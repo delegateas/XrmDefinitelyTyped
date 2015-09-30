@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "stripInternal": true,
+    "declaration": true
+  },
+  "files": [
+    "dg.xrmquery.ts"
+  ]
+}

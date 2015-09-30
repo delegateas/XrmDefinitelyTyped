@@ -1,0 +1,12 @@
+source https://nuget.org/api/v2
+
+nuget FSharp.Formatting
+nuget NUnit
+nuget NUnit.Runners
+nuget FAKE
+nuget SourceLink.Fake
+nuget Microsoft.CrmSdk.CoreAssemblies ~> 7
+
+github fsharp/FAKE modules/Octokit/Octokit.fsx
+github mktange/CSharpFormat
+http http://dl.google.com/closure-compiler/compiler-latest.zip
