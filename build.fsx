@@ -15,6 +15,7 @@ open System.IO
 open SourceLink
 #endif
 
+
 // --------------------------------------------------------------------------------------
 // START TODO: Provide project-specific details below
 // --------------------------------------------------------------------------------------
@@ -177,6 +178,7 @@ Target "NuGet" (fun _ ->
 Target "PublishNuget" (fun _ ->
     Paket.Push(fun p -> 
         { p with
+            ApiKey = getBuildParamOrDefault "delegateas-nugetkey" ""
             WorkingDir = "bin" })
 )
 
