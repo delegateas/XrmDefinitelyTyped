@@ -75,6 +75,10 @@ table.pre td.lines {
   width:30px;
 }
 
+code {
+    color: blue;
+}
+
 /*-------------------------------------------------------------------------- 
   Formatting for page & standard document content
 /*--------------------------------------------------------------------------*/
@@ -85,6 +89,40 @@ body {
   padding-bottom: 40px;
 }
 
+table:not(.pre) {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  word-break: normal;
+  word-break: keep-all;
+}
+
+table:not(.pre) th {
+  font-weight: bold;
+  background-color: #373F4C;
+  color: #ffffff;
+}
+
+table:not(.pre) th,
+table:not(.pre) td {
+  padding: 4px 10px;
+  border: 1px solid #ddd;
+}
+
+table:not(.pre) tr {
+  background-color: #fff;
+  border-top: 1px solid #ccc;
+}
+
+table:not(.pre) tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+table:not(.pre) th > p {
+	margin: 6px !important;
+	vertical-align: middle;
+}
+
 pre {
 	word-wrap: inherit;
 }
@@ -92,7 +130,7 @@ pre {
 a, a:hover, a:visited
 {
     text-decoration: none;
-    color: #f58025;
+    color: #4dadf6;
 }
 
 a.hlink
@@ -109,7 +147,7 @@ a.hlink
 a.hlink:hover 
 {
     color: white; 
-    background: #f58025
+    background: #4dadf6
 }
 
 ul.projects
@@ -131,7 +169,7 @@ ul.projects li
 
 ul.projects li + li
 {
-	border-top: thin dashed #f58025;
+	border-top: thin dashed #4dadf6;
 }
 
 h1.headline
@@ -160,9 +198,11 @@ img.code
 
 /* Format the heading - nicer spacing etc. */
 .masthead {
-  background-color: #f58025;
+  background-color: #373F4C;
   overflow: hidden;
   margin-bottom: 2em;
+  padding: 0.5em 2em;
+  /* padding-left: 2em;*/
 }
 
 .masthead ul.nav {
@@ -192,7 +232,11 @@ img.code
 }
 
 .masthead .nav li a:hover {
-  background: #FF9540;
+  background: #4dadf6;
+}
+
+.masthead .site-logo img {
+  width: 190px;
 }
 
 .credits {
