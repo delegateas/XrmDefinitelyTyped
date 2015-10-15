@@ -30,7 +30,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DocumentationFile>bin\Debug\XrmContextUtil.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\XrmDefinitelyTyped.XML</DocumentationFile>
     <Prefer32Bit>true</Prefer32Bit>
     <StartArguments>
     </StartArguments>
