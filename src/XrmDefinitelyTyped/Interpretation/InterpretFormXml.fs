@@ -131,6 +131,7 @@ module internal InterpretFormXml =
         | None -> ControlClassId.Other
   
 
+  /// Renames controls with number suffixes if some share the same id
   let renameControls (controls:XrmFormControl list) =
     controls
     |> List.groupBy (fun x -> fst x)
@@ -140,6 +141,38 @@ module internal InterpretFormXml =
         else x, c
       ) cs)
     |> List.concat
+
+
+  let getCompositeField (id, datafieldname, _) subFieldName ty : ControlField =
+    sprintf "%s_compositionLinkControl_%s" id subFieldName,
+    subFieldName,
+    ty
+
+  let (|IsCompositeAddress|_|) (str:string) = 
+    let regex = Regex.Match(str, "^address(\d)_composite$")
+    match regex.Success with
+    | true -> Some (System.Int32.Parse(regex.Groups.[1].Value))
+    | false -> None
+
+  /// Finds all composite fields and adds the sub-fields that they bring along
+  let getCompositeFields : ControlField list -> ControlField list =
+    List.choose (fun field  ->
+      let (id, datafieldname, _) = field
+
+      match datafieldname with
+      | null -> None
+      | IsCompositeAddress x -> 
+        Some 
+          [ getCompositeField field (sprintf "address%d_line1" x) ControlClassId.TextBox
+            getCompositeField field (sprintf "address%d_line2" x) ControlClassId.TextBox
+            getCompositeField field (sprintf "address%d_line3" x) ControlClassId.TextBox
+            getCompositeField field (sprintf "address%d_city" x) ControlClassId.TextBox
+            getCompositeField field (sprintf "address%d_stateorprovince" x) ControlClassId.TextBox
+            getCompositeField field (sprintf "address%d_postalcode" x) ControlClassId.TextBox
+            getCompositeField field (sprintf "address%d_country" x) ControlClassId.TextBox
+          ]
+      | _ -> None
+    ) >> List.concat
 
   /// Function to interpret a single FormXml
   let interpretFormXml (enums:Map<string,Type>) (bpfFields: ControlField list option) (systemForm:Entity) =
@@ -177,6 +210,8 @@ module internal InterpretFormXml =
         id, datafieldname, controlClass)
       |> List.ofSeq
 
+    let compositeFields = getCompositeFields controlFields
+
     let name = systemForm.Attributes.["name"].ToString()
     let typeInt = (systemForm.Attributes.["type"] :?> OptionSetValue).Value
     
@@ -184,12 +219,12 @@ module internal InterpretFormXml =
       entityName =  systemForm.Attributes.["objecttypecode"].ToString()
       formType = enum<FormType>(typeInt).ToString()
       attributes = 
-        controlFields @ bpfFields
+        controlFields @ compositeFields @ bpfFields
         |> List.choose (getAttribute enums)
         |> List.distinctBy (fun x -> fst x)
 
       controls = 
-        controlFields @ bpfFields
+        controlFields @ compositeFields @ bpfFields
         |> List.map getControl
         |> renameControls
       tabs = tabs

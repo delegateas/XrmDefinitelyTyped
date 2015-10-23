@@ -302,6 +302,13 @@
      */
     getPrecision(): number;
   }
+
+  /**
+   * Interface for a lookup attribute.
+   */
+  interface LookupAttribute extends Attribute<EntityReference[]> {
+  }
+
   /**
    * Interface for an OptionSet attribute.
    */

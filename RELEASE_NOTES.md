@@ -1,11 +1,15 @@
 # Release Notes
 
+### 1.5.6 - October 23 2015
+* Added the attributes and controls that come along when `addressX_composite` is on a form
+* Added interface `IPage.LookupAttribute` as a shorthand name for `IPage.Attribute<IPage.EntityReference[]>`
+
 ### 1.5.5 - September 30 2015
 * Code refactoring in preparation for open-sourcing the project
 
 ### 1.5.4 - September 29 2015
 * Added numbering to controls when there are multiple of the same field on a form
-* Added `getAttribute` to form controls with correct type
+* Added `getAttribute` to form controls
 
 ### 1.5.3 - August 31 2015
 * Changed to use more robust Date object check in XrmQuery (updated javascript files)

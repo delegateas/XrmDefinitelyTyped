@@ -6,9 +6,9 @@ open System.Reflection
 [<assembly: AssemblyDescriptionAttribute("Tool to generate TypeScript declaration files for MS CRM Dynamics client-side coding.")>]
 [<assembly: AssemblyCompanyAttribute("Delegate A/S")>]
 [<assembly: AssemblyCopyrightAttribute("Copyright (c) Delegate A/S 2015")>]
-[<assembly: AssemblyVersionAttribute("1.5.5")>]
-[<assembly: AssemblyFileVersionAttribute("1.5.5")>]
+[<assembly: AssemblyVersionAttribute("1.5.6")>]
+[<assembly: AssemblyFileVersionAttribute("1.5.6")>]
 do ()
 
 module internal AssemblyVersionInformation =
-    let [<Literal>] Version = "1.5.5"
+    let [<Literal>] Version = "1.5.6"

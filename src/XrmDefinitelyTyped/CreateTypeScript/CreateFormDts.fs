@@ -12,7 +12,6 @@ module internal CreateFormDts =
   let getAttributeInterface = function
     | AttributeType.OptionSet ty  -> Type.SpecificGeneric ("IPage.OptionSetAttribute", ty)
     | AttributeType.Default ty    -> Type.SpecificGeneric ("IPage.Attribute", ty)
-    | AttributeType.Lookup        -> Type.SpecificGeneric ("IPage.Attribute", Type.Custom "IPage.EntityReference[]")
     | x                           -> Type.Custom (sprintf "IPage.%AAttribute" x)
 
 
