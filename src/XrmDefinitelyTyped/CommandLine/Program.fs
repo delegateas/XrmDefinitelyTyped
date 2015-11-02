@@ -8,27 +8,9 @@ open DG.XrmDefinitelyTyped
 open CommandLineHelper
 open GeneratorLogic
 
-// Arguments
-let expectedArgs = [
-  { command="url";        required=true;  description="Url to the Organization.svc" }
-  { command="username";   required=true;  description="CRM Username" }
-  { command="password";   required=true;  description="CRM Password" }
-  { command="domain";     required=false; description="Domain to use for CRM" }
-  { command="ap";         required=false; description="Authentication Provider Type" }
-  { command="out";        required=false; description="Output directory for the generated files" }
-  { command="tsversion";  required=false; description="Specify which version of TS should be used, i.e. \"1.0\"" }
-  ]
-
-// Usage
-let showUsage () = 
-  printfn @"Usage: XrmDefinitelyTyped.exe /url:http://<serverName>/<organizationName>/XRMServices/2011/Organization.svc /username:<username> /password:<password>"
-  printfn ""
-  printArgumentHelp expectedArgs
-
-
 // Main executable function
 let executeGetContext argv =
-  let parsedArgs = parseArgs argv expectedArgs
+  let parsedArgs = parseArgs argv Args.expectedArgs
 
   let ap = 
     match parsedArgs.TryFind "ap" with
@@ -58,6 +40,7 @@ let executeGetContext argv =
   XrmDefinitelyTyped.GetContext(xrmAuth, parsedArgs.TryFind "out", tsv)
 
 
+
 // Main method
 [<EntryPoint>]
 let main argv = 
@@ -65,12 +48,10 @@ let main argv =
   executeGetContext argv
   0
   #else
-  if argv.Length = 0 then // Given no args, show usage
-    showUsage()
-  else
-    try 
-      executeGetContext argv
-    with ex ->
-      eprintfn "%s" ex.Message
+  try 
+    if argv.Length > 0 && Args.helpArgs.Contains argv.[0] then showUsage()
+    else executeGetContext argv
+  with ex ->
+    eprintfn "%s" ex.Message
   0
   #endif
