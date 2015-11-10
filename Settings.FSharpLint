@@ -34,6 +34,10 @@
       </Rules>
       <Enabled>False</Enabled>
     </FunctionReimplementation>
+    <Hints>
+      <Rules />
+      <Enabled>False</Enabled>
+    </Hints>
     <NameConventions>
       <Rules>
         <EnumCasesMustBePascalCase>
