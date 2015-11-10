@@ -99,6 +99,7 @@
     <Compile Include="CreateTypeScript/CreateFormDts.fs" />
     <Compile Include="GeneratorLogic.fs" />
     <Compile Include="XrmDefinitelyTyped.fs" />
+    <Compile Include="CommandLine\Arguments.fs" />
     <Compile Include="CommandLine\CommandLineHelper.fs" />
     <Compile Include="CommandLine\Program.fs" />
     <None Include="App.config" />
@@ -107,6 +108,7 @@
   <ItemGroup>
     <Reference Include="mscorlib" />
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.DirectoryServices.AccountManagement" />

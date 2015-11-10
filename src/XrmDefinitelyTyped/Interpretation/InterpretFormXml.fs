@@ -45,42 +45,6 @@ module internal InterpretFormXml =
       ("9C5CA0A1-AB4D-4781-BE7E-8DFBE867B87E", Timer)
     ] |> List.map (fun (id,t) -> id.ToUpper(), t) |> Map.ofList
     
-  let getControl (controlId, _, controlClass) =
-    let cType = 
-      match controlClass with
-      | DateTime -> ControlType.Date
-
-      | Picklist 
-      | StatusReason
-      | RadioButtons
-      | CheckBox  -> ControlType.OptionSet
-        
-      | Decimal 
-      | Duration
-      | Integer 
-      | MoneyValue 
-      | Float -> ControlType.Number
-
-      | WebResource -> ControlType.WebResource
-      | IFrame -> ControlType.IFrame 
-        
-      | Subgrid -> ControlType.SubGrid
-
-      | PartyListLookup 
-      | RegardingLookup 
-      | Lookup -> ControlType.Lookup
-        
-      // TODO: Figure out if the following should be special control types
-      | Language
-      | QuickView
-      | TimeZonePicklist 
-      | TickerSymbol
-      | Map
-      | Timer
-      | _ -> ControlType.Default
-
-    controlId, cType
-
   let getAttribute (enums:Map<string,Type>) (_, attr, controlClass) =
     if attr = null then None else 
 
@@ -114,6 +78,51 @@ module internal InterpretFormXml =
         
     Some (attr, aType)
 
+
+  let getControl  (enums:Map<string,Type>) (controlField:ControlField): XrmFormControl option =
+    let controlId, datafield, controlClass = controlField
+    if controlClass = QuickView then None else
+
+    let aType =
+      match getAttribute enums controlField with
+      | Some (_, aType) -> Some aType
+      | None -> None
+
+    
+    let cType = 
+      match controlClass with
+      | DateTime -> ControlType.Date
+
+      | Picklist 
+      | StatusReason
+      | RadioButtons
+      | CheckBox  -> ControlType.OptionSet
+        
+      | Decimal 
+      | Duration
+      | Integer 
+      | MoneyValue 
+      | Float -> ControlType.Number
+
+      | WebResource -> ControlType.WebResource
+      | IFrame -> ControlType.IFrame 
+        
+      | Subgrid -> ControlType.SubGrid
+
+      | PartyListLookup 
+      | RegardingLookup 
+      | Lookup -> ControlType.Lookup
+        
+      // TODO: Figure out if the following should be special control types
+      | Language
+      | QuickView
+      | TimeZonePicklist 
+      | TickerSymbol
+      | Map
+      | Timer
+      | _ -> ControlType.Default
+
+    Some (controlId, aType, cType)
   
   let getValue (xEl:XElement) (str:string) =
     match xEl.Attribute(XName.Get(str)) with
@@ -134,11 +143,11 @@ module internal InterpretFormXml =
   /// Renames controls with number suffixes if some share the same id
   let renameControls (controls:XrmFormControl list) =
     controls
-    |> List.groupBy (fun x -> fst x)
+    |> List.groupBy (fun (x,_,_) -> x)
     |> List.map (fun (x,cs) -> 
-      List.mapi (fun i (_,c) -> 
-        if i > 0 then sprintf "%s%d" x i, c 
-        else x, c
+      List.mapi (fun i (_,a,c) -> 
+        if i > 0 then sprintf "%s%d" x i, a, c 
+        else x, a, c
       ) cs)
     |> List.concat
 
@@ -225,7 +234,7 @@ module internal InterpretFormXml =
 
       controls = 
         controlFields @ compositeFields @ bpfFields
-        |> List.map getControl
+        |> List.choose (getControl enums)
         |> renameControls
       tabs = tabs
     }

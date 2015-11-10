@@ -12,8 +12,8 @@
     BulkEdit = 6,
   }
   /**
-    * Interface for an option set value.
-    */ 
+   * Interface for an option set value.
+   */ 
   interface Option {
     /**
      * Label for the option.
@@ -26,8 +26,8 @@
   }
 
   /**
-    * Interface for an user privileges for an attribute.
-    */ 
+   * Interface for an user privileges for an attribute.
+   */ 
   interface UserPrivilege {
     /**
      * Specificies if the user can read data values for the attribute.
@@ -124,7 +124,12 @@
   /**
    * A collection of controls.
    */
-  interface ControlCollection extends Collection<Control> {
+  interface ControlCollection extends Collection<BaseControl> {
+  }
+  /**
+   * A collection of controls.
+   */
+  interface SpecificControlCollection<T> extends Collection<Control<T>> {
   }
   /**
    * A collection of sections.
@@ -145,7 +150,7 @@
   /**
    * A collection of controls.
    */
-  interface ControlCollectionBase extends CollectionBase<Control> {
+  interface ControlCollectionBase extends CollectionBase<BaseControl> {
   }
   /**
    * A collection of sections.
@@ -171,7 +176,7 @@
     /**
      * Collection of controls associated with the attribute.
      */
-    controls: Collection<Control>;
+    controls: SpecificControlCollection<Attribute<T>>;
     /**
      * Retrieves the data value for an attribute.
      */
@@ -348,11 +353,7 @@
   /**
    * Interface for a standard form control.
    */
-  interface Control extends EmptyControl {
-    /**
-    * Get the attribute this control is bound to.
-    */
-    getAttribute(): IPage.Attribute<any>;
+  interface BaseControl extends EmptyControl {
     /**
      * Get information about the type of control.
      *
@@ -418,10 +419,16 @@
     clearNotification(uniqueId: string): boolean;
   }
 
+  interface Control<T extends IPage.EmptyAttribute> extends BaseControl {
+    /**
+     * Get the attribute this control is bound to.
+     */
+    getAttribute(): T;
+  }
   /**
    * Interface for an OptionSet form control.
    */
-  interface OptionSetControl extends Control {
+  interface OptionSetControl<T> extends Control<OptionSetAttribute<T>> {
     /**
      * Adds an option to an option set control.
      *
@@ -444,7 +451,7 @@
   /**
    * Interface for an external form control.
    */
-  interface ExternalControl extends Control {
+  interface ExternalControl extends BaseControl {
     /**
      * Returns the object in the form that represents an IFRAME or WebResource.
      */
@@ -490,7 +497,7 @@
   /**
    * Interface for a DateTime form control.
    */
-  interface DateControl extends Control {
+  interface DateControl extends Control<Attribute<Date>> {
     /**
      * Get whether a date control shows the time portion of the date.
      */
@@ -504,7 +511,7 @@
   /**
    * Interface for a Lookup form control.
    */
-  interface LookupControl extends Control {
+  interface LookupControl extends Control<LookupAttribute> {
     /**
      * Use to add filters to the results displayed in the lookup. Each filter will be combined with any previously added filters as an ?AND? condition.
      * 
@@ -544,11 +551,23 @@
   /**
    * Interface for a SubGrid form control.
    */
-  interface SubGridControl extends Control {
+  interface SubGridControl extends BaseControl {
     /**
      * Refreshes the data displayed in a subgrid.
      */
     refresh();
+  }
+
+  /**
+   * Interface for a string form control.
+   */
+  interface StringControl extends Control<Attribute<string>> {
+  }
+
+  /**
+   * Interface for a number form control.
+   */
+  interface NumberControl extends Control<NumberAttribute> {
   }
 
   /**
@@ -953,7 +972,7 @@
     /**
      * A collection of controls in the section.
      */
-    controls: Collection<Control>;
+    controls: Collection<BaseControl>;
     /**
      * Method to return the name of the section.
      */
@@ -1022,7 +1041,7 @@
     /**
      * Returns the Xrm.Page.ui object.
      */
-    getParent(): UiModule<Collection<PageTab<Collection<PageSection>>>,Collection<Control>>;
+    getParent(): UiModule<Collection<PageTab<Collection<PageSection>>>,Collection<BaseControl>>;
     /**
      * Returns the tab label.
      */
@@ -1087,7 +1106,7 @@
      * Method to get the control object that currently has focus on the form. Web Resource and IFRAME controls are not returned by this method.
      * This method was deprecated in Microsoft Dynamics CRM 2013 Update Rollup 2.
      */
-    getCurrentControl(): Control;
+    getCurrentControl(): BaseControl;
     /**
      * Use this method to remove form level notifications.
      *

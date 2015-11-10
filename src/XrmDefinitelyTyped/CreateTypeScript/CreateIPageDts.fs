@@ -15,11 +15,8 @@ module internal CreateIPageDts =
         | ty, SpecialType.OptionSet -> Type.SpecificGeneric ("OptionSetAttribute", ty)
         | Type.Boolean, _ -> Type.SpecificGeneric ("OptionSetAttribute", Type.Boolean)
         | Type.Number, _ -> Type.Custom "NumberAttribute"
-        | _ ->
-          match v.varType with
-          | Type.Custom "EntityReference" -> Type.Array (Type.Custom "EntityReference")
-          | _ -> v.varType
-          |> fun (vType) -> Type.SpecificGeneric("Attribute", vType)
+        | Type.Custom "EntityReference", _ -> Type.Custom "LookupAttribute"
+        | _ -> Type.SpecificGeneric("Attribute", v.varType)
 
       Function.Create("getAttribute",
         [Variable.Create("name", getConstantType v.logicalName)],
@@ -30,10 +27,14 @@ module internal CreateIPageDts =
     list
     |> List.map (fun v ->
       let aType = 
-        match v.varType with
-        | Type.Date     -> Type.Custom "DateControl"
-        | Type.Custom _ -> Type.Custom "LookupControl"
-        | _ -> Type.Custom "Control"
+        match v.varType, v.specialType with
+        | ty, SpecialType.OptionSet -> Type.SpecificGeneric ("OptionSetControl", ty)
+        | Type.Boolean, _ -> Type.SpecificGeneric ("OptionSetControl", Type.Boolean)
+        | Type.Date, _     -> Type.Custom "DateControl"
+        | Type.String _, _ -> Type.Custom "StringControl"
+        | Type.Number _, _ -> Type.Custom "NumberControl"
+        | Type.Custom "EntityReference", _ -> Type.Custom "LookupControl"
+        | _ -> Type.Custom "BaseControl"
 
       Function.Create("getControl",
         [Variable.Create("name", getConstantType v.logicalName)],
@@ -54,16 +55,16 @@ module internal CreateIPageDts =
         @ [ Function.Create("getControl",
               [ Variable.Create("name", Type.String) ],
               Type.Custom "EmptyControl")
-            Function.Create("getControl", [], Type.Array (Type.Custom "Control"))
+            Function.Create("getControl", [], Type.Array (Type.Custom "BaseControl"))
             Function.Create("getControl", 
-              [Variable.Create("index", Type.Number)], Type.Custom "Control")
+              [Variable.Create("index", Type.Number)], Type.Custom "BaseControl")
             Function.Create("getControl", 
               [Variable.Create("chooser", 
                 Type.Function 
-                  ([  Variable.Create("control", Type.Custom "Control")
+                  ([  Variable.Create("control", Type.Custom "BaseControl")
                       Variable.Create("index", Type.Number) ], 
                   Type.Boolean)) ],
-              Type.Custom "Control") ])
+              Type.Custom "BaseControl") ])
 
   let getIPageContext (e:XrmEntity): string list =
     (Module.Create("IPage", declare = true,

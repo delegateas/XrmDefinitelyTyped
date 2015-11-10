@@ -1,10 +1,11 @@
 ﻿namespace DG.XrmDefinitelyTyped
 
+open System.Text.RegularExpressions
+open Microsoft.FSharp.Reflection
+
 open TsStringUtil
 open Utility
 open IntermediateRepresentation
-open System.Text.RegularExpressions
-open Microsoft.FSharp.Reflection
 
 module internal CreateFormDts =
 
@@ -13,14 +14,21 @@ module internal CreateFormDts =
     | AttributeType.OptionSet ty  -> Type.SpecificGeneric ("IPage.OptionSetAttribute", ty)
     | AttributeType.Default ty    -> Type.SpecificGeneric ("IPage.Attribute", ty)
     | x                           -> Type.Custom (sprintf "IPage.%AAttribute" x)
-
+ 
+  /// Gets the corresponding enum of the option set if possible
+  let getOptionSetType = function
+    | AttributeType.OptionSet ty -> ty
+    | _ -> Type.Number
 
   /// Translate internal control type to corresponding TypeScript interface.
-  let getControlInterface = function
-    | ControlType.Default
-    | ControlType.Number      -> Type.Custom "IPage.Control"
-    | x                       -> Type.Custom (sprintf "IPage.%AControl" x)
-
+  let getControlInterface cType aType =
+    match aType, cType with
+    | None, ControlType.Default       -> Type.Custom "IPage.BaseControl"
+    | Some (AttributeType.Default Type.String), ControlType.Default
+                                      -> Type.Custom "IPage.StringControl"
+    | Some at, ControlType.OptionSet  -> Type.SpecificGeneric ("IPage.OptionSetControl", getOptionSetType at)
+    | Some at, ControlType.Default    -> Type.SpecificGeneric ("IPage.Control", getAttributeInterface at) 
+    | _, x                            -> Type.Custom (sprintf "IPage.%AControl" x)
 
   /// Default collection functions which also use the "get" function name.
   let defaultCollectionFuncs emptyType defaultType = 
@@ -61,13 +69,13 @@ module internal CreateFormDts =
   let getControlCollection (controls:XrmFormControl list) =
     let getFuncs = 
       controls
-      |> List.map (fun (name, ty) ->
+      |> List.map (fun (name, aType, cType) ->
         let paramType = getConstantType name
-        let returnType = getControlInterface ty          
+        let returnType = getControlInterface cType aType          
 
         Function.Create("get", [Variable.Create("name", paramType)], returnType))
 
-    let defaultFuncs = defaultCollectionFuncs "IPage.EmptyControl" "IPage.Control"
+    let defaultFuncs = defaultCollectionFuncs "IPage.EmptyControl" "IPage.BaseControl"
 
     Interface.Create("Controls", superClass = "IPage.ControlCollectionBase",
       funcs = getFuncs @ defaultFuncs)
@@ -134,9 +142,9 @@ module internal CreateFormDts =
   let getControlFuncs (controls:XrmFormControl list) =
     let ctrlFuncs = 
       controls
-      |> List.map (fun (name, ty) ->
+      |> List.map (fun (name, aType, cType) ->
         let paramType = getConstantType name
-        let returnType = getControlInterface ty
+        let returnType = getControlInterface cType aType
 
         Function.Create("getControl", 
           [ Variable.Create("controlName", paramType) ], returnType)

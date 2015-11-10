@@ -69,7 +69,7 @@ module IntermediateRepresentation =
     | AppointmentBookBackup = 102
   
   type XrmFormAttribute = string * AttributeType
-  type XrmFormControl = string * ControlType
+  type XrmFormControl = string * AttributeType option * ControlType
   type XrmFormTab = string * string * string list
   
   type ControlClassId =
