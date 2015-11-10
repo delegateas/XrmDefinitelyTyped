@@ -1,5 +1,14 @@
 # Release Notes
 
+### 1.6.0 November 10 2015
+* Added possibility of using `.exe.config` file to pass arguments
+* Changed `IPage.Control` to be generic, depending on the attribute it contains
+* Added `IPage.BaseControl` as a superclass to `IPage.Control` that is non-generic and has no
+  `getAttribute()` function.
+* Added `IPage.StringControl` and `IPage.NumberControl` as shorthand names for their corresponding
+  attribute controls
+* Updated entity IPage interfaces with new control types
+
 ### 1.5.6 - October 23 2015
 * Added the attributes and controls that come along when `addressX_composite` is on a form
 * Added interface `IPage.LookupAttribute` as a shorthand name for `IPage.Attribute<IPage.EntityReference[]>`
