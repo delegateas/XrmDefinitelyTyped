@@ -37,11 +37,14 @@ module internal InterpretOptionSetMetadata =
 
       let fixedOptionLabels =
         options
-        |> Seq.fold (fun (acc:Map<string,Option list>) op ->
-          if acc.ContainsKey op.label then
-            acc.Add(op.label, ({ op with label = sprintf "%s_%d" op.label (acc.[op.label].Length+1) }:: acc.[op.label]))
-          else 
-            acc.Add(op.label, [op])
+        |> Seq.fold (fun (countMap:Map<string,Option list>) op ->
+          if countMap.ContainsKey op.label then
+            countMap.Add(
+              op.label, 
+              { op with label = sprintf "%s_%d" op.label (countMap.[op.label].Length+1) } 
+                :: countMap.[op.label]
+            )
+          else countMap.Add(op.label, [op])
         ) Map.empty
         |> Map.toArray |> Array.map snd |> List.concat 
         |> List.sortBy (fun op -> op.value) |> List.toArray

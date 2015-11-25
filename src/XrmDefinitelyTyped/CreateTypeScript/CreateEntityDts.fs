@@ -126,19 +126,20 @@ module internal CreateEntityDts =
 
   /// Create entity enums
   let getEntityEnums (e:XrmEntity): string list =
+    let enums =
+      e.opt_sets
+      |> List.map (fun os ->
+        Enum.Create(os.displayName, 
+          os.options 
+            |> Array.map (fun o -> o.label, Some o.value) |> List.ofArray,
+          export = true,
+          constant = true))
+      |> List.fold (fun acc os -> 
+        if List.exists (fun (x:Enum) -> os.name = x.name) acc then acc 
+        else os::acc) []
+
     Module.Create(
       sprintf "Enum.%s" e.schemaName,
       declare = true,
-      enums = 
-        (e.opt_sets
-        |> List.map (fun os ->
-          Enum.Create(
-            os.displayName,
-            os.options 
-              |> Array.map (fun o -> o.label, Some o.value) |> List.ofArray,
-            export = true,
-            constant = true))
-        |> List.fold (fun acc os -> 
-          if List.exists (fun (x:Enum) -> os.name = x.name) acc then acc 
-          else os::acc) [])
-    ) |> moduleToString
+      enums = enums) 
+    |> moduleToString

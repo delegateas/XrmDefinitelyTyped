@@ -54,7 +54,7 @@ module GeneratorLogic =
   let entityRef n = makeRefSub n "_internal/entities"
   let entityEnumRef n name = makeRefSub n (sprintf "_internal/EntityEnum/%s" name)
   let enumRef n name = makeRefSub n (sprintf "_internal/Enum/%s" name)
-  let enumsToRefs enums = enums |> List.map (fun enum -> makeRef (sprintf "../Enum/%s" enum))
+  let enumsToRefs enums = enums |> List.map (fun enum -> sprintf "../Enum/%s" enum |> makeRef)
 
 
   (** Resource helpers *)

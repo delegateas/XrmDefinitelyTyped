@@ -55,12 +55,9 @@ module internal CreateFormDts =
       |> List.map (fun (name,ty) ->
         let paramType = getConstantType name
         let returnType = getAttributeInterface ty
-          
-
         Function.Create("get", [Variable.Create("name", paramType)], returnType))
 
     let defaultFuncs = defaultCollectionFuncs "IPage.EmptyAttribute" "IPage.Attribute<any>"
-
     Interface.Create("Attributes", superClass = "IPage.AttributeCollectionBase",
       funcs = getFuncs @ defaultFuncs)
 
@@ -72,11 +69,9 @@ module internal CreateFormDts =
       |> List.map (fun (name, aType, cType) ->
         let paramType = getConstantType name
         let returnType = getControlInterface cType aType          
-
         Function.Create("get", [Variable.Create("name", paramType)], returnType))
 
     let defaultFuncs = defaultCollectionFuncs "IPage.EmptyControl" "IPage.BaseControl"
-
     Interface.Create("Controls", superClass = "IPage.ControlCollectionBase",
       funcs = getFuncs @ defaultFuncs)
 
@@ -109,9 +104,7 @@ module internal CreateFormDts =
           Type.Custom "IPage.PageSection"))
 
     let defaultFuncs = defaultCollectionFuncs "IPage.EmptyPageSection" "IPage.PageSection"
-
-    tabs
-    |> List.map (fun (iname, name, sections) ->
+    tabs |> List.map (fun (iname, name, sections) ->
       Interface.Create(iname, superClass = "IPage.SectionCollectionBase",
         funcs = getFuncs sections @ defaultFuncs))
 
@@ -124,16 +117,13 @@ module internal CreateFormDts =
       |> List.map (fun (name, ty) ->
         let paramType = getConstantType name
         let returnType = getAttributeInterface ty
-
         Function.Create("getAttribute", 
-          [ Variable.Create("attributeName", paramType) ], returnType)
-      )
+          [ Variable.Create("attributeName", paramType) ], returnType))
 
     let defaultFunc =
       Function.Create("getAttribute", 
         [ Variable.Create("attributeName", Type.String) ], 
         Type.Custom "IPage.EmptyAttribute")
-
     attrFuncs @ [ defaultFunc ]
 
 
@@ -145,16 +135,13 @@ module internal CreateFormDts =
       |> List.map (fun (name, aType, cType) ->
         let paramType = getConstantType name
         let returnType = getControlInterface cType aType
-
         Function.Create("getControl", 
-          [ Variable.Create("controlName", paramType) ], returnType)
-      )
+          [ Variable.Create("controlName", paramType) ], returnType))
 
     let defaultFunc =
       Function.Create("getControl", 
         [ Variable.Create("controlName", Type.String) ], 
         Type.Custom "IPage.EmptyControl")
-
     ctrlFuncs @ [ defaultFunc ]
 
 

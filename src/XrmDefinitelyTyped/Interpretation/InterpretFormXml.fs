@@ -83,10 +83,9 @@ module internal InterpretFormXml =
     let controlId, datafield, controlClass = controlField
     if controlClass = QuickView then None else
 
-    let aType =
-      match getAttribute enums controlField with
-      | Some (_, aType) -> Some aType
-      | None -> None
+    let aType = 
+      getAttribute enums controlField
+      |> Option.map snd
 
     
     let cType = 
@@ -135,9 +134,7 @@ module internal InterpretFormXml =
       | IsWebresouce true -> ControlClassId.WebResource
       | _ -> 
         let normalizedClassId = Regex.Replace(classId.ToUpper(), "[{}]", "")
-        match classIds.TryFind normalizedClassId with
-        | Some x -> x
-        | None -> ControlClassId.Other
+        classIds.TryFind normalizedClassId |? ControlClassId.Other
   
 
   /// Renames controls with number suffixes if some share the same id

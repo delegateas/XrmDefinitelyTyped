@@ -15,7 +15,8 @@ let executeGetContext argv =
   let ap = 
     match parsedArgs.TryFind "ap" with
     | Some ap -> 
-        Enum.Parse(typeof<AuthenticationProviderType>, ap) :?> AuthenticationProviderType |> Some
+        Enum.Parse(typeof<AuthenticationProviderType>, ap) 
+          :?> AuthenticationProviderType |> Some
     | None -> None
 
   let xrmAuth =
@@ -34,7 +35,8 @@ let executeGetContext argv =
         | false -> None
         | true -> 
           match m.Groups.[3].Success with
-          | true -> Some (Int32.Parse m.Groups.[1].Value, Int32.Parse m.Groups.[3].Value) 
+          | true -> Some (Int32.Parse m.Groups.[1].Value, 
+                          Int32.Parse m.Groups.[3].Value) 
           | false -> Some (Int32.Parse m.Groups.[1].Value, 0) 
     
   XrmDefinitelyTyped.GetContext(xrmAuth, parsedArgs.TryFind "out", tsv)

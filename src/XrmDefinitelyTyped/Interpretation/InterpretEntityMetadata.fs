@@ -3,6 +3,7 @@
 open IntermediateRepresentation
 open InterpretOptionSetMetadata
 open Microsoft.Xrm.Sdk.Metadata
+open Utility
 
 module internal InterpretEntityMetadata =
   
@@ -30,10 +31,10 @@ module internal InterpretEntityMetadata =
     | AttributeTypeCode.Status    -> Type.Number
     | _                           -> Type.Any
 
+
+
   let (|IsWrongYomi|) (haystack : string) =
     not(haystack.StartsWith("Yomi")) && haystack.Contains("Yomi")
-
-
 
   let interpretAttribute (a:AttributeMetadata) =
     let aType = a.AttributeType.GetValueOrDefault()
@@ -73,10 +74,7 @@ module internal InterpretEntityMetadata =
     let rEntity =
         if referencing then rel.ReferencedEntity
         else rel.ReferencingEntity
-        |> fun s ->
-          match Map.tryFind s map with
-          | Some x -> x
-          | None -> s
+        |> fun s -> Map.tryFind s map |? s
     
     let name =
         match rel.ReferencedEntity = rel.ReferencingEntity with
@@ -96,48 +94,13 @@ module internal InterpretEntityMetadata =
 
     rEntity, xRel
 
-//  let interpretRelationshipDEPRECATED map referencing (rel:OneToManyRelationshipMetadata) =
-//    let rEntity =
-//      if referencing then rel.ReferencedEntity
-//      else rel.ReferencingEntity
-//      |> fun s ->
-//        match Map.tryFind s map with
-//        | Some x -> x
-//        | None -> s
-//
-//    let interpretRelationship' isResult =
-//      let rType = 
-//        if referencing then Type.Custom rEntity
-//        else if isResult then
-//          Type.SpecificGeneric ("SDK.Results", Type.Custom (sprintf "%sResult" rEntity)) 
-//        else Type.Array (Type.Custom rEntity)
-//
-//      let name =
-//        match rel.ReferencedEntity = rel.ReferencingEntity with
-//        | false -> rel.SchemaName
-//        | true  ->
-//          match referencing with
-//          | true  -> sprintf "Referencing%s" rel.SchemaName
-//          | false -> sprintf "Referenced%s" rel.SchemaName
-// 
-//      { XrmAttribute.schemaName = name
-//        logicalName = 
-//          if referencing then rel.ReferencingAttribute 
-//          else rel.ReferencedAttribute
-//        varType = rType
-//        specialType = SpecialType.Default }
-//
-//    rEntity, interpretRelationship'
 
   let interpretM2MRelationship map lname (rel:ManyToManyRelationshipMetadata) =
     let rEntity =
       match lname = rel.Entity2LogicalName with
       | true  -> rel.Entity1LogicalName
       | false -> rel.Entity2LogicalName
-      |> fun s -> 
-        match Map.tryFind s map with
-        | Some x -> x
-        | None -> s
+      |> fun s -> Map.tryFind s map |? s
 
     let xRel = 
       { XrmRelationship.schemaName = rel.SchemaName 
@@ -147,26 +110,6 @@ module internal InterpretEntityMetadata =
     
     rEntity, xRel
 
-//  let interpretM2MRelationshipDEPRECATED map lname (rel:ManyToManyRelationshipMetadata) =
-//    let rEntity =
-//      match lname = rel.Entity2LogicalName with
-//      | true  -> rel.Entity1LogicalName
-//      | false -> rel.Entity2LogicalName
-//      |> fun s -> 
-//        match Map.tryFind s map with
-//        | Some x -> x
-//        | None -> s
-//
-//    let interpretM2MRelationship' isResult =
-//      { XrmAttribute.schemaName = rel.SchemaName
-//        logicalName = rel.SchemaName
-//        varType = 
-//          if isResult then Type.SpecificGeneric ("SDK.Results", Type.Custom (sprintf "%sResult" rEntity)) 
-//          else Type.Array (Type.Custom rEntity) 
-//        specialType = SpecialType.Default
-//      }
-//    
-//    rEntity, interpretM2MRelationship'
 
   let interpretEntity map (metadata:EntityMetadata) =
     if (metadata.Attributes = null) then failwith "No attributes found!"
@@ -179,7 +122,8 @@ module internal InterpretEntityMetadata =
     let attr_vars = attr_vars |> Array.choose id |> Array.toList
     
     let opt_sets = 
-      opt_sets |> Seq.choose id |> Seq.distinctBy (fun x -> x.displayName) 
+      opt_sets |> Seq.choose id 
+      |> Seq.distinctBy (fun x -> x.displayName) 
       |> Seq.toList
     
 
@@ -196,7 +140,7 @@ module internal InterpretEntityMetadata =
       [ metadata.OneToManyRelationships |> handleOneToMany false 
         metadata.ManyToOneRelationships |> handleOneToMany true 
         metadata.ManyToManyRelationships |> handleManyToMany metadata.LogicalName 
-      ] |> List.map (Array.toList) 
+      ] |> List.map Array.toList
         |> List.concat
         |> List.unzip
 
