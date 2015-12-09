@@ -166,7 +166,7 @@ Target "NuGet" (fun _ ->
         Tags = tags
         NoDefaultExcludes = true
         AccessKey = getBuildParamOrDefault "delegateas-nugetkey" ""
-        Dependencies = [ "Microsoft.CrmSdk.CoreAssemblies", "[7.1.0]" ]
+        Dependencies = [ "Microsoft.CrmSdk.CoreAssemblies", "5.0.18" ]
         References = [] 
 
         OutputPath = "bin"

@@ -70,6 +70,18 @@
   </Target>
   -->
   <ItemGroup>
+    <Content Include="bin\tools\CrmSvcUtil.exe">
+      <Paket>True</Paket>
+    </Content>
+    <Content Include="bin\tools\CrmSvcUtil.xml">
+      <Paket>True</Paket>
+    </Content>
+    <Content Include="bin\tools\Microsoft.Xrm.Sdk.dll">
+      <Paket>True</Paket>
+    </Content>
+    <Content Include="bin\tools\SolutionPackager.exe">
+      <Paket>True</Paket>
+    </Content>
     <Compile Include="AssemblyInfo.fs" />
     <EmbeddedResource Include="Resources/base.d.ts" />
     <EmbeddedResource Include="Resources/metadata.d.ts" />
@@ -131,15 +143,15 @@
 java -jar $(ProjectDir)..\..\tools\closure\compiler.jar --js $(ProjectDir)Resources\dg.xrmquery.js --js_output_file $(ProjectDir)Resources\dg.xrmquery.min.js</PreBuildEvent>
   </PropertyGroup>
   <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6')">
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6')">
       <ItemGroup>
         <Reference Include="Microsoft.Crm.Sdk.Proxy">
-          <HintPath>..\..\packages\Microsoft.CrmSdk.CoreAssemblies\lib\net45\Microsoft.Crm.Sdk.Proxy.dll</HintPath>
+          <HintPath>..\..\packages\Microsoft.CrmSdk.CoreAssemblies\lib\net40\Microsoft.Crm.Sdk.Proxy.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
         <Reference Include="Microsoft.Xrm.Sdk">
-          <HintPath>..\..\packages\Microsoft.CrmSdk.CoreAssemblies\lib\net45\Microsoft.Xrm.Sdk.dll</HintPath>
+          <HintPath>..\..\packages\Microsoft.CrmSdk.CoreAssemblies\lib\net40\Microsoft.Xrm.Sdk.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
@@ -147,7 +159,7 @@ java -jar $(ProjectDir)..\..\tools\closure\compiler.jar --js $(ProjectDir)Resour
     </When>
   </Choose>
   <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v3.5' Or $(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6')">
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6')">
       <ItemGroup>
         <Reference Include="Microsoft.IdentityModel">
           <HintPath>..\..\packages\Microsoft.IdentityModel\lib\net35\Microsoft.IdentityModel.dll</HintPath>
