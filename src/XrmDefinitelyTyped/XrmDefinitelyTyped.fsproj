@@ -9,7 +9,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>DG.XrmDefinitelyTyped</RootNamespace>
     <AssemblyName>XrmDefinitelyTyped</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
     <Name>XrmDefinitelyTyped</Name>
@@ -31,7 +31,7 @@
     <WarningLevel>3</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DocumentationFile>bin\Debug\XrmDefinitelyTyped.XML</DocumentationFile>
-    <Prefer32Bit>true</Prefer32Bit>
+    <Prefer32Bit>false</Prefer32Bit>
     <StartArguments>
     </StartArguments>
   </PropertyGroup>
@@ -44,7 +44,7 @@
     <WarningLevel>3</WarningLevel>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DocumentationFile>bin\Release\XrmDefinitelyTyped.xml</DocumentationFile>
-    <Prefer32Bit>true</Prefer32Bit>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
@@ -83,6 +83,7 @@
       <Paket>True</Paket>
     </Content>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="Domain.fs" />
     <EmbeddedResource Include="Resources/base.d.ts" />
     <EmbeddedResource Include="Resources/metadata.d.ts" />
     <None Include="Resources\dg.xrmquery.ts" />

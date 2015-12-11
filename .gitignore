@@ -174,7 +174,7 @@ packages/
 docs/output/
 
 # Tools folder (gotten via Paket)
-tools
+/tools/
 
 # Temp folder used for publishing docs
 temp/

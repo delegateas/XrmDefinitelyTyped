@@ -75,7 +75,7 @@ table.pre td.lines {
   width:30px;
 }
 
-code {
+p > code {
     color: blue;
 }
 

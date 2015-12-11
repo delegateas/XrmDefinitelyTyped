@@ -1,6 +1,14 @@
 # Release Notes
 
-### 1.6.0 November 10 2015
+### 1.7.0 - December ** 2015
+* Added filtering of which entities should be included in the context, see 
+  [usage for more information](tool-usage.html).
+* Fixed a missing generic type declaration on certain controls of type `OptionSetControl`
+* Reduced version requirements to support backward-compatibility:
+  * Reduced requirement of the dependency `Microsoft.CrmSdk.CoreAssemblies` to 5.0.18 or greater
+  * Reduced used .NET Framework to version 4.5.2
+
+### 1.6.0 - November 10 2015
 * Added possibility of using `.exe.config` file to pass arguments
 * Changed `IPage.Control` to be generic, depending on the attribute it contains
 * Added `IPage.BaseControl` as a superclass to `IPage.Control` that is non-generic and has no

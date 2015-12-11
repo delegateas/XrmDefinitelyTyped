@@ -5,7 +5,7 @@ $dest = "{0}\{1}\" -f $project.Name, $sampleFolder
 
 write-host "Copying required .dll and .xml files to scripts folder:" $dest
 
-dir "$installPath\lib" -Recurse -include *.dll,*.xml | 
+dir "$installPath\content" -Recurse -include *.dll,*.xml,*.exe | 
     ? { -not $_.PSIsContainer } | 
     Select -ExpandProperty FullName |
     Copy-Item -ErrorAction SilentlyContinue -Dest $dest

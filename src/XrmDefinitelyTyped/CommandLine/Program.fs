@@ -38,8 +38,18 @@ let executeGetContext argv =
           | true -> Some (Int32.Parse m.Groups.[1].Value, 
                           Int32.Parse m.Groups.[3].Value) 
           | false -> Some (Int32.Parse m.Groups.[1].Value, 0) 
-    
-  XrmDefinitelyTyped.GetContext(xrmAuth, parsedArgs.TryFind "out", tsv)
+   
+  let entities = getListArg parsedArgs "entities" (fun s -> s.ToLower())
+  let solutions = getListArg parsedArgs "solutions" id
+
+  let settings =
+    { XrmDefinitelyTypedSettings.out = parsedArgs.TryFind "out"
+      tsv = tsv
+      entities = entities
+      solutions = solutions
+    }
+
+  XrmDefinitelyTyped.GetContext(xrmAuth, settings)
 
 
 

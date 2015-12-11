@@ -49,7 +49,7 @@ module internal CrmDataHelper =
   // Get all entities with a filter
   let internal getEntitiesFilter 
     proxy (logicalName:string)
-    (cols:string list) (filter:Map<string,string>) =
+    (cols:string list) (filter:Map<string,obj>) =
     
     let f = FilterExpression()
     filter |> Map.iter(fun k v -> f.AddCondition(k, ConditionOperator.Equal, v))
@@ -138,3 +138,61 @@ module internal CrmDataHelper =
     let resp = getResponse<RetrieveMultipleResponse> proxy request
     resp.EntityCollection.Entities 
     |> Array.ofSeq
+
+  // Retrieve a single entity metadata along with any intersect
+  let retrieveEntityAndDependentMetadata proxy allLogicalNames logicalName =
+    let metadata = getEntityMetadata proxy logicalName
+    let m2mRels = 
+      metadata.ManyToManyRelationships 
+      |> Array.filter (fun m2m -> 
+        m2m.Entity1LogicalName = logicalName && 
+        Set.contains m2m.Entity2LogicalName allLogicalNames)
+
+      |> Array.map (fun m2m -> getEntityMetadata proxy m2m.IntersectEntityName)      
+      |> List.ofArray
+
+    metadata :: m2mRels
+
+  // Retrieve activityparty entity metadata along with any necessary intersect
+  let retrieveActivityPartyAndDependentMetadata proxy allLogicalNames =
+    let metadata = getEntityMetadata proxy "activityparty"
+    let m2mRels = 
+      metadata.ManyToManyRelationships 
+      |> Array.filter (fun m2m -> 
+        Set.contains m2m.Entity2LogicalName allLogicalNames)
+      |> Array.map (fun m2m -> getEntityMetadata proxy m2m.IntersectEntityName)      
+      |> List.ofArray
+
+    metadata :: m2mRels
+
+  // Retrieve single entity metadata
+  let getEntityLogicalNameFromId (proxy:OrganizationServiceProxy) metadataId =
+    let request = RetrieveEntityRequest()
+    request.MetadataId <- metadataId
+    request.EntityFilters <- Microsoft.Xrm.Sdk.Metadata.EntityFilters.Entity
+    request.RetrieveAsIfPublished <- true
+
+    let resp = getResponse<RetrieveEntityResponse> proxy request
+    resp.EntityMetadata.LogicalName
+
+
+  // Retrieves all the logical names of a solution
+  let retrieveSolutionEntities proxy solutionName =
+    let solutionFilter = [("uniquename", solutionName)] |> Map.ofList
+    let solutions = 
+      getEntitiesFilter proxy "solution" 
+        ["solutionid"; "uniquename"] solutionFilter
+    
+    solutions
+    |> Seq.map (fun sol ->
+      let solutionComponentFilter = 
+        [ ("solutionid", sol.Attributes.["solutionid"]) 
+          ("componenttype", 1 :> obj) 
+        ] |> Map.ofList
+
+      getEntitiesFilter proxy "solutioncomponent" 
+        ["solutionid"; "objectid"; "componenttype"] solutionComponentFilter
+      |> Seq.map (fun sc -> 
+        getEntityLogicalNameFromId proxy (sc.Attributes.["objectid"] :?> Guid))
+    )
+    |> Seq.concat

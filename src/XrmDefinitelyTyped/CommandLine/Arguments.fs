@@ -13,6 +13,9 @@ type Args private () =
     { command="ap";         required=false; description="Authentication Provider Type" }
     { command="out";        required=false; description="Output directory for the generated files" }
     { command="tsversion";  required=false; description="Specify which version of TS should be used, i.e. \"1.0\"" }
+    { command="solutions";  required=false; description="Comma-separated list of solutions names. Generates code for the entities found in these solutions." }
+    { command="entities";   required=false; 
+      description=  "Comma-separated list of logical names of the entities it should generate code for. This is additive with the entities gotten via the \"solutions\" argument." }
     ]
 
   // Usage

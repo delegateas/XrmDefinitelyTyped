@@ -17,7 +17,7 @@ module internal CreateFormDts =
  
   /// Gets the corresponding enum of the option set if possible
   let getOptionSetType = function
-    | AttributeType.OptionSet ty -> ty
+    | Some (AttributeType.OptionSet ty) -> ty
     | _ -> Type.Number
 
   /// Translate internal control type to corresponding TypeScript interface.
@@ -26,8 +26,8 @@ module internal CreateFormDts =
     | None, ControlType.Default       -> Type.Custom "IPage.BaseControl"
     | Some (AttributeType.Default Type.String), ControlType.Default
                                       -> Type.Custom "IPage.StringControl"
-    | Some at, ControlType.OptionSet  -> Type.SpecificGeneric ("IPage.OptionSetControl", getOptionSetType at)
     | Some at, ControlType.Default    -> Type.SpecificGeneric ("IPage.Control", getAttributeInterface at) 
+    | aType, ControlType.OptionSet    -> Type.SpecificGeneric ("IPage.OptionSetControl", getOptionSetType aType)
     | _, x                            -> Type.Custom (sprintf "IPage.%AControl" x)
 
   /// Default collection functions which also use the "get" function name.

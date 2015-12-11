@@ -71,44 +71,43 @@ module internal InterpretEntityMetadata =
 
 
   let interpretRelationship map referencing (rel:OneToManyRelationshipMetadata) =
-    let rEntity =
-        if referencing then rel.ReferencedEntity
-        else rel.ReferencingEntity
-        |> fun s -> Map.tryFind s map |? s
-    
-    let name =
-        match rel.ReferencedEntity = rel.ReferencingEntity with
-        | false -> rel.SchemaName
-        | true  ->
-          match referencing with
-          | true  -> sprintf "Referencing%s" rel.SchemaName
-          | false -> sprintf "Referenced%s" rel.SchemaName
+    if referencing then rel.ReferencedEntity
+    else rel.ReferencingEntity
+    |> fun s -> Map.tryFind s map
+    |> Option.map (fun rEntity ->
+      let name =
+          match rel.ReferencedEntity = rel.ReferencingEntity with
+          | false -> rel.SchemaName
+          | true  ->
+            match referencing with
+            | true  -> sprintf "Referencing%s" rel.SchemaName
+            | false -> sprintf "Referenced%s" rel.SchemaName
 
-    let xRel = 
-      { XrmRelationship.schemaName = name
-        attributeName = 
-          if referencing then rel.ReferencingAttribute 
-          else rel.ReferencedAttribute
-        referencing = referencing
-        relatedEntity = rEntity }
+      let xRel = 
+        { XrmRelationship.schemaName = name
+          attributeName = 
+            if referencing then rel.ReferencingAttribute 
+            else rel.ReferencedAttribute
+          referencing = referencing
+          relatedEntity = rEntity }
 
-    rEntity, xRel
+      rEntity, xRel)
 
 
   let interpretM2MRelationship map lname (rel:ManyToManyRelationshipMetadata) =
-    let rEntity =
-      match lname = rel.Entity2LogicalName with
-      | true  -> rel.Entity1LogicalName
-      | false -> rel.Entity2LogicalName
-      |> fun s -> Map.tryFind s map |? s
+    match lname = rel.Entity2LogicalName with
+    | true  -> rel.Entity1LogicalName
+    | false -> rel.Entity2LogicalName
+    |> fun s -> Map.tryFind s map
+    |> Option.map (fun rEntity ->
 
-    let xRel = 
-      { XrmRelationship.schemaName = rel.SchemaName 
-        attributeName = rel.SchemaName
-        referencing = false
-        relatedEntity = rEntity }
+      let xRel = 
+        { XrmRelationship.schemaName = rel.SchemaName 
+          attributeName = rel.SchemaName
+          referencing = false
+          relatedEntity = rEntity }
     
-    rEntity, xRel
+      rEntity, xRel)
 
 
   let interpretEntity map (metadata:EntityMetadata) =
@@ -129,11 +128,11 @@ module internal InterpretEntityMetadata =
 
     let handleOneToMany referencing = function
       | null -> Array.empty
-      | x -> x |> Array.map (interpretRelationship map referencing)
+      | x -> x |> Array.choose (interpretRelationship map referencing)
     
     let handleManyToMany logicalName = function
       | null -> Array.empty
-      | x -> x |> Array.map (interpretM2MRelationship map logicalName)
+      | x -> x |> Array.choose (interpretM2MRelationship map logicalName)
 
 
     let rel_entities, rel_vars = 

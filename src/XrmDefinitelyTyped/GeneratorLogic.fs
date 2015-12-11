@@ -122,12 +122,40 @@ module GeneratorLogic =
 
     proxy
 
-  /// Retrieve all the necessary CRM data
-  let retrieveCrmData proxy =
+  // Retrieve CRM entity metadata
+  let retrieveEntityMetadata entities proxy =
     printf "Fetching entity metadata from CRM..."
     let rawEntityMetadata = 
-      CrmDataHelper.getAllEntityMetadata proxy
+      match entities with
+      | None -> CrmDataHelper.getAllEntityMetadata proxy
+      | Some logicalNames -> 
+        let set = logicalNames |> Set.ofArray
+
+        let mainEntities =
+          logicalNames
+          |> Array.map (CrmDataHelper.retrieveEntityAndDependentMetadata proxy set)
+          |> List.concat
+        
+        let needActivityParty =
+          not (set.Contains "activityparty") &&
+          mainEntities 
+          |> List.exists (fun m -> 
+            m.Attributes 
+            |> Array.exists (fun a -> 
+              a.AttributeType.GetValueOrDefault() = AttributeTypeCode.PartyList))
+
+        if needActivityParty then 
+          (CrmDataHelper.retrieveActivityPartyAndDependentMetadata proxy set) @ mainEntities
+        else mainEntities
+        |> Array.ofList
+        |> Array.distinctBy (fun m -> m.LogicalName)
     printfn "Done!"
+    rawEntityMetadata
+
+
+  /// Retrieve all the necessary CRM data
+  let retrieveCrmData entities proxy =
+    let rawEntityMetadata = retrieveEntityMetadata entities proxy
 
     printf "Fetching BPF metadata from CRM..."
     let bpfData = CrmDataHelper.getBpfData proxy
@@ -146,6 +174,32 @@ module GeneratorLogic =
       bpfData = bpfData
       formData = formData }
 
+
+  /// Gets all the entities related to the given solutions and merges with the given entities
+  let getFullEntityList entities solutions proxy =
+    printf "Figuring out which entities should be included in the context.."
+    let solutionEntities = 
+      match solutions with
+      | Some sols -> 
+        sols 
+        |> Array.map (CrmDataHelper.retrieveSolutionEntities proxy)
+        |> Seq.concat
+        |> Set.ofSeq
+      | None -> Set.empty
+
+    let allEntities =
+      match entities with
+      | Some ents -> Set.union solutionEntities (Set.ofArray ents)
+      | None -> solutionEntities
+
+    match allEntities.Count with
+    | 0 -> None
+    | _ -> 
+      let entities = allEntities |> Set.toArray 
+      printfn "Done!"
+      printfn "Creating context for the following entities: %s" (String.Join(",", entities))
+      entities
+      |> Some
 
   /// Interprets the raw CRM data into an intermediate state used for further generation
   let interpretCrmData out tsv (rawState:RawState) =
