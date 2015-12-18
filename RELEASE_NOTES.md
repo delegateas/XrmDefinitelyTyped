@@ -1,6 +1,6 @@
 # Release Notes
 
-### 1.7.0 - December ** 2015
+### 1.7.0 - December 18 2015
 * Added filtering of which entities should be included in the context, see 
   [usage for more information](tool-usage.html).
 * Fixed a missing generic type declaration on certain controls of type `OptionSetControl`
