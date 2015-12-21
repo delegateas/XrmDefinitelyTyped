@@ -1,5 +1,8 @@
 # Release Notes
 
+### 1.7.1 - December 21 2015
+* Added CRM Online 2015 Update 1 functionality to subgrid controls
+
 ### 1.7.0 - December 18 2015
 * Added filtering of which entities should be included in the context, see 
   [usage for more information](tool-usage.html).
