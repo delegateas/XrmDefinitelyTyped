@@ -1,5 +1,8 @@
 # Release Notes
 
+### 1.7.2 - December 29 2015
+* Improved retrieval of CRM metadata
+
 ### 1.7.1 - December 21 2015
 * Added CRM Online 2015 Update 1 functionality to subgrid controls
 

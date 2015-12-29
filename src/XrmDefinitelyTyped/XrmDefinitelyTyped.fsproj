@@ -98,6 +98,7 @@
     <Compile Include="TypeScript/TypeScript.fs" />
     <Compile Include="TypeScript/TsStringUtil.fs" />
     <Compile Include="Crm/CrmAuth.fs" />
+    <Compile Include="Crm/CrmBaseHelper.fs" />
     <Compile Include="Crm/CrmDataHelper.fs" />
     <Compile Include="Utility.fs" />
     <Compile Include="IntermediateRepresentation.fs" />

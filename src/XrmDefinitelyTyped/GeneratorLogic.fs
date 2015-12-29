@@ -106,65 +106,52 @@ module GeneratorLogic =
     Directory.CreateDirectory (sprintf "%s/_internal/EntityEnum" out) |> ignore
     printfn "Done!"
 
+  // Proxy helper that makes it easy to get a new proxy instance
+  let proxyHelper xrmAuth () =
+    let ap = xrmAuth.ap |? AuthenticationProviderType.OnlineFederation
+    let domain = xrmAuth.domain |? ""
+    CrmAuth.authenticate
+      xrmAuth.url ap xrmAuth.username 
+      xrmAuth.password domain
+    ||> CrmAuth.proxyInstance
+
 
   /// Connect to CRM with the given authentication
   let connectToCrm xrmAuth =
-    let ap = xrmAuth.ap |? AuthenticationProviderType.OnlineFederation
-    let domain = xrmAuth.domain |? ""
-
     printf "Connecting to CRM..."
-    let manager,authToken =
-      CrmAuth.authenticate 
-        xrmAuth.url ap xrmAuth.username 
-        xrmAuth.password domain
-    let proxy = CrmAuth.proxyInstance manager authToken
+    let proxy = proxyHelper xrmAuth ()
     printfn "Done!"
-
     proxy
 
+
   // Retrieve CRM entity metadata
-  let retrieveEntityMetadata entities proxy =
+  let retrieveEntityMetadata entities mainProxy proxyGetter =
     printf "Fetching entity metadata from CRM..."
+
     let rawEntityMetadata = 
       match entities with
-      | None -> CrmDataHelper.getAllEntityMetadata proxy
+      | None -> CrmBaseHelper.getAllEntityMetadata mainProxy
       | Some logicalNames -> 
-        let set = logicalNames |> Set.ofArray
+        CrmBaseHelper.getSpecificEntitiesAndDependentMetadata proxyGetter logicalNames
 
-        let mainEntities =
-          logicalNames
-          |> Array.map (CrmDataHelper.retrieveEntityAndDependentMetadata proxy set)
-          |> List.concat
-        
-        let needActivityParty =
-          not (set.Contains "activityparty") &&
-          mainEntities 
-          |> List.exists (fun m -> 
-            m.Attributes 
-            |> Array.exists (fun a -> 
-              a.AttributeType.GetValueOrDefault() = AttributeTypeCode.PartyList))
-
-        if needActivityParty then 
-          (CrmDataHelper.retrieveActivityPartyAndDependentMetadata proxy set) @ mainEntities
-        else mainEntities
-        |> Array.ofList
-        |> Array.distinctBy (fun m -> m.LogicalName)
     printfn "Done!"
     rawEntityMetadata
 
 
   /// Retrieve all the necessary CRM data
-  let retrieveCrmData entities proxy =
-    let rawEntityMetadata = retrieveEntityMetadata entities proxy
-
+  let retrieveCrmData entities mainProxy proxyGetter =
+    let rawEntityMetadata = 
+      retrieveEntityMetadata entities mainProxy proxyGetter
+    
     printf "Fetching BPF metadata from CRM..."
-    let bpfData = CrmDataHelper.getBpfData proxy
+    let bpfData = CrmDataHelper.getBpfData mainProxy
     printfn "Done!"
 
     printf "Fetching FormXmls from CRM..."
     let formData =
       rawEntityMetadata
-      |> Array.map (fun em -> 
+      |> Array.Parallel.map (fun em -> 
+        let proxy = proxyGetter()
         em.LogicalName, 
         CrmDataHelper.getEntityForms proxy em.LogicalName)
       |> Map.ofArray
@@ -182,7 +169,7 @@ module GeneratorLogic =
       match solutions with
       | Some sols -> 
         sols 
-        |> Array.map (CrmDataHelper.retrieveSolutionEntities proxy)
+        |> Array.map (CrmBaseHelper.retrieveSolutionEntities proxy)
         |> Seq.concat
         |> Set.ofSeq
       | None -> Set.empty
@@ -192,11 +179,13 @@ module GeneratorLogic =
       | Some ents -> Set.union solutionEntities (Set.ofArray ents)
       | None -> solutionEntities
 
+    printfn "Done!"
     match allEntities.Count with
-    | 0 -> None
+    | 0 -> 
+      printfn "Creating context for all entities"
+      None
     | _ -> 
       let entities = allEntities |> Set.toArray 
-      printfn "Done!"
       printfn "Creating context for the following entities: %s" (String.Join(",", entities))
       entities
       |> Some

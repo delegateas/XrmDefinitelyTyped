@@ -35,17 +35,16 @@ type XrmDefinitelyTyped private () =
       clearOldOutputFiles out
       generateFolderStructure out
 
-      let proxy =
-        xrmAuth
-        |> connectToCrm 
-      
+      let mainProxy = connectToCrm xrmAuth
+      let proxyGetter = proxyHelper xrmAuth
+
       let entities = 
-        getFullEntityList settings.entities settings.solutions proxy
+        getFullEntityList settings.entities settings.solutions mainProxy
 
       // Connect to CRM and interpret the data
       let data = 
-        proxy
-        |> retrieveCrmData entities
+        (mainProxy, proxyGetter)
+        ||> retrieveCrmData entities
         |> interpretCrmData out tsv
 
       // Generate the files
