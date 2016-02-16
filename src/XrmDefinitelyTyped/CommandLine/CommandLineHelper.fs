@@ -84,6 +84,12 @@ module internal CommandLineHelper =
           arg.description 
           (if arg.required then " (required)" else ""))
 
+  let showDescription () =
+    printfn "[%s v.%s]" 
+      (Reflection.Assembly.GetExecutingAssembly().GetName().Name) 
+      System.AssemblyVersionInformation.Version
+    printfn ""
+
   let showUsage () =
     printfn "%s" Args.usageString
     printfn ""

@@ -1,5 +1,10 @@
 # Release Notes
 
+### 1.7.3 - February 16 2016
+* Added support for the new CRM 2016 form types
+* Added version print when using the executable
+* Added "***/config***" argument which generates a dummy configuration file to use
+
 ### 1.7.2 - December 29 2015
 * Improved retrieval of CRM metadata
 

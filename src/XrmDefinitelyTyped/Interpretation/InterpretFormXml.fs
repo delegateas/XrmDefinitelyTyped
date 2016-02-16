@@ -223,7 +223,7 @@ module internal InterpretFormXml =
     
     { XrmForm.name =  name |> Utility.sanitizeString
       entityName =  systemForm.Attributes.["objecttypecode"].ToString()
-      formType = enum<FormType>(typeInt).ToString()
+      formType = enum<FormType>(typeInt).ToString() |> Utility.sanitizeString
       attributes = 
         controlFields @ compositeFields @ bpfFields
         |> List.choose (getAttribute enums)

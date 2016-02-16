@@ -19,7 +19,7 @@ workflow.
 Arguments
 -------------------------------
 
-Here is the full list of arguments:
+Here is the full list of arguments for configuring the tool:
 
 | Argument          | Description   
 | :-                |:-             
@@ -32,6 +32,10 @@ Here is the full list of arguments:
 | tsversion         | Specify which version of TS should be used, i.e. "1.0"
 | solutions         | Comma-separated list of solutions names. Generates code for the entities found in these solutions.
 | entities          | Comma-separated list of logical names of the entities it should generate code for. This is additive with the entities gotten via the ***solutions*** argument.
+
+You can also view this list of arguments using the "***/help***" argument.
+
+If you want to generate a dummy configuration file to use for arguments, use the "***/config***" argument.
 
 
 Command prompt
