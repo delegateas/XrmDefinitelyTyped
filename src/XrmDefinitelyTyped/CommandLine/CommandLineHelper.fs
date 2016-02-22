@@ -35,6 +35,9 @@ module internal CommandLineHelper =
       printfn "Option '%s' not recognized." k
       parsedArgs
 
+  let sharesElement set1 =
+    Set.intersect set1 >> Set.isEmpty >> not
+
   /// Helper function that recursively parses the arguments
   let rec parseCommandLineRec args expectedArgs parsedArgs =
     match args with
@@ -51,15 +54,19 @@ module internal CommandLineHelper =
       handleArg expectedArgs args k ConfigurationManager.AppSettings.[k]
     ) parsedArgs
 
-
   /// Parses the given arguments against the expected arguments.
   let parseArgs argv expectedArgs =
     let argSet = expectedArgs |> List.map (fun a -> a.command.ToLower()) |> Set.ofList 
-    let argv = argv |> List.ofArray
+
+    let metaArgs, appArgs = argv |> Array.partition (fun a -> Args.useConfigArgs.Contains a)
+    let metaArgs = metaArgs |> Set.ofArray
+    let appArgs = appArgs |> List.ofArray
 
     let parsedArgs = 
-      parseConfigArgs argSet Map.empty
-      |> parseCommandLineRec argv argSet
+      Map.empty
+      |> if List.isEmpty appArgs || sharesElement metaArgs Args.useConfigArgs
+         then parseConfigArgs argSet else id
+      |> parseCommandLineRec appArgs argSet
   
     let missingArgs =
       expectedArgs

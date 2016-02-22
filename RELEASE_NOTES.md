@@ -1,5 +1,10 @@
 # Release Notes
 
+### 1.7.4 - February 24 2016
+* Added "***/useconfig***" argument, see [usage for more information](tool-usage.html#Configuration-file)
+* Renamed "***/config***" argument to "***/genconfig***"
+* Changed exit-code for the executable to be 1 instead of 0, when it encounters an exception
+
 ### 1.7.3 - February 16 2016
 * Added support for the new CRM 2016 form types
 * Added version print when using the executable

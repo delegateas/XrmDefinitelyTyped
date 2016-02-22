@@ -59,5 +59,6 @@ type Args private () =
     printfn "Generated configuration file with dummy values. Change them to fit your environment."
 
 
-  static member configArgs = [ "-config"; "/config" ] |> Set.ofList
+  static member useConfigArgs = [ "-useconfig"; "/useconfig"; "-uc"; "/uc" ] |> Set.ofList
+  static member genConfigArgs = [ "-genconfig"; "/genconfig"; "-gc"; "/gc" ] |> Set.ofList
   static member helpArgs = [ "help"; "-h"; "-help"; "--help"; "/h"; "/help" ] |> Set.ofList
