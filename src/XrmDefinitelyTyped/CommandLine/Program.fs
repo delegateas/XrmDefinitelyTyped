@@ -65,7 +65,8 @@ let main argv =
     if argv.Length > 0 && Args.helpArgs.Contains argv.[0] then showUsage()
     else if argv.Length > 0 && Args.configArgs.Contains argv.[0] then Args.genConfig()
     else executeGetContext argv
+    0
   with ex ->
     eprintfn "%s" ex.Message
-  0
+    1
   #endif
