@@ -52,7 +52,7 @@ type Args private () =
   static member genConfig () =
     let configmanager = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None)
     let config = configmanager.AppSettings.Settings
-    config.Add("url", "http://INSTANCE.crm4.dynamics.com/XRMServices/2011/Organization.svc")
+    config.Add("url", "https://INSTANCE.crm4.dynamics.com/XRMServices/2011/Organization.svc")
     config.Add("username","admin@INSTANCE.onmicrosoft.com")
     config.Add("password", "pass@word1")
     configmanager.Save(ConfigurationSaveMode.Modified)
