@@ -24,11 +24,6 @@ let info =
 open System.IO
 
 // Replace CSharpFormat with extended one
-File.Delete("../../packages/FSharp.Formatting/lib/net40/CSharpFormat.dll")
-File.Copy(
-  "../../paket-files/mktange/CSharpFormat/CSharpFormat.dll", 
-  "../../packages/FSharp.Formatting/lib/net40/CSharpFormat.dll")
-
 
 #I "../../packages/FAKE/tools/"
 #load "../../packages/FSharp.Formatting/FSharp.Formatting.fsx"
