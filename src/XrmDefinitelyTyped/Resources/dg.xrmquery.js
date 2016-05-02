@@ -174,7 +174,7 @@ var XQC;
             SDK.REST.retrieveRecord(this.id, this.logicalName, (this.selects.length > 0) ? this.selects.join(",") : null, (this.expands.length > 0) ? this.expands.join(",") : null, successCallback, errorCallback ? errorCallback : NoOp);
         };
         return RetrieveRecord;
-    })();
+    }());
     XQC.RetrieveRecord = RetrieveRecord;
     /**
      * Contains information about a RetrieveMultiple query
@@ -268,7 +268,7 @@ var XQC;
             return options.join("&");
         };
         return RetrieveMultipleRecords;
-    })();
+    }());
     XQC.RetrieveMultipleRecords = RetrieveMultipleRecords;
     /**
      * Contains information about a Create query
@@ -282,7 +282,7 @@ var XQC;
             SDK.REST.createRecord(this.record, this.logicalName, successCallback ? successCallback : NoOp, errorCallback ? errorCallback : NoOp);
         };
         return CreateRecord;
-    })();
+    }());
     XQC.CreateRecord = CreateRecord;
     /**
      * Contains information about an Update query
@@ -297,7 +297,7 @@ var XQC;
             SDK.REST.updateRecord(this.id, this.record, this.logicalName, successCallback ? successCallback : NoOp, errorCallback ? errorCallback : NoOp);
         };
         return UpdateRecord;
-    })();
+    }());
     XQC.UpdateRecord = UpdateRecord;
     /**
      * Contains information about a Delete query
@@ -311,6 +311,6 @@ var XQC;
             SDK.REST.deleteRecord(this.id, this.logicalName, successCallback ? successCallback : NoOp, errorCallback ? errorCallback : NoOp);
         };
         return DeleteRecord;
-    })();
+    }());
     XQC.DeleteRecord = DeleteRecord;
 })(XQC || (XQC = {}));

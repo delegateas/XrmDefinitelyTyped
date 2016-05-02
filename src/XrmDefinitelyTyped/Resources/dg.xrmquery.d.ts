@@ -30,8 +30,8 @@ declare module XQC {
      */
     class RetrieveRecord<S, E, R> {
         constructor(entityPicker: (x: Entities) => QueryMapping<any, S, E, any, R>, id: string);
-        select(vars: (x: S) => Attribute<S>[]): RetrieveRecord<S, E, R>;
-        expand<S2>(exps: (x: E) => Expandable<S, S2>, vars?: (x: S2) => Attribute<S2>[]): RetrieveRecord<S, E, R>;
+        select(vars: (x: S) => Attribute<S>[]): this;
+        expand<S2>(exps: (x: E) => Expandable<S, S2>, vars?: (x: S2) => Attribute<S2>[]): this;
         execute(successCallback: (record: R) => any, errorCallback?: (err: Error) => any): void;
     }
     /**
@@ -39,13 +39,13 @@ declare module XQC {
      */
     class RetrieveMultipleRecords<S, E, F, R> {
         constructor(entityPicker: (x: Entities) => QueryMapping<any, S, E, F, R>);
-        select(vars: (x: S) => Attribute<S>[]): RetrieveMultipleRecords<S, E, F, R>;
-        expand<T2>(exps: (x: E) => Expandable<S, T2>, vars?: (x: T2) => Attribute<T2>[]): RetrieveMultipleRecords<S, E, F, R>;
-        filter(filter: (x: F) => Filter): RetrieveMultipleRecords<S, E, F, R>;
-        orderAsc(vars: (x: S) => Attribute<S>): RetrieveMultipleRecords<S, E, F, R>;
-        orderDesc(vars: (x: S) => Attribute<S>): RetrieveMultipleRecords<S, E, F, R>;
-        skip(amount: number): RetrieveMultipleRecords<S, E, F, R>;
-        top(amount: number): RetrieveMultipleRecords<S, E, F, R>;
+        select(vars: (x: S) => Attribute<S>[]): this;
+        expand<T2>(exps: (x: E) => Expandable<S, T2>, vars?: (x: T2) => Attribute<T2>[]): this;
+        filter(filter: (x: F) => Filter): this;
+        orderAsc(vars: (x: S) => Attribute<S>): this;
+        orderDesc(vars: (x: S) => Attribute<S>): this;
+        skip(amount: number): this;
+        top(amount: number): this;
         execute(successCallback: (records: R[]) => any, errorCallback?: (err: Error) => any, onComplete?: () => any): void;
     }
     /**

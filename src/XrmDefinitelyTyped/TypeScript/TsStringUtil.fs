@@ -2,6 +2,8 @@
 
 module internal TsStringUtil =
 
+  let getConstantType (name:string) = name.Replace("\\", "\\\\").Replace("\"", "\\\"") |> sprintf "\"%s\"" |> Type.Custom
+
   let rec typeToString = function
     | Type.Void           -> "void"
     | Type.Any            -> "any"

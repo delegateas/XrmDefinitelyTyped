@@ -84,6 +84,7 @@
     </Content>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Domain.fs" />
+    <Compile Include="Utility.fs" />
     <EmbeddedResource Include="Resources/base.d.ts" />
     <EmbeddedResource Include="Resources/metadata.d.ts" />
     <None Include="Resources\dg.xrmquery.ts" />
@@ -100,7 +101,6 @@
     <Compile Include="Crm/CrmAuth.fs" />
     <Compile Include="Crm/CrmBaseHelper.fs" />
     <Compile Include="Crm/CrmDataHelper.fs" />
-    <Compile Include="Utility.fs" />
     <Compile Include="IntermediateRepresentation.fs" />
     <Compile Include="Interpretation/InterpretOptionSetMetadata.fs" />
     <Compile Include="Interpretation/InterpretEntityMetadata.fs" />
@@ -145,7 +145,7 @@
 java -jar $(ProjectDir)..\..\tools\closure\compiler.jar --js $(ProjectDir)Resources\dg.xrmquery.js --js_output_file $(ProjectDir)Resources\dg.xrmquery.min.js</PreBuildEvent>
   </PropertyGroup>
   <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6')">
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1')">
       <ItemGroup>
         <Reference Include="Microsoft.Crm.Sdk.Proxy">
           <HintPath>..\..\packages\Microsoft.CrmSdk.CoreAssemblies\lib\net40\Microsoft.Crm.Sdk.Proxy.dll</HintPath>
@@ -161,7 +161,7 @@ java -jar $(ProjectDir)..\..\tools\closure\compiler.jar --js $(ProjectDir)Resour
     </When>
   </Choose>
   <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6')">
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1')">
       <ItemGroup>
         <Reference Include="Microsoft.IdentityModel">
           <HintPath>..\..\packages\Microsoft.IdentityModel\lib\net35\Microsoft.IdentityModel.dll</HintPath>

@@ -15,12 +15,12 @@ module internal InterpretOptionSetMetadata =
     try
       label.UserLocalizedLabel.Label 
       |> Utility.sanitizeString
-    with _ -> unknownLabel
+    with _ -> emptyLabel
 
   let getMetadataString (metadata:OptionSetMetadataBase) =
     getLabelString metadata.DisplayName
     |> fun name -> 
-      if name <> unknownLabel then name
+      if name <> emptyLabel then name
       else metadata.Name
 
 
