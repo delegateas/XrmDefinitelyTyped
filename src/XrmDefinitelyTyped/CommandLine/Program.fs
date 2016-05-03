@@ -47,6 +47,7 @@ let executeGetContext argv =
       tsv = tsv
       entities = entities
       solutions = solutions
+      sdkVersion = None
     }
 
   XrmDefinitelyTyped.GetContext(xrmAuth, settings)

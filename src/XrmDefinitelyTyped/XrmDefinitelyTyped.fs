@@ -20,6 +20,7 @@ type XrmDefinitelyTyped private () =
         tsv = tsv
         entities = entities
         solutions = solutions
+        sdkVersion = None
       }
     XrmDefinitelyTyped.GetContext(xrmAuth, settings)
 
@@ -38,13 +39,17 @@ type XrmDefinitelyTyped private () =
       let mainProxy = connectToCrm xrmAuth
       let proxyGetter = proxyHelper xrmAuth
 
+      let sdkVersion =
+        if settings.sdkVersion.IsNone then retrieveCrmVersion mainProxy
+        else settings.sdkVersion.Value
+
       let entities = 
         getFullEntityList settings.entities settings.solutions mainProxy
 
       // Connect to CRM and interpret the data
       let data = 
         (mainProxy, proxyGetter)
-        ||> retrieveCrmData entities
+        ||> retrieveCrmData sdkVersion entities
         |> interpretCrmData out tsv
 
       // Generate the files

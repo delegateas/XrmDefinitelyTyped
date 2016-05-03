@@ -137,14 +137,26 @@ module GeneratorLogic =
     printfn "Done!"
     rawEntityMetadata
 
+  /// Retrieve version from CRM
+  let retrieveCrmVersion mainProxy =
+    printf "Retrieving CRM version..."
+
+    let version = 
+      CrmBaseHelper.retrieveVersion mainProxy
+
+    printfn "Done!"
+    version
 
   /// Retrieve all the necessary CRM data
-  let retrieveCrmData entities mainProxy proxyGetter =
+  let retrieveCrmData sdkVersion entities mainProxy proxyGetter =
     let rawEntityMetadata = 
       retrieveEntityMetadata entities mainProxy proxyGetter
     
     printf "Fetching BPF metadata from CRM..."
-    let bpfData = CrmDataHelper.getBpfData mainProxy
+    let bpfData = 
+      match checkVersion (6,0,0,0) sdkVersion with
+      | true  -> CrmDataHelper.getBpfData mainProxy
+      | false -> [||]
     printfn "Done!"
 
     printf "Fetching FormXmls from CRM..."

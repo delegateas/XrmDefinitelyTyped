@@ -11,9 +11,12 @@ type XrmAuthentication = {
   ap: AuthenticationProviderType option
 }
 
+type XrmVersion = int * int * int * int
+
 type XrmDefinitelyTypedSettings = {
   out: string option
   tsv: (int*int) option
   entities: string[] option
   solutions: string[] option
+  sdkVersion: XrmVersion option
 }
