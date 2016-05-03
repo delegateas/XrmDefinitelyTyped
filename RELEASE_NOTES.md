@@ -1,5 +1,8 @@
 # Release Notes
 
+### 1.7.5 - May 3 2016
+* Added CRM version check for BPF fields in order to support CRM2011
+
 ### 1.7.4 - February 24 2016
 * Added "***/useconfig***" argument, see [usage for more information](tool-usage.html#Configuration-file)
 * Renamed "***/config***" argument to "***/genconfig***"
