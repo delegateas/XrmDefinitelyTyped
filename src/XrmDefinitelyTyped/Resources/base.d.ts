@@ -14,15 +14,15 @@
     /**
      * Interface for an option set value.
      */
-    interface Option {
+    interface Option<T> {
         /**
          * Label for the option.
          */
         text: string;
         /**
-         * Value for the option as a string.
+         * Value for the option.
          */
-        value: string;
+        value: T;
     }
 
     /**
@@ -321,7 +321,7 @@
         /**
          * Returns a value that represents the value set for an OptionSet or Boolean attribute when the form opened.
          */
-        getInitialValue(): number;
+        getInitialValue(): T;
         /**
          * Returns a string value of the text for the currently selected option for an optionset attribute.
          */
@@ -329,19 +329,19 @@
         /**
          * Returns an option object with the value matching the argument passed to the method.
          */
-        getOption(value: string): Option;
+        getOption(value: string): Option<T>;
         /**
          * Returns an option object with the value matching the argument passed to the method.
          */
-        getOption(value: number): Option;
+        getOption(value: T): Option<T>;
         /**
          * Returns an array of option objects representing the valid options for an optionset attribute.
          */
-        getOptions(): Option[];
+        getOptions(): Option<T>[];
         /**
          * Returns the option object that is selected in an optionset attribute.
          */
-        getSelectedOption(): Option;
+        getSelectedOption(): Option<T>;
     }
 
     /**
@@ -435,7 +435,7 @@
          * @param option An option object to add to the OptionSet.
          * @param index The index position to place the new option in. If not provided, the option will be added to the end.
          */
-        addOption(option: Option, index?: number);
+        addOption(option: Option<T>, index?: number);
         /**
          * Clears all options from an option set control.
          */
@@ -446,6 +446,10 @@
          * @param number The value of the option you want to remove.
          */
         removeOption(number: number);
+        /**
+         * Returns an array of option objects representing the valid options for an optionset control.
+         */
+        getOptions(): Option<T>[];
     }
 
     /**
