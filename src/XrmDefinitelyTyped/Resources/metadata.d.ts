@@ -129,17 +129,17 @@ declare module SDK {
       /**
        * Only available on Attributes with AttributeType == "Picklist"
        */
-      SourceTypeMask: string;
+      SourceTypeMask?: string;
 
       /**
        * Only available on Attributes with AttributeType == "Picklist"
        */
-      DefaultFormValue: number;
+      DefaultFormValue?: number;
 
       /**
        * Only available on Attributes with AttributeType == "Picklist"
        */
-      FormulaDefinition: string;
+      FormulaDefinition?: string;
 
       /**
        * Only available on Attributes with AttributeType == "Picklist"
@@ -150,6 +150,37 @@ declare module SDK {
        * Only available on Attributes with AttributeType == "Lookup"
        */
       Targets?: string[];
+
+      /**
+       * Only available on Attributes with AttributeType == "String"
+       */
+      MaxLength?: number;
+
+      /**
+       * Only available on Attributes with AttributeType == "Integer", "Decimal", "Money"
+       */
+      MinValue?: number;
+
+      /**
+       * Only available on Attributes with AttributeType == "Integer", "Decimal", "Money"
+       */
+      MaxValue?: number;
+
+      /**
+       * Only available on Attributes with AttributeType == "Decimal", "Money"
+       */
+      Precision?: number;
+
+      /**
+       * Only available on Attributes with AttributeType == "Money"
+       */
+      PrecisionSource?: PrecisionSource;
+    }
+
+    const enum PrecisionSource {
+      Precision = 0,
+      UseOrganizationPricingDecimalPrecision = 1,
+      UseCurrencyPrecision = 2
     }
 
     interface OptionSetMetadata extends GeneralMetadata {
@@ -191,7 +222,7 @@ declare module SDK {
      * Interface that holds metadata for an entity.
      */
     interface EntityMetadata extends GeneralMetadata {
-      
+
       AttributeTypeMask: number;
 
       /**
@@ -253,7 +284,7 @@ declare module SDK {
       IsVisibleInMobileClient: ManagedProperty<boolean>;
 
       LogicalName: string;
-      
+
       ManyToManyRelationships: ManyToManyRelationshipMetadata[];
       ManyToOneRelationships: OneToManyRelationshipMetadata[];
       ObjectTypeCode: number;
