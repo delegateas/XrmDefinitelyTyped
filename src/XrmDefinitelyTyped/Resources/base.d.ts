@@ -234,17 +234,17 @@
          *
          * @param functionRef The event handler for the on change event.
          */
-        addOnChange(functionRef: (context?: ExecutionContext) => any);
+        addOnChange(functionRef: (context?: ExecutionContext) => any): void;
         /**
          * Removes a function from the OnChange event hander for an attribute.
          *
          * @param functionRef The event handler for the on change event.
          */
-        removeOnChange(functionRef: Function);
+        removeOnChange(functionRef: Function): void;
         /**
          * Causes the OnChange event to occur on the attribute so that any script associated to that event can execute.
          */
-        fireOnChange();
+        fireOnChange(): void;
         /**
          * Returns a string value indicating whether a value for the attribute is required or recommended.
          *
@@ -255,19 +255,19 @@
         /**
          * Sets the data to be optional for the attribute.
          */
-        setRequiredLevel(level: "none");
+        setRequiredLevel(level: "none"): void;
         /**
          * Sets the data to be required for the attribute before the record can be saved.
          */
-        setRequiredLevel(level: "required");
+        setRequiredLevel(level: "required"): void;
         /**
          * Sets the data to be recommended for the attribute.
          */
-        setRequiredLevel(level: "recommended");
+        setRequiredLevel(level: "recommended"): void;
         /**
          * Sets whether data is required or recommended for the attribute before the record can be saved.
          */
-        setRequiredLevel(level: string);
+        setRequiredLevel(level: string): void;
         /**
          * Returns a string indicating when data from the attribute will be submitted when the record is saved.
          */
@@ -275,19 +275,19 @@
         /**
          * The value is always submitted.
          */
-        setSubmitMode(mode: "always");
+        setSubmitMode(mode: "always"): void;
         /**
          * The value is never submitted. When this option is set, data cannot be edited for any fields in the form for this attribute.
          */
-        setSubmitMode(mode: "never");
+        setSubmitMode(mode: "never"): void;
         /**
          * The value is submitted on create if it is not null, and on save only when it is changed.
          */
-        setSubmitMode(mode: "dirty");
+        setSubmitMode(mode: "dirty"): void;
         /**
          * Sets whether data from the attribute will be submitted when the record is saved.
          */
-        setSubmitMode(mode: string);
+        setSubmitMode(mode: string): void;
     }
 
     /**
@@ -321,7 +321,7 @@
         /**
          * Returns a value that represents the value set for an OptionSet or Boolean attribute when the form opened.
          */
-        getInitialValue(): T;
+        getInitialValue(): number;
         /**
          * Returns a string value of the text for the currently selected option for an optionset attribute.
          */
@@ -335,7 +335,7 @@
          */
         getOption(value: T): Option<T>;
         /**
-         * Returns an array of option objects representing the valid options for an optionset attribute.
+         * Returns an array of option objects representing the valid options for an option-set attribute.
          */
         getOptions(): Option<T>[];
         /**
@@ -365,7 +365,7 @@
         /**
          * Sets the focus on the control.
          */
-        setFocus();
+        setFocus(): void;
         /**
          * Get the section object that the control is in.
          */
@@ -383,7 +383,7 @@
          *
          * @param label The new label for the control.
          */
-        setLabel(label: string);
+        setLabel(label: string): void;
         /**
          * Returns a value that indicates whether the control is currently visible.
          */
@@ -393,7 +393,7 @@
          * 
          * @param visible True if the control should be visible; otherwise, false.
          */
-        setVisible(visible: boolean);
+        setVisible(visible: boolean): void;
         /**
          * Returns whether the control is disabled.
          */
@@ -403,7 +403,7 @@
          *
          * @param disable True if the control should be disabled, otherwise false.
          */
-        setDisabled(disable: boolean);
+        setDisabled(disable: boolean): void;
         /**
          * Display a message near the control to indicate that data isn?t valid. When this method is used on Microsoft Dynamics CRM for tablets a red "X" icon appears next to the control. Tapping on the icon will display the message.
          *
@@ -435,19 +435,19 @@
          * @param option An option object to add to the OptionSet.
          * @param index The index position to place the new option in. If not provided, the option will be added to the end.
          */
-        addOption(option: Option<T>, index?: number);
+        addOption(option: Option<T>, index?: number): void;
         /**
          * Clears all options from an option set control.
          */
-        clearOptions();
+        clearOptions(): void;
         /**
          * Removes an option from an option set control.
          *
          * @param number The value of the option you want to remove.
          */
-        removeOption(number: number);
+        removeOption(number: number): void;
         /**
-         * Returns an array of option objects representing the valid options for an optionset control.
+         * Returns an array of option objects representing the valid options for an option-set control.
          */
         getOptions(): Option<T>[];
     }
@@ -469,7 +469,7 @@
          *
          * @param url The URL.
          */
-        setSrc(url: string);
+        setSrc(url: string): void;
     }
 
     /**
@@ -485,7 +485,7 @@
          *
          * @param dataQuery The data value to pass to the web resource.
          */
-        setData(dataQuery: string);
+        setData(dataQuery: string): void;
     }
 
     /**
@@ -509,7 +509,7 @@
         /**
          * Specify whether a date control should show the time portion of the date.
          */
-        setShowTime(doShow: boolean);
+        setShowTime(doShow: boolean): void;
     }
 
     /**
@@ -522,7 +522,7 @@
          * @param fetchXml The fetchXml filter element to apply.
          * @param entityType If this is set, the filter only applies to that entity type. Otherwise, it applies to all types of entities returned.
          */
-        addCustomFilter(fetchXml: string, entityType?: string);
+        addCustomFilter(fetchXml: string, entityType?: string): void;
         /**
          * Adds a new view for the lookup dialog box.
          *
@@ -533,7 +533,7 @@
          * @param layoutXml The XML that defines the layout of the view.
          * @param isDefault Whether the view should be the default view.
          */
-        addCustomView(viewId: string, entityName: string, viewDisplayName: string, fetchXml: string, layoutXml: string, isDefault: boolean);
+        addCustomView(viewId: string, entityName: string, viewDisplayName: string, fetchXml: string, layoutXml: string, isDefault: boolean): void;
         /**
          * Returns the ID value of the default lookup dialog view.
          */
@@ -541,15 +541,15 @@
         /**
          * Sets the default view for the lookup control dialog box.
          */
-        setDefaultView(guid: string);
+        setDefaultView(guid: string): void;
         /**
          * Use this method to apply changes to lookups based on values current just as the user is about to view results for the lookup.
          */
-        addPreSearch(handler: Function);
+        addPreSearch(handler: Function): void;
         /**
          * Use this method to remove event handler functions that have previously been set for the PreSearch event.
          */
-        removePreSearch(handler: Function);
+        removePreSearch(handler: Function): void;
     }
 
     /**
@@ -559,20 +559,26 @@
         /**
          * Refreshes the data displayed in a subgrid.
          */
-        refresh();
-    
+        refresh(): void;
+
         /**
          * Only for CRM Online 2015 Update 1 or later
          * Add event handlers to this event to run every time the subgrid refreshes. 
          * This includes when users sort the values by clicking the column headings. 
          */
-        addOnLoad(functionRef: (context?: ExecutionContext) => any);
-    
+        addOnLoad(functionRef: (context?: ExecutionContext) => any): void;
+
         /**
          * Only for CRM Online 2015 Update 1 or later
          * Use this method to get the logical name of the entity data displayed in the grid.
          */
         getEntityName(): string
+
+        /**
+         * Only for CRM Online 2015 Update 1 or later
+         * Use this method to get the logical name of the relationship used for the data displayed in the grid.
+         */
+        getRelationshipName(): string
 
         /**
          * Only for CRM Online 2015 Update 1 or later
@@ -590,10 +596,10 @@
          * Only for CRM Online 2015 Update 1 or later
          * Use this method to remove event handlers from the GridControl.OnLoad event.
          */
-        removeOnLoad(reference: Function);
+        removeOnLoad(reference: Function): void;
     }
 
-    
+
     interface Grid {
         /**
          * Returns a collection of every GridRow in the Grid.
@@ -667,7 +673,7 @@
         /**
          * Use this method to set the current view.
          */
-        setCurrentView(reference: IPage.EntityReference);
+        setCurrentView(reference: IPage.EntityReference): void;
     }
 
     /**
@@ -696,13 +702,13 @@
          * @param reference Reference to a function. It will be added to the bottom of the event handler pipeline. 
          *                  The execution context is automatically set to be passed as the first parameter passed to event handlers set using this method.
          */
-        addOnSave(functionRef: (context?: ExecutionContext) => any);
+        addOnSave(functionRef: (context?: ExecutionContext) => any): void;
         /**
          * Removes a function to be called when the record is saved.
          *
          * @param reference Reference to a function that was added to the OnSave event.
          */
-        removeOnSave(reference: Function);
+        removeOnSave(reference: Function): void;
         /**
          * Gets a string for the value of the primary attribute of the entity.
          */
@@ -726,19 +732,19 @@
         /**
          * Saves the record synchronously with the options to close the form or open a new form after the save is completed.
          */
-        save();
+        save(): boolean;
         /**
          * This is the equivalent of using the "Save and Close" command.
          */
-        save(type: "saveandclose");
+        save(type: "saveandclose"): boolean;
         /**
          * This is the equivalent of using the "Save and New" command.
          */
-        save(type: "saveandnew");
+        save(type: "saveandnew"): boolean;
         /**
          * Saves the record synchronously and performs the command according to the type given.
          */
-        save(type: string);
+        save(type: string): boolean;
     }
 
     interface ExecutionContext {
@@ -791,7 +797,7 @@
     /**
      * Supported values returned to detect different ways entity records may be saved by the user.
      */
-    enum SaveMode {
+    const enum SaveMode {
         Save = 1,
         SaveAndClose = 2,
         SaveAndNew = 59,
@@ -831,7 +837,7 @@
         save(saveOptions?: SaveOptions): Then;
     }
 
-  
+
     /**
      * Interface for the business process flow on a form.
      */
@@ -1047,7 +1053,7 @@
          * @param successCallback A function to call when the operation succeeds.
          * @param errorCallback A function to call when the operation fails.
          */
-        then(successCallback?: Function, errorCallback?: ErrorCallback);
+        then(successCallback?: Function, errorCallback?: ErrorCallback): void;
     }
 
     interface ErrorCallback {
@@ -1056,14 +1062,14 @@
          *
          * @param messageObject Object containing information about the error.
          */
-        (messageObject: ErrorCallbackObject);
+        (messageObject: ErrorCallbackObject): void;
         /**
          * A function to call when the operation fails.
          *
          * @param errorCode The error code.
          * @param message A localized error message.
          */
-        (errorCode: number, message: string);
+        (errorCode: number, message: string): void;
     }
 
     interface ErrorCallbackObject {
@@ -1102,11 +1108,11 @@
          *
          * @param label The label text to set.
          */
-        setLabel(label: string);
+        setLabel(label: string): void;
         /**
          * Sets a value to show or hide the section.
          */
-        setVisible(visibility: boolean);
+        setVisible(visibility: boolean): void;
         /**
          * Returns true if the section is visible, otherwise returns false.
          */
@@ -1141,15 +1147,15 @@
         /**
          * Sets the tab to be expanded.
          */
-        setDisplayState(state: "expanded");
+        setDisplayState(state: "expanded"): void;
         /**
          * Sets the tab to be collapsed.
          */
-        setDisplayState(state: "collapsed");
+        setDisplayState(state: "collapsed"): void;
         /**
          * Sets the tab to be collapsed or expanded.
          */
-        setDisplayState(state: string);
+        setDisplayState(state: string): void;
         /**
          * Returns the Xrm.Page.ui object.
          */
@@ -1163,15 +1169,15 @@
          *
          * @param label The new label for the tab.
          */
-        setLabel(label: string);
+        setLabel(label: string): void;
         /**
          * Sets the focus on the tab.
          */
-        setFocus();
+        setFocus(): void;
         /**
          * Sets a value that indicates whether the control is visible.
          */
-        setVisible(visibility: boolean);
+        setVisible(visibility: boolean): void;
         /**
          * Returns a value that indicates whether the tab is visible.
          */
@@ -1181,7 +1187,7 @@
          *
          * @param reference Event handler for tab state change.
          */
-        add_tabStateChange(reference: Function);
+        add_tabStateChange(reference: Function): void;
     }
 
     /**
@@ -1234,7 +1240,7 @@
          * @param level The level of the message.
          * @param uniqueId A unique identifier for the message used with clearFormNotification to remove the notification.
          */
-        setFormNotification(message: string, level: "INFO", uniqueId: string);
+        setFormNotification(message: string, level: "INFO", uniqueId: string): boolean;
         /**
          * Use this method to display form level notifications. You can display any number of notifications and they will be displayed until 
          * they are removed using clearFormNotification. The height of the notification area is limited so each new message will be added to the top. 
@@ -1244,7 +1250,7 @@
          * @param level The level of the message.
          * @param uniqueId A unique identifier for the message used with clearFormNotification to remove the notification.
          */
-        setFormNotification(message: string, level: "WARNING", uniqueId: string);
+        setFormNotification(message: string, level: "WARNING", uniqueId: string): boolean;
         /**
          * Use this method to display form level notifications. You can display any number of notifications and they will be displayed until 
          * they are removed using clearFormNotification. The height of the notification area is limited so each new message will be added to the top. 
@@ -1254,7 +1260,7 @@
          * @param level The level of the message.
          * @param uniqueId A unique identifier for the message used with clearFormNotification to remove the notification.
          */
-        setFormNotification(message: string, level: "ERROR", uniqueId: string);
+        setFormNotification(message: string, level: "ERROR", uniqueId: string): boolean;
         /**
          * Use this method to display form level notifications. You can display any number of notifications and they will be displayed until 
          * they are removed using clearFormNotification. The height of the notification area is limited so each new message will be added to the top. 
@@ -1534,7 +1540,7 @@ declare module Xrm {
          * @param message The text of the message to display in the dialog.
          * @param onCloseCallback A function to execute when the OK button is clicked.
          */
-        alertDialog(message: string, onCloseCallback?: Function);
+        alertDialog(message: string, onCloseCallback?: Function): void;
         /**
          * Displays a confirmation dialog box that contains an optional message as well as OK and Cancel buttons.
          *
@@ -1542,7 +1548,7 @@ declare module Xrm {
          * @param yesCloseCallback A function to execute when the OK button is clicked.
          * @param noCloseCallback A function to execute when the Cancel button is clicked.
          */
-        confirmDialog(message: string, yesCloseCallback?: Function, noCloseCallback?: Function);
+        confirmDialog(message: string, yesCloseCallback?: Function, noCloseCallback?: Function): void;
         /**
          * Determine if an entity is an activity entity.
          *
@@ -1557,7 +1563,7 @@ declare module Xrm {
          * @param parameters A dictionary object that passes extra query string parameters to the form. Invalid query string parameters will cause an error.
          * @param windowOptions You can choose to open a form in a new window by passing a dictionary object with a boolean openInNewWindow property set to true.
          */
-        openEntityForm(name: string, id?: string, parameters?: any, windowOptions?: WindowOptions);
+        openEntityForm(name: string, id?: string, parameters?: any, windowOptions?: WindowOptions): void;
         /**
          * Opens a quick create form.
          * 
@@ -1566,7 +1572,7 @@ declare module Xrm {
          * @param createFromEntity Designates a record that will provide default values based on mapped attribute values.
          * @param parameters A dictionary object that passes extra query string parameters to the form. Invalid query string parameters will cause an error.
          */
-        openQuickCreate(callback: (lookup: Lookup) => any, entityLogicalName: string, createFromEntity?: Lookup, parameters?: any);
+        openQuickCreate(callback: (lookup: Lookup) => any, entityLogicalName: string, createFromEntity?: Lookup, parameters?: any): void;
         /**
          * Opens an HTML web resource.
          * 
@@ -1644,13 +1650,13 @@ interface Expandable<T, U> extends Attribute<T> {
 }
 
 interface Filter {
-    __isFilter;
+    __isFilter: any;
 }
 interface ValueContainerFilter<T> {
     Value: T;
 }
 interface Guid {
-    __isGuid;
+    __isGuid: any;
 }
 interface EntityReferenceFilter {
     Id: Guid;
