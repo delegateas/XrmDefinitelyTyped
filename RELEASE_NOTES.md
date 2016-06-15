@@ -1,5 +1,10 @@
 # Release Notes
 
+### 1.7.6 - June 15 2016
+* Changed the `Option` interface to be generic based on the type of the parent attribute/control
+* Updated base.d.ts with more types to allow the use of `noImplicitAny` in the TypeScript compiler
+* Added a few missing functions to base.d.ts
+
 ### 1.7.5 - May 3 2016
 * Added CRM version check for BPF fields in order to support CRM2011
 
