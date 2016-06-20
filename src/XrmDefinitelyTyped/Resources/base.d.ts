@@ -321,7 +321,7 @@
         /**
          * Returns a value that represents the value set for an OptionSet or Boolean attribute when the form opened.
          */
-        getInitialValue(): number;
+        getInitialValue(): T;
         /**
          * Returns a string value of the text for the currently selected option for an optionset attribute.
          */
