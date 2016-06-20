@@ -98,20 +98,22 @@ module XQC {
   /**
    * @internal
    */
-  var fPatt = /function[^\(]+\(([a-zA-Z0-9_]+)[^\{]+\{([\s\S]*)\}$/
+  var fPatt = /function[^\(]*\(([a-zA-Z0-9_]+)[^\{]*\{([\s\S]*)\}$/m
 
   /**
    * @internal
    */
   function objRegex(oName: string) {
-    return new RegExp("\\b" + oName + "\\.([a-zA-Z_$][0-9a-zA-Z_$]*)(\\.([a-zA-Z_$][0-9a-zA-Z_$]*))?", "g")
+    return new RegExp("\\b" + oName + "\\.([a-zA-Z_$][0-9a-zA-Z_$]*)(\\.([a-zA-Z_$][0-9a-zA-Z_$]*))?", "g");
   }
 
   /**
    * @internal
    */
   function analyzeFunc(f: (x: any) => any) {
-    var m = f.toString().match(fPatt); return { arg: m[1], body: m[2] }
+    var m = f.toString().match(fPatt);
+    if (!m) throw new Error(`XrmQuery: Unable to properly parse function: ${f.toString()}`);
+    return { arg: m[1], body: m[2] };
   }
 
   /**

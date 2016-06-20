@@ -99,7 +99,7 @@ var XQC;
     /**
      * @internal
      */
-    var fPatt = /function[^\(]+\(([a-zA-Z0-9_]+)[^\{]+\{([\s\S]*)\}$/;
+    var fPatt = /function[^\(]*\(([a-zA-Z0-9_]+)[^\{]*\{([\s\S]*)\}$/m;
     /**
      * @internal
      */
@@ -111,6 +111,8 @@ var XQC;
      */
     function analyzeFunc(f) {
         var m = f.toString().match(fPatt);
+        if (!m)
+            throw new Error("XrmQuery: Unable to properly parse function: " + f.toString());
         return { arg: m[1], body: m[2] };
     }
     /**
