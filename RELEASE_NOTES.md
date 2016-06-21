@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.7.7 - June 21 2016
+* Fixed bug in XrmQuery when using IE in which it would fail to execute in certain cases
+* Changed `getInitialValue()` of option-sets to also return the corresponding enum value
+
 ### 1.7.6 - June 15 2016
 * Changed the `Option` interface to be generic based on the type of the parent attribute/control
 * Updated base.d.ts with more types to allow the use of `noImplicitAny` in the TypeScript compiler
