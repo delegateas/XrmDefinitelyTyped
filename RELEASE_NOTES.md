@@ -1,6 +1,9 @@
 # Release Notes
 
-## 1.7.7 - June 21 2016
+### 1.7.8 - June 22 2016
+* Fixed variable name: `Xrm.Page.ui.FormSelector` -> `Xrm.Page.ui.formSelector`
+
+### 1.7.7 - June 21 2016
 * Fixed bug in XrmQuery when using IE in which it would fail to execute in certain cases
 * Changed `getInitialValue()` of option-sets to also return the corresponding enum value
 

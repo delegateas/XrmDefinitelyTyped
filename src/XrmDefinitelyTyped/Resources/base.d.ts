@@ -1219,7 +1219,7 @@
          * Use the formSelector.getCurrentItem method to retrieve information about the form currently in use and the formSelector.items 
          * collection containing information about all the forms available for the user.
          */
-        FormSelector: FormSelector;
+        formSelector: FormSelector;
         /**
          * Method to get the control object that currently has focus on the form. Web Resource and IFRAME controls are not returned by this method.
          * This method was deprecated in Microsoft Dynamics CRM 2013 Update Rollup 2.
