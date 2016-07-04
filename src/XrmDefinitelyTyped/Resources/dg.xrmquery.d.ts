@@ -9,6 +9,8 @@ declare module Filter {
     function and(f1: Filter, f2: Filter): Filter;
     function or(f1: Filter, f2: Filter): Filter;
     function not(f1: Filter): Filter;
+    function ands(fs: Filter[]): Filter;
+    function ors(fs: Filter[]): Filter;
     function startsWith(v1: string, v2: string): Filter;
     function substringOf(v1: string, v2: string): Filter;
     function endsWith(v1: string, v2: string): Filter;
@@ -42,11 +44,14 @@ declare module XQC {
         select(vars: (x: S) => Attribute<S>[]): this;
         expand<T2>(exps: (x: E) => Expandable<S, T2>, vars?: (x: T2) => Attribute<T2>[]): this;
         filter(filter: (x: F) => Filter): this;
+        orFilter(filter: (x: F) => Filter): this;
+        andFilter(filter: (x: F) => Filter): this;
         orderAsc(vars: (x: S) => Attribute<S>): this;
         orderDesc(vars: (x: S) => Attribute<S>): this;
         skip(amount: number): this;
         top(amount: number): this;
         execute(successCallback: (records: R[]) => any, errorCallback?: (err: Error) => any, onComplete?: () => any): void;
+        getOptionString(): string;
     }
     /**
      * Contains information about a Create query

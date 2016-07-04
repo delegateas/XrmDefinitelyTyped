@@ -13,17 +13,20 @@ declare module SDK {
 }
 
 module Filter {
-  export function equals<T>(v1: T, v2: T): Filter { return XQC.Comp<T>(v1, "eq", v2) }
-  export function notEquals<T>(v1: T, v2: T): Filter { return XQC.Comp<T>(v1, "ne", v2) }
+  export function equals<T>(v1: T, v2: T): Filter { return XQC.Comp(v1, "eq", v2) }
+  export function notEquals<T>(v1: T, v2: T): Filter { return XQC.Comp(v1, "ne", v2) }
 
-  export function greaterThan<T extends Number|Date>(v1: T, v2: T): Filter { return XQC.Comp<T>(v1, "gt", v2) }
-  export function greaterThanOrEqual<T extends Number|Date>(v1: T, v2: T): Filter { return XQC.Comp<T>(v1, "ge", v2) }
-  export function lessThan<T extends Number|Date>(v1: T, v2: T): Filter { return XQC.Comp<T>(v1, "lt", v2) }
-  export function lessThanOrEqual<T extends Number|Date>(v1: T, v2: T): Filter { return XQC.Comp<T>(v1, "le", v2) }
+  export function greaterThan<T extends Number|Date>(v1: T, v2: T): Filter { return XQC.Comp(v1, "gt", v2) }
+  export function greaterThanOrEqual<T extends Number|Date>(v1: T, v2: T): Filter { return XQC.Comp(v1, "ge", v2) }
+  export function lessThan<T extends Number|Date>(v1: T, v2: T): Filter { return XQC.Comp(v1, "lt", v2) }
+  export function lessThanOrEqual<T extends Number|Date>(v1: T, v2: T): Filter { return XQC.Comp(v1, "le", v2) }
 
   export function and(f1: Filter, f2: Filter): Filter { return XQC.BiFilter(f1, "and", f2) }
   export function or(f1: Filter, f2: Filter): Filter { return XQC.BiFilter(f1, "or", f2) }
   export function not(f1: Filter): Filter { return <Filter><any>("not " + f1) }
+
+  export function ands(fs: Filter[]): Filter { return XQC.NestedFilter(fs, "and") }
+  export function ors(fs: Filter[]): Filter { return XQC.NestedFilter(fs, "or") }
 
   export function startsWith(v1: string, v2: string): Filter { return XQC.DataFunc("startswith", v1, v2) }
   export function substringOf(v1: string, v2: string): Filter { return XQC.DataFunc("substringof", v1, v2) }
@@ -32,7 +35,7 @@ module Filter {
   /**
    * Makes a string into a GUID that can be sent to the OData source
    */
-  export function makeGuid(id: string) { return <Guid><any>XQC.makeTag("(guid'" + id + "')") }
+  export function makeGuid(id: string): Guid { return <Guid><any>XQC.makeTag(`(guid'${id}')`) }
 }
 
 
@@ -61,8 +64,8 @@ module XQC {
    */
   function getVal(v: any) {
     if (v == null) return "null"
-    if (typeof (v) === "string") return "'" + v + "'";
-    if (Object.prototype.toString.call(v) === "[object Date]") return "DateTime'" + v.format('yyyy-MM-ddTHH:mm:ss') + "'";
+    if (typeof (v) === "string") return `'${v}'`;
+    if (Object.prototype.toString.call(v) === "[object Date]") return `DateTime'${v.format('yyyy-MM-ddTHH:mm:ss')}'`;
     return v.toString();
   }
 
@@ -70,21 +73,29 @@ module XQC {
    * @internal
    */
   export function Comp<T>(val1: T, op: string, val2: T): Filter {
-    return <Filter><any>(getVal(val1) + " " + op + " " + getVal(val2));
+    return <Filter><any>(`${getVal(val1)} ${op} ${getVal(val2)}`);
   }
 
   /**
    * @internal
    */
   export function DataFunc<T>(funcName: string, val1: T, val2: T): Filter {
-    return <Filter><any>(funcName + "(" + getVal(val1) + ", " + getVal(val2) + ")");
+    return <Filter><any>(`${funcName}(${getVal(val1)}, ${getVal(val2)})`);
   }
 
   /**
    * @internal
    */
   export function BiFilter(f1: Filter, conj: string, f2: Filter): Filter {
-    return <Filter><any>("(" + f1 + " " + conj + " " + f2 + ")");
+    return <Filter><any>(`(${f1} ${conj} ${f2})`);
+  }
+
+  /**
+   * @internal
+   */
+  export function NestedFilter(fs: Filter[], conj: string): Filter {
+    var last = fs.pop();
+    return fs.reduceRight((acc, c) => XQC.BiFilter(c, conj, acc), last);
   }
 
   /**
@@ -243,7 +254,7 @@ module XQC {
     expand<T2>(exps: (x: E) => Expandable<S, T2>, vars?: (x: T2) => Attribute<T2>[]) {
       var expName = taggedExec(exps).toString();
       this.expands.push(expName);
-      if (vars) this.selects = this.selects.concat(taggedExec(vars).map(a => expName + "." + a));
+      if (vars) this.selects = this.selects.concat(taggedExec(vars).map(a => `${expName}/${a}`));
       return this;
     }
 
@@ -252,10 +263,22 @@ module XQC {
       return this;
     }
 
+    orFilter(filter: (x: F) => Filter) {
+        if (this.filters) this.filters = Filter.or(this.filters, taggedExec(filter));
+        else this.filter(filter);
+        return this;
+    }
+
+    andFilter(filter: (x: F) => Filter) {
+        if (this.filters) this.filters = Filter.and(this.filters, taggedExec(filter));
+        else this.filter(filter);
+        return this;
+    }
+
     /**
      * @internal
      */
-    order(vars: (x: S) => Attribute<S>, by: string) {
+    private order(vars: (x: S) => Attribute<S>, by: string) {
       this.ordering.push(taggedExec(vars) + " " + by);
       return this;
     }
@@ -281,16 +304,13 @@ module XQC {
     execute(successCallback: (records: R[]) => any, errorCallback?: (err: Error) => any, onComplete?: () => any) {
       SDK.REST.retrieveMultipleRecords(
         this.logicalName,
-        this.getOptions(),
+        this.getOptionString(),
         successCallback,
         errorCallback ? errorCallback : NoOp,
         onComplete ? onComplete : NoOp);
     }
-
-    /**
-     * @internal
-     */
-    private getOptions(): string {
+      
+    getOptionString(): string {
       var options = [];
       if (this.selects.length > 0) {
         options.push("$select=" + this.selects.join(","));

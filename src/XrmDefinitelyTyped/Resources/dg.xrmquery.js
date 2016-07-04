@@ -19,6 +19,10 @@ var Filter;
     Filter.or = or;
     function not(f1) { return ("not " + f1); }
     Filter.not = not;
+    function ands(fs) { return XQC.NestedFilter(fs, "and"); }
+    Filter.ands = ands;
+    function ors(fs) { return XQC.NestedFilter(fs, "or"); }
+    Filter.ors = ors;
     function startsWith(v1, v2) { return XQC.DataFunc("startswith", v1, v2); }
     Filter.startsWith = startsWith;
     function substringOf(v1, v2) { return XQC.DataFunc("substringof", v1, v2); }
@@ -89,6 +93,14 @@ var XQC;
         return ("(" + f1 + " " + conj + " " + f2 + ")");
     }
     XQC.BiFilter = BiFilter;
+    /**
+     * @internal
+     */
+    function NestedFilter(fs, conj) {
+        var last = fs.pop();
+        return fs.reduceRight(function (acc, c) { return XQC.BiFilter(c, conj, acc); }, last);
+    }
+    XQC.NestedFilter = NestedFilter;
     /**
      * @internal
      */
@@ -213,11 +225,25 @@ var XQC;
             var expName = taggedExec(exps).toString();
             this.expands.push(expName);
             if (vars)
-                this.selects = this.selects.concat(taggedExec(vars).map(function (a) { return expName + "." + a; }));
+                this.selects = this.selects.concat(taggedExec(vars).map(function (a) { return (expName + "/" + a); }));
             return this;
         };
         RetrieveMultipleRecords.prototype.filter = function (filter) {
             this.filters = taggedExec(filter);
+            return this;
+        };
+        RetrieveMultipleRecords.prototype.orFilter = function (filter) {
+            if (this.filters)
+                this.filters = Filter.or(this.filters, taggedExec(filter));
+            else
+                this.filter(filter);
+            return this;
+        };
+        RetrieveMultipleRecords.prototype.andFilter = function (filter) {
+            if (this.filters)
+                this.filters = Filter.and(this.filters, taggedExec(filter));
+            else
+                this.filter(filter);
             return this;
         };
         /**
@@ -242,12 +268,9 @@ var XQC;
             return this;
         };
         RetrieveMultipleRecords.prototype.execute = function (successCallback, errorCallback, onComplete) {
-            SDK.REST.retrieveMultipleRecords(this.logicalName, this.getOptions(), successCallback, errorCallback ? errorCallback : NoOp, onComplete ? onComplete : NoOp);
+            SDK.REST.retrieveMultipleRecords(this.logicalName, this.getOptionString(), successCallback, errorCallback ? errorCallback : NoOp, onComplete ? onComplete : NoOp);
         };
-        /**
-         * @internal
-         */
-        RetrieveMultipleRecords.prototype.getOptions = function () {
+        RetrieveMultipleRecords.prototype.getOptionString = function () {
             var options = [];
             if (this.selects.length > 0) {
                 options.push("$select=" + this.selects.join(","));
