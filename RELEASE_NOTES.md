@@ -1,5 +1,12 @@
 # Release Notes
 
+### 1.7.9 - July 4 2016
+* Added support for entities and option sets sharing the same name
+* ***XrmQuery updates*** (new javascript code):
+  * Fixed attribute select in expanded entities
+  * Added new filter functions to make it easier to make chained conjunctions: `Filter.ors`, `Filter.ands`
+  * Added new functions to RetrieveMultiple that make it possible to extend the current filter: `.orFilter` or `.andFilter`
+
 ### 1.7.8 - June 22 2016
 * Fixed variable name: `Xrm.Page.ui.FormSelector` -> `Xrm.Page.ui.formSelector`
 
