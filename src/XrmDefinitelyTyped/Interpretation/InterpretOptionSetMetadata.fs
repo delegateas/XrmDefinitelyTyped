@@ -25,7 +25,7 @@ module internal InterpretOptionSetMetadata =
 
 
   /// Interprets CRM OptionSetMetadata into intermediate type
-  let interpretOptionSet (metadata:OptionSetMetadataBase) =
+  let interpretOptionSet entityNames (metadata:OptionSetMetadataBase) =
     match metadata with
     | :? OptionSetMetadata as osm ->
 
@@ -35,6 +35,11 @@ module internal InterpretOptionSetMetadata =
           { label = getLabelString opt.Label
             value = opt.Value.GetValueOrDefault() }) 
 
+      let displayName = 
+        match entityNames |> Set.contains metadata.Name with
+        | true  -> sprintf "%s_Enum" metadata.Name
+        | false -> metadata.Name
+  
       let fixedOptionLabels =
         options
         |> Seq.fold (fun (countMap:Map<string,Option list>) op ->
@@ -49,7 +54,7 @@ module internal InterpretOptionSetMetadata =
         |> Map.toArray |> Array.map snd |> List.concat 
         |> List.sortBy (fun op -> op.value) |> List.toArray
 
-      { displayName = metadata.Name
+      { displayName = displayName
         options = fixedOptionLabels }
       |> Some
 

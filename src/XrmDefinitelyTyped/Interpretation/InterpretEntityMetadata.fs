@@ -36,7 +36,7 @@ module internal InterpretEntityMetadata =
   let (|IsWrongYomi|) (haystack : string) =
     not(haystack.StartsWith("Yomi")) && haystack.Contains("Yomi")
 
-  let interpretAttribute (a:AttributeMetadata) =
+  let interpretAttribute entityNames (a:AttributeMetadata) =
     let aType = a.AttributeType.GetValueOrDefault()
     match aType, a.SchemaName with
       | AttributeTypeCode.Virtual, _
@@ -45,7 +45,7 @@ module internal InterpretEntityMetadata =
 
       let options =
         match a with
-        | :? EnumAttributeMetadata as eam -> interpretOptionSet eam.OptionSet
+        | :? EnumAttributeMetadata as eam -> interpretOptionSet entityNames eam.OptionSet
         | _ -> None
 
       let vType, sType = 
@@ -110,12 +110,12 @@ module internal InterpretEntityMetadata =
       rEntity, xRel)
 
 
-  let interpretEntity map (metadata:EntityMetadata) =
+  let interpretEntity entityNames map (metadata:EntityMetadata) =
     if (metadata.Attributes = null) then failwith "No attributes found!"
 
     let opt_sets, attr_vars = 
       metadata.Attributes 
-      |> Array.map interpretAttribute
+      |> Array.map (interpretAttribute entityNames)
       |> Array.unzip
 
     let attr_vars = attr_vars |> Array.choose id |> Array.toList

@@ -210,8 +210,13 @@ module GeneratorLogic =
       |> Array.Parallel.map (fun em -> em.LogicalName, em.SchemaName)
       |> Map.ofArray
 
+    let entityNames = 
+       rawState.metadata
+       |> Array.Parallel.map (fun em -> em.SchemaName)
+       |> Set.ofArray
+
     let entityMetadata =
-      rawState.metadata |> Array.Parallel.map (interpretEntity nameMap)
+      rawState.metadata |> Array.Parallel.map (interpretEntity entityNames nameMap)
 
     let bpfControls = interpretBpfs rawState.bpfData
 
