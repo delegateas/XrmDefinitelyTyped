@@ -309,7 +309,16 @@ module XQC {
         errorCallback ? errorCallback : NoOp,
         onComplete ? onComplete : NoOp);
     }
-      
+
+    getFirst(successCallback: (record: R) => any, errorCallback?: (err: Error) => any) {
+        this.top(1);
+        this.execute(recs => successCallback((recs.length > 0) ? recs[0] : null), errorCallback, NoOp);
+    }
+
+    
+    /**
+     * @internal
+     */
     getOptionString(): string {
       var options = [];
       if (this.selects.length > 0) {

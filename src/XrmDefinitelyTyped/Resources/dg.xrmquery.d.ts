@@ -51,7 +51,7 @@ declare module XQC {
         skip(amount: number): this;
         top(amount: number): this;
         execute(successCallback: (records: R[]) => any, errorCallback?: (err: Error) => any, onComplete?: () => any): void;
-        getOptionString(): string;
+        getFirst(successCallback: (record: R) => any, errorCallback?: (err: Error) => any): void;
     }
     /**
      * Contains information about a Create query

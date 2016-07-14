@@ -270,6 +270,13 @@ var XQC;
         RetrieveMultipleRecords.prototype.execute = function (successCallback, errorCallback, onComplete) {
             SDK.REST.retrieveMultipleRecords(this.logicalName, this.getOptionString(), successCallback, errorCallback ? errorCallback : NoOp, onComplete ? onComplete : NoOp);
         };
+        RetrieveMultipleRecords.prototype.getFirst = function (successCallback, errorCallback) {
+            this.top(1);
+            this.execute(function (recs) { return successCallback((recs.length > 0) ? recs[0] : null); }, errorCallback, NoOp);
+        };
+        /**
+         * @internal
+         */
         RetrieveMultipleRecords.prototype.getOptionString = function () {
             var options = [];
             if (this.selects.length > 0) {
