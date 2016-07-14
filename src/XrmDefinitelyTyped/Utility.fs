@@ -1,5 +1,6 @@
 ﻿namespace DG.XrmDefinitelyTyped
 
+open System
 open System.IO
 open System.Runtime.Serialization.Json
 open System.Text
@@ -16,6 +17,11 @@ module Utility =
     let mutable intvalue = 0
     if System.Int32.TryParse(str, &intvalue) then Some(intvalue)
     else None
+
+  let rec getFirstExceptionMessage (ex:Exception) =
+    match ex with
+    | :? AggregateException as ae -> getFirstExceptionMessage ae.InnerException
+    | _ -> ex.Message
 
   let (|StartsWithNumber|) (str:string) = str.Length > 0 && str.[0] >= '0' && str.[0] <= '9'
   let (|StartsWith|_|) needle (haystack : string) = if haystack.StartsWith(needle) then Some() else None

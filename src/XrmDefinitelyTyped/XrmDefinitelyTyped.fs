@@ -66,6 +66,6 @@ type XrmDefinitelyTyped private () =
 
     #if !DEBUG
     with _ as ex ->
-      failwithf "\nUnable to generate TypeScript files: %s" ex.Message
+      getFirstExceptionMessage ex |> failwithf "\nUnable to generate TypeScript files: %s"
     #endif
 
