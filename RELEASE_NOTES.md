@@ -1,5 +1,12 @@
 # Release Notes
 
+### 1.8.0 - August 2 2016
+* Removed current implementation for supporting previous TypeScript versions
+* Made use of string literal types for certain functions in base.d.ts
+* Better error messages when encountering AggregateExceptions
+* ***XrmQuery update*** (new javascript code): 
+  * Added `getFirst` function to RetrieveMultipleRecords
+
 ### 1.7.9 - July 4 2016
 * Added support for entities and option sets sharing the same name
 * ***XrmQuery updates*** (new javascript code):
