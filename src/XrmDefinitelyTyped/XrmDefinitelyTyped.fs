@@ -6,7 +6,7 @@ open GeneratorLogic
 
 type XrmDefinitelyTyped private () =
 
-  static member GetContext(url, username, password, ?domain, ?ap, ?out, ?tsv, ?entities, ?solutions) =
+  static member GetContext(url, username, password, ?domain, ?ap, ?out, ?entities, ?solutions) =
     let xrmAuth =
       { XrmAuthentication.url = Uri(url);
         username = username;
@@ -17,7 +17,6 @@ type XrmDefinitelyTyped private () =
 
     let settings =
       { XrmDefinitelyTypedSettings.out = out
-        tsv = tsv
         entities = entities
         solutions = solutions
         sdkVersion = None
@@ -30,7 +29,6 @@ type XrmDefinitelyTyped private () =
     try
     #endif
       let out = settings.out |? "."
-      let tsv = settings.tsv |? (Int32.MaxValue, Int32.MaxValue)
 
       // Pre-generation tasks
       clearOldOutputFiles out
@@ -50,7 +48,7 @@ type XrmDefinitelyTyped private () =
       let data = 
         (mainProxy, proxyGetter)
         ||> retrieveCrmData sdkVersion entities
-        |> interpretCrmData out tsv
+        |> interpretCrmData out
 
       // Generate the files
       data

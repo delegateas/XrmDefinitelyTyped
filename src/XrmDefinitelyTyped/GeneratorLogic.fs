@@ -39,7 +39,6 @@ module GeneratorLogic =
 
   type InterpretedState = {
     outputDir: string
-    tsv: int * int
     entities: XrmEntity[]
     forms: XrmForm[]
     bpfControls: Map<string,ControlField list>
@@ -67,14 +66,6 @@ module GeneratorLogic =
     seq {
       while not sr.EndOfStream do yield sr.ReadLine ()
     } |> List.ofSeq
-
-  let getDeclarationFile resName tsv =
-    getResourceLines resName
-    |> fun lines ->
-      match tsv >= (1,4) with
-      | true -> lines
-      | false -> lines |> List.map (fun s -> s.Replace("const enum", "enum"))
-
 
 
   (** Generation functionality *)
@@ -203,7 +194,7 @@ module GeneratorLogic =
       |> Some
 
   /// Interprets the raw CRM data into an intermediate state used for further generation
-  let interpretCrmData out tsv (rawState:RawState) =
+  let interpretCrmData out (rawState:RawState) =
     printf "Interpreting data..."
     let nameMap = 
       rawState.metadata
@@ -226,23 +217,23 @@ module GeneratorLogic =
     { InterpretedState.entities = entityMetadata
       bpfControls = bpfControls
       forms = forms
-      outputDir = out
-      tsv = tsv }
+      outputDir = out 
+    }
 
 
   /// Generate the files stored as resources
   let generateResourceFiles state =
-    getDeclarationFile "base.d.ts" state.tsv
+    getResourceLines "base.d.ts"
     |> fun lines -> 
       File.WriteAllLines(
         sprintf "%s/base.d.ts" state.outputDir, makeRef "_internal/entities" :: lines)
 
-    getDeclarationFile "metadata.d.ts" state.tsv
+    getResourceLines "metadata.d.ts"
     |> fun lines -> 
       File.WriteAllLines(
         sprintf "%s/metadata.d.ts" state.outputDir, lines)
       
-    getDeclarationFile "dg.xrmquery.d.ts" state.tsv
+    getResourceLines "dg.xrmquery.d.ts"
     |> fun lines -> 
       File.WriteAllLines(sprintf "%s/dg.xrmquery.d.ts" state.outputDir, lines)
 
@@ -274,7 +265,7 @@ module GeneratorLogic =
     |> Array.Parallel.iter (fun os ->
       File.WriteAllLines(
         sprintf "%s/_internal/Enum/%s.d.ts" state.outputDir os.displayName,
-        getOptionSetEnum state.tsv os))
+        getOptionSetEnum os))
     printfn "Done!"
 
 

@@ -29,7 +29,6 @@ Here is the full list of arguments for configuring the tool:
 | domain            | Domain to use for CRM
 | ap                | Authentication Provider Type
 | out               | Output directory for the generated files.
-| tsversion         | Specify which version of TS should be used, i.e. "1.0"
 | solutions         | Comma-separated list of solutions names. Generates code for the entities found in these solutions.
 | entities          | Comma-separated list of logical names of the entities it should generate code for. <br/> This is additive with the entities gotten via the ***solutions*** argument.
 

@@ -30,10 +30,6 @@ type Args private () =
       description="Output directory for the generated files"
       required=false }
 
-    { command="tsversion"
-      description="Specify which version of TS should be used, i.e. \"1.0\""
-      required=false }
-
     { command="solutions"
       description="Comma-separated list of solutions names. Generates code for the entities found in these solutions."
       required=false }

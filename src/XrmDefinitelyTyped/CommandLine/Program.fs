@@ -25,26 +25,12 @@ let executeGetContext argv =
       password = parsedArgs.Item "password";
       domain = parsedArgs.TryFind "domain";
       ap = ap; }
-
-  let tsv = 
-    match parsedArgs.TryFind "tsversion" with
-    | None -> None
-    | Some tsv -> 
-      Regex.Match(tsv, "^(\d+)(\.(\d+))?$") |> fun m ->
-        match m.Success with
-        | false -> None
-        | true -> 
-          match m.Groups.[3].Success with
-          | true -> Some (Int32.Parse m.Groups.[1].Value, 
-                          Int32.Parse m.Groups.[3].Value) 
-          | false -> Some (Int32.Parse m.Groups.[1].Value, 0) 
    
   let entities = getListArg parsedArgs "entities" (fun s -> s.ToLower())
   let solutions = getListArg parsedArgs "solutions" id
 
   let settings =
     { XrmDefinitelyTypedSettings.out = parsedArgs.TryFind "out"
-      tsv = tsv
       entities = entities
       solutions = solutions
       sdkVersion = None
