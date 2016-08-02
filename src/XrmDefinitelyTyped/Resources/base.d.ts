@@ -169,6 +169,18 @@
     interface EmptyAttribute {
     }
 
+    type AttributeType =
+        "boolean" | "datetime" | "decimal" | "double" | "integer" | "lookup"
+        | "memo" | "money" | "optionset" | "string";
+
+    type AttributeFormat =
+        "date" | "datetime" | "duration" | "email" | "language" | "none"
+        | "phone" | "text" | "textarea" | "tickersymbol" | "timezone" | "url"
+
+    type AttributeRequiredLevel = "none" | "required" | "recommended";
+
+    type AttributeSubmitMode = "always" | "never" | "dirty";
+
     /**
      * Interface for an standard entity attribute.
      */
@@ -189,20 +201,12 @@
         setValue(val: T): void;
         /**
          * Get the type of attribute.
-         * 
-         * It can return one of the following values:
-         * "boolean", "datetime", "decimal", "double", "integer", "lookup", "memo",
-         * "money", "optionset" or "string"
          */
-        getAttributeType(): string;
+        getAttributeType(): AttributeType;
         /**
          * Get the attribute format. 
-         *
-         * It can return one of the following values:
-         * "date", "datetime", "duration", "email", "language", "none", "phone", 
-         * "text", "textarea", "tickersymbol", "timezone", "url" or null
          */
-        getFormat(): string;
+        getFormat(): AttributeFormat;
         /**
          * Determine whether the value of an attribute has changed since it was last saved.
          */
@@ -226,7 +230,7 @@
         /**
          * Returns an object with three Boolean properties corresponding to privileges indicating if the user can create, 
          * read or update data values for an attribute. This function is intended for use when Field Level Security 
-         * modifies a user?s privileges for a particular attribute.
+         * modifies a user's privileges for a particular attribute.
          */
         getUserPrivilege(): UserPrivilege;
         /**
@@ -247,47 +251,20 @@
         fireOnChange(): void;
         /**
          * Returns a string value indicating whether a value for the attribute is required or recommended.
-         *
-         * It can return one of the following values:
-         * "none", "required" or "recommended"
          */
-        getRequiredLevel(): string;
+        getRequiredLevel(): AttributeRequiredLevel;
         /**
-         * Sets the data to be optional for the attribute.
+         * Sets whether data is required, recommended or optional for the attribute before the record can be saved.
          */
-        setRequiredLevel(level: "none"): void;
-        /**
-         * Sets the data to be required for the attribute before the record can be saved.
-         */
-        setRequiredLevel(level: "required"): void;
-        /**
-         * Sets the data to be recommended for the attribute.
-         */
-        setRequiredLevel(level: "recommended"): void;
-        /**
-         * Sets whether data is required or recommended for the attribute before the record can be saved.
-         */
-        setRequiredLevel(level: string): void;
+        setRequiredLevel(level: AttributeRequiredLevel): void;
         /**
          * Returns a string indicating when data from the attribute will be submitted when the record is saved.
          */
-        getSubmitMode(): string;
+        getSubmitMode(): AttributeSubmitMode;
         /**
-         * The value is always submitted.
+         * Sets when data from the attribute will be submitted when the record is saved.
          */
-        setSubmitMode(mode: "always"): void;
-        /**
-         * The value is never submitted. When this option is set, data cannot be edited for any fields in the form for this attribute.
-         */
-        setSubmitMode(mode: "never"): void;
-        /**
-         * The value is submitted on create if it is not null, and on save only when it is changed.
-         */
-        setSubmitMode(mode: "dirty"): void;
-        /**
-         * Sets whether data from the attribute will be submitted when the record is saved.
-         */
-        setSubmitMode(mode: string): void;
+        setSubmitMode(mode: AttributeSubmitMode): void;
     }
 
     /**
@@ -350,18 +327,18 @@
     interface EmptyControl {
     }
 
+    type ControlType =
+        "standard" | "iframe" | "lookup" | "optionset" | "subgrid"
+        | "webresource" | "notes" | "timercontrol" | "kbsearch";
+
     /**
      * Interface for a standard form control.
      */
     interface BaseControl extends EmptyControl {
         /**
          * Get information about the type of control.
-         *
-         * It returns one of the following values:
-         * "standard", "iframe", "lookup", "optionset", "subgrid", "webresource",
-         * "notes", "timercontrol" or "kbsearch"
          */
-        getControlType(): string;
+        getControlType(): ControlType;
         /**
          * Sets the focus on the control.
          */
@@ -517,7 +494,7 @@
      */
     interface LookupControl extends Control<LookupAttribute> {
         /**
-         * Use to add filters to the results displayed in the lookup. Each filter will be combined with any previously added filters as an ?AND? condition.
+         * Use to add filters to the results displayed in the lookup. Each filter will be combined with any previously added filters as an 'AND' condition.
          * 
          * @param fetchXml The fetchXml filter element to apply.
          * @param entityType If this is set, the filter only applies to that entity type. Otherwise, it applies to all types of entities returned.
@@ -837,6 +814,8 @@
         save(saveOptions?: SaveOptions): Then;
     }
 
+    type ProcessStageMoveAnswer = "success" | "crossEntity" | "end" | "invalid" | "dirtyForm";
+    type ProcessStageSetAnswer = "crossEntity" | "unreachable" | "dirtyForm" | "invalid";
 
     /**
      * Interface for the business process flow on a form.
@@ -876,7 +855,7 @@
                               OR
                 - The record hasn’t been saved yet.
          */
-        setActiveStage(stageId: string, callback?: (stringVal: string) => any): void;
+        setActiveStage(stageId: string, callback?: (stringVal: ProcessStageSetAnswer) => any): void;
 
         /**
          * Use this method to get a collection of stages currently in the active path with methods to interact with the stages displayed in the business process flow control.
@@ -941,7 +920,7 @@
                 "invalid": The operation failed because the selected stage isn’t the same as the active stage.
                 "dirtyForm": This value will be returned if the data in the page is not saved.
          */
-        moveNext(callback?: (stringVal: string) => any): void;
+        moveNext(callback?: (stringVal: ProcessStageMoveAnswer) => any): void;
 
         /**
          * Moves to the previous stage.
@@ -955,7 +934,7 @@
                 "invalid": The operation failed because the selected stage isn’t the same as the active stage.
                 "dirtyForm": This value will be returned if the data in the page is not saved.
          */
-        movePrevious(callback?: (stringVal: string) => any): void;
+        movePrevious(callback?: (stringVal: ProcessStageMoveAnswer) => any): void;
     }
 
     interface ProcessContainer {
@@ -981,12 +960,13 @@
         isRendered(): boolean;
     }
 
+    type StageStatus = "active" | "inactive"
 
     interface Stage {
         /**
          * Returns an object with a getValue method which will return the integer value of the business process flow category.
          */
-        getCategory(): StageCategory;
+        getCategory(): IStageCategory;
         /**
          * Returns the logical name of the entity associated with the stage.
          */
@@ -1001,27 +981,29 @@
         getName(): string;
         /**
          * Returns the status of the stage.
-         * Returns either "active" or "inactive".
          */
-        getStatus(): string;
+        getStatus(): StageStatus;
         /**
          * Returns a collection of steps in the stage.
          */
         getSteps(): StageStep[];
     }
 
-    interface StageCategory {
+    const enum StageCategory {
+        Qualify = 0,
+        Develop = 1,
+        Propose = 2,
+        Close = 3,
+        Identify = 4,
+        Research = 5,
+        Resolve = 6,
+    }
+
+    interface IStageCategory {
         /**
-         * Returns one of the following values:
-         *  0: Qualify
-         *  1: Develop
-         *  2: Propose
-         *  3: Close
-         *  4: Identify
-         *  5: Research
-         *  6: Resolve
+         * Returns the stage category.
          */
-        getValue(): number;
+        getValue(): StageCategory;
     }
 
     interface StageStep {
@@ -1041,7 +1023,7 @@
 
     interface SaveOptions {
         /**
-         * Indicates whether to use the "Book" or "Reschedule" messages rather than the "Create" or "Update" messages.
+         * Indicates whether to use the "Book" or "Reschedule" messages, rather than the "Create" or "Update" messages.
          */
         UseSchedulingEngine: boolean;
     }
@@ -1125,6 +1107,8 @@
     interface EmptyPageTab {
     }
 
+    type CollapsableDisplayState = "expanded" | "collapsed";
+
     /**
      * Interface for a tab on a form.
      */
@@ -1139,23 +1123,12 @@
         getName(): string;
         /**
          * Returns a value that indicates whether the tab is collapsed or expanded.
-         *
-         * It can return the following values:
-         * "expanded" or "collapsed"
          */
-        getDisplayState(): string;
-        /**
-         * Sets the tab to be expanded.
-         */
-        setDisplayState(state: "expanded"): void;
-        /**
-         * Sets the tab to be collapsed.
-         */
-        setDisplayState(state: "collapsed"): void;
+        getDisplayState(): CollapsableDisplayState;
         /**
          * Sets the tab to be collapsed or expanded.
          */
-        setDisplayState(state: string): void;
+        setDisplayState(state: CollapsableDisplayState | string): void;
         /**
          * Returns the Xrm.Page.ui object.
          */
@@ -1189,6 +1162,8 @@
          */
         add_tabStateChange(reference: Function): void;
     }
+
+    type NotificationLevel = "INFO" | "WARNING" | "ERROR";
 
     /**
      * Interface for the ui of a form.
@@ -1240,37 +1215,7 @@
          * @param level The level of the message.
          * @param uniqueId A unique identifier for the message used with clearFormNotification to remove the notification.
          */
-        setFormNotification(message: string, level: "INFO", uniqueId: string): boolean;
-        /**
-         * Use this method to display form level notifications. You can display any number of notifications and they will be displayed until 
-         * they are removed using clearFormNotification. The height of the notification area is limited so each new message will be added to the top. 
-         * Users can scroll down to view older messages that have not yet been removed.
-         *
-         * @param message The text of the message.
-         * @param level The level of the message.
-         * @param uniqueId A unique identifier for the message used with clearFormNotification to remove the notification.
-         */
-        setFormNotification(message: string, level: "WARNING", uniqueId: string): boolean;
-        /**
-         * Use this method to display form level notifications. You can display any number of notifications and they will be displayed until 
-         * they are removed using clearFormNotification. The height of the notification area is limited so each new message will be added to the top. 
-         * Users can scroll down to view older messages that have not yet been removed.
-         *
-         * @param message The text of the message.
-         * @param level The level of the message.
-         * @param uniqueId A unique identifier for the message used with clearFormNotification to remove the notification.
-         */
-        setFormNotification(message: string, level: "ERROR", uniqueId: string): boolean;
-        /**
-         * Use this method to display form level notifications. You can display any number of notifications and they will be displayed until 
-         * they are removed using clearFormNotification. The height of the notification area is limited so each new message will be added to the top. 
-         * Users can scroll down to view older messages that have not yet been removed.
-         *
-         * @param message The text of the message.
-         * @param level The level of the message.
-         * @param uniqueId A unique identifier for the message used with clearFormNotification to remove the notification.
-         */
-        setFormNotification(message: string, level: string, uniqueId: string): boolean;
+        setFormNotification(message: string, level: NotificationLevel | string, uniqueId: string): boolean;
         /**
          * Method to cause the ribbon to re-evaluate data that controls what is displayed in it.
          */
@@ -1293,24 +1238,13 @@
     interface UiProcessModule {
         /**
          * Use this method to retrieve the display state for the business process control.
-         * Returns "expanded" when the control is expanded, "collapsed" when the control is collapsed.
          */
-        getDisplayState(): string;
-
-        /**
-         * Use this method to expand the business process flow control.
-         */
-        setDisplayState(val: "expanded"): void;
-
-        /**
-         * Use this method to collapse the business process flow control.
-         */
-        setDisplayState(val: "collapsed"): void;
+        getDisplayState(): CollapsableDisplayState;
 
         /**
          * Use this method to expand or collapse the business process flow control.
          */
-        setDisplayState(val: string): void;
+        setDisplayState(val: CollapsableDisplayState | string): void;
 
         /**
          * Use getVisible to retrieve whether the business process control is visible.
@@ -1441,21 +1375,18 @@
         prependOrgName(sPath: string): string;
     }
 
+    type ClientType = "Web" | "Outlook" | "Mobile";
+    type ClientState = "Online" | "Offline";
+
     interface client {
         /**
          * Returns a value to indicate which client the script is executing in.
-         *
-         * It can return one of the following values:
-         * "Web", "Outlook" or "Mobile"
          */
-        getClient(): string;
+        getClient(): ClientType;
         /**
          * Use this instead of the removed isOutlookOnline method.
-         *
-         * It can return one of the following values:
-         * "Online" or "Offline"
          */
-        getClientState(): string;
+        getClientState(): ClientState;
     }
 
     /**
