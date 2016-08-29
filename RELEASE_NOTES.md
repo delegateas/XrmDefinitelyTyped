@@ -1,5 +1,8 @@
 # Release Notes
 
+### 1.9.1 - August 29 2016
+* Fix: Removed the newly version-controlled function `addTabStateChange` from the base declaration file
+
 ### 1.9.0 - August 29 2016
 * Split `base.d.ts` into more parts
 * XrmDefinitelyTyped now retrieves the version from the targeted CRM and modifies the resulting `base.d.ts` to fit that version

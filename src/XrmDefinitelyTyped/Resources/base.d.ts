@@ -1286,13 +1286,6 @@ declare namespace IPage {
          * Returns a value that indicates whether the tab is visible.
          */
         getVisible(): boolean;
-
-        /**
-         * Add an event handler on tab state change.
-         *
-         * @param reference Event handler for tab state change.
-         */
-        addTabStateChange(reference: Function): void;
     }
 
     type NotificationLevel = "INFO" | "WARNING" | "ERROR";
