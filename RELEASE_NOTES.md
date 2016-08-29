@@ -1,5 +1,14 @@
 # Release Notes
 
+### 1.9.0 - August 29 2016
+* Split `base.d.ts` into more parts
+* XrmDefinitelyTyped now retrieves the version from the targeted CRM and modifies the resulting `base.d.ts` to fit that version
+  * Made AddTabStateChange function for specific CRM versions (Pre-CRM2016: `add_tabStateChange`, Post-CRM2016: `addTabStateChange`)
+  * Made CRM 2015 Update 1 form functionality only available, when CRM is that version or higher
+* Added more specific types when getting controls on an attribute via `<Attribute>.controls`
+* Changed `IPage` module to be a namespace instead
+* Made `IPage.ExecutionContext` generic, such that it contains the type of the event source
+
 ### 1.8.0 - August 2 2016
 * Removed current implementation for supporting previous TypeScript versions
 * Made use of string literal types for certain functions in base.d.ts
