@@ -67,6 +67,37 @@ module GeneratorLogic =
       while not sr.EndOfStream do yield sr.ReadLine ()
     } |> List.ofSeq
 
+  let allResourceNames =
+    let assembly = Assembly.GetExecutingAssembly()
+    assembly.GetManifestResourceNames()
+
+  let copyResourceDirectly outDir resName =
+    File.WriteAllLines(
+      sprintf "%s/%s" outDir resName, 
+      getResourceLines resName)
+
+  let stripReferenceLines : string list -> string list =
+    List.skipWhile (fun l -> String.IsNullOrEmpty(l.Trim()) || l.StartsWith "/// <reference")
+
+
+  let filterVersionedStrings crmVersion (prefix: string) (suffix: string) =
+    Array.filter (fun (n: string) ->
+      n.StartsWith prefix &&
+      n.EndsWith suffix &&
+
+      n.Substring(prefix.Length, n.Length - prefix.Length - suffix.Length) 
+      |> parseVersionCriteria 
+      ?|> matchesVersionCriteria crmVersion 
+      ?| false
+    )
+
+  let getBaseExtensions crmVersion = 
+    let prefix = "base_ext_"
+    let suffix = ".d.ts"
+
+    allResourceNames
+    |> filterVersionedStrings crmVersion prefix suffix
+
 
   (** Generation functionality *)
 
@@ -99,8 +130,8 @@ module GeneratorLogic =
 
   // Proxy helper that makes it easy to get a new proxy instance
   let proxyHelper xrmAuth () =
-    let ap = xrmAuth.ap |? AuthenticationProviderType.OnlineFederation
-    let domain = xrmAuth.domain |? ""
+    let ap = xrmAuth.ap ?| AuthenticationProviderType.OnlineFederation
+    let domain = xrmAuth.domain ?| ""
     CrmAuth.authenticate
       xrmAuth.url ap xrmAuth.username 
       xrmAuth.password domain
@@ -139,13 +170,13 @@ module GeneratorLogic =
     version
 
   /// Retrieve all the necessary CRM data
-  let retrieveCrmData sdkVersion entities mainProxy proxyGetter =
+  let retrieveCrmData crmVersion entities mainProxy proxyGetter =
     let rawEntityMetadata = 
       retrieveEntityMetadata entities mainProxy proxyGetter
     
     printf "Fetching BPF metadata from CRM..."
     let bpfData = 
-      match checkVersion (6,0,0,0) sdkVersion with
+      match crmVersion .>= (6,0,0,0) with
       | true  -> CrmDataHelper.getBpfData mainProxy
       | false -> [||]
     printfn "Done!"
@@ -220,26 +251,31 @@ module GeneratorLogic =
       outputDir = out 
     }
 
-
   /// Generate the files stored as resources
-  let generateResourceFiles state =
-    getResourceLines "base.d.ts"
+  let generateResourceFiles crmVersion state =
+    let exts = getBaseExtensions crmVersion
+
+    // Extend base.d.ts with version specific additions
+    getBaseExtensions crmVersion
+    |> Seq.map (getResourceLines >> stripReferenceLines)
+    |> (getResourceLines "base.d.ts" |> Seq.singleton |> Seq.append)
+    |> List.concat
     |> fun lines -> 
       File.WriteAllLines(
         sprintf "%s/base.d.ts" state.outputDir, makeRef "_internal/entities" :: lines)
+ 
+    // Copy stable declaration files directly
+    [ "metadata.d.ts"
+      "dg.xrmquery.d.ts"
+    ] |> List.iter (copyResourceDirectly state.outputDir)
 
-    getResourceLines "metadata.d.ts"
-    |> fun lines -> 
-      File.WriteAllLines(
-        sprintf "%s/metadata.d.ts" state.outputDir, lines)
-      
-    getResourceLines "dg.xrmquery.d.ts"
-    |> fun lines -> 
-      File.WriteAllLines(sprintf "%s/dg.xrmquery.d.ts" state.outputDir, lines)
+    [ "domain.d.ts"
+      "sdk.d.ts"
+    ] |> List.iter (copyResourceDirectly (sprintf "%s/_internal" state.outputDir))
+    
 
-
-  /// Generate a few base files
-  let generateBaseFiles state =
+  /// Generate a entity base files
+  let generateEntityBaseFiles state =
     // Blank entity interfaces
     state.entities
     |> getBlankEntityInterfaces

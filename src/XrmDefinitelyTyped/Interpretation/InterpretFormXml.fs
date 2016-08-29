@@ -51,7 +51,7 @@ module internal InterpretFormXml =
     let aType = 
       match controlClass with
       | Picklist 
-      | StatusReason  -> AttributeType.OptionSet (enums.TryFind(attr) |? Type.Number)
+      | StatusReason  -> AttributeType.OptionSet (enums.TryFind(attr) ?| Type.Number)
       | RadioButtons 
       | CheckBox      -> AttributeType.OptionSet Type.Boolean
         
@@ -65,14 +65,14 @@ module internal InterpretFormXml =
       | RegardingLookup 
       | Lookup        -> AttributeType.Lookup
 
+      | DateTime      -> AttributeType.Date
+
       | EmailAddress 
       | EmailBody 
       | Notes
       | TextArea 
       | TextBox 
       | Url           -> AttributeType.Default Type.String
-
-      | DateTime      -> AttributeType.Default Type.Date
 
       | _             -> AttributeType.Default Type.Any
         
@@ -134,7 +134,7 @@ module internal InterpretFormXml =
       | IsWebresouce true -> ControlClassId.WebResource
       | _ -> 
         let normalizedClassId = Regex.Replace(classId.ToUpper(), "[{}]", "")
-        classIds.TryFind normalizedClassId |? ControlClassId.Other
+        classIds.TryFind normalizedClassId ?| ControlClassId.Other
   
 
   /// Renames controls with number suffixes if some share the same id
@@ -182,7 +182,7 @@ module internal InterpretFormXml =
 
   /// Function to interpret a single FormXml
   let interpretFormXml (enums:Map<string,Type>) (bpfFields: ControlField list option) (systemForm:Entity) =
-    let bpfFields = bpfFields |? []
+    let bpfFields = bpfFields ?| []
     let form = XElement.Parse(systemForm.Attributes.["formxml"].ToString())
 
     let tabs = 

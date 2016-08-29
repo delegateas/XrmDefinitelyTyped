@@ -85,10 +85,14 @@
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Domain.fs" />
     <Compile Include="Utility.fs" />
-    <EmbeddedResource Include="Resources/base.d.ts" />
+    <EmbeddedResource Include="Resources\Extensions\base_ext_-7.d.ts" />
+    <EmbeddedResource Include="Resources\Extensions\base_ext_7.1-.d.ts" />
+    <EmbeddedResource Include="Resources\Extensions\base_ext_8-.d.ts" />
+    <EmbeddedResource Include="Resources\_internal\domain.d.ts" />
+    <EmbeddedResource Include="Resources\_internal\sdk.d.ts" />
     <EmbeddedResource Include="Resources/metadata.d.ts" />
+    <EmbeddedResource Include="Resources/base.d.ts" />
     <None Include="Resources\dg.xrmquery.ts" />
-    <Content Include="Resources\tsconfig.json" />
     <EmbeddedResource Include="Resources\dg.xrmquery.d.ts" />
     <Content Include="Resources\dg.xrmquery.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -96,6 +100,7 @@
     <Content Include="Resources\dg.xrmquery.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\tsconfig.json" />
     <Compile Include="TypeScript/TypeScript.fs" />
     <Compile Include="TypeScript/TsStringUtil.fs" />
     <Compile Include="Crm/CrmAuth.fs" />
@@ -137,7 +142,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <Target Name="BeforeBuild">
-	<Exec Command="tsc -p $(ProjectDir)Resources" />
+    <Exec Command="tsc -p $(ProjectDir)Resources" />
     <Exec Command="java -jar $(ProjectDir)..\..\tools\closure\compiler.jar --js $(ProjectDir)Resources\dg.xrmquery.js --js_output_file $(ProjectDir)Resources\dg.xrmquery.min.js" />
   </Target>
   <Choose>

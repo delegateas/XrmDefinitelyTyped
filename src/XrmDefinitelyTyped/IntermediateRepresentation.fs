@@ -53,6 +53,7 @@ module IntermediateRepresentation =
     | Default of Type
     | Number
     | Lookup
+    | Date
     | OptionSet of Type
 
   type FormType =

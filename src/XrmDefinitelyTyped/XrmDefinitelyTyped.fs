@@ -19,7 +19,7 @@ type XrmDefinitelyTyped private () =
       { XrmDefinitelyTypedSettings.out = out
         entities = entities
         solutions = solutions
-        sdkVersion = None
+        crmVersion = None
       }
     XrmDefinitelyTyped.GetContext(xrmAuth, settings)
 
@@ -28,7 +28,7 @@ type XrmDefinitelyTyped private () =
     #if !DEBUG
     try
     #endif
-      let out = settings.out |? "."
+      let out = settings.out ?| "."
 
       // Pre-generation tasks
       clearOldOutputFiles out
@@ -37,9 +37,9 @@ type XrmDefinitelyTyped private () =
       let mainProxy = connectToCrm xrmAuth
       let proxyGetter = proxyHelper xrmAuth
 
-      let sdkVersion =
-        if settings.sdkVersion.IsNone then retrieveCrmVersion mainProxy
-        else settings.sdkVersion.Value
+      let crmVersion =
+        if settings.crmVersion.IsNone then retrieveCrmVersion mainProxy
+        else settings.crmVersion.Value
 
       let entities = 
         getFullEntityList settings.entities settings.solutions mainProxy
@@ -47,13 +47,13 @@ type XrmDefinitelyTyped private () =
       // Connect to CRM and interpret the data
       let data = 
         (mainProxy, proxyGetter)
-        ||> retrieveCrmData sdkVersion entities
+        ||> retrieveCrmData crmVersion entities
         |> interpretCrmData out
 
       // Generate the files
       data
-      |>> generateResourceFiles
-      |>> generateBaseFiles
+      |>> generateResourceFiles crmVersion
+      |>> generateEntityBaseFiles
       |>> generateEnumFiles
       |>> generateEntityEnumFiles
       |>> generateEntityFiles

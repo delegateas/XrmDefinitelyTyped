@@ -17,5 +17,5 @@ type XrmDefinitelyTypedSettings = {
   out: string option
   entities: string[] option
   solutions: string[] option
-  sdkVersion: XrmVersion option
+  crmVersion: XrmVersion option
 }

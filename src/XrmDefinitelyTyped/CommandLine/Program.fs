@@ -33,7 +33,7 @@ let executeGetContext argv =
     { XrmDefinitelyTypedSettings.out = parsedArgs.TryFind "out"
       entities = entities
       solutions = solutions
-      sdkVersion = None
+      crmVersion = None
     }
 
   XrmDefinitelyTyped.GetContext(xrmAuth, settings)
