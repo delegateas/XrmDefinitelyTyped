@@ -37,6 +37,11 @@ type Args private () =
     { command="entities"
       description="Comma-separated list of logical names of the entities it should generate code for. This is additive with the entities gotten via the \"solutions\" argument."
       required=false }
+
+    { command="formintersect"
+      description="Comma-separated list of named semicolon-separated lists of form GUIDs that should be intersected. "
+       + "Example: 'MyAccountIntersect: 284FF02B-BDD1-4BB0-9BCF-6CFDBDA130D4;16068A3B-D428-4430-AEF6-397CE2AEFE07, MyContactIntersect: F4B3397C-C1A5-40BE-89DD-CEA5F7064D1D;824CFA3C-3EB4-4746-BA3C-7F1DFCA114C0'"
+      required=false }
     ]
 
 

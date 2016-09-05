@@ -92,7 +92,8 @@ module IntermediateRepresentation =
 
   type XrmForm = {
     entityName: string
-    formType: string
+    entityDependencies: string seq
+    formType: string option
     name: string
     attributes: XrmFormAttribute list
     controls: XrmFormControl list

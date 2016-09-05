@@ -220,10 +220,13 @@ module internal InterpretFormXml =
 
     let name = systemForm.Attributes.["name"].ToString()
     let typeInt = (systemForm.Attributes.["type"] :?> OptionSetValue).Value
-    
+    let logicalName = systemForm.Attributes.["objecttypecode"].ToString()
+
+    systemForm.Id, 
     { XrmForm.name =  name |> Utility.sanitizeString
-      entityName =  systemForm.Attributes.["objecttypecode"].ToString()
-      formType = enum<FormType>(typeInt).ToString() |> Utility.sanitizeString
+      entityName = logicalName
+      entityDependencies = Seq.singleton logicalName
+      formType = enum<FormType>(typeInt).ToString() |> Utility.sanitizeString |> Some
       attributes = 
         controlFields @ compositeFields @ bpfFields
         |> List.choose (getAttribute enums)
@@ -249,3 +252,4 @@ module internal InterpretFormXml =
         formData.[em.logicalName]
         |> Array.Parallel.map (interpretFormXml enums (bpfControls.TryFind em.logicalName)))
       |> Array.concat
+    |> dict

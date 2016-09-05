@@ -29,11 +29,30 @@ let executeGetContext argv =
   let entities = getListArg parsedArgs "entities" (fun s -> s.ToLower())
   let solutions = getListArg parsedArgs "solutions" id
 
+  let formIntersects = getListArg parsedArgs "formintersect" (fun definition -> 
+    let nameSplit = definition.IndexOf(":")
+    if nameSplit < 0 then failwithf "No name specfication found in form-intersect list at: '%s'" definition
+
+    let name = definition.Substring(0, nameSplit) |> Utility.sanitizeString
+    let list = definition.Substring(nameSplit + 1)
+
+    let guidInput = list.Split(';')
+    let guids = 
+      guidInput
+      |> Array.map Guid.TryParse
+      |> Array.mapi (fun idx (r,g) ->
+        if r then Some g
+        else printfn "Unable to parse given form GUID: %s. Skipping it" guidInput.[idx]; None)
+      |> Array.choose id
+
+    name, guids)
+
   let settings =
     { XrmDefinitelyTypedSettings.out = parsedArgs.TryFind "out"
       entities = entities
       solutions = solutions
       crmVersion = None
+      formIntersects = formIntersects
     }
 
   XrmDefinitelyTyped.GetContext(xrmAuth, settings)

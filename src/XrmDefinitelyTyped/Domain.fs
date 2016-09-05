@@ -13,9 +13,12 @@ type XrmAuthentication = {
 
 type XrmVersion = int * int * int * int
 
+type FormIntersect = string * Guid[]
+
 type XrmDefinitelyTypedSettings = {
   out: string option
   entities: string[] option
   solutions: string[] option
   crmVersion: XrmVersion option
+  formIntersects: FormIntersect [] option
 }

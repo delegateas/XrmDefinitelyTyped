@@ -1,5 +1,8 @@
 # Release Notes
 
+### 1.10.0 - September 5 2016
+* Added the possibility of generating special declaration files, which are intersections of multiple forms.
+
 ### 1.9.1 - August 29 2016
 * Fix: Removed the newly version-controlled function `addTabStateChange` from the base declaration file
 

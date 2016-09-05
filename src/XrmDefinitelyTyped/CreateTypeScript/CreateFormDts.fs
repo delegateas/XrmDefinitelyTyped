@@ -172,8 +172,15 @@ module internal CreateFormDts =
   /// Generate the module containing all the form interface and internal 
   /// module for collections.
   let getFormDts (form:XrmForm) = 
+    let moduleName = 
+      sprintf "Form.%s%s" 
+        (form.entityName |> Utility.sanitizeString)
+        (match form.formType with
+        | Some ty -> sprintf ".%s" ty
+        | None   -> "")
+
     Module.Create(
-      sprintf "Form.%s.%s" (form.entityName |> Utility.sanitizeString) form.formType, 
+      moduleName,
       declare = true,
       modules = [ getFormSubmodule form ],
       interfaces = [ getFormInterface form ]) 

@@ -31,6 +31,7 @@ Here is the full list of arguments for configuring the tool:
 | out               | Output directory for the generated files.
 | solutions         | Comma-separated list of solutions names. Generates code for the entities found in these solutions.
 | entities          | Comma-separated list of logical names of the entities it should generate code for. <br/> This is additive with the entities gotten via the ***solutions*** argument.
+| formintersect     | Comma-separated list of named semicolon-separated lists of form GUIDs that should be intersected. Example: <br /> <code>MyAccountIntersect: 284FF02B-BDD1-4BB0-9BCF-6CFDBDA130D4;16068A3B-D428-4430-AEF6-397CE2AEFE07, MyContactIntersect: F4B3397C-C1A5-40BE-89DD-CEA5F7064D1D;824CFA3C-3EB4-4746-BA3C-7F1DFCA114C0</code>
 
 You can also view this list of arguments using the "***/help***" argument.
 

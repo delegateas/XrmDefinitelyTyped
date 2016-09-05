@@ -6,7 +6,7 @@ open GeneratorLogic
 
 type XrmDefinitelyTyped private () =
 
-  static member GetContext(url, username, password, ?domain, ?ap, ?out, ?entities, ?solutions) =
+  static member GetContext(url, username, password, ?domain, ?ap, ?out, ?entities, ?solutions, ?formIntersects) =
     let xrmAuth =
       { XrmAuthentication.url = Uri(url);
         username = username;
@@ -20,6 +20,7 @@ type XrmDefinitelyTyped private () =
         entities = entities
         solutions = solutions
         crmVersion = None
+        formIntersects = formIntersects
       }
     XrmDefinitelyTyped.GetContext(xrmAuth, settings)
 
@@ -38,17 +39,19 @@ type XrmDefinitelyTyped private () =
       let proxyGetter = proxyHelper xrmAuth
 
       let crmVersion =
-        if settings.crmVersion.IsNone then retrieveCrmVersion mainProxy
-        else settings.crmVersion.Value
+        settings.crmVersion ?| retrieveCrmVersion mainProxy
 
       let entities = 
         getFullEntityList settings.entities settings.solutions mainProxy
+
+      let formIntersects = 
+        settings.formIntersects ?| [||]
 
       // Connect to CRM and interpret the data
       let data = 
         (mainProxy, proxyGetter)
         ||> retrieveCrmData crmVersion entities
-        |> interpretCrmData out
+        |> interpretCrmData out formIntersects
 
       // Generate the files
       data
