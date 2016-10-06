@@ -184,8 +184,7 @@ var XQC;
             return this;
         };
         RetrieveRecord.prototype.execute = function (successCallback, errorCallback) {
-            var eCb = (errorCallback) ? errorCallback : function () { };
-            SDK.REST.retrieveRecord(this.id, this.logicalName, (this.selects.length > 0) ? this.selects.join(",") : null, (this.expands.length > 0) ? this.expands.join(",") : null, successCallback, errorCallback ? errorCallback : NoOp);
+            SDK.REST.retrieveRecord(this.id, this.logicalName, this.selects.length > 0 ? this.selects.join(",") : null, this.expands.length > 0 ? this.expands.join(",") : null, successCallback, errorCallback ? errorCallback : NoOp);
         };
         return RetrieveRecord;
     }());
@@ -225,7 +224,7 @@ var XQC;
             var expName = taggedExec(exps).toString();
             this.expands.push(expName);
             if (vars)
-                this.selects = this.selects.concat(taggedExec(vars).map(function (a) { return (expName + "/" + a); }));
+                this.selects = this.selects.concat(taggedExec(vars).map(function (a) { return expName + "/" + a; }));
             return this;
         };
         RetrieveMultipleRecords.prototype.filter = function (filter) {
@@ -267,16 +266,37 @@ var XQC;
             this.topAmount = amount;
             return this;
         };
-        RetrieveMultipleRecords.prototype.execute = function (successCallback, errorCallback, onComplete) {
-            SDK.REST.retrieveMultipleRecords(this.logicalName, this.getOptionString(), successCallback, errorCallback ? errorCallback : NoOp, onComplete ? onComplete : NoOp);
+        /**
+         * Executes the RetrieveMultiple. Note that the first function passed as an argument is called once per page returned from CRM.
+         * @param pageSuccessCallback Called once per page returned from CRM
+         * @param errorCallback Called if an error occurs during the retrieval
+         * @param onComplete Called when all pages have been successfully retrieved from CRM
+         */
+        RetrieveMultipleRecords.prototype.execute = function (pageSuccessCallback, errorCallback, onComplete) {
+            SDK.REST.retrieveMultipleRecords(this.logicalName, this.getOptionString(), pageSuccessCallback, errorCallback ? errorCallback : NoOp, onComplete ? onComplete : NoOp);
         };
+        /**
+         * Executes the RetrieveMultiple and concatenates all the pages to a single array that is delivered to the success callback function.
+         * @param successCallback Called with all records returned from the query
+         * @param errorCallback Called if an error occures during the retrieval
+         */
+        RetrieveMultipleRecords.prototype.getAll = function (successCallback, errorCallback) {
+            var pages = [];
+            SDK.REST.retrieveMultipleRecords(this.logicalName, this.getOptionString(), function (page) {
+                pages.push(page);
+            }, errorCallback ? errorCallback : NoOp, function () {
+                successCallback([].concat.apply([], pages));
+            });
+        };
+        /**
+         * Executes the RetrieveMultiple, but only returns the first result (or null, if no record was found).
+         * @param successCallback Called with the first result of the query (or null, if no record was found)
+         * @param errorCallback Called if an error occures during the retrieval
+         */
         RetrieveMultipleRecords.prototype.getFirst = function (successCallback, errorCallback) {
             this.top(1);
             this.execute(function (recs) { return successCallback((recs.length > 0) ? recs[0] : null); }, errorCallback, NoOp);
         };
-        /**
-         * @internal
-         */
         RetrieveMultipleRecords.prototype.getOptionString = function () {
             var options = [];
             if (this.selects.length > 0) {

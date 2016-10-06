@@ -4,22 +4,31 @@ module internal TsStringUtil =
 
   let getConstantType (name:string) = name.Replace("\\", "\\\\").Replace("\"", "\\\"") |> sprintf "\"%s\"" |> Type.Custom
 
-  let rec typeToString = function
+  let rec wrapIfUnionType ty =
+    match ty with
+    | Type.Union _ -> typeToString ty |> sprintf "(%s)"
+    | _ -> typeToString ty
+
+  and typeToString = function
     | Type.Void           -> "void"
+    | Type.Null           -> "null"
+    | Type.Undefined      -> "undefined"
+    | Type.Never          -> "never"
     | Type.Any            -> "any"
     | Type.Boolean        -> "boolean"
     | Type.String         -> "string"
     | Type.Number         -> "number"
-    | Type.Array a        -> sprintf "%s[]" (typeToString a)
+    | Type.Array a        -> sprintf "%s[]" (wrapIfUnionType a)
     | Type.Date           -> "Date"
-    | Type.Function(v,r)  -> 
+    | Type.Function(v, r) -> 
       sprintf "(%s) => %s" 
-        (String.concat ", " (List.map ivarToString v)) 
+        (String.concat ", " (List.map varToIString v)) 
         (typeToString r)
     | Type.Custom s       -> s
-    | Type.Generic(n,t)   -> sprintf "%s<%s>" n t
+    | Type.Generic(n, t)  -> sprintf "%s<%s>" n t
     | Type.SpecificGeneric(n,t) 
                           -> sprintf "%s<%s>" n (typeToString t)
+    | Type.Union types    -> types |> List.map wrapIfUnionType |> String.concat " | "
 
   and valueToString = function
     | Value.String s  -> sprintf "\"%s\"" s
@@ -56,10 +65,10 @@ module internal TsStringUtil =
       (someTypeToString v.varType)
       (someValueToString v.value)
 
-  and ivarToString (v:Variable) =
+  and varToIString (v:Variable) =
     sprintf "%s%s%s" 
       v.name 
-      (if v.value.IsSome then "?" else "")
+      (if v.optional then "?" else "")
       (someTypeToString v.varType)
 
 
@@ -112,7 +121,7 @@ module internal TsStringUtil =
     sprintf "%s%s(%s)%s" 
       (if desc then "function " else "") 
       f.name 
-      (String.concat ", " (List.map ivarToString f.args)) 
+      (String.concat ", " (List.map varToIString f.args)) 
       (someTypeToString f.returnType)
 
   let endLines = List.map (fun s -> sprintf "%s;" s)
@@ -140,7 +149,7 @@ module internal TsStringUtil =
         (implementationsToString i.impls))
     ]
     @ indent
-      ( (List.map varToString i.vars |> endLines)
+      ( (List.map varToIString i.vars |> endLines)
       @ (List.map (funcToIString false) i.funcs |> endLines)
       )
     @ ["}"]

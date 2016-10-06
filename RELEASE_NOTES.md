@@ -1,5 +1,11 @@
 # Release Notes
 
+### 1.11.0 - October 6 2016
+* Added union types throughout the generated declaration files to make it usable with TypeScript's `strictNullChecks`.
+* ***XrmQuery update*** (new javascript code): 
+  * Added `getAll` function to RetrieveMultipleRecords which concatenates all page results and serves it to the success callback.
+  * Changed `execute` function of RetrieveMultipleRecords to have obligatory `errorCallback` and `onComplete` handlers to promote proper usage of paged results.
+
 ### 1.10.0 - September 5 2016
 * Added the possibility of generating special declaration files, which are intersections of multiple forms.
 

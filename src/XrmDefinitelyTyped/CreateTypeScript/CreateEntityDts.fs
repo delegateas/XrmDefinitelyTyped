@@ -40,7 +40,8 @@ module internal CreateEntityDts =
         | SpecialType.Money           -> Type.Custom "SDK.Money"
         | SpecialType.EntityReference -> Type.Custom "SDK.EntityReference"
         | _ -> v.varType
-      Variable.Create(v.schemaName, vType))
+        |> fun ty -> Type.Union [ty; Type.Null]
+      Variable.Create(v.schemaName, vType, optional = true))
 
   let getFilterVariables (list: XrmAttribute list) = 
     list |> List.map (fun v -> 
@@ -61,7 +62,8 @@ module internal CreateEntityDts =
         | true, _       -> Type.Custom r.relatedEntity
         | false, false  -> arrayOf r.relatedEntity
         | false, true   -> results r.relatedEntity
-      Variable.Create(r.schemaName, rType)
+        |> fun ty -> Type.Union [ty; Type.Null]
+      Variable.Create(r.schemaName, rType, optional = true)
     )
 
 

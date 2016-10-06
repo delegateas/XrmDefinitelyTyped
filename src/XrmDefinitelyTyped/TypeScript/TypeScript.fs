@@ -14,6 +14,9 @@ type Value =
 
 type Type = 
   | Void
+  | Null
+  | Undefined
+  | Never
   | Any
   | Boolean
   | String
@@ -24,17 +27,20 @@ type Type =
   | SpecificGeneric of string * Type
   | Function of Variable list * Type
   | Custom of string
+  | Union of Type list
 
 and Variable = 
   { name : string
     varType : Type option
     value : Value option
-    declare: bool }
-  static member Create(name, ?varType, ?value, ?declare) = 
+    declare: bool
+    optional: bool }
+  static member Create(name, ?varType, ?value, ?declare, ?optional) = 
     { Variable.name = name
       varType = varType
       value = value
-      declare = defaultArg declare false }
+      declare = defaultArg declare false
+      optional = defaultArg optional false }
 
 type ExportType = 
   | Regular

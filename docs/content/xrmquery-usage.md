@@ -29,7 +29,7 @@ Here is a small example where a complex filter is applied to a RetrieveMultiple 
                 ),
                 Filter.equals(acc.PrimaryContactId.Id, Filter.makeGuid("0000-SOME-GUID"))
             ))
-        .execute(records => {
+        .getAll(records => {
             // Success callback function for the accounts.
             console.log(records)
         });

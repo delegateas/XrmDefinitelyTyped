@@ -198,12 +198,11 @@ module XQC {
     }
 
     execute(successCallback: (record: R) => any, errorCallback?: (err: Error) => any) {
-      var eCb = (errorCallback) ? errorCallback : () => { };
       SDK.REST.retrieveRecord(
         this.id,
         this.logicalName,
-        (this.selects.length > 0) ? this.selects.join(",") : null,
-        (this.expands.length > 0) ? this.expands.join(",") : null,
+        this.selects.length > 0 ? this.selects.join(",") : null,
+        this.expands.length > 0 ? this.expands.join(",") : null,
         successCallback,
         errorCallback ? errorCallback : NoOp);
     }
@@ -301,24 +300,51 @@ module XQC {
       return this;
     }
 
-    execute(successCallback: (records: R[]) => any, errorCallback?: (err: Error) => any, onComplete?: () => any) {
+    /**
+     * Executes the RetrieveMultiple. Note that the first function passed as an argument is called once per page returned from CRM.
+     * @param pageSuccessCallback Called once per page returned from CRM
+     * @param errorCallback Called if an error occurs during the retrieval
+     * @param onComplete Called when all pages have been successfully retrieved from CRM
+     */
+    execute(pageSuccessCallback: (records: R[]) => any, errorCallback: (err: Error) => any, onComplete: () => any) {
       SDK.REST.retrieveMultipleRecords(
         this.logicalName,
         this.getOptionString(),
-        successCallback,
+        pageSuccessCallback,
         errorCallback ? errorCallback : NoOp,
         onComplete ? onComplete : NoOp);
     }
 
-    getFirst(successCallback: (record: R) => any, errorCallback?: (err: Error) => any) {
+    /**
+     * Executes the RetrieveMultiple and concatenates all the pages to a single array that is delivered to the success callback function.
+     * @param successCallback Called with all records returned from the query
+     * @param errorCallback Called if an error occures during the retrieval
+     */
+    getAll(successCallback: (records: R[]) => any, errorCallback?: (err: Error) => any) {
+        let pages = [];
+        SDK.REST.retrieveMultipleRecords(
+            this.logicalName,
+            this.getOptionString(),
+            (page) => {
+                pages.push(page);
+            },
+            errorCallback ? errorCallback : NoOp,
+            () => {
+                successCallback([].concat.apply([], pages));
+            });
+    }
+
+    /**
+     * Executes the RetrieveMultiple, but only returns the first result (or null, if no record was found).
+     * @param successCallback Called with the first result of the query (or null, if no record was found)
+     * @param errorCallback Called if an error occures during the retrieval
+     */
+    getFirst(successCallback: (record: R | null) => any, errorCallback?: (err: Error) => any) {
         this.top(1);
         this.execute(recs => successCallback((recs.length > 0) ? recs[0] : null), errorCallback, NoOp);
     }
 
     
-    /**
-     * @internal
-     */
     getOptionString(): string {
       var options = [];
       if (this.selects.length > 0) {

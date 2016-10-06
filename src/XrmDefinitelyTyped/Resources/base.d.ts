@@ -56,8 +56,8 @@ declare namespace IPage {
      */
     interface EntityReference {
         id: string;
-        name: string;
         entityType: string;
+        name?: string | null;
     }
 
 
@@ -218,14 +218,14 @@ declare namespace IPage {
         /**
          * Retrieves the data value for an attribute.
          */
-        getValue(): T;
+        getValue(): T | null;
 
         /**
          * Sets the data value for an attribute.
          *
          * @param val The new value for the attribute.
          */
-        setValue(val: T): void;
+        setValue(val?: T | null): void;
 
         /**
          * Get the type of attribute.
@@ -370,7 +370,7 @@ declare namespace IPage {
         /**
          * Returns a value that represents the value set for an OptionSet or Boolean attribute when the form opened.
          */
-        getInitialValue(): T;
+        getInitialValue(): T | null;
 
         /**
          * Returns a string value of the text for the currently selected option for an optionset attribute.
@@ -380,12 +380,12 @@ declare namespace IPage {
         /**
          * Returns an option object with the value matching the argument passed to the method.
          */
-        getOption(value: string): Option<T>;
+        getOption(value: string): Option<T> | null;
 
         /**
          * Returns an option object with the value matching the argument passed to the method.
          */
-        getOption(value: T): Option<T>;
+        getOption(value: T): Option<T> | null;
 
         /**
          * Returns an array of option objects representing the valid options for an option-set attribute.
@@ -395,7 +395,7 @@ declare namespace IPage {
         /**
          * Returns the option object that is selected in an optionset attribute.
          */
-        getSelectedOption(): Option<T>;
+        getSelectedOption(): Option<T> | null;
     }
 
     /**
@@ -474,14 +474,14 @@ declare namespace IPage {
          * @param message The message to display.
          * @param uniqueId The ID to use to clear just this message when using clearNotification.
          */
-        setNotification(message: string, uniqueId: string): boolean;
+        setNotification(message: string, uniqueId?: string): boolean;
 
         /**
          * Remove a message already displayed for a control.
          *
          * @param uniqueId The ID to use to clear a specific message set using setNotification.
          */
-        clearNotification(uniqueId: string): boolean;
+        clearNotification(uniqueId?: string | null): boolean;
     }
 
 
@@ -543,7 +543,7 @@ declare namespace IPage {
          *
          * @param url The URL.
          */
-        setSrc(url: string): void;
+        setSrc(url?: string): void;
     }
 
 
@@ -561,7 +561,7 @@ declare namespace IPage {
          *
          * @param dataQuery The data value to pass to the web resource.
          */
-        setData(dataQuery: string): void;
+        setData(dataQuery?: string): void;
     }
 
 
@@ -1053,14 +1053,17 @@ declare namespace IPage {
          * Returns the unique identifier of the process.
          */
         getId(): string;
+
         /**
          * Returns the name of the process.
          */
         getName(): string;
+
         /**
          * Returns an collection of stages in the process.
          */
         getStages(): Collection<Stage>;
+
         /**
          * Returns true if the process is rendered, false if not.
          */

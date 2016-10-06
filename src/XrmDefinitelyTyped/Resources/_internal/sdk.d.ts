@@ -9,16 +9,17 @@ declare namespace SDK {
         /**
          * GUID of the entity reference.
          */
-        Id: string;
+        Id: string | null;
         /**
          * Logical name of the entity.
          */
-        LogicalName: string;
+        LogicalName: string | null;
         /**
          * Name of the entity.
          */
-        Name?: string;
+        Name?: string | null;
     }
+
     /**
      * Interface for an option set value attribute for the OData endpoint.
      */
@@ -26,7 +27,7 @@ declare namespace SDK {
         /**
          * Integer value for the option.
          */
-        Value: T;
+        Value: T | null;
     }
 
     /**
@@ -36,8 +37,9 @@ declare namespace SDK {
         /**
          * Decimal value of the amount as a string.
          */
-        Value: string;
+        Value: string | null;
     }
+
     /**
      * Interface for an expanded result from the OData endpoint.
      */

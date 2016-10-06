@@ -45,7 +45,7 @@ declare module SDK {
                             This function must accept an Error object as a parameter.
      * @param passThroughObject An Object that will be passed through to as the second parameter to the successCallBack.
      */
-    function RetrieveEntity(EntityFilters: EntityFilters, LogicalName: string, MetadataId: string, RetrieveAsIfPublished: boolean, successCallback: (metadata: EntityMetadata, passThroughObject?: any) => any, errorCallback: (error: Error) => any, passThroughObject: any): void;
+    function RetrieveEntity(EntityFilters: EntityFilters, LogicalName: string, MetadataId: string | null, RetrieveAsIfPublished: boolean, successCallback: (metadata: EntityMetadata, passThroughObject?: any) => any, errorCallback: (error: Error) => any, passThroughObject: any): void;
     /**
      * Sends an asynchronous RetrieveAttribute Request to retrieve a specific entity.
      *
@@ -59,7 +59,7 @@ declare module SDK {
      *                      This function must accept an Error object as a parameter.
      * @param passThroughObject An Object that will be passed through to as the second parameter to the successCallBack.
      */
-    function RetrieveAttribute(EntityLogicalName: string, LogicalName: string, MetadataId: string, RetrieveAsIfPublished: boolean, successCallback: (metadata: AttributeMetadata, passThroughObject?: any) => any, errorCallback: (error: Error) => any, passThroughObject: any): void;
+    function RetrieveAttribute(EntityLogicalName: string, LogicalName: string, MetadataId: string | null, RetrieveAsIfPublished: boolean, successCallback: (metadata: AttributeMetadata, passThroughObject?: any) => any, errorCallback: (error: Error) => any, passThroughObject: any): void;
 
 
     interface BasicMetadata {
