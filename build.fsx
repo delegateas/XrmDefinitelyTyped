@@ -134,13 +134,19 @@ Target "CleanDocs" (fun _ ->
 // Build library & test project
 
 Target "BuildSetup" (fun _ ->
-  let closureFolder = @"tools/closure"
-  CreateDir closureFolder
+  let closureToolsFolder = @"tools/closure"
+  CreateDir closureToolsFolder
 
-  let closureCompilerPath = closureFolder @@ @"compiler.jar"
+  let closureCompiler = closureToolsFolder @@ @"compiler.jar"
 
-  if not(fileExists closureCompilerPath) then
-    CopyFile closureCompilerPath "paket-files/dl.google.com/compiler.jar"
+  if not(fileExists closureCompiler) then
+    let paketFilePath = 
+      Directory.EnumerateFiles("paket-files/dl.google.com", "*.jar", SearchOption.TopDirectoryOnly)
+      |> Seq.tryHead
+
+    match paketFilePath with
+    | Some path  -> CopyFile closureCompiler path
+    | None -> failwithf "No .jar file found for closure compiler"
 )
 
 
