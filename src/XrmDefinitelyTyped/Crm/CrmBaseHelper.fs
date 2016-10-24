@@ -91,7 +91,7 @@ module internal CrmBaseHelper =
     let request = RetrieveEntityRequest()
     request.LogicalName <- lname
     request.EntityFilters <- Microsoft.Xrm.Sdk.Metadata.EntityFilters.All
-    request.RetrieveAsIfPublished <- true
+    request.RetrieveAsIfPublished <- false
     request
 
   // Retrieve single entity metadata
@@ -146,8 +146,8 @@ module internal CrmBaseHelper =
     let resp = getResponse<RetrieveAllOptionSetsResponse> proxy request
     resp.OptionSetMetadata
 
-
-  // Retrieve a single entity metadata along with any intersect
+    
+  // Find relationship intersect entities
   let findRelationEntities allLogicalNames (metadata:EntityMetadata[]) =
     metadata
     |> Array.Parallel.map (fun md ->
@@ -161,7 +161,7 @@ module internal CrmBaseHelper =
     |> Array.distinct
 
 
-  // Retrieve speicifc entity metadata along with any intersect
+  // Retrieve specific entity metadata along with any intersect
   let getSpecificEntitiesAndDependentMetadata proxyGetter logicalNames =
     // TODO: either figure out the best degree of parallelism through code, or add it as a setting
     let getMetadata = getSpecificEntityMetadataHybrid proxyGetter 4
@@ -217,3 +217,12 @@ module internal CrmBaseHelper =
         getEntityLogicalNameFromId proxy (sc.Attributes.["objectid"] :?> Guid))
     )
     |> Seq.concat
+
+  // Proxy helper that makes it easy to get a new proxy instance
+  let proxyHelper xrmAuth () =
+    let ap = xrmAuth.ap ?| AuthenticationProviderType.OnlineFederation
+    let domain = xrmAuth.domain ?| ""
+    CrmAuth.authenticate
+      xrmAuth.url ap xrmAuth.username 
+      xrmAuth.password domain
+    ||> CrmAuth.proxyInstance

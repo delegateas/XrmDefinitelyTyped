@@ -32,8 +32,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DocumentationFile>bin\Debug\XrmDefinitelyTyped.XML</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
-    <StartArguments>
-    </StartArguments>
+    <StartArguments>/load:../../XdtData.json /out:../../../../test/typings /rest:RestNs /web:WebNs</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -70,36 +69,31 @@
   </Target>
   -->
   <ItemGroup>
-    <Content Include="bin\tools\CrmSvcUtil.exe">
-      <Paket>True</Paket>
-    </Content>
-    <Content Include="bin\tools\CrmSvcUtil.xml">
-      <Paket>True</Paket>
-    </Content>
-    <Content Include="bin\tools\Microsoft.Xrm.Sdk.dll">
-      <Paket>True</Paket>
-    </Content>
-    <Content Include="bin\tools\SolutionPackager.exe">
-      <Paket>True</Paket>
-    </Content>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Domain.fs" />
     <Compile Include="Utility.fs" />
-    <EmbeddedResource Include="Resources\Extensions\base_ext_-7.d.ts" />
-    <EmbeddedResource Include="Resources\Extensions\base_ext_7.1-.d.ts" />
-    <EmbeddedResource Include="Resources\Extensions\base_ext_8-.d.ts" />
-    <EmbeddedResource Include="Resources\_internal\domain.d.ts" />
+    <EmbeddedResource Include="Resources\Extensions\xrm_ext_-7.d.ts" />
+    <EmbeddedResource Include="Resources\Extensions\xrm_ext_7.1-.d.ts" />
+    <EmbeddedResource Include="Resources\Extensions\xrm_ext_8-.d.ts" />
     <EmbeddedResource Include="Resources\_internal\sdk.d.ts" />
+    <EmbeddedResource Include="Resources\Build\dg.xrmquery.rest.d.ts" />
+    <Content Include="Resources\Build\dg.xrmquery.rest.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Build\dg.xrmquery.rest.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <EmbeddedResource Include="Resources\Build\dg.xrmquery.web.d.ts" />
+    <Content Include="Resources\Build\dg.xrmquery.web.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\Build\dg.xrmquery.web.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <EmbeddedResource Include="Resources/metadata.d.ts" />
-    <EmbeddedResource Include="Resources/base.d.ts" />
-    <None Include="Resources\dg.xrmquery.ts" />
-    <EmbeddedResource Include="Resources\dg.xrmquery.d.ts" />
-    <Content Include="Resources\dg.xrmquery.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\dg.xrmquery.min.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <EmbeddedResource Include="Resources\xrm.d.ts" />
+    <None Include="Resources\dg.xrmquery.web.ts" />
+    <None Include="Resources\dg.xrmquery.rest.ts" />
     <Content Include="Resources\tsconfig.json" />
     <Compile Include="TypeScript/TypeScript.fs" />
     <Compile Include="TypeScript/TsStringUtil.fs" />
@@ -111,12 +105,16 @@
     <Compile Include="Interpretation/InterpretEntityMetadata.fs" />
     <Compile Include="Interpretation/InterpretFormXml.fs" />
     <Compile Include="Interpretation/InterpretBpfJson.fs" />
+    <Compile Include="CreateTypeScript\CreateCommon.fs" />
     <Compile Include="CreateTypeScript/CreateOptionSetDts.fs" />
-    <Compile Include="CreateTypeScript/CreateEntityDts.fs" />
-    <Compile Include="CreateTypeScript/CreateEntityRestDts.fs" />
-    <Compile Include="CreateTypeScript/CreateIPageDts.fs" />
+    <Compile Include="CreateTypeScript\CreateRestEntities.fs" />
+    <Compile Include="CreateTypeScript\CreateWebEntities.fs" />
+    <Compile Include="CreateTypeScript\CreateSdkRestDts.fs" />
     <Compile Include="CreateTypeScript/CreateFormDts.fs" />
-    <Compile Include="GeneratorLogic.fs" />
+    <Compile Include="Generation/DataRetrieval.fs" />
+    <Compile Include="Generation/InterfaceSetup.fs" />
+    <Compile Include="Generation\FileGeneration.fs" />
+    <Compile Include="Generation\GenerationMain.fs" />
     <Compile Include="XrmDefinitelyTyped.fs" />
     <Compile Include="CommandLine\Arguments.fs" />
     <Compile Include="CommandLine\CommandLineHelper.fs" />
@@ -143,18 +141,19 @@
   </ItemGroup>
   <Target Name="BeforeBuild">
     <Exec Command="tsc -p $(ProjectDir)Resources" />
-    <Exec Command="java -jar $(ProjectDir)..\..\tools\closure\compiler.jar --js $(ProjectDir)Resources\dg.xrmquery.js --js_output_file $(ProjectDir)Resources\dg.xrmquery.min.js" />
+    <Exec Command="java -jar $(ProjectDir)..\..\tools\closure\compiler.jar --js $(ProjectDir)Resources\Build\dg.xrmquery.web.js --js_output_file $(ProjectDir)Resources\Build\dg.xrmquery.web.min.js" />
+    <Exec Command="java -jar $(ProjectDir)..\..\tools\closure\compiler.jar --js $(ProjectDir)Resources\Build\dg.xrmquery.rest.js --js_output_file $(ProjectDir)Resources\Build\dg.xrmquery.rest.min.js" />
   </Target>
   <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1')">
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1' Or $(TargetFrameworkVersion) == 'v4.6.2' Or $(TargetFrameworkVersion) == 'v4.6.3')">
       <ItemGroup>
         <Reference Include="Microsoft.Crm.Sdk.Proxy">
-          <HintPath>..\..\packages\Microsoft.CrmSdk.CoreAssemblies\lib\net40\Microsoft.Crm.Sdk.Proxy.dll</HintPath>
+          <HintPath>..\..\packages\Microsoft.CrmSdk.CoreAssemblies\lib\net452\Microsoft.Crm.Sdk.Proxy.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
         <Reference Include="Microsoft.Xrm.Sdk">
-          <HintPath>..\..\packages\Microsoft.CrmSdk.CoreAssemblies\lib\net40\Microsoft.Xrm.Sdk.dll</HintPath>
+          <HintPath>..\..\packages\Microsoft.CrmSdk.CoreAssemblies\lib\net452\Microsoft.Xrm.Sdk.dll</HintPath>
           <Private>True</Private>
           <Paket>True</Paket>
         </Reference>
@@ -162,7 +161,7 @@
     </When>
   </Choose>
   <Choose>
-    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1')">
+    <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v3.5' Or $(TargetFrameworkVersion) == 'v4.0' Or $(TargetFrameworkVersion) == 'v4.5' Or $(TargetFrameworkVersion) == 'v4.5.1' Or $(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1' Or $(TargetFrameworkVersion) == 'v4.6.2' Or $(TargetFrameworkVersion) == 'v4.6.3')">
       <ItemGroup>
         <Reference Include="Microsoft.IdentityModel">
           <HintPath>..\..\packages\Microsoft.IdentityModel\lib\net35\Microsoft.IdentityModel.dll</HintPath>

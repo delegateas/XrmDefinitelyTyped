@@ -12,19 +12,26 @@ module IntermediateRepresentation =
     options: Option[]
   }
 
-  type SpecialType = Default | OptionSet | Money | Guid | EntityReference
+  type SpecialType = 
+    | Default 
+    | OptionSet 
+    | Money 
+    | Guid 
+    | EntityReference
 
   type XrmAttribute = { 
     schemaName: string
     logicalName: string
-    varType: Type
+    varType: TsType
     specialType: SpecialType
   }
 
   type XrmRelationship = {
     schemaName: string
     attributeName: string
-    relatedEntity: string
+    relatedSetName: string
+    relatedSchemaName: string
+    navProp: string
     referencing: bool
   }
 
@@ -32,10 +39,12 @@ module IntermediateRepresentation =
     typecode: int
     schemaName: string
     logicalName: string
+    entitySetName: string
     attr_vars: XrmAttribute list 
     opt_sets: OptionSet list
     rel_vars: XrmRelationship list
-    relatedEntities: string list }
+    relatedEntities: string list 
+  }
 
 
   // Forms
@@ -50,11 +59,11 @@ module IntermediateRepresentation =
     | IFrame
 
   type AttributeType = 
-    | Default of Type
+    | Default of TsType
     | Number
     | Lookup
     | Date
-    | OptionSet of Type
+    | OptionSet of TsType
 
   type FormType =
     | Dashboard = 0
@@ -102,4 +111,10 @@ module IntermediateRepresentation =
 
 
 
+  type InterpretedState = {
+    outputDir: string
+    entities: XrmEntity[]
+    forms: XrmForm[]
+    bpfControls: Map<string,ControlField list>
+  }
 

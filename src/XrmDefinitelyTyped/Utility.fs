@@ -8,15 +8,25 @@ open System.Text.RegularExpressions
 
 module Utility =
 
+  /// Use argument and pass it along
   let (|>>) x g = g x; x
+  /// Option binder
   let (?>>) m f = Option.bind f m
+  /// Option mapper
   let (?|>) m f = Option.map f m
+  /// Option checker
+  let (?>>?) m c = Option.bind (fun x -> match c x with | true -> Some x | false -> None) m
+  /// Option default argument
   let (?|) = defaultArg
 
   let parseInt str =
     let mutable intvalue = 0
     if System.Int32.TryParse(str, &intvalue) then Some(intvalue)
     else None
+
+  let truthySet = Set.ofList ["true"; "1"; "yes"; "y"]
+  let parseBoolish (str: string) =
+    not (isNull str) && truthySet.Contains(str.ToLower()) 
 
   let rec getFirstExceptionMessage (ex:Exception) =
     match ex with
@@ -40,7 +50,6 @@ module Utility =
       | "" -> emptyLabel
       | _ -> str
   
-
   let parseJson<'t> (jsonString:string)  : 't =  
     use ms = new MemoryStream(ASCIIEncoding.UTF8.GetBytes(jsonString)) 
     let obj = (new DataContractJsonSerializer(typeof<'t>)).ReadObject(ms) 
@@ -85,22 +94,27 @@ module Utility =
     ||> List.map2 (-)
     |> List.tryFind ((<>) 0)
 
+  /// Version greater than or equal to
   let (.>=) v1 v2 =
     versionCompare v1 v2
     ?|> fun x -> x > 0
     ?| true
 
+  /// Version less than or equal to
   let (.<=) v1 v2 =
     versionCompare v1 v2
     ?|> fun x -> x < 0
     ?| true
 
+  /// Version less than
   let (.<) v1 v2 = 
     v1 .>= v2 |> not
 
+  /// Version greater than
   let (.>) v1 v2 = 
     v1 .<= v2 |> not
 
+  /// Check if the version matches the version criteria
   let matchesVersionCriteria (versionToCheck: Version) (criteria: VersionCriteria) =
     match criteria with
     | None, None       -> true

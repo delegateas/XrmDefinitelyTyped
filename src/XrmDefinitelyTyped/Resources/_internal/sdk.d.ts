@@ -1,5 +1,5 @@
 ﻿/**
- * SDK module
+ * SDK namespace
  */
 declare namespace SDK {
     /**

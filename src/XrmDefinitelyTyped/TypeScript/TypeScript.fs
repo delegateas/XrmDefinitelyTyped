@@ -12,7 +12,7 @@ type Value =
   | Map of Map<string, Value>
   | Object of Map<string, Value>
 
-type Type = 
+type TsType = 
   | Void
   | Null
   | Undefined
@@ -22,16 +22,17 @@ type Type =
   | String
   | Number
   | Date
-  | Array of Type
+  | Array of TsType
   | Generic of string * string
-  | SpecificGeneric of string * Type
-  | Function of Variable list * Type
+  | SpecificGeneric of string * TsType list
+  | Function of Variable list * TsType
   | Custom of string
-  | Union of Type list
+  | Union of TsType list
+  | Intersection of TsType list
 
 and Variable = 
   { name : string
-    varType : Type option
+    varType : TsType option
     value : Value option
     declare: bool
     optional: bool }
@@ -46,26 +47,23 @@ type ExportType =
   | Regular
   | Export
 
-type Enum = 
+type TsEnum = 
   { name : string
     vals : (string * int option) list
     declare : bool
     constant: bool
     export : bool }
   static member Create(name, ?vals, ?constant, ?declare, ?export) = 
-    { Enum.name = name
+    { TsEnum.name = name
       vals = defaultArg vals []
       declare = defaultArg declare false
       constant = defaultArg constant true
       export = defaultArg export false }
 
-type Type with
-  static member fromEnum (e : Enum) = Type.Custom e.name
-
 type Function = 
   { name : string
     args : Variable list
-    returnType : Type option
+    returnType : TsType option
     expr : string list }
   static member Create(name, ?args, ?returnType, ?expr) = 
     { Function.name = name
@@ -106,29 +104,31 @@ type Interface =
       vars = defaultArg vars []
       funcs = defaultArg funcs [] }
 
-type Type with
-  static member fromInterface (i : Interface) = Type.Custom i.name
-
-type Module = 
+type Namespace = 
   { name : string
     export : ExportType
     declare : bool
     ambient : bool
     vars : Variable list
-    enums : Enum list
+    enums : TsEnum list
     funcs : Function list
-    modules : Module list
+    namespaces : Namespace list
     interfaces : Interface list
     classes : Class list }
   static member Create(name, ?export, ?declare, ?ambient, ?vars, ?enums, 
-                       ?modules, ?funcs, ?interfaces, ?classes) = 
-    { Module.name = name
+                       ?namespaces, ?funcs, ?interfaces, ?classes) = 
+    { Namespace.name = name
       export = defaultArg export Regular
       declare = defaultArg declare false
       ambient = defaultArg ambient false || defaultArg declare false
       vars = defaultArg vars []
       enums = defaultArg enums []
       funcs = defaultArg funcs []
-      modules = defaultArg modules []
+      namespaces = defaultArg namespaces []
       interfaces = defaultArg interfaces []
       classes = defaultArg classes [] }
+
+
+type TsType with
+  static member fromEnum (e : TsEnum) = TsType.Custom e.name
+  static member fromInterface (i : Interface) = TsType.Custom i.name

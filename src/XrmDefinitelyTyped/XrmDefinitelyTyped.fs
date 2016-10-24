@@ -1,72 +1,111 @@
 ﻿namespace DG.XrmDefinitelyTyped
 
 open System
+open System.IO
+open System.Runtime.Serialization.Json
+
 open Utility
-open GeneratorLogic
+open DataRetrieval
+open GenerationMain
 
-type XrmDefinitelyTyped private () =
+type XrmDefinitelyTyped private () = 
 
-  static member GetContext(url, username, password, ?domain, ?ap, ?out, ?entities, ?solutions, ?formIntersects) =
-    let xrmAuth =
-      { XrmAuthentication.url = Uri(url);
-        username = username;
-        password = password;
+  static member GenerateFromCrm(url, username, password, ?domain, ?ap, ?outDir, ?entities, ?solutions, ?crmVersion, ?skipForms, ?restNs, ?webNs, ?formIntersects) = 
+    let xrmAuth = 
+      { XrmAuthentication.url = Uri(url)
+        username = username
+        password = password
         domain = domain
-        ap = ap
-      }
-
-    let settings =
-      { XrmDefinitelyTypedSettings.out = out
-        entities = entities
+        ap = ap }
+    
+    let rSettings = 
+      { XdtRetrievalSettings.entities = entities
         solutions = solutions
-        crmVersion = None
-        formIntersects = formIntersects
       }
-    XrmDefinitelyTyped.GetContext(xrmAuth, settings)
+
+    let gSettings = 
+      { XdtGenerationSettings.out = outDir
+        crmVersion = crmVersion
+        skipForms = skipForms ?| false
+        restNs = restNs
+        webNs = webNs
+        formIntersects = formIntersects
+       }
+    
+    XrmDefinitelyTyped.GenerateFromCrm(xrmAuth, rSettings, gSettings)
+  
 
 
-  static member GetContext(xrmAuth, settings) =
-    #if !DEBUG
+  static member GenerateFromCrm(xrmAuth, rSettings, gSettings) =
+    #if !DEBUG 
     try
-    #endif
-      let out = settings.out ?| "."
-
-      // Pre-generation tasks
-      clearOldOutputFiles out
-      generateFolderStructure out
-
-      let mainProxy = connectToCrm xrmAuth
-      let proxyGetter = proxyHelper xrmAuth
-
-      let crmVersion =
-        settings.crmVersion ?| retrieveCrmVersion mainProxy
-
-      let entities = 
-        getFullEntityList settings.entities settings.solutions mainProxy
-
-      let formIntersects = 
-        settings.formIntersects ?| [||]
-
-      // Connect to CRM and interpret the data
-      let data = 
-        (mainProxy, proxyGetter)
-        ||> retrieveCrmData crmVersion entities
-        |> interpretCrmData out formIntersects
-
-      // Generate the files
-      data
-      |>> generateResourceFiles crmVersion
-      |>> generateEntityBaseFiles
-      |>> generateEnumFiles
-      |>> generateEntityEnumFiles
-      |>> generateEntityFiles
-      |>> generateIPageFiles
-      |>  generateFormFiles
-
+    #endif 
+      
+      retrieveRawState xrmAuth rSettings
+      |> generateFromRaw gSettings
       printfn "\nSuccessfully generated all TypeScript declaration files."
 
     #if !DEBUG
-    with _ as ex ->
-      getFirstExceptionMessage ex |> failwithf "\nUnable to generate TypeScript files: %s"
+    with ex -> getFirstExceptionMessage ex |> failwithf "\nUnable to generate TypeScript files: %s"
     #endif
 
+
+
+  static member SaveMetadataToFile(xrmAuth, rSettings, ?filePath) =
+    #if !DEBUG 
+    try
+    #endif 
+      
+      let filePath = 
+        filePath 
+        ?>>? (String.IsNullOrWhiteSpace >> not)
+        ?| "XdtData.json"
+
+      let serializer = DataContractJsonSerializer(typeof<RawState>)
+      use stream = new FileStream(filePath, FileMode.Create)
+
+      retrieveRawState xrmAuth rSettings
+      |> fun state -> serializer.WriteObject(stream, state)
+      printfn "\nSuccessfully saved retrieved data to file."
+
+    #if !DEBUG
+    with ex -> getFirstExceptionMessage ex |> failwithf "\nUnable to generate data file: %s"
+    #endif
+
+
+
+  static member GenerateFromRawState(rawState, gSettings) =
+    #if !DEBUG 
+    try
+    #endif 
+
+      generateFromRaw gSettings rawState
+      printfn "\nSuccessfully generated all TypeScript declaration files."
+
+    #if !DEBUG
+    with ex -> getFirstExceptionMessage ex |> failwithf "\nUnable to generate TypeScript files: %s"
+    #endif
+
+
+  static member GenerateFromFile(gSettings, ?filePath) =
+    #if !DEBUG 
+    try
+    #endif 
+      let filePath = 
+        filePath 
+        ?>>? (String.IsNullOrWhiteSpace >> not)
+        ?| "XdtData.json"
+
+      let rawState =
+        try
+          let serializer = DataContractJsonSerializer(typeof<RawState>)
+          use stream = new FileStream(filePath, FileMode.Open)
+          serializer.ReadObject(stream) :?> RawState
+        with ex -> failwithf "\nUnable to parse data file"
+    
+      generateFromRaw gSettings rawState
+      printfn "\nSuccessfully generated all TypeScript declaration files."
+
+    #if !DEBUG
+    with ex -> getFirstExceptionMessage ex |> failwithf "\nUnable to generate TypeScript files: %s"
+    #endif

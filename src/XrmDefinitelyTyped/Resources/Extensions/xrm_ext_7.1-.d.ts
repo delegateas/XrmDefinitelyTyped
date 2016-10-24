@@ -1,5 +1,5 @@
-﻿/// <reference path="..\base.d.ts" />
-declare module IPage {
+﻿/// <reference path="..\xrm.d.ts" />
+declare namespace Xrm {
     interface SubGridControl extends BaseControl {
         /**
          * Add event handlers to this event to run every time the subgrid refreshes. 

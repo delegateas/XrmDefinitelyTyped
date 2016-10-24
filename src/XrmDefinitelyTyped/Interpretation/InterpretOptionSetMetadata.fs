@@ -1,7 +1,5 @@
 ﻿namespace DG.XrmDefinitelyTyped
 
-open System.Text.RegularExpressions
-
 open Microsoft.Xrm.Sdk
 open Microsoft.Xrm.Sdk.Metadata
 

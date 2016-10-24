@@ -1,80 +1,77 @@
 ﻿namespace DG.XrmDefinitelyTyped
 
+open Utility
+
 open IntermediateRepresentation
 open InterpretOptionSetMetadata
 open Microsoft.Xrm.Sdk.Metadata
-open Utility
 
 module internal InterpretEntityMetadata =
   
   let toSome convertFunc (nullable:System.Nullable<'a>) =
     match nullable.HasValue with
     | true -> convertFunc (nullable.GetValueOrDefault())
-    | false -> Type.Any
+    | false -> TsType.Any
 
   let typeConv = function   
-    | AttributeTypeCode.Boolean   -> Type.Boolean
-    | AttributeTypeCode.DateTime  -> Type.Date
-    | AttributeTypeCode.Integer   -> Type.Number
+    | AttributeTypeCode.Boolean   -> TsType.Boolean
+    | AttributeTypeCode.DateTime  -> TsType.Date
+    | AttributeTypeCode.Integer   -> TsType.Number
     
     | AttributeTypeCode.Memo      
     | AttributeTypeCode.EntityName
-    | AttributeTypeCode.String    -> Type.String
-
-    | AttributeTypeCode.BigInt    
     | AttributeTypeCode.Double    
     | AttributeTypeCode.Decimal   
+    | AttributeTypeCode.String    -> TsType.String
+
+    | AttributeTypeCode.BigInt    
     | AttributeTypeCode.Integer
     | AttributeTypeCode.Money     
     | AttributeTypeCode.Picklist  
     | AttributeTypeCode.State     
-    | AttributeTypeCode.Status    -> Type.Number
-    | _                           -> Type.Any
+    | AttributeTypeCode.Status    -> TsType.Number
+    | _                           -> TsType.Any
 
-
-
-  let (|IsWrongYomi|) (haystack : string) =
-    not(haystack.StartsWith("Yomi")) && haystack.Contains("Yomi")
 
   let interpretAttribute entityNames (a:AttributeMetadata) =
     let aType = a.AttributeType.GetValueOrDefault()
-    match aType, a.SchemaName with
-      | AttributeTypeCode.Virtual, _
-      | _, IsWrongYomi true           -> None, None
-      | _ -> 
+    if a.AttributeOf <> null ||
+       aType = AttributeTypeCode.Virtual ||
+       a.LogicalName.StartsWith("yomi") then None, None
+    else
 
-      let options =
-        match a with
-        | :? EnumAttributeMetadata as eam -> interpretOptionSet entityNames eam.OptionSet
-        | _ -> None
+    let options =
+      match a with
+      | :? EnumAttributeMetadata as eam -> interpretOptionSet entityNames eam.OptionSet
+      | _ -> None
 
-      let vType, sType = 
-        match aType with
-        | AttributeTypeCode.Money     -> Type.Number, SpecialType.Money
-        | AttributeTypeCode.Picklist
-        | AttributeTypeCode.State
-        | AttributeTypeCode.Status    -> Type.Custom options.Value.displayName, SpecialType.OptionSet
+    let vType, sType = 
+      match aType with
+      | AttributeTypeCode.Money     -> TsType.Number, SpecialType.Money
+      | AttributeTypeCode.Picklist
+      | AttributeTypeCode.State
+      | AttributeTypeCode.Status    -> TsType.Custom options.Value.displayName, SpecialType.OptionSet
 
-        | AttributeTypeCode.Lookup    
-        | AttributeTypeCode.PartyList
-        | AttributeTypeCode.Customer
-        | AttributeTypeCode.Owner     -> Type.Any, SpecialType.EntityReference
+      | AttributeTypeCode.Lookup    
+      | AttributeTypeCode.PartyList  
+      | AttributeTypeCode.Customer  
+      | AttributeTypeCode.Owner     -> TsType.String, SpecialType.EntityReference
         
-        | AttributeTypeCode.Uniqueidentifier -> Type.String, SpecialType.Guid
-        | _ -> toSome typeConv a.AttributeType, SpecialType.Default
+      | AttributeTypeCode.Uniqueidentifier -> TsType.String, SpecialType.Guid
+      | _ -> toSome typeConv a.AttributeType, SpecialType.Default
     
-      options, Some {
-        XrmAttribute.schemaName = a.SchemaName
-        logicalName = a.LogicalName
-        varType = vType
-        specialType = sType }
+    options, Some {
+      XrmAttribute.schemaName = a.SchemaName
+      logicalName = a.LogicalName
+      varType = vType
+      specialType = sType }
 
 
   let interpretRelationship map referencing (rel:OneToManyRelationshipMetadata) =
     if referencing then rel.ReferencedEntity
     else rel.ReferencingEntity
     |> fun s -> Map.tryFind s map
-    |> Option.map (fun rEntity ->
+    ?|> (fun (rSchema, rSetName) ->
       let name =
           match rel.ReferencedEntity = rel.ReferencingEntity with
           | false -> rel.SchemaName
@@ -88,10 +85,14 @@ module internal InterpretEntityMetadata =
           attributeName = 
             if referencing then rel.ReferencingAttribute 
             else rel.ReferencedAttribute
+          navProp = 
+            if referencing then rel.ReferencingEntityNavigationPropertyName
+            else rel.ReferencedEntityNavigationPropertyName
           referencing = referencing
-          relatedEntity = rEntity }
+          relatedSetName = rSetName
+          relatedSchemaName = rSchema }
 
-      rEntity, xRel)
+      rSchema, xRel)
 
 
   let interpretM2MRelationship map lname (rel:ManyToManyRelationshipMetadata) =
@@ -99,15 +100,19 @@ module internal InterpretEntityMetadata =
     | true  -> rel.Entity1LogicalName
     | false -> rel.Entity2LogicalName
     |> fun s -> Map.tryFind s map
-    |> Option.map (fun rEntity ->
-
+    ?|> (fun (rSchema, rSetName) ->
+      
       let xRel = 
         { XrmRelationship.schemaName = rel.SchemaName 
           attributeName = rel.SchemaName
+          navProp = 
+            if lname = rel.Entity2LogicalName then rel.Entity1NavigationPropertyName
+            else rel.Entity2NavigationPropertyName
           referencing = false
-          relatedEntity = rEntity }
+          relatedSetName = rSetName
+          relatedSchemaName = rSchema }
     
-      rEntity, xRel)
+      rSchema, xRel)
 
 
   let interpretEntity entityNames map (metadata:EntityMetadata) =
@@ -150,6 +155,7 @@ module internal InterpretEntityMetadata =
     { XrmEntity.typecode = metadata.ObjectTypeCode.GetValueOrDefault()
       schemaName = metadata.SchemaName
       logicalName = metadata.LogicalName
+      entitySetName = metadata.EntitySetName
       attr_vars = attr_vars
       rel_vars = rel_vars
       opt_sets = opt_sets

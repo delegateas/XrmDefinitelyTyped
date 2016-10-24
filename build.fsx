@@ -172,7 +172,7 @@ Target "NuGet" (fun _ ->
         Tags = tags
         NoDefaultExcludes = true
         AccessKey = getBuildParamOrDefault "delegateas-nugetkey" ""
-        Dependencies = [ "Microsoft.CrmSdk.CoreAssemblies", "5.0.18" ]
+        Dependencies = [ "Microsoft.CrmSdk.CoreAssemblies", "8.1.0" ]
         References = [] 
 
         OutputPath = "bin"
@@ -221,21 +221,25 @@ let copySpecialFiles () =
     CopyFile "docs/content/" "LICENSE.md"
     Rename "docs/content/license.md" "docs/content/LICENSE.md"
 
-let copyLibs () =
+let copyExtraFiles () =
+    let path = "docs/output/files"
+    CleanDir path
+    // Copy additional files
+    CopyRecursive "files" path true |> tracefn "%A"
     // Copy over compiled javascript resources
-    CleanDir "docs/output/libs"
-    CopyRecursive "bin/XrmDefinitelyTyped/Resources" "docs/output/libs" true |> tracefn "%A"
+    CopyRecursive "bin/XrmDefinitelyTyped/Resources" path true |> tracefn "%A"
+
 
 Target "GenerateHelp" (fun _ ->
     copySpecialFiles()
     generateHelp true
-    copyLibs()
+    copyExtraFiles()
 )
 
 Target "GenerateHelpDebug" (fun _ ->
     copySpecialFiles()
     generateHelp' true true
-    copyLibs()
+    copyExtraFiles()
 )
 
 Target "KeepRunning" (fun _ ->    

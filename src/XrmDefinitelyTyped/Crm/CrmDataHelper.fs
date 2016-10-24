@@ -8,6 +8,7 @@ open Microsoft.Xrm.Sdk.Messages
 open Microsoft.Xrm.Sdk.Query
 open Microsoft.Xrm.Sdk.Metadata
 
+open Utility
 open CrmBaseHelper
 
 module internal CrmDataHelper =

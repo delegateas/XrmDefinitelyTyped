@@ -1,9 +1,13 @@
 {
-  "compilerOptions": {
-    "stripInternal": true,
-    "declaration": true
-  },
-  "files": [
-    "dg.xrmquery.ts"
-  ]
+    "compilerOptions": {
+        "stripInternal": true,
+        "declaration": true,
+        "strictNullChecks": true,
+        "outDir": "Build",
+        "lib": [ "dom", "es5", "es2015.promise" ]
+    },
+    "files": [
+        "dg.xrmquery.rest.ts",
+        "dg.xrmquery.web.ts"
+    ]
 }

@@ -1,34 +1,34 @@
 ﻿
 open System
-open System.Text.RegularExpressions
 
 open Microsoft.Xrm.Sdk.Client
 
 open DG.XrmDefinitelyTyped
+open Utility
 open CommandLineHelper
-open GeneratorLogic
 
-// Main executable function
-let executeGetContext argv =
-  let parsedArgs = parseArgs argv Args.expectedArgs
 
+let getXrmAuth parsedArgs = 
   let ap = 
-    match parsedArgs.TryFind "ap" with
-    | Some ap -> 
-        Enum.Parse(typeof<AuthenticationProviderType>, ap) 
-          :?> AuthenticationProviderType |> Some
-    | None -> None
+    getArg parsedArgs "ap" (fun ap ->
+      Enum.Parse(typeof<AuthenticationProviderType>, ap) 
+        :?> AuthenticationProviderType)
 
-  let xrmAuth =
-    { XrmAuthentication.url = Uri(parsedArgs.Item "url");
-      username = parsedArgs.Item "username";
-      password = parsedArgs.Item "password";
-      domain = parsedArgs.TryFind "domain";
-      ap = ap; }
-   
+  { XrmAuthentication.url = Uri(Map.find "url" parsedArgs)
+    username = Map.find "username" parsedArgs
+    password = Map.find "password" parsedArgs
+    domain = Map.tryFind "domain" parsedArgs
+    ap = ap; }
+
+let getRetrieveSettings parsedArgs =
   let entities = getListArg parsedArgs "entities" (fun s -> s.ToLower())
   let solutions = getListArg parsedArgs "solutions" id
 
+  { XdtRetrievalSettings.entities = entities
+    solutions = solutions
+  }
+
+let getGenerationSettings parsedArgs =
   let formIntersects = getListArg parsedArgs "formintersect" (fun definition -> 
     let nameSplit = definition.IndexOf(":")
     if nameSplit < 0 then failwithf "No name specfication found in form-intersect list at: '%s'" definition
@@ -44,33 +44,81 @@ let executeGetContext argv =
         if r then Some g
         else printfn "Unable to parse given form GUID: %s. Skipping it" guidInput.[idx]; None)
       |> Array.choose id
-
     name, guids)
 
-  let settings =
-    { XrmDefinitelyTypedSettings.out = parsedArgs.TryFind "out"
-      entities = entities
-      solutions = solutions
-      crmVersion = None
-      formIntersects = formIntersects
-    }
+  let nsSanitizer ns =
+    if String.IsNullOrWhiteSpace ns then String.Empty
+    else sanitizeString ns
 
-  XrmDefinitelyTyped.GetContext(xrmAuth, settings)
+  { XdtGenerationSettings.out = Map.tryFind "out" parsedArgs 
+    crmVersion = getArg parsedArgs "crmVersion" parseVersion
+    skipForms = getArg parsedArgs "skipForms" parseBoolish ?| false
+    restNs = getArg parsedArgs "rest" nsSanitizer
+    webNs = getArg parsedArgs "web" nsSanitizer
+    formIntersects = formIntersects 
+  }
 
+
+/// Load metadata from local file and generate
+let loadGen parsedArgs =
+  let filename = 
+    match Map.tryFind "load" parsedArgs with
+    | Some p -> p
+    | None -> failwithf "No load argument found"
+
+  XrmDefinitelyTyped.GenerateFromFile(
+    getGenerationSettings parsedArgs,
+    filename)
+
+/// Save metadata to file
+let dataSave parsedArgs =
+  let filename = 
+    match Map.tryFind "save" parsedArgs with
+    | Some p -> p
+    | None -> failwithf "No load argument found"
+
+  XrmDefinitelyTyped.SaveMetadataToFile(
+      getXrmAuth parsedArgs, 
+      getRetrieveSettings parsedArgs,
+      filename)
+
+// Regular connect to CRM and generate
+let connectGen parsedArgs =
+  XrmDefinitelyTyped.GenerateFromCrm(
+    getXrmAuth parsedArgs, 
+    getRetrieveSettings parsedArgs, 
+    getGenerationSettings parsedArgs)
+
+
+// Main executable function
+let executeWithArgs argv =
+  let parsedArgs = parseArgs argv Args.argMap
+
+  match parsedArgs |> Map.tryPick (fun k v -> Args.flagArgMap.TryFind k) with
+  | Some flagArg when flagArg = Args.genConfigFlag -> 
+    Args.genConfig()
+
+  | Some flagArg when flagArg = Args.loadFlag ->
+    parsedArgs |> checkArgs Args.generationArgs |> loadGen
+
+  | Some flagArg when flagArg = Args.saveFlag ->
+    parsedArgs |> checkArgs Args.connectionArgs |> dataSave
+
+  | _ -> 
+    parsedArgs |> checkArgs Args.fullArgList |> connectGen
 
 
 // Main method
 [<EntryPoint>]
 let main argv = 
   #if DEBUG
-  executeGetContext argv
+  executeWithArgs (List.ofArray argv)
   0
   #else
   try 
     showDescription()
     if argv.Length > 0 && Args.helpArgs.Contains argv.[0] then showUsage()
-    else if argv.Length > 0 && Args.genConfigArgs.Contains argv.[0] then Args.genConfig()
-    else executeGetContext argv
+    else executeWithArgs (List.ofArray argv)
     0
   with ex ->
     eprintfn "%s" ex.Message

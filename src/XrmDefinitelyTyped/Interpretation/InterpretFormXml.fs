@@ -4,10 +4,8 @@ open System.Xml.Linq
 open System.Text.RegularExpressions
 
 open Microsoft.Xrm.Sdk
-open Microsoft.Xrm.Sdk.Metadata
 
 open IntermediateRepresentation
-open InterpretOptionSetMetadata
 open Utility
 
 module internal InterpretFormXml = 
@@ -45,15 +43,15 @@ module internal InterpretFormXml =
       ("9C5CA0A1-AB4D-4781-BE7E-8DFBE867B87E", Timer)
     ] |> List.map (fun (id,t) -> id.ToUpper(), t) |> Map.ofList
     
-  let getAttribute (enums:Map<string,Type>) (_, attr, controlClass) =
+  let getAttribute (enums:Map<string,TsType>) (_, attr, controlClass) =
     if attr = null then None else 
 
     let aType = 
       match controlClass with
       | Picklist 
-      | StatusReason  -> AttributeType.OptionSet (enums.TryFind(attr) ?| Type.Number)
+      | StatusReason  -> AttributeType.OptionSet (enums.TryFind(attr) ?| TsType.Number)
       | RadioButtons 
-      | CheckBox      -> AttributeType.OptionSet Type.Boolean
+      | CheckBox      -> AttributeType.OptionSet TsType.Boolean
         
       | Decimal 
       | Duration
@@ -72,14 +70,14 @@ module internal InterpretFormXml =
       | Notes
       | TextArea 
       | TextBox 
-      | Url           -> AttributeType.Default Type.String
+      | Url           -> AttributeType.Default TsType.String
 
-      | _             -> AttributeType.Default Type.Any
+      | _             -> AttributeType.Default TsType.Any
         
     Some (attr, aType)
 
 
-  let getControl  (enums:Map<string,Type>) (controlField:ControlField): XrmFormControl option =
+  let getControl  (enums:Map<string,TsType>) (controlField:ControlField): XrmFormControl option =
     let controlId, datafield, controlClass = controlField
     if controlClass = QuickView then None else
 
@@ -181,7 +179,7 @@ module internal InterpretFormXml =
     ) >> List.concat
 
   /// Function to interpret a single FormXml
-  let interpretFormXml (enums:Map<string,Type>) (bpfFields: ControlField list option) (systemForm:Entity) =
+  let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list option) (systemForm:Entity) =
     let bpfFields = bpfFields ?| []
     let form = XElement.Parse(systemForm.Attributes.["formxml"].ToString())
 

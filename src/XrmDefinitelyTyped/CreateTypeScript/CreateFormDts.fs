@@ -11,41 +11,41 @@ module internal CreateFormDts =
 
   /// Translate internal attribute type to corresponding TypeScript interface.
   let getAttributeInterface = function
-    | AttributeType.OptionSet ty  -> Type.SpecificGeneric ("IPage.OptionSetAttribute", ty)
-    | AttributeType.Default ty    -> Type.SpecificGeneric ("IPage.Attribute", ty)
-    | x                           -> Type.Custom (sprintf "IPage.%AAttribute" x)
+    | AttributeType.OptionSet ty  -> TsType.SpecificGeneric ("Xrm.OptionSetAttribute", [ ty ])
+    | AttributeType.Default ty    -> TsType.SpecificGeneric ("Xrm.Attribute", [ ty ])
+    | x                           -> TsType.Custom (sprintf "Xrm.%AAttribute" x)
  
   /// Gets the corresponding enum of the option set if possible
   let getOptionSetType = function
     | Some (AttributeType.OptionSet ty) -> ty
-    | _ -> Type.Number
+    | _ -> TsType.Number
 
   /// Translate internal control type to corresponding TypeScript interface.
   let getControlInterface cType aType =
     match aType, cType with
-    | None, ControlType.Default       -> Type.Custom "IPage.BaseControl"
-    | Some (AttributeType.Default Type.String), ControlType.Default
-                                      -> Type.Custom "IPage.StringControl"
-    | Some at, ControlType.Default    -> Type.SpecificGeneric ("IPage.Control", getAttributeInterface at) 
-    | aType, ControlType.OptionSet    -> Type.SpecificGeneric ("IPage.OptionSetControl", getOptionSetType aType)
-    | _, x                            -> Type.Custom (sprintf "IPage.%AControl" x)
+    | None, ControlType.Default       -> TsType.Custom "Xrm.BaseControl"
+    | Some (AttributeType.Default TsType.String), ControlType.Default
+                                      -> TsType.Custom "Xrm.StringControl"
+    | Some at, ControlType.Default    -> TsType.SpecificGeneric ("Xrm.Control", [ getAttributeInterface at ]) 
+    | aType, ControlType.OptionSet    -> TsType.SpecificGeneric ("Xrm.OptionSetControl", [ getOptionSetType aType ])
+    | _, x                            -> TsType.Custom (sprintf "Xrm.%AControl" x)
 
   /// Default collection functions which also use the "get" function name.
   let defaultCollectionFuncs emptyType defaultType = 
     [ Function.Create("get", 
-        [ Variable.Create("name", Type.String) ], 
-        Type.Custom emptyType)
+        [ Variable.Create("name", TsType.String) ], 
+        TsType.Custom emptyType)
 
-      Function.Create("get", [], Type.Array (Type.Custom defaultType))
+      Function.Create("get", [], TsType.Array (TsType.Custom defaultType))
       Function.Create("get", 
-        [Variable.Create("index", Type.Number)], Type.Custom defaultType)
+        [Variable.Create("index", TsType.Number)], TsType.Custom defaultType)
       Function.Create("get", 
         [Variable.Create("chooser", 
-          Type.Function(
-            [ Variable.Create("item", Type.Custom defaultType)
-              Variable.Create("index", Type.Number) ], 
-            Type.Boolean))], 
-          Type.Array (Type.Custom defaultType))]
+          TsType.Function(
+            [ Variable.Create("item", TsType.Custom defaultType)
+              Variable.Create("index", TsType.Number) ], 
+            TsType.Boolean))], 
+          TsType.Array (TsType.Custom defaultType))]
 
 
   /// Generate Xrm.Page.data.entity.attributes.get(<string>) functions.
@@ -57,8 +57,8 @@ module internal CreateFormDts =
         let returnType = getAttributeInterface ty
         Function.Create("get", [Variable.Create("name", paramType)], returnType))
 
-    let defaultFuncs = defaultCollectionFuncs "IPage.EmptyAttribute" "IPage.Attribute<any>"
-    Interface.Create("Attributes", superClass = "IPage.AttributeCollectionBase",
+    let defaultFuncs = defaultCollectionFuncs "Xrm.EmptyAttribute" "Xrm.Attribute<any>"
+    Interface.Create("Attributes", superClass = "Xrm.AttributeCollectionBase",
       funcs = getFuncs @ defaultFuncs)
 
 
@@ -71,8 +71,8 @@ module internal CreateFormDts =
         let returnType = getControlInterface cType aType          
         Function.Create("get", [Variable.Create("name", paramType)], returnType))
 
-    let defaultFuncs = defaultCollectionFuncs "IPage.EmptyControl" "IPage.BaseControl"
-    Interface.Create("Controls", superClass = "IPage.ControlCollectionBase",
+    let defaultFuncs = defaultCollectionFuncs "Xrm.EmptyControl" "Xrm.BaseControl"
+    Interface.Create("Controls", superClass = "Xrm.ControlCollectionBase",
       funcs = getFuncs @ defaultFuncs)
 
 
@@ -82,15 +82,15 @@ module internal CreateFormDts =
       tabs
       |> List.map (fun (iname, name, sections) ->
         let paramType = getConstantType name
-        let returnType = sprintf "IPage.PageTab<Tabs.%s>" iname |> Type.Custom
+        let returnType = sprintf "Xrm.PageTab<Tabs.%s>" iname |> TsType.Custom
         Function.Create("get", [Variable.Create("name", paramType)], returnType))
 
     let defaultFuncs = 
       defaultCollectionFuncs 
-        "IPage.EmptyPageTab" 
-        "IPage.PageTab<IPage.Collection<IPage.PageSection>>"
+        "Xrm.EmptyPageTab" 
+        "Xrm.PageTab<Xrm.Collection<Xrm.PageSection>>"
 
-    Interface.Create("Tabs", superClass = "IPage.TabCollectionBase",
+    Interface.Create("Tabs", superClass = "Xrm.TabCollectionBase",
       funcs = getFuncs @ defaultFuncs)
 
 
@@ -101,11 +101,11 @@ module internal CreateFormDts =
       |> List.map (fun name -> 
         let paramType = getConstantType name
         Function.Create("get", [ Variable.Create("name", paramType) ], 
-          Type.Custom "IPage.PageSection"))
+          TsType.Custom "Xrm.PageSection"))
 
-    let defaultFuncs = defaultCollectionFuncs "IPage.EmptyPageSection" "IPage.PageSection"
+    let defaultFuncs = defaultCollectionFuncs "Xrm.EmptyPageSection" "Xrm.PageSection"
     tabs |> List.map (fun (iname, name, sections) ->
-      Interface.Create(iname, superClass = "IPage.SectionCollectionBase",
+      Interface.Create(iname, superClass = "Xrm.SectionCollectionBase",
         funcs = getFuncs sections @ defaultFuncs))
 
 
@@ -122,8 +122,8 @@ module internal CreateFormDts =
 
     let defaultFunc =
       Function.Create("getAttribute", 
-        [ Variable.Create("attributeName", Type.String) ], 
-        Type.Custom "IPage.EmptyAttribute")
+        [ Variable.Create("attributeName", TsType.String) ], 
+        TsType.Custom "Xrm.EmptyAttribute")
     attrFuncs @ [ defaultFunc ]
 
 
@@ -140,27 +140,27 @@ module internal CreateFormDts =
 
     let defaultFunc =
       Function.Create("getControl", 
-        [ Variable.Create("controlName", Type.String) ], 
-        Type.Custom "IPage.EmptyControl")
+        [ Variable.Create("controlName", TsType.String) ], 
+        TsType.Custom "Xrm.EmptyControl")
     ctrlFuncs @ [ defaultFunc ]
 
 
 
-  /// Generate internal module for keeping track all the collections.
-  let getFormSubmodule (form:XrmForm) =
-    Module.Create(form.name,
+  /// Generate internal namespace for keeping track all the collections.
+  let getFormNamespace (form:XrmForm) =
+    Namespace.Create(form.name,
       interfaces = 
         [ getAttributeCollection form.attributes 
           getControlCollection form.controls 
           getTabCollection form.tabs ],
-      modules = 
-        [ Module.Create("Tabs", interfaces = getSectionCollections form.tabs) ])
+      namespaces = 
+        [ Namespace.Create("Tabs", interfaces = getSectionCollections form.tabs) ])
 
 
   /// Generate the interface for the Xrm.Page of the form.
   let getFormInterface (form:XrmForm) =
     let superClass = 
-      sprintf "IPage.PageBase<%s.Attributes,%s.Tabs,%s.Controls>"
+      sprintf "Xrm.PageBase<%s.Attributes,%s.Tabs,%s.Controls>"
         form.name form.name form.name
 
     Interface.Create(form.name, superClass = superClass, 
@@ -169,20 +169,20 @@ module internal CreateFormDts =
         getControlFuncs form.controls)
 
 
-  /// Generate the module containing all the form interface and internal 
-  /// module for collections.
+  /// Generate the namespace containing all the form interface and internal 
+  /// namespaces for collections.
   let getFormDts (form:XrmForm) = 
-    let moduleName = 
+    let nsName = 
       sprintf "Form.%s%s" 
         (form.entityName |> Utility.sanitizeString)
         (match form.formType with
         | Some ty -> sprintf ".%s" ty
         | None   -> "")
 
-    Module.Create(
-      moduleName,
+    Namespace.Create(
+      nsName,
       declare = true,
-      modules = [ getFormSubmodule form ],
+      namespaces = [ getFormNamespace form ],
       interfaces = [ getFormInterface form ]) 
-    |> moduleToString
+    |> nsToString
 

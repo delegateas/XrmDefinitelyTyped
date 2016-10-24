@@ -1,64 +1,59 @@
-/// <reference path="base.d.ts" />
+interface RestEntities { }
+
 /**
  * @internal
  */
-declare module SDK {
-  module REST {
+declare namespace SDK {
+  namespace REST {
     function createRecord(object: any, type: string, successCallback: (result: any) => any, errorCallback: (err: Error) => any): void;
     function deleteRecord(id: string, type: string, successCallBack: () => any, errorCallback: (err: Error) => any): void;
-    function retrieveRecord(id: string, type: string, select: string, expand: string, successCallback: (result: any) => any, errorCallback: (err: Error) => any): void;
+    function retrieveRecord(id: string, type: string, select: string | null, expand: string | null, successCallback: (result: any) => any, errorCallback: (err: Error) => any): void;
     function updateRecord(id: string, object: any, type: string, successCallBack: () => any, errorCallback: (err: Error) => any): void;
-    function retrieveMultipleRecords(type: string, options: string, successCallback: (result: any[]) => any, errorCallback: (err: Error) => any, onComplete: any): void;
+    function retrieveMultipleRecords(type: string, options: string | null, successCallback: (result: any[]) => any, errorCallback: (err: Error) => any, onComplete: any): void;
   }
 }
 
-module Filter {
-  export function equals<T>(v1: T, v2: T): Filter { return XQC.Comp(v1, "eq", v2) }
-  export function notEquals<T>(v1: T, v2: T): Filter { return XQC.Comp(v1, "ne", v2) }
+interface RestMapping<O, S, E, F, R> {
+  __isRestMapping: O;
+}
 
-  export function greaterThan<T extends Number|Date>(v1: T, v2: T): Filter { return XQC.Comp(v1, "gt", v2) }
-  export function greaterThanOrEqual<T extends Number|Date>(v1: T, v2: T): Filter { return XQC.Comp(v1, "ge", v2) }
-  export function lessThan<T extends Number|Date>(v1: T, v2: T): Filter { return XQC.Comp(v1, "lt", v2) }
-  export function lessThanOrEqual<T extends Number|Date>(v1: T, v2: T): Filter { return XQC.Comp(v1, "le", v2) }
+interface RestAttribute<T> {
+  __isRestAttribute: T;
+}
 
-  export function and(f1: Filter, f2: Filter): Filter { return XQC.BiFilter(f1, "and", f2) }
-  export function or(f1: Filter, f2: Filter): Filter { return XQC.BiFilter(f1, "or", f2) }
-  export function not(f1: Filter): Filter { return <Filter><any>("not " + f1) }
+interface RestExpand<T, U> extends RestAttribute<T> {
+  __isRestExpandable: U;
+}
 
-  export function ands(fs: Filter[]): Filter { return XQC.NestedFilter(fs, "and") }
-  export function ors(fs: Filter[]): Filter { return XQC.NestedFilter(fs, "or") }
+interface RestFilter {
+  __isRestFilter: any;
+}
 
-  export function startsWith(v1: string, v2: string): Filter { return XQC.DataFunc("startswith", v1, v2) }
-  export function substringOf(v1: string, v2: string): Filter { return XQC.DataFunc("substringof", v1, v2) }
-  export function endsWith(v1: string, v2: string): Filter { return XQC.DataFunc("endswith", v1, v2) }
-  
+namespace Filter.REST {
+  export function equals<T>(v1: T, v2: T): RestFilter { return Comp(v1, "eq", v2) }
+  export function notEquals<T>(v1: T, v2: T): RestFilter { return Comp(v1, "ne", v2) }
+
+  export function greaterThan<T extends Number | Date>(v1: T, v2: T): RestFilter { return Comp(v1, "gt", v2) }
+  export function greaterThanOrEqual<T extends Number | Date>(v1: T, v2: T): RestFilter { return Comp(v1, "ge", v2) }
+  export function lessThan<T extends Number | Date>(v1: T, v2: T): RestFilter { return Comp(v1, "lt", v2) }
+  export function lessThanOrEqual<T extends Number | Date>(v1: T, v2: T): RestFilter { return Comp(v1, "le", v2) }
+
+  export function and(f1: RestFilter, f2: RestFilter): RestFilter { return BiFilter(f1, "and", f2) }
+  export function or(f1: RestFilter, f2: RestFilter): RestFilter { return BiFilter(f1, "or", f2) }
+  export function not(f1: RestFilter): RestFilter { return <RestFilter><any>("not " + f1) }
+
+  export function ands(fs: RestFilter[]): RestFilter { return NestedFilter(fs, "and") }
+  export function ors(fs: RestFilter[]): RestFilter { return NestedFilter(fs, "or") }
+
+  export function startsWith(v1: string, v2: string): RestFilter { return DataFunc("startswith", v1, v2) }
+  export function substringOf(v1: string, v2: string): RestFilter { return DataFunc("substringof", v1, v2) }
+  export function endsWith(v1: string, v2: string): RestFilter { return DataFunc("endswith", v1, v2) }
+
   /**
    * Makes a string into a GUID that can be sent to the OData source
    */
-  export function makeGuid(id: string): Guid { return <Guid><any>XQC.makeTag(`(guid'${id}')`) }
-}
+  export function makeGuid(id: string): XQR.Guid { return <XQR.Guid><any>XQR.makeTag(`(guid'${id}')`) }
 
-
-module XrmQuery {
-  export function retrieveRecord<O, S, E, R>(entityPicker: (x: Entities) => QueryMapping<O, S, E, any, R>, id: string) {
-    return new XQC.RetrieveRecord(entityPicker, id);
-  }
-  export function retrieveMultipleRecords<O, S, E, F, R>(entityPicker: (x: Entities) => QueryMapping<O, S, E, F, R>) {
-    return new XQC.RetrieveMultipleRecords(entityPicker);
-  }
-  export function createRecord<O, R>(entityPicker: (x: Entities) => QueryMapping<O, any, any, any, R>, record: O) {
-    return new XQC.CreateRecord(entityPicker, record);
-  }
-  export function updateRecord<O>(entityPicker: (x: Entities) => QueryMapping<O, any, any, any, any>, id: string, record: O) {
-    return new XQC.UpdateRecord(entityPicker, id, record);
-  }
-  export function deleteRecord<O>(entityPicker: (x: Entities) => QueryMapping<O, any, any, any, any>, id: string) {
-    return new XQC.DeleteRecord(entityPicker, id);
-  }
-}
-
-
-module XQC {
   /**
    * @internal
    */
@@ -72,30 +67,75 @@ module XQC {
   /**
    * @internal
    */
-  export function Comp<T>(val1: T, op: string, val2: T): Filter {
-    return <Filter><any>(`${getVal(val1)} ${op} ${getVal(val2)}`);
+  function Comp<T>(val1: T, op: string, val2: T): RestFilter {
+    return <RestFilter><any>(`${getVal(val1)} ${op} ${getVal(val2)}`);
   }
 
   /**
    * @internal
    */
-  export function DataFunc<T>(funcName: string, val1: T, val2: T): Filter {
-    return <Filter><any>(`${funcName}(${getVal(val1)}, ${getVal(val2)})`);
+  function DataFunc<T>(funcName: string, val1: T, val2: T): RestFilter {
+    return <RestFilter><any>(`${funcName}(${getVal(val1)}, ${getVal(val2)})`);
   }
 
   /**
    * @internal
    */
-  export function BiFilter(f1: Filter, conj: string, f2: Filter): Filter {
-    return <Filter><any>(`(${f1} ${conj} ${f2})`);
+  function BiFilter(f1: RestFilter, conj: string, f2: RestFilter): RestFilter {
+    return <RestFilter><any>(`(${f1} ${conj} ${f2})`);
   }
 
   /**
    * @internal
    */
-  export function NestedFilter(fs: Filter[], conj: string): Filter {
+  function NestedFilter(fs: RestFilter[], conj: string): RestFilter {
     var last = fs.pop();
-    return fs.reduceRight((acc, c) => XQC.BiFilter(c, conj, acc), last);
+    return fs.reduceRight((acc, c) => BiFilter(c, conj, acc), last);
+  }
+}
+
+
+
+namespace XrmQuery.REST {
+  export function retrieveRecord<O, S, E, R>(entityPicker: (x: RestEntities) => RestMapping<O, S, E, any, R>, id: string) {
+    return new XQR.RetrieveRecord(entityPicker, id);
+  }
+  export function retrieveMultipleRecords<O, S, E, F, R>(entityPicker: (x: RestEntities) => RestMapping<O, S, E, F, R>) {
+    return new XQR.RetrieveMultipleRecords(entityPicker);
+  }
+  export function createRecord<O, R>(entityPicker: (x: RestEntities) => RestMapping<O, any, any, any, R>, record: O) {
+    return new XQR.CreateRecord(entityPicker, record);
+  }
+  export function updateRecord<O>(entityPicker: (x: RestEntities) => RestMapping<O, any, any, any, any>, id: string, record: O) {
+    return new XQR.UpdateRecord(entityPicker, id, record);
+  }
+  export function deleteRecord<O>(entityPicker: (x: RestEntities) => RestMapping<O, any, any, any, any>, id: string) {
+    return new XQR.DeleteRecord(entityPicker, id);
+  }
+}
+
+
+namespace XQR {
+
+  export interface Guid {
+    __XqrGuid: any;
+  }
+
+  export interface ValueContainerFilter<T> {
+    Value: T;
+  }
+
+  export interface EntityReferenceFilter {
+    Id: Guid;
+    Name: string;
+    LogicalName: string;
+  }
+
+  /**
+   * @internal
+   */
+  export function makeTag(name: string) {
+    return { __str: name, toString: function () { return this.__str } }
   }
 
   /**
@@ -127,12 +167,6 @@ module XQC {
     return { arg: m[1], body: m[2] };
   }
 
-  /**
-   * @internal
-   */
-  export function makeTag(name: string) {
-    return { __str: name, toString: function () { return this.__str } }
-  }
 
   /**
    * @internal
@@ -180,17 +214,17 @@ module XQC {
      */
     private id: string;
 
-    constructor(entityPicker: (x: Entities) => QueryMapping<any, S, E, any, R>, id: string) {
+    constructor(entityPicker: (x: RestEntities) => RestMapping<any, S, E, any, R>, id: string) {
       this.logicalName = taggedExec(entityPicker).toString();
       this.id = id;
     }
 
-    select(vars: (x: S) => Attribute<S>[]) {
+    select(vars: (x: S) => RestAttribute<S>[]) {
       this.selects = this.selects.concat(<string[]><any>taggedExec(vars));
       return this;
     }
 
-    expand<S2>(exps: (x: E) => Expandable<S, S2>, vars?: (x: S2) => Attribute<S2>[]) {
+    expand<S2>(exps: (x: E) => RestExpand<S, S2>, vars?: (x: S2) => RestAttribute<S2>[]) {
       var expName = taggedExec(exps).toString();
       this.expands.push(expName);
       if (vars) this.selects = this.selects.concat(taggedExec(vars).map(a => expName + "." + a));
@@ -231,62 +265,62 @@ module XQC {
     /**
      * @internal
      */
-    private filters: Filter;
+    private filters: RestFilter;
     /**
      * @internal
      */
-    private skipAmount: number = null;
+    private skipAmount: number | null = null;
     /**
      * @internal
      */
-    private topAmount: number = null;
+    private topAmount: number | null = null;
 
-    constructor(entityPicker: (x: Entities) => QueryMapping<any, S, E, F, R>) {
+    constructor(entityPicker: (x: RestEntities) => RestMapping<any, S, E, F, R>) {
       this.logicalName = taggedExec(entityPicker).toString();
     }
 
-    select(vars: (x: S) => Attribute<S>[]) {
+    select(vars: (x: S) => RestAttribute<S>[]) {
       this.selects = this.selects.concat(<string[]><any>taggedExec(vars));
       return this;
     }
 
-    expand<T2>(exps: (x: E) => Expandable<S, T2>, vars?: (x: T2) => Attribute<T2>[]) {
+    expand<T2>(exps: (x: E) => RestExpand<S, T2>, vars?: (x: T2) => RestAttribute<T2>[]) {
       var expName = taggedExec(exps).toString();
       this.expands.push(expName);
       if (vars) this.selects = this.selects.concat(taggedExec(vars).map(a => `${expName}/${a}`));
       return this;
     }
 
-    filter(filter: (x: F) => Filter) {
+    filter(filter: (x: F) => RestFilter) {
       this.filters = taggedExec(filter);
       return this;
     }
 
-    orFilter(filter: (x: F) => Filter) {
-        if (this.filters) this.filters = Filter.or(this.filters, taggedExec(filter));
-        else this.filter(filter);
-        return this;
+    orFilter(filter: (x: F) => RestFilter) {
+      if (this.filters) this.filters = Filter.REST.or(this.filters, taggedExec(filter));
+      else this.filter(filter);
+      return this;
     }
 
-    andFilter(filter: (x: F) => Filter) {
-        if (this.filters) this.filters = Filter.and(this.filters, taggedExec(filter));
-        else this.filter(filter);
-        return this;
+    andFilter(filter: (x: F) => RestFilter) {
+      if (this.filters) this.filters = Filter.REST.and(this.filters, taggedExec(filter));
+      else this.filter(filter);
+      return this;
     }
 
     /**
      * @internal
      */
-    private order(vars: (x: S) => Attribute<S>, by: string) {
+    private order(vars: (x: S) => RestAttribute<S>, by: string) {
       this.ordering.push(taggedExec(vars) + " " + by);
       return this;
     }
 
-    orderAsc(vars: (x: S) => Attribute<S>) {
+    orderAsc(vars: (x: S) => RestAttribute<S>) {
       return this.order(vars, "asc");
     }
 
-    orderDesc(vars: (x: S) => Attribute<S>) {
+    orderDesc(vars: (x: S) => RestAttribute<S>) {
       return this.order(vars, "desc");
     }
 
@@ -311,8 +345,8 @@ module XQC {
         this.logicalName,
         this.getOptionString(),
         pageSuccessCallback,
-        errorCallback ? errorCallback : NoOp,
-        onComplete ? onComplete : NoOp);
+        errorCallback,
+        onComplete);
     }
 
     /**
@@ -321,17 +355,17 @@ module XQC {
      * @param errorCallback Called if an error occures during the retrieval
      */
     getAll(successCallback: (records: R[]) => any, errorCallback?: (err: Error) => any) {
-        let pages = [];
-        SDK.REST.retrieveMultipleRecords(
-            this.logicalName,
-            this.getOptionString(),
-            (page) => {
-                pages.push(page);
-            },
-            errorCallback ? errorCallback : NoOp,
-            () => {
-                successCallback([].concat.apply([], pages));
-            });
+      let pages: any[][] = [];
+      SDK.REST.retrieveMultipleRecords(
+        this.logicalName,
+        this.getOptionString(),
+        (page) => {
+          pages.push(page);
+        },
+        errorCallback ? errorCallback : NoOp,
+        () => {
+          successCallback([].concat.apply([], pages));
+        });
     }
 
     /**
@@ -340,13 +374,13 @@ module XQC {
      * @param errorCallback Called if an error occures during the retrieval
      */
     getFirst(successCallback: (record: R | null) => any, errorCallback?: (err: Error) => any) {
-        this.top(1);
-        this.execute(recs => successCallback((recs.length > 0) ? recs[0] : null), errorCallback, NoOp);
+      this.top(1);
+      this.execute(recs => successCallback((recs.length > 0) ? recs[0] : null), errorCallback ? errorCallback : NoOp, NoOp);
     }
 
-    
+
     getOptionString(): string {
-      var options = [];
+      var options: string[] = [];
       if (this.selects.length > 0) {
         options.push("$select=" + this.selects.join(","));
       }
@@ -382,7 +416,7 @@ module XQC {
      */
     private record: O;
 
-    constructor(entityPicker: (x: Entities) => QueryMapping<O, any, any, any, R>, record: O) {
+    constructor(entityPicker: (x: RestEntities) => RestMapping<O, any, any, any, R>, record: O) {
       this.logicalName = taggedExec(entityPicker).toString();
       this.record = record;
     }
@@ -413,20 +447,12 @@ module XQC {
      */
     private record: O;
 
-    constructor(entityPicker: (x: Entities) => QueryMapping<O, any, any, any, any>, id: string, record: O) {
+    constructor(entityPicker: (x: RestEntities) => RestMapping<O, any, any, any, any>, id: string, record: O) {
       this.logicalName = taggedExec(entityPicker).toString();
       this.id = id;
       this.record = record;
     }
 
-    execute(successCallback?: () => any, errorCallback?: (err: Error) => any) {
-      SDK.REST.updateRecord(
-        this.id,
-        this.record,
-        this.logicalName,
-        successCallback ? successCallback : NoOp,
-        errorCallback ? errorCallback : NoOp);
-    }
   }
 
   /**
@@ -442,7 +468,7 @@ module XQC {
      */
     private id: string;
 
-    constructor(entityPicker: (x: Entities) => QueryMapping<O, any, any, any, any>, id: string) {
+    constructor(entityPicker: (x: RestEntities) => RestMapping<O, any, any, any, any>, id: string) {
       this.logicalName = taggedExec(entityPicker).toString();
       this.id = id;
     }

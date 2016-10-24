@@ -1,31 +1,29 @@
 NUGET
   remote: https://www.nuget.org/api/v2
-  specs:
-    FAKE (4.21.0)
+    FAKE (4.41.8)
     FSharp.Compiler.Service (2.0.0.6)
+    FSharp.Core (4.0.0.1)
     FSharp.Formatting (2.13.6)
-      FSharp.Compiler.Service (>= 2.0.0.3 < 2.1.0)
-      FSharpVSPowerTools.Core (>= 2.3.0 < 2.4.0)
-    FSharpVSPowerTools.Core (2.3.0)
+      FSharp.Compiler.Service (>= 2.0.0.3 < 2.1)
+      FSharpVSPowerTools.Core (>= 2.3 < 2.4)
+    FSharpVSPowerTools.Core (2.3)
       FSharp.Compiler.Service (>= 2.0.0.3)
-    Microsoft.Bcl (1.1.10)
+    Microsoft.Bcl (1.1.10) - framework: net10, net11, net20, net30, net35, net40, net40-full
       Microsoft.Bcl.Build (>= 1.0.14)
-    Microsoft.Bcl.Build (1.0.21) - import_targets: false
-    Microsoft.CrmSdk.CoreAssemblies (5.0.18)
-      Microsoft.IdentityModel (>= 6.1.7600.16394) - framework: >= net40
-    Microsoft.IdentityModel (6.1.7600.16394) - framework: >= net40
-    Microsoft.Net.Http (2.2.29)
+    Microsoft.Bcl.Build (1.0.21) - import_targets: false, framework: net10, net11, net20, net30, net35, net40, net40-full
+    Microsoft.CrmSdk.CoreAssemblies (8.1.0.2)
+      Microsoft.IdentityModel (>= 6.1.7600.16394) - framework: >= net35
+    Microsoft.IdentityModel (6.1.7600.16394) - framework: >= net35
+    Microsoft.Net.Http (2.2.29) - framework: net10, net11, net20, net30, net35, net40, net40-full
       Microsoft.Bcl (>= 1.1.10)
       Microsoft.Bcl.Build (>= 1.0.14)
-    Octokit (0.18.0)
-      Microsoft.Net.Http
-    SourceLink.Fake (1.1.0)
+    Octokit (0.23)
+      Microsoft.Net.Http  - framework: net10, net11, net20, net30, net35, net40, net40-full
+    SourceLink.Fake (1.1)
 GITHUB
   remote: fsharp/FAKE
-  specs:
-    modules/Octokit/Octokit.fsx (998ddffae27ce0add0d7b8634a02fb43a9f96409)
-      Octokit
+    modules/Octokit/Octokit.fsx (4e4428bfe931a5f720e32f9d69289d25eb16d467)
+      Octokit (>= 0.20)
 HTTP
   remote: http://dl.google.com
-  specs:
     compiler-latest.zip (/closure-compiler/compiler-latest.zip)

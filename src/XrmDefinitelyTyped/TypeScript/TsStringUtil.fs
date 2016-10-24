@@ -2,33 +2,35 @@
 
 module internal TsStringUtil =
 
-  let getConstantType (name:string) = name.Replace("\\", "\\\\").Replace("\"", "\\\"") |> sprintf "\"%s\"" |> Type.Custom
+  let getConstantType (name:string) = name.Replace("\\", "\\\\").Replace("\"", "\\\"") |> sprintf "\"%s\"" |> TsType.Custom
 
-  let rec wrapIfUnionType ty =
+  let rec wrapIfRecursive ty =
     match ty with
-    | Type.Union _ -> typeToString ty |> sprintf "(%s)"
+    | TsType.Intersection _ 
+    | TsType.Union _ -> typeToString ty |> sprintf "(%s)"
     | _ -> typeToString ty
 
   and typeToString = function
-    | Type.Void           -> "void"
-    | Type.Null           -> "null"
-    | Type.Undefined      -> "undefined"
-    | Type.Never          -> "never"
-    | Type.Any            -> "any"
-    | Type.Boolean        -> "boolean"
-    | Type.String         -> "string"
-    | Type.Number         -> "number"
-    | Type.Array a        -> sprintf "%s[]" (wrapIfUnionType a)
-    | Type.Date           -> "Date"
-    | Type.Function(v, r) -> 
+    | TsType.Void           -> "void"
+    | TsType.Null           -> "null"
+    | TsType.Undefined      -> "undefined"
+    | TsType.Never          -> "never"
+    | TsType.Any            -> "any"
+    | TsType.Boolean        -> "boolean"
+    | TsType.String         -> "string"
+    | TsType.Number         -> "number"
+    | TsType.Array a        -> sprintf "%s[]" (wrapIfRecursive a)
+    | TsType.Date           -> "Date"
+    | TsType.Function(v, r) -> 
       sprintf "(%s) => %s" 
         (String.concat ", " (List.map varToIString v)) 
         (typeToString r)
-    | Type.Custom s       -> s
-    | Type.Generic(n, t)  -> sprintf "%s<%s>" n t
-    | Type.SpecificGeneric(n,t) 
-                          -> sprintf "%s<%s>" n (typeToString t)
-    | Type.Union types    -> types |> List.map wrapIfUnionType |> String.concat " | "
+    | TsType.Custom s       -> s
+    | TsType.Generic(n, t)  -> sprintf "%s<%s>" n t
+    | TsType.SpecificGeneric(n,ts) 
+                            -> sprintf "%s<%s>" n (ts |> Seq.map typeToString |> String.concat ", ")
+    | TsType.Union types    -> types |> List.map wrapIfRecursive |> String.concat " | "
+    | TsType.Intersection types    -> types |> List.map wrapIfRecursive |> String.concat " & "
 
   and valueToString = function
     | Value.String s  -> sprintf "\"%s\"" s
@@ -98,7 +100,7 @@ module internal TsStringUtil =
     | Some i  -> sprintf "%s = %d," k i
     | None    -> sprintf "%s," k
 
-  let enumToString (e:Enum) =
+  let enumToString (e:TsEnum) =
     [ (sprintf "%s%s%senum %s {"
         (if e.export then "export " else "")
         (if (not e.export) && e.declare then "declare " else "")
@@ -154,13 +156,17 @@ module internal TsStringUtil =
       )
     @ ["}"]
 
-  let rec moduleToString (m:Module) =
+  let varsToInlineInterfaceString vars =  
+    vars |> List.map varToIString |> String.concat "; " |> sprintf "{ %s }"
+
+
+  let rec nsToString (m:Namespace) =
     let funcs = 
       match m.ambient with
       | true  -> List.map (funcToIString true) m.funcs |> endLines
       | false -> List.map (funcToString true) m.funcs |> List.concat
 
-    [(sprintf "%s%smodule %s {"
+    [(sprintf "%s%snamespace %s {"
         (declareToString m.declare)
         (exportTypeToString m.export)
         m.name 
@@ -169,9 +175,8 @@ module internal TsStringUtil =
       ( (List.map varToString m.vars |> preLines "var " |> endLines)
       @ (List.map enumToString m.enums |> List.concat)
       @ funcs
-      @ (List.map moduleToString m.modules |> List.concat)
+      @ (List.map nsToString m.namespaces |> List.concat)
       @ (List.map interfaceToString m.interfaces |> List.concat)
       @ (List.map classToString m.classes |> List.concat)
       )
     @ ["}"]
-

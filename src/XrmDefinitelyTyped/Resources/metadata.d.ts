@@ -1,11 +1,11 @@
 /**
- * SDK module
+ * SDK namespace
  */
-declare module SDK {
+declare namespace SDK {
   /**
-   * SDK.Metadata module
+   * SDK.Metadata namespace
    */
-  module Metadata {
+  namespace Metadata {
     /**
      * Enum which corresponds to the entity filters used in the metadata functions.
      */

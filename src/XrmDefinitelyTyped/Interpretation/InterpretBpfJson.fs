@@ -3,11 +3,9 @@
 open Utility
 open InterpretFormXml
 open IntermediateRepresentation
-open InterpretOptionSetMetadata
 
 open Microsoft.Xrm.Sdk
 open System.Runtime.Serialization
-open System.Runtime.Serialization.Json
 open System.Collections.Generic
 
 module internal InterpretBpfJson =

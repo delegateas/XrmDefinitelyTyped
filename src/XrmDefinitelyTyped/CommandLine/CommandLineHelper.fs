@@ -24,14 +24,15 @@ module internal CommandLineHelper =
       | _ -> None
 
   let (|GetArgVal|_|) input = 
-    let m = Regex("^/([^:]+):\"?(.*)\"?$").Match(input)
-    if m.Success then Some (m.Groups.[1].Value.ToLower(), m.Groups.[2].Value)
+    let m = Regex("^[/\-]([^:]+)(:\"?(.*)\"?)?$").Match(input)
+    if m.Success then Some (m.Groups.[1].Value.ToLower(), m.Groups.[3].Value)
     else None
 
-  let handleArg expectedArgs parsedArgs k v =
-    match Set.contains k expectedArgs with
-    | true -> Map.add k v parsedArgs
-    | false ->
+
+  let handleArg argMap parsedArgs k v =
+    match Map.tryFind k argMap with
+    | Some a -> Map.add a.command v parsedArgs
+    | None ->
       printfn "Option '%s' not recognized." k
       parsedArgs
 
@@ -39,65 +40,77 @@ module internal CommandLineHelper =
     Set.intersect set1 >> Set.isEmpty >> not
 
   /// Helper function that recursively parses the arguments
-  let rec parseCommandLineRec args expectedArgs parsedArgs =
+  let rec parseCommandLineRec args argMap parsedArgs =
     match args with
     | GetArgVal(k,v) :: xs ->
-      handleArg expectedArgs parsedArgs k v
-      |> parseCommandLineRec xs expectedArgs
+      handleArg argMap parsedArgs k v
+      |> parseCommandLineRec xs argMap
     | [] -> parsedArgs
     | x :: xs  -> failwithf "Did not understand argument '%s'." x
 
 
-  let parseConfigArgs expectedArgs parsedArgs =
+  let parseConfigArgs argMap parsedArgs =
     ConfigurationManager.AppSettings.AllKeys
     |> Array.fold (fun args k -> 
-      handleArg expectedArgs args k ConfigurationManager.AppSettings.[k]
+      handleArg argMap args k ConfigurationManager.AppSettings.[k]
     ) parsedArgs
 
+
   /// Parses the given arguments against the expected arguments.
-  let parseArgs argv expectedArgs =
-    let argSet = expectedArgs |> List.map (fun a -> a.command.ToLower()) |> Set.ofList 
+  let parseArgs argv argMap =
+    let commandLineArgs = parseCommandLineRec argv argMap Map.empty
+    let specialArgs, executionArgs = 
+      commandLineArgs |> Map.partition (fun k v -> 
+        Args.useConfigSet.Contains k || Args.flagArgMap.ContainsKey k)
 
-    let metaArgs, appArgs = argv |> Array.partition (fun a -> Args.useConfigArgs.Contains a)
-    let metaArgs = metaArgs |> Set.ofArray
-    let appArgs = appArgs |> List.ofArray
+    let configArgs =  
+      match Map.isEmpty executionArgs || Map.containsKey "useconfig" commandLineArgs with
+      | true  -> parseConfigArgs argMap Map.empty
+      | false -> Map.empty
 
-    let parsedArgs = 
-      Map.empty
-      |> if List.isEmpty appArgs || sharesElement metaArgs Args.useConfigArgs
-         then parseConfigArgs argSet else id
-      |> parseCommandLineRec appArgs argSet
-  
+    commandLineArgs |> Map.fold (fun acc k v -> Map.add k v acc) configArgs
+
+  // Check if args against current expected args
+  let checkArgs expectedArgs parsedArgs =
+    let validArgs = 
+      expectedArgs
+      |> List.map (fun a -> a.command :: a.altCommands) |> List.concat 
+      |> List.map (fun c -> c.ToLower()) |> Set.ofList 
+
+    let argIsInMap (aMap:Map<string, _>) a =
+      a.command :: a.altCommands |> List.exists aMap.ContainsKey
+
     let missingArgs =
       expectedArgs
       |> List.filter (fun a -> a.required) 
-      |> List.map (fun a -> (a.command, parsedArgs.ContainsKey(a.command)))
+      |> List.map (fun a -> 
+        (a.command, a |> argIsInMap parsedArgs))
       |> List.filter (snd >> not)
       |> List.map fst
 
     match missingArgs.Length = 0 with
-    | true -> parsedArgs
+    | true -> parsedArgs 
     | false -> 
       failwithf "Missing required argument(s): %s" 
         (String.concat ", " missingArgs)
+
 
   /// Helper that prints all the possible arguments to console.
   let printArgumentHelp expectedArgs = 
     printfn "Available arguments:"
     expectedArgs |> List.iter
       (fun arg ->
-        printfn "%12s - %s%s"
+        printfn "%12s - %s"
           arg.command 
-          arg.description 
-          (if arg.required then " (required)" else ""))
+          arg.description)
 
   let showDescription () =
     printfn "[%s v.%s]" 
       (Reflection.Assembly.GetExecutingAssembly().GetName().Name) 
-      System.AssemblyVersionInformation.Version
+      AssemblyVersionInformation.AssemblyVersion
     printfn ""
 
   let showUsage () =
     printfn "%s" Args.usageString
     printfn ""
-    printArgumentHelp Args.expectedArgs
+    printArgumentHelp Args.fullArgList

@@ -6,7 +6,7 @@ open IntermediateRepresentation
 module internal CreateOptionSetDts =
  
   let getOptionSetEnum (os:OptionSet) =
-    Enum.Create(
+    TsEnum.Create(
       os.displayName,
       os.options 
         |> Array.Parallel.map (fun o -> o.label, Some o.value) 

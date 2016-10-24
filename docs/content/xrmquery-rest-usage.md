@@ -2,7 +2,7 @@ XrmQuery
 =========
 
 With XrmQuery you can get intellisense for creating your query to the CRM dynamics database!
-Simply add a reference to the declaration file `typings/XRM/dg.xrmquery.d.ts`, and be sure 
+Simply add a reference to the declaration file `typings/XRM/dg.xrmquery.rest.d.ts`, and be sure 
 to include the javascript code for XrmQuery on the page/form you want to use it on.
 
 A minified version of the necessary javascript code of XrmQuery can be [found here][minified]. 
@@ -16,18 +16,18 @@ and helper functions for all the options one can query with for [OData on CRM][o
 Here is a small example where a complex filter is applied to a RetrieveMultiple on accounts:
 
     [lang=typescript]
-    /// <reference path="../../typings/xrm/dg.xrmquery.d.ts" />
+    /// <reference path="../../typings/xrm/dg.xrmquery.rest.d.ts" />
     /// <reference path="../../typings/xrm/entity/account.d.ts" />
 
-    XrmQuery.retrieveMultipleRecords(x => x.Account)
+    XrmQuery.REST.retrieveMultipleRecords(x => x.Account)
         .select(acc => [acc.Name, acc.EMailAddress1])
         .filter(acc =>
-            Filter.and(
-                Filter.or(
-                    Filter.equals(acc.Address1_ShippingMethodCode.Value, account_address1_shippingmethodcode.Airborne),
-                    Filter.greaterThan(acc.CreditLimit.Value, 1000)
+            Filter.REST.and(
+                Filter.REST.or(
+                    Filter.REST.equals(acc.Address1_ShippingMethodCode.Value, account_address1_shippingmethodcode.Airborne),
+                    Filter.REST.greaterThan(acc.CreditLimit.Value, 1000)
                 ),
-                Filter.equals(acc.PrimaryContactId.Id, Filter.makeGuid("0000-SOME-GUID"))
+                Filter.REST.equals(acc.PrimaryContactId.Id, Filter.REST.makeGuid("0000-SOME-GUID"))
             ))
         .getAll(records => {
             // Success callback function for the accounts.
@@ -38,8 +38,8 @@ The execute function also has the possibility to add a callback handler for erro
 like the standard SDK.REST API. These have been made optional, since they aren't necessary for a
 succesful run of the function.
 
-Check out the generated declaration file at `typings/XRM/dg.xrmquery.d.ts` to see what can be 
+Check out the generated declaration file at `typings/XRM/dg.xrmquery.rest.d.ts` to see what can be 
 accomplished with XrmQuery!
 
-[minified]: libs/dg.xrmquery.min.js
+[minified]: files/dg.xrmquery.rest.min.js
 [odata-options]: https://msdn.microsoft.com/en-us/library/gg309461.aspx

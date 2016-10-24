@@ -3,7 +3,7 @@ Xrm Object Model
 
 The [Xrm object model][xrm] can be accessed from web resources in your 
 solution. To start using the declaration files, one can drag in a reference to 
-`base.d.ts` which is located in the root folder, `typings/XRM/`. 
+`xrm.d.ts` which is located in the root folder, `typings/XRM/`. 
 This contains the base description of the API.
 
   [xrm]: https://msdn.microsoft.com/en-us/library/gg328255.aspx
@@ -45,7 +45,7 @@ Below is an example of an initial setup for your code file.
     [lang=typescript]
     /// <reference path="../../typings/XRM/Form/contact/Main/Information.d.ts" />
 
-    module DG.Contact {
+    namespace DG.Contact {
         declare var Xrm: Xrm<Form.contact.Main.Information>;
 
         export function onLoad() {
