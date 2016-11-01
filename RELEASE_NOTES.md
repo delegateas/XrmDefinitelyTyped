@@ -1,5 +1,8 @@
 # Release Notes
 
+### 1.11.1 - November 1 2016
+* Better handling of tabs and sections when intersecting forms
+
 ### 1.11.0 - October 6 2016
 * Added union types throughout the generated declaration files to make it usable with TypeScript's `strictNullChecks`.
 * ***XrmQuery update*** (new javascript code): 

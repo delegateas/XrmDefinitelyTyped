@@ -226,13 +226,19 @@ module GeneratorLogic =
       |> Some
 
 
+  let intersectMappedSets a b = Map.ofSeq (seq {
+    for KeyValue(k, va) in a do
+      match Map.tryFind k b with
+      | Some vb -> yield k, Set.intersect va vb
+      | None    -> () })
+
   // Reduces a list of quadruple sets to a single quadruple set
   let intersectFormQuads =
     Seq.reduce (fun (d1, a1, c1, t1) (d2, a2, c2, t2) ->
-      Set.union d1 d2, Set.intersect a1 a2, Set.intersect c1 c2, Set.intersect t1 t2)
+      Set.union d1 d2, Set.intersect a1 a2, Set.intersect c1 c2, intersectMappedSets t1 t2)
 
   // Makes intersection of forms by guid
-  let intersectFormContentByGuid (formDict:IDictionary<Guid,XrmForm>) ((name, guids): FormIntersect) =
+  let intersectFormContentByGuid (formDict: IDictionary<Guid, XrmForm>) ((name, guids): FormIntersect) =
     guids 
     |> Seq.choose (fun g ->
       match formDict.ContainsKey g with
@@ -240,10 +246,10 @@ module GeneratorLogic =
       | false -> printfn "Form with GUID %A was not found" g; None)
 
     |> Seq.map (fun f -> 
-      f.entityDependencies |> Set.ofSeq,
+      f.entityDependencies |> Set.ofSeq,  
       f.attributes |> Set.ofList, 
       f.controls |> Set.ofList, 
-      f.tabs |> Set.ofList)
+      f.tabs |> Seq.map (fun (name, iname, sections) -> (name, iname), sections |> Set.ofList) |> Map.ofSeq)
 
     |> intersectFormQuads
     |> fun q -> name, q
@@ -259,7 +265,7 @@ module GeneratorLogic =
         formType = None
         attributes = a |> Set.toList
         controls = c |> Set.toList
-        tabs = t |> Set.toList
+        tabs = t |> Map.toList |> List.map (fun ((k1, k2), v) -> k1, k2, v |> Set.toList)
       })
     >> Seq.append formDict.Values
     >> Array.ofSeq
