@@ -32,7 +32,8 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DocumentationFile>bin\Debug\XrmDefinitelyTyped.XML</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
-    <StartArguments>/load:../../XdtData.json /out:../../../../test/typings /rest:RestNs /web:WebNs</StartArguments>
+    <StartArguments>
+    </StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -76,24 +77,24 @@
     <EmbeddedResource Include="Resources\Extensions\xrm_ext_7.1-.d.ts" />
     <EmbeddedResource Include="Resources\Extensions\xrm_ext_8-.d.ts" />
     <EmbeddedResource Include="Resources\_internal\sdk.d.ts" />
-    <EmbeddedResource Include="Resources\Build\dg.xrmquery.rest.d.ts" />
-    <Content Include="Resources\Build\dg.xrmquery.rest.js">
+    <EmbeddedResource Include="Resources\Dist\dg.xrmquery.rest.d.ts" />
+    <EmbeddedResource Include="Resources\Dist\dg.xrmquery.rest.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Build\dg.xrmquery.rest.min.js">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Dist\dg.xrmquery.rest.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <EmbeddedResource Include="Resources\Build\dg.xrmquery.web.d.ts" />
-    <Content Include="Resources\Build\dg.xrmquery.web.js">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Dist\dg.xrmquery.web.d.ts" />
+    <EmbeddedResource Include="Resources\Dist\dg.xrmquery.web.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Build\dg.xrmquery.web.min.js">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Dist\dg.xrmquery.web.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources/metadata.d.ts" />
     <EmbeddedResource Include="Resources\xrm.d.ts" />
-    <None Include="Resources\dg.xrmquery.web.ts" />
-    <None Include="Resources\dg.xrmquery.rest.ts" />
+    <EmbeddedResource Include="Resources\dg.xrmquery.web.ts" />
+    <EmbeddedResource Include="Resources\dg.xrmquery.rest.ts" />
     <Content Include="Resources\tsconfig.json" />
     <Compile Include="TypeScript/TypeScript.fs" />
     <Compile Include="TypeScript/TsStringUtil.fs" />
@@ -119,8 +120,13 @@
     <Compile Include="CommandLine\Arguments.fs" />
     <Compile Include="CommandLine\CommandLineHelper.fs" />
     <Compile Include="CommandLine\Program.fs" />
-    <None Include="App.config" />
     <None Include="paket.references" />
+    <None Include="App.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <Content Include="EnvInfo.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
@@ -141,8 +147,8 @@
   </ItemGroup>
   <Target Name="BeforeBuild">
     <Exec Command="tsc -p $(ProjectDir)Resources" />
-    <Exec Command="java -jar $(ProjectDir)..\..\tools\closure\compiler.jar --js $(ProjectDir)Resources\Build\dg.xrmquery.web.js --js_output_file $(ProjectDir)Resources\Build\dg.xrmquery.web.min.js" />
-    <Exec Command="java -jar $(ProjectDir)..\..\tools\closure\compiler.jar --js $(ProjectDir)Resources\Build\dg.xrmquery.rest.js --js_output_file $(ProjectDir)Resources\Build\dg.xrmquery.rest.min.js" />
+    <Exec Command="java -jar $(ProjectDir)..\..\tools\closure\compiler.jar --js $(ProjectDir)Resources\Dist\dg.xrmquery.web.js --js_output_file $(ProjectDir)Resources\Dist\dg.xrmquery.web.min.js" />
+    <Exec Command="java -jar $(ProjectDir)..\..\tools\closure\compiler.jar --js $(ProjectDir)Resources\Dist\dg.xrmquery.rest.js --js_output_file $(ProjectDir)Resources\Dist\dg.xrmquery.rest.min.js" />
   </Target>
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1' Or $(TargetFrameworkVersion) == 'v4.6.2' Or $(TargetFrameworkVersion) == 'v4.6.3')">

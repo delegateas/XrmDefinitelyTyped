@@ -79,6 +79,9 @@ module internal TsStringUtil =
   let indent =
     List.map (fun s -> sprintf "  %s" s)
 
+  let makeTypeDeclaration (name, ty) =
+    sprintf "type %s = %s" name (typeToString ty)
+
   let superClassToString = function
     | Some x  -> sprintf "extends %s " x
     | None    -> ""
@@ -86,6 +89,11 @@ module internal TsStringUtil =
   let implementationsToString = function
     | []    -> ""
     | list  -> sprintf "implements %s " (String.concat ", " list)
+
+  let extendsToString = function
+    | []    -> ""
+    | list  -> sprintf "extends %s " (String.concat ", " list)
+
 
   let exportTypeToString = function
     | Export  -> "export "
@@ -144,11 +152,10 @@ module internal TsStringUtil =
     @ ["}"]
     
   let interfaceToString (i:Interface) =  
-    [(sprintf "%sinterface %s %s%s{"
+    [(sprintf "%sinterface %s %s{"
         (exportTypeToString i.export)
         i.name 
-        (superClassToString i.superClass)
-        (implementationsToString i.impls))
+        (extendsToString i.extends))
     ]
     @ indent
       ( (List.map varToIString i.vars |> endLines)
@@ -178,5 +185,6 @@ module internal TsStringUtil =
       @ (List.map nsToString m.namespaces |> List.concat)
       @ (List.map interfaceToString m.interfaces |> List.concat)
       @ (List.map classToString m.classes |> List.concat)
+      @ (List.map makeTypeDeclaration m.typeDecs)
       )
     @ ["}"]

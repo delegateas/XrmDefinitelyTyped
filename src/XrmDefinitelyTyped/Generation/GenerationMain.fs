@@ -33,11 +33,13 @@ module GenerationMain =
     // Pre-generation tasks 
     clearOldOutputFiles out
     generateFolderStructure out gSettings
+    copyJsLibResourceFiles gSettings
+    copyTsLibResourceFiles gSettings
 
     // Generate the files
     let data =
       interpretCrmData out formIntersects rawState 
-      |>> generateResourceFiles crmVersion 
+      |>> generateDtsResourceFiles crmVersion 
       |>> generateEnumFiles 
       |>> generateEntityEnumFiles 
 

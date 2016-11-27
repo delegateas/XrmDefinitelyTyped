@@ -33,7 +33,7 @@ module internal InterpretEntityMetadata =
     | _                           -> TsType.Any
 
 
-  let interpretAttribute entityNames (a:AttributeMetadata) =
+  let interpretAttribute map entityNames (a:AttributeMetadata) =
     let aType = a.AttributeType.GetValueOrDefault()
     if a.AttributeOf <> null ||
        aType = AttributeTypeCode.Virtual ||
@@ -43,6 +43,14 @@ module internal InterpretEntityMetadata =
     let options =
       match a with
       | :? EnumAttributeMetadata as eam -> interpretOptionSet entityNames eam.OptionSet
+      | _ -> None
+
+    let targetEntitySets =
+      match a with
+      | :? LookupAttributeMetadata as lam -> 
+        lam.Targets
+        |> Array.choose (fun k -> Map.tryFind k map ?|> snd)
+        |> Some
       | _ -> None
 
     let vType, sType = 
@@ -59,26 +67,42 @@ module internal InterpretEntityMetadata =
         
       | AttributeTypeCode.Uniqueidentifier -> TsType.String, SpecialType.Guid
       | _ -> toSome typeConv a.AttributeType, SpecialType.Default
-    
+
+    let attr = 
+      match a.IsValidForCreate.GetValueOrDefault(false) <> a.IsValidForUpdate.GetValueOrDefault(false) with
+      | true -> Some a
+      | false -> None
+
+    if attr.IsSome then
+      ()
+
     options, Some {
       XrmAttribute.schemaName = a.SchemaName
       logicalName = a.LogicalName
       varType = vType
-      specialType = sType }
+      specialType = sType
+      targetEntitySets = targetEntitySets
+      readable = a.IsValidForRead.GetValueOrDefault(false)
+      createable = a.IsValidForCreate.GetValueOrDefault(false)
+      updateable = a.IsValidForUpdate.GetValueOrDefault(false)
+    }
 
 
-  let interpretRelationship map referencing (rel:OneToManyRelationshipMetadata) =
-    if referencing then rel.ReferencedEntity
-    else rel.ReferencingEntity
-    |> fun s -> Map.tryFind s map
-    ?|> (fun (rSchema, rSetName) ->
+  let interpretRelationship schemaNames map referencing (rel:OneToManyRelationshipMetadata) =
+    let rLogical =
+      if referencing then rel.ReferencedEntity
+      else rel.ReferencingEntity
+    
+    Map.tryFind rLogical map
+    ?>>? fun (rSchema, _) -> Set.contains rSchema schemaNames
+    ?|> fun (rSchema, rSetName) ->
       let name =
-          match rel.ReferencedEntity = rel.ReferencingEntity with
-          | false -> rel.SchemaName
-          | true  ->
-            match referencing with
-            | true  -> sprintf "Referencing%s" rel.SchemaName
-            | false -> sprintf "Referenced%s" rel.SchemaName
+        match rel.ReferencedEntity = rel.ReferencingEntity with
+        | false -> rel.SchemaName
+        | true  ->
+          match referencing with
+          | true  -> sprintf "Referencing%s" rel.SchemaName
+          | false -> sprintf "Referenced%s" rel.SchemaName
 
       let xRel = 
         { XrmRelationship.schemaName = name
@@ -92,14 +116,17 @@ module internal InterpretEntityMetadata =
           relatedSetName = rSetName
           relatedSchemaName = rSchema }
 
-      rSchema, xRel)
+      rSchema, xRel
 
 
-  let interpretM2MRelationship map lname (rel:ManyToManyRelationshipMetadata) =
-    match lname = rel.Entity2LogicalName with
-    | true  -> rel.Entity1LogicalName
-    | false -> rel.Entity2LogicalName
-    |> fun s -> Map.tryFind s map
+  let interpretM2MRelationship schemaNames map lname (rel:ManyToManyRelationshipMetadata) =
+    let rLogical =
+      match lname = rel.Entity2LogicalName with
+      | true  -> rel.Entity1LogicalName
+      | false -> rel.Entity2LogicalName
+    
+    Map.tryFind rLogical map
+    ?>>? fun (rSchema, _) -> Set.contains rSchema schemaNames
     ?|> (fun (rSchema, rSetName) ->
       
       let xRel = 
@@ -115,12 +142,12 @@ module internal InterpretEntityMetadata =
       rSchema, xRel)
 
 
-  let interpretEntity entityNames map (metadata:EntityMetadata) =
+  let interpretEntity schemaNames map (metadata:EntityMetadata) =
     if (metadata.Attributes = null) then failwith "No attributes found!"
 
     let opt_sets, attr_vars = 
       metadata.Attributes 
-      |> Array.map (interpretAttribute entityNames)
+      |> Array.map (interpretAttribute map schemaNames)
       |> Array.unzip
 
     let attr_vars = attr_vars |> Array.choose id |> Array.toList
@@ -133,11 +160,11 @@ module internal InterpretEntityMetadata =
 
     let handleOneToMany referencing = function
       | null -> Array.empty
-      | x -> x |> Array.choose (interpretRelationship map referencing)
+      | x -> x |> Array.choose (interpretRelationship schemaNames map referencing)
     
     let handleManyToMany logicalName = function
       | null -> Array.empty
-      | x -> x |> Array.choose (interpretM2MRelationship map logicalName)
+      | x -> x |> Array.choose (interpretM2MRelationship schemaNames map logicalName)
 
 
     let rel_entities, rel_vars = 
@@ -156,7 +183,8 @@ module internal InterpretEntityMetadata =
       schemaName = metadata.SchemaName
       logicalName = metadata.LogicalName
       entitySetName = metadata.EntitySetName
-      attr_vars = attr_vars
-      rel_vars = rel_vars
+      idAttr = metadata.PrimaryIdAttribute
+      attrs = attr_vars
+      rels = rel_vars
       opt_sets = opt_sets
       relatedEntities = rel_entities }

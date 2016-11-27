@@ -2,11 +2,20 @@
   "name": "xdt-test",
   "version": "1.0.0",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha --compilers ts:ts-node/register,tsx:ts-node/register src/tests/**/*.ts",
+    "test-watch": "mocha --watch --compilers ts:ts-node/register,tsx:ts-node/register --require tests/utils/init.ts tests/**/*.ts"
   },
   "author": "Delegate A/S, Martin Kasban Tange",
   "license": "MIT",
   "devDependencies": {
-    "typescript": "^2.0.9"
+    "@types/chai": "^3.4.34",
+    "@types/sinon": "^1.16.32",
+    "chai": "^3.5.0",
+    "fs": "0.0.1-security",
+    "mocha": "^3.1.2",
+    "mocha-typescript": "^1.0.11",
+    "sinon": "^1.17.6",
+    "ts-node": "^1.7.0",
+    "typescript": "^2.2.0-dev.20161118"
   }
 }

@@ -4,18 +4,23 @@ open TsStringUtil
 open IntermediateRepresentation
 
 module internal CreateCommon =
- 
-  let interfacesToNsLines ns is =
-    match System.String.IsNullOrWhiteSpace ns with
+
+  let skipNsIfEmpty (ns: Namespace) =
+    match System.String.IsNullOrWhiteSpace ns.name with
     | true ->
-      is
-      |> List.map interfaceToString
-      |> List.concat
+      (ns.interfaces |> List.map interfaceToString |> List.concat)
+      @ (ns.typeDecs |> List.map makeTypeDeclaration)
     | false ->
-      Namespace.Create(ns, declare = true, interfaces = is)
-      |> nsToString
+      nsToString ns
+
+
+
+  let wrapNameInNsIfAny ns =
+    match System.String.IsNullOrWhiteSpace ns with
+    | true -> id
+    | false -> sprintf "%s.%s" ns
 
   let wrapNamesInNsIfAny ns =
     match System.String.IsNullOrWhiteSpace ns with
     | true -> id
-    | false -> List.map (sprintf "%s.%s" ns)
+    | false -> List.map (wrapNameInNsIfAny ns)

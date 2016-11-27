@@ -92,15 +92,13 @@ type Class =
 type Interface = 
   { name : string
     export : ExportType
-    superClass : string option
-    impls : string list
+    extends : string list
     vars : Variable list
     funcs : Function list }
-  static member Create(name, ?export, ?superClass, ?impls, ?vars, ?funcs) = 
+  static member Create(name, ?export, ?extends, ?vars, ?funcs) = 
     { Interface.name = name
       export = defaultArg export Regular
-      superClass = superClass
-      impls = defaultArg impls []
+      extends = defaultArg extends []
       vars = defaultArg vars []
       funcs = defaultArg funcs [] }
 
@@ -114,9 +112,11 @@ type Namespace =
     funcs : Function list
     namespaces : Namespace list
     interfaces : Interface list
-    classes : Class list }
+    classes : Class list
+    typeDecs : (string * TsType) list
+  }
   static member Create(name, ?export, ?declare, ?ambient, ?vars, ?enums, 
-                       ?namespaces, ?funcs, ?interfaces, ?classes) = 
+                       ?namespaces, ?funcs, ?interfaces, ?classes, ?typeDecs) = 
     { Namespace.name = name
       export = defaultArg export Regular
       declare = defaultArg declare false
@@ -126,7 +126,9 @@ type Namespace =
       funcs = defaultArg funcs []
       namespaces = defaultArg namespaces []
       interfaces = defaultArg interfaces []
-      classes = defaultArg classes [] }
+      classes = defaultArg classes []
+      typeDecs = defaultArg typeDecs [] 
+    }
 
 
 type TsType with

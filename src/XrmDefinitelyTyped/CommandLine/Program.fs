@@ -51,6 +51,8 @@ let getGenerationSettings parsedArgs =
     else sanitizeString ns
 
   { XdtGenerationSettings.out = Map.tryFind "out" parsedArgs 
+    jsLib = Map.tryFind "jsLib" parsedArgs 
+    tsLib = Map.tryFind "tsLib" parsedArgs 
     crmVersion = getArg parsedArgs "crmVersion" parseVersion
     skipForms = getArg parsedArgs "skipForms" parseBoolish ?| false
     restNs = getArg parsedArgs "rest" nsSanitizer

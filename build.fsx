@@ -42,7 +42,7 @@ let description = "Tool to generate TypeScript declaration files for MS CRM Dyna
 let authors = [ "Delegate A/S"; "Martin Kasban Tange" ]
 
 // Tags for your project (for NuGet package)
-let tags = "microsoft crm xrm dynamics xrmdefinitelytyped typescript ts definitelytyped javascript sdk rest odata fsharp f# delegate"
+let tags = "microsoft crm xrm dynamics xrmdefinitelytyped typescript ts definitelytyped javascript sdk rest odata fsharp f# delegate D365 Dynamics365 365"
 
 let company = "Delegate A/S"
 let copyright = @"Copyright (c) Delegate A/S 2015"

@@ -55,20 +55,16 @@ module InterfaceSetup =
     >> Array.ofSeq
 
   /// Interprets the raw CRM data into an intermediate state used for further generation
-  let interpretCrmData out toIntersect (rawState:RawState) =
+  let interpretCrmData out toIntersect (rawState: RawState) =
     printf "Interpreting data..."
-    let nameMap = 
-      rawState.metadata
-      |> Array.Parallel.map (fun em -> em.LogicalName, (em.SchemaName, em.EntitySetName))
-      |> Map.ofArray
 
-    let entityNames = 
+    let schemaNames = 
        rawState.metadata
        |> Array.Parallel.map (fun em -> em.SchemaName)
        |> Set.ofArray
 
     let entityMetadata =
-      rawState.metadata |> Array.Parallel.map (interpretEntity entityNames nameMap)
+      rawState.metadata |> Array.Parallel.map (interpretEntity schemaNames rawState.nameMap)
 
     let bpfControls = interpretBpfs rawState.bpfData
 

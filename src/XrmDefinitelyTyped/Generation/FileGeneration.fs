@@ -20,7 +20,6 @@ module FileGeneration =
   let xrmRef n = makeRefSub n "xrm"
   let sdkRef n = makeRefSub n "_internal/sdk"
 
-  let webRef n = makeRefSub n "dg.xrmquery.web"
   let restRef n = makeRefSub n "dg.xrmquery.rest"
   let webEntityRef n = makeRefSub n "_internal/web-entities"
   let restEntityRef n = makeRefSub n "_internal/rest-entities"
@@ -101,8 +100,8 @@ module FileGeneration =
     printfn "Done!"
 
 
-  /// Generate the files stored as resources
-  let generateResourceFiles crmVersion state =
+  /// Generate the declaration files stored as resources
+  let generateDtsResourceFiles crmVersion state =
     // Extend xrm.d.ts with version specific additions
     getBaseExtensions crmVersion
     |> Seq.map (getResourceLines >> stripReferenceLines)
@@ -121,6 +120,34 @@ module FileGeneration =
     [ "sdk.d.ts"
     ] |> List.iter (copyResourceDirectly (sprintf "%s/_internal" state.outputDir))
     
+
+  /// Copy the js files stored as resources
+  let copyJsLibResourceFiles (gSettings: XdtGenerationSettings) =
+    if gSettings.jsLib.IsNone then ()
+    let path = gSettings.jsLib ?| "."
+    
+    if Directory.Exists path |> not then 
+      Directory.CreateDirectory path |> ignore
+
+    [ gSettings.webNs ?|> fun _ -> "dg.xrmquery.web.js"
+      gSettings.webNs ?|> fun _ -> "dg.xrmquery.web.min.js"
+      gSettings.restNs ?|> fun _ -> "dg.xrmquery.rest.js"
+      gSettings.restNs ?|> fun _ -> "dg.xrmquery.rest.min.js"
+    ] |> List.choose id |> List.iter (copyResourceDirectly path)
+
+  /// Copy the ts files stored as resources
+  let copyTsLibResourceFiles (gSettings: XdtGenerationSettings) =
+    if gSettings.tsLib.IsNone then ()
+    let path = gSettings.tsLib ?| "."
+    
+    if Directory.Exists path |> not then 
+      Directory.CreateDirectory path |> ignore
+
+    [ gSettings.webNs ?|> fun _ -> "dg.xrmquery.web.ts"
+      gSettings.restNs ?|> fun _ -> "dg.xrmquery.rest.ts"
+    ] |> List.choose id |> List.iter (copyResourceDirectly path)
+
+
   /// Generate the Enum files
   let generateEnumFiles state =
     printf "Writing Enum files..."
@@ -193,7 +220,7 @@ module FileGeneration =
     |> Array.Parallel.map (fun e -> e.logicalName, CreateWebEntities.getEntityInterfaceLines ns e)
     |> Array.Parallel.iter (fun (name, lines) ->
       File.WriteAllLines(sprintf "%s/Web/%s.d.ts" state.outputDir name, 
-        sdkRef 1 :: webRef 1 :: webEntityRef 1 :: entityEnumRef 1 name :: lines))
+        webEntityRef 1 :: entityEnumRef 1 name :: lines))
     printfn "Done!"
 
   /// Generate the Form files

@@ -14,19 +14,19 @@ declare namespace SDK {
 }
 
 interface RestMapping<O, S, E, F, R> {
-  __isRestMapping: O;
+  __RestMapping: O;
 }
 
 interface RestAttribute<T> {
-  __isRestAttribute: T;
+  __RestAttribute: T;
 }
 
 interface RestExpand<T, U> extends RestAttribute<T> {
-  __isRestExpandable: U;
+  __RestExpandable: U;
 }
 
 interface RestFilter {
-  __isRestFilter: any;
+  __RestFilter: any;
 }
 
 namespace Filter.REST {
@@ -175,8 +175,8 @@ namespace XQR {
     var funcInfo = analyzeFunc(f);
     var regex = objRegex(funcInfo.arg);
 
-    var obj = {};
-    var match;
+    var obj: { [k:string]: any } = {};
+    var match: any;
     while ((match = regex.exec(funcInfo.body)) != null) {
       if (!obj[match[1]]) {
         obj[match[1]] = makeTag(match[1]);

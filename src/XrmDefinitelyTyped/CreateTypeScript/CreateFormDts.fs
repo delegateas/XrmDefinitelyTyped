@@ -58,7 +58,7 @@ module internal CreateFormDts =
         Function.Create("get", [Variable.Create("name", paramType)], returnType))
 
     let defaultFuncs = defaultCollectionFuncs "Xrm.EmptyAttribute" "Xrm.Attribute<any>"
-    Interface.Create("Attributes", superClass = "Xrm.AttributeCollectionBase",
+    Interface.Create("Attributes", extends = ["Xrm.AttributeCollectionBase"],
       funcs = getFuncs @ defaultFuncs)
 
 
@@ -72,7 +72,7 @@ module internal CreateFormDts =
         Function.Create("get", [Variable.Create("name", paramType)], returnType))
 
     let defaultFuncs = defaultCollectionFuncs "Xrm.EmptyControl" "Xrm.BaseControl"
-    Interface.Create("Controls", superClass = "Xrm.ControlCollectionBase",
+    Interface.Create("Controls", extends = ["Xrm.ControlCollectionBase"],
       funcs = getFuncs @ defaultFuncs)
 
 
@@ -90,7 +90,7 @@ module internal CreateFormDts =
         "Xrm.EmptyPageTab" 
         "Xrm.PageTab<Xrm.Collection<Xrm.PageSection>>"
 
-    Interface.Create("Tabs", superClass = "Xrm.TabCollectionBase",
+    Interface.Create("Tabs", extends = ["Xrm.TabCollectionBase"],
       funcs = getFuncs @ defaultFuncs)
 
 
@@ -105,7 +105,7 @@ module internal CreateFormDts =
 
     let defaultFuncs = defaultCollectionFuncs "Xrm.EmptyPageSection" "Xrm.PageSection"
     tabs |> List.map (fun (iname, name, sections) ->
-      Interface.Create(iname, superClass = "Xrm.SectionCollectionBase",
+      Interface.Create(iname, extends = ["Xrm.SectionCollectionBase"],
         funcs = getFuncs sections @ defaultFuncs))
 
 
@@ -163,7 +163,7 @@ module internal CreateFormDts =
       sprintf "Xrm.PageBase<%s.Attributes,%s.Tabs,%s.Controls>"
         form.name form.name form.name
 
-    Interface.Create(form.name, superClass = superClass, 
+    Interface.Create(form.name, extends = [superClass], 
       funcs = 
         getAttributeFuncs form.attributes @ 
         getControlFuncs form.controls)

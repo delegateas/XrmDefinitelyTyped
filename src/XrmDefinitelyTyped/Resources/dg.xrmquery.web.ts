@@ -1,111 +1,37 @@
 
-interface WebEntities {
-  dg_buses: WebMapping<dg_bus, dg_bus_Select, dg_bus_Single, dg_bus_Filter, dg_bus, dg_bus_Formatted>;
-}
-
-interface dg_bus_Formatted {
-}
-
-interface dg_child {
-  dg_name: string;
-  dg_allowance: number;
-}
-
-interface dg_child_Select {
-  dg_name: WebAttribute<dg_child_Select, { dg_name: string }, { dg_name_formatted: string }>;
-  dg_allowance: WebAttribute<dg_child_Select, { dg_allowance: number }, { dg_allowance_formatted: string }>;
-}
-
-interface dg_child_Filter {
-
-}
-
-interface dg_man {
-  dg_name: string;
-}
-
-interface dg_man_Select {
-  dg_name: WebAttribute<dg_man_Select, { dg_name: string }, {}>;
-}
-
-
-interface dg_man_Filter {
-  dg_name: string;
-}
-
-interface dg_bus_Select {
-  dg_driver_lookup$dg_drivers: WebAttribute<dg_bus_Select, { dg_driver_lookup$dg_drivers: string }, {}>;
-  dg_name: WebAttribute<dg_bus_Select, { dg_name: string }, {}>;
-  dg_udkoerselsdato: WebAttribute<dg_bus_Select, { dg_udkoerselsdato: Date }, { dg_udkoerselsdato_formatted?: string }>;
-  dg_udregnet: WebAttribute<dg_bus_Select, { dg_udregnet: number; _transactioncurrencyid_value: XQW.Guid }, { dg_udregnet_formatted?: string }>;
-  dg_ticketprice: WebAttribute<dg_bus_Select, { dg_ticketprice: number; _transactioncurrencyid_value: XQW.Guid }, { dg_ticketprice_formatted?: string }>;
-  createdon: WebAttribute<dg_bus_Select, { createdon: Date }, { createdon_formatted?: string }>;
-}
-
-interface dg_bus_Single {
-  dg_Driver: WebExpand<dg_bus_Single, dg_man_Select, dg_man_Filter, { dg_Driver: WebEntityResult & dg_man }>;
-}
-
-interface dg_bus_Collection {
-  dg_dg_bus_dg_child_Skolebus: WebExpand<dg_bus_Collection, dg_child_Select, dg_child_Filter, { dg_dg_bus_dg_child_Skolebus: (WebEntityResult & dg_child)[] }>;
-}
-
-
-
-interface dg_bus_Filter {
-
-}
-
-interface dg_bus {
-  dg_name?: string;
-  dg_udregnet?: number;
-  createdon?: Date;
-  _transactioncurrencyid_value?: XQW.Guid;
-}
-
-
-
-/** 
-************************************************************************
-************************************************************************
-************************************************************************
-************************************************************************
-*/
-
 interface WebEntities { }
 declare var GetGlobalContext: any;
 
-interface WebMapping<IEntity, ISelect, IExpand, IFilter, Result, FormattedResult> {
-  __isWebMapping: IEntity;
+interface WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult> {
+  __WebMappingRetrieve: ISelect;
+}
+
+interface WebMappingCUD<ICreate, IUpdate> {
+  __WebMappingCUD: ICreate & IUpdate;
+}
+
+interface WebMappingRelated<ISingle, IMultiple> {
+  _WebMappingRelated: ISingle & IMultiple;
 }
 
 interface WebAttribute<ISelect, Result, Formatted> {
-  __isWebAttribute: ISelect;
+  __WebAttribute: ISelect;
 }
 
 interface WebExpand<IExpand, ChildSelect, ChildFilter, Result> {
-  __isWebExpandable: IExpand;
+  __WebExpandable: IExpand;
 }
 
 interface WebFilter {
-  __isWebFilter: any;
+  __WebFilter: any;
 }
-
-interface WebApiResult {
-  "@odata.context": string;
-}
-
-interface WebEntityResult {
-  "@odata.etag": string;
-}
-
 
 const enum SortOrder {
   Ascending = 1,
   Descending = 2,
 }
 
-interface ExtraExpandOptions<ISelect, IFilter> {
+interface ExpandOptions<ISelect, IFilter> {
   filter?: (f: IFilter) => WebFilter;
   top?: number;
   orderBy?: (s: ISelect) => WebAttribute<ISelect, any, any>;
@@ -178,48 +104,66 @@ namespace Filter {
   }
 }
 
-namespace XQW {
-  export interface Guid {
-    __XqwGuid: any;
+
+namespace XrmQuery {
+
+  export function setApiUrl(url: string | null) {
+    XQW.ApiUrl = url;
+  }
+  export function setApiVersion(v: string) {
+    XQW.ApiUrl = XQW.getDefaultUrl(v);
+  }
+
+  export function retrieveMultiple<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(
+    entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>) {
+    return XQW.RetrieveMultipleRecords.Get<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(entityPicker);
+  }
+
+  export function retrieveRelatedRecord<ISingle, ISelect, IExpand, IFixed, Result, FormattedResult>(
+    entityPicker: (x: WebEntities) => WebMappingRelated<ISingle, any>,
+    id: string,
+    relatedPicker: (x: ISingle) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>) {
+    return XQW.RetrieveRecord.Related<ISingle, ISelect, IExpand, IFixed, Result, FormattedResult>(entityPicker, id, relatedPicker);
+  }
+
+  export function retrieveRelatedMultiple<IMultiple, ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(
+    entityPicker: (x: WebEntities) => WebMappingRelated<any, IMultiple>,
+    id: string,
+    relatedPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>) {
+    return XQW.RetrieveMultipleRecords.Related<IMultiple, ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(entityPicker, id, relatedPicker);
+  }
+
+  export function retrieve<ISelect, IExpand, IFixed, Result, FormattedResult>(
+    entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>,
+    id: string) {
+    return XQW.RetrieveRecord.Get<ISelect, IExpand, IFixed, Result, FormattedResult>(entityPicker, id);
+  }
+
+  export function create<ICreate>(
+    entityPicker: (x: WebEntities) => WebMappingCUD<ICreate, any>,
+    record?: ICreate) {
+    return new XQW.CreateRecord<ICreate>(entityPicker, record);
+  }
+
+  export function update<IUpdate>(
+    entityPicker: (x: WebEntities) => WebMappingCUD<any, IUpdate>,
+    id?: string,
+    record?: IUpdate) {
+    return new XQW.UpdateRecord<IUpdate>(entityPicker, id, record);
+  }
+
+  export function deleteRecord(
+    entityPicker: (x: WebEntities) => WebMappingCUD<any, any>,
+    id?: string) {
+    return new XQW.DeleteRecord(entityPicker, id);
   }
 
   /**
    * @internal
    */
-  export function makeTag(name: string) {
-    return { __str: name, toString: function () { return this.__str } }
-  }
-
-}
-
-
-namespace XrmQuery {
-
-  export var ApiUrl: string;
-
-  export function retrieveMultiple<IEntity, ISelect, IExpand, IFilter, Result, FormattedResult>(entityPicker: (x: WebEntities) => WebMapping<IEntity, ISelect, IExpand, IFilter, Result, FormattedResult>) {
-    return new XQW.RetrieveMultipleRecords(entityPicker);
-  }
-
-  export function retrieve<IEntity, ISelect, IExpand, IFilter, Result, FormattedResult>(entityPicker: (x: WebEntities) => WebMapping<IEntity, ISelect, IExpand, IFilter, Result, FormattedResult>, id: string) {
-    return new XQW.RetrieveRecord(entityPicker, id);
-  }
-
-  export function create<IEntity>(entityPicker: (x: WebEntities) => WebMapping<IEntity, any, any, any, any, any>, record?: IEntity) {
-    return new XQW.CreateRecord<IEntity>(entityPicker, record);
-  }
-
-  export function update<IEntity>(entityPicker: (x: WebEntities) => WebMapping<IEntity, any, any, any, any, any>, id?: string, record?: IEntity) {
-    return new XQW.UpdateRecord<IEntity>(entityPicker, id, record);
-  }
-
-  export function deleteRecord<IEntity>(entityPicker: (x: WebEntities) => WebMapping<IEntity, any, any, any, any, any>, id?: string) {
-    return new XQW.DeleteRecord<IEntity>(entityPicker, id);
-  }
-
-  export function sendCbRequest(type: XQW.HttpRequestType, queryString: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb: (err: Error) => any, preSend?: (req: XMLHttpRequest) => void) {
+  export function request(type: XQW.HttpRequestType, url: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb: (err: Error) => any, preSend?: (req: XMLHttpRequest) => void) {
     let req = new XMLHttpRequest()
-    req.open(type, encodeURI(XQW.getApiUrl() + queryString), true);
+    req.open(type, url, true);
     req.setRequestHeader("Accept", "application/json");
     req.setRequestHeader("Content-Type", "application/json; charset=utf-8");
     req.setRequestHeader("OData-MaxVersion", "4.0");
@@ -230,10 +174,14 @@ namespace XrmQuery {
       if (this.readyState == 4) {
         req.onreadystatechange = <any>null;
         if (this.status == 200 || this.status == 204) successCb(this);
-        else errorCb(JSON.parse(this.response).error);
+        else errorCb(new Error(this.response));
       }
     };
     req.send(data);
+  }
+
+  export function sendCbRequest(type: XQW.HttpRequestType, queryString: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb: (err: Error) => any, preSend?: (req: XMLHttpRequest) => void) {
+    request(type, encodeURI(XQW.getApiUrl() + queryString), data, successCb, errorCb, preSend);
   }
 
   export function sendRequest(type: XQW.HttpRequestType, queryString: string, data: any, configure?: (req: XMLHttpRequest) => void) {
@@ -251,7 +199,12 @@ namespace XQW {
   const FORMATTED_VALUE_ID = "OData.Community.Display.V1.FormattedValue";
   const FORMATTED_VALUE_SUFFIX = "@" + FORMATTED_VALUE_ID;
   const FORMATTED_VALUES_HEADER = { type: "Prefer", value: `odata.include-annotations="${FORMATTED_VALUE_ID}"` };
-  const LOOKUP_ID = "_lookup$";
+  const BIND_ID = "_bind$";
+  const GUID_ENDING = "_guid";
+  const FORMATTED_ENDING = "_formatted";
+  const NEXT_LINK_ID = "@odata.nextLink";
+
+  const MaxPageSizeHeader = (size: number) => ({ type: "Prefer", value: `odata.maxpagesize=${size}` });
 
   export type HttpRequestType = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
@@ -259,6 +212,18 @@ namespace XQW {
     type: string;
     value: string;
   }
+
+  export interface Guid {
+    __XqwGuid: any;
+  }
+
+  /**
+   * @internal
+   */
+  export function makeTag(name: string) {
+    return { __str: name, toString: function () { return this.__str } }
+  }
+
 
   function endsWith(str: string, suffix: string) {
     return str.substr(-suffix.length) == suffix;
@@ -269,7 +234,7 @@ namespace XQW {
   }
 
   const datePattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
-  function reviver(name: string, value) {
+  function reviver(name: string, value: any) {
     if (datePattern.test(value)) return new Date(value);
     let newName = name;
     const formatted = endsWith(newName, FORMATTED_VALUE_SUFFIX);
@@ -277,16 +242,16 @@ namespace XQW {
     if (formatted) newName = newName.substr(0, newName.length - 42);
     if (beginsWith(newName, '_') && endsWith(newName, '_value')) {
       newName = newName.substr(1, newName.length - 7);
-      if (!formatted) newName += "_guid";
+      if (!formatted) newName += GUID_ENDING;
     }
-    if (formatted) newName += "_formatted";
+    if (formatted) newName += FORMATTED_ENDING;
     if (newName != name) {
       this[newName] = value;
     } else {
       return value;
     }
   }
-
+  
   /* A bit slower (but nicer) implementation using RegEx */
   //const pattern = /^(_)?(.+?)(_value)?(@OData\.Community\.Display\.V1\.FormattedValue)?$/;
   //function reviver(name: string, value) {
@@ -298,6 +263,157 @@ namespace XQW {
   //  else return value;
   //}
 
+  function parseRetrievedData<T>(req: XMLHttpRequest): T {
+    return JSON.parse(req.response, reviver)
+  }
+
+  function isStringArray(arr: any[] | string[]): arr is string[] {
+    return arr.length > 0 && typeof (arr[0]) === "string";
+  }
+
+  function promisifyCallback<T>(callbackFunc: (success: (t: T) => any, errorCb?: (e: Error) => any) => any): Promise<T> {
+    if (!Promise) throw new Error("Promises are not natively supported in this browser. Add a polyfill to use it.");
+    return new Promise<T>((resolve, reject) => {
+      callbackFunc(resolve, reject)
+    });
+  }
+
+
+  interface MultiResult {
+    value: any[];
+    "@odata.nextLink": string;
+  }
+
+  interface ExpandKey {
+    arrKey: string;
+    linkKey: string;
+  }
+
+  abstract class LinkHelper {
+    private missingCallbacks = 0;
+    private isDoneSending = false;
+    private isDoingWork = false;
+
+    constructor(protected toReturn: any, private successCallback: Function, protected errorCallback: (e: Error) => any) {
+    }
+
+    protected followLink(linkUrl: string, expandKeys: ExpandKey[], valPlacer: (vs: any[]) => void) {
+      this.performingCallback();
+
+      XrmQuery.request("GET", linkUrl, null, (req) => {
+        let resp = parseRetrievedData<MultiResult>(req);
+
+        PageLinkHelper.followLinks(resp, expandKeys, (vals) => {
+          valPlacer(vals);
+          this.callbackReceived();
+
+        }, this.errorCallback);
+      },
+      (err: Error) => {
+        this.callbackReceived();
+        this.errorCallback(err);
+      });
+    }
+
+    protected populateRecord(rec: any, expandKeys: ExpandKey[]) {
+      this.performingCallback();
+      EntityLinkHelper.followLinks(rec, expandKeys, this.callbackReceived, this.errorCallback)
+    }
+
+    protected allSent() {
+      if (!this.isDoingWork) return this.successCallback(this.toReturn);
+      this.isDoneSending = true;
+    }
+
+    private performingCallback() {
+      this.missingCallbacks++;
+      this.isDoingWork = true;
+    }
+
+
+    protected callbackReceived = () => {
+      this.missingCallbacks--;
+      if (this.allSent && this.missingCallbacks == 0) {
+        this.successCallback(this.toReturn);
+      }
+    }
+  }
+
+  class EntityLinkHelper extends LinkHelper {
+
+    static followLinks(rec: any, expandKeys: ExpandKey[] | string[], successCallback: (t: any) => any, errorCallback: (e: Error) => any) {
+      if (expandKeys.length == 0) return successCallback(rec);
+
+      if (isStringArray(expandKeys)) {
+        expandKeys = expandKeys.map(k => ({ arrKey: k, linkKey: k + NEXT_LINK_ID }));
+      }
+
+      return new EntityLinkHelper(rec, expandKeys, successCallback, errorCallback);
+    }
+
+    private constructor(rec: any, expandKeys: ExpandKey[], successCallback: (t: any) => any, errorCallback: (e: Error) => any) {
+      super(rec, successCallback, errorCallback);
+
+      expandKeys.forEach(exp => {
+        let linkUrl = rec[exp.linkKey];
+        if (linkUrl) {
+          delete rec[exp.linkKey];
+
+          this.followLink(linkUrl, [], vals => {
+            rec[exp.arrKey] = rec[exp.arrKey].concat(vals);
+          });
+        }
+      });
+      
+      this.allSent();
+    }
+  }
+
+  /**
+   * Helper class to expand on all @odata.nextLink, both pages and on entities retrieved
+   */
+  class PageLinkHelper extends LinkHelper {
+
+    static followLinks(obj: MultiResult, expandKeys: ExpandKey[] | string[], successCallback: (t: any) => any, errorCallback: (e: Error) => any) {
+      if (!obj["@odata.nextLink"] && (obj.value.length == 0 || expandKeys.length == 0)) return successCallback(obj.value);
+
+      if (expandKeys.length == 0) {
+        return new PageLinkHelper(obj, [], successCallback, errorCallback);
+      }
+
+      if (isStringArray(expandKeys)) {
+        expandKeys = expandKeys.map(k => ({ arrKey: k, linkKey: k + NEXT_LINK_ID }));
+      }
+
+      if (obj.value.length == 0) {
+        return new PageLinkHelper(obj, expandKeys, successCallback, errorCallback);
+
+      } else { // Trim expand keys down to the ones that may have nextLinks
+        let firstRec = obj.value[0];
+        let toKeep = expandKeys.filter(exp => firstRec[exp.linkKey]);
+        return new PageLinkHelper(obj, toKeep, successCallback, errorCallback);
+      }
+    }
+
+    private constructor(obj: MultiResult, expandKeys: ExpandKey[], successCallback: (t: any) => any, errorCallback: (e: Error) => any) {
+      super(obj.value, successCallback, errorCallback);
+      
+      let nextPage = obj["@odata.nextLink"];
+      if (nextPage) {
+        this.followLink(nextPage, expandKeys, vals => {
+          this.toReturn = this.toReturn.concat(vals);
+        });
+      }
+
+      if (expandKeys.length > 0) {
+        obj.value.forEach(r => this.populateRecord(r, expandKeys));
+      }
+
+      this.allSent();
+    }
+  }
+
+
 
   export abstract class Query<T> {
     protected additionalHeaders: RequestHeader[] = [];
@@ -305,38 +421,32 @@ namespace XQW {
     constructor(protected requestType: HttpRequestType) { }
 
     abstract getQueryString(): string;
+    protected abstract handleResponse(req: XMLHttpRequest, successCallback: (t: T) => any, errorCallback: (e: Error) => any): void;
+    protected getObjectToSend: () => any = () => null;
 
-    executePromise() {
-      if (!Promise) throw new Error("Promises are not natively supported in this browser. Add a polyfill to use it.");
-      return new Promise<T>((resolve, reject) => {
-        this.execute(resolve, reject)
-      });
+    promise() {
+      return promisifyCallback(this.executeCallback);
     }
 
-    execute(successCallback: (x: T) => any, errorCallback: (err: Error) => any = () => { }) {
+    executeCallback(successCallback: (x: T) => any, errorCallback: (err: Error) => any = () => { }) {
       this._executeRaw(successCallback, errorCallback, true);
     }
 
-    protected handleResponse = (req: XMLHttpRequest, useReviver?: boolean) => JSON.parse(req.response, useReviver ? reviver : undefined)
-    protected getObjectToSend: () => any = () => null;
-
+    
     /**
      * @internal
      */
-    _executeRaw(successCallback: (x: T) => any, errorCallback: (err: Error) => any = () => { }, useReviver = false) {
-      let configure = req => this.additionalHeaders.forEach(h => req.setRequestHeader(h.type, h.value));
-      let successHandler = req => successCallback(this.handleResponse(req, useReviver));
-      return XrmQuery.sendCbRequest(this.requestType, this.getQueryString(), this.getObjectToSend(), successHandler, errorCallback, configure);
+    _executeRaw(successCallback: (x: T) => any, errorCallback: (err: Error) => any, parseResult: true): void;
+    _executeRaw(successCallback: (x: XMLHttpRequest) => any, errorCallback: (err: Error) => any, parseResult: false): void;
+    _executeRaw(successCallback: (x: T | XMLHttpRequest) => any, errorCallback: (err: Error) => any = () => { }, parseResult: boolean = false) {
+      let config = (req: XMLHttpRequest) => this.additionalHeaders.forEach(h => req.setRequestHeader(h.type, h.value));
+      let successHandler = (req: XMLHttpRequest) => parseResult ? this.handleResponse(req, successCallback, errorCallback) : successCallback(req);
+      return XrmQuery.sendCbRequest(this.requestType, this.getQueryString(), this.getObjectToSend(), successHandler, errorCallback, config);
     }
   }
 
 
-
-  export class RetrieveMultipleRecords<IEntity, ISelect, IExpand, IFilter, FormattedResult, Result> extends Query<WebApiResult & Result> {
-    /**
-     * @internal
-     */
-    private entitySetName: string;
+  export class RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result> extends Query<Result[]> {
     /**
      * @internal
      */
@@ -345,6 +455,10 @@ namespace XQW {
      * @internal
      */
     protected expands: string[] = [];
+    /**
+     * @internal
+     */
+    protected expandKeys: string[] = [];
     /**
      * @internal
      */
@@ -361,6 +475,36 @@ namespace XQW {
      * @internal
      */
     private topAmount: number | null = null;
+
+    static Get<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(
+      entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>) {
+      return new RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(taggedExec(entityPicker).toString());
+    }
+
+    static Related<IMultiple, ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(
+      entityPicker: (x: WebEntities) => WebMappingRelated<any, IMultiple>,
+      id: string,
+      relatedPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>) {
+      return new RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(taggedExec(entityPicker).toString(), id, taggedExec(relatedPicker).toString());
+    }
+
+    private constructor(private entitySetName: string, private id?: string, private relatedNav?: string) {
+      super("GET");
+    }
+
+    handleResponse(req: XMLHttpRequest, successCallback: (r: Result[]) => any, errorCallback: (e: Error) => any) {
+      PageLinkHelper.followLinks(parseRetrievedData<MultiResult>(req), this.expandKeys, successCallback, errorCallback);
+    }
+
+    getFirst(successCallback: (r: Result | null) => any, errorCallback?: (e: Error) => any) {
+      this.top(1);
+      this.executeCallback(res => successCallback(res && res.length > 0 ? res[0] : null), errorCallback);
+    }
+
+    promiseFirst(): Promise<Result> {
+      return promisifyCallback(this.getFirst);
+    }
+
 
     getQueryString(): string {
       let options: string[] = [];
@@ -382,53 +526,70 @@ namespace XQW {
       if (this.topAmount != null) {
         options.push("$top=" + this.topAmount);
       }
-      return this.entitySetName + (options.length > 0 ? "?" + options.join("&") : "");
+      let prefix = this.entitySetName;
+      if (this.id && this.relatedNav) {
+        prefix += `(${this.id})/${this.relatedNav}`;
+      }
+      return prefix + (options.length > 0 ? `?${options.join("&")}` : "");
     }
 
-    constructor(entityPicker: (x: WebEntities) => WebMapping<IEntity, ISelect, IExpand, IFilter, Result, FormattedResult>) {
-      super("GET");
-      this.entitySetName = taggedExec(entityPicker).toString();
+
+
+    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13, R14, F14, R15, F15>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>, WebAttribute<ISelect, R14, F14>, WebAttribute<ISelect, R15, F15>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13 & F14 & F15, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13 & R14 & R15>;
+    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13, R14, F14>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>, WebAttribute<ISelect, R14, F14>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13 & F14, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13 & R14>;
+    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13>;
+    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12>;
+    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11>;
+    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10>;
+    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9>;
+    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8>;
+    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7>;
+    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6, IFixed & R1 & R2 & R3 & R4 & R5 & R6>;
+    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5, IFixed & R1 & R2 & R3 & R4 & R5>;
+    select<R1, F1, R2, F2, R3, F3, R4, F4>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4, IFixed & R1 & R2 & R3 & R4>;
+    select<R1, F1, R2, F2, R3, F3>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3, IFixed & R1 & R2 & R3>;
+    select<R1, F1, R2, F2>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2, IFixed & R1 & R2>;
+    select<R1, F1>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1, IFixed & R1>;
+    select(vars: (x: ISelect) => WebAttribute<ISelect, any, any>[]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result> {
+      this.selects = parseSelects(vars);
+      return this;
     }
 
-    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13, R14, F14, R15, F15>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>, WebAttribute<ISelect, R14, F14>, WebAttribute<ISelect, R15, F15>]): RetrieveMultipleRecords<IEntity, ISelect, IExpand, IFilter, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13 & F14 & F15, R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13 & R14 & R15>;
-    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13, R14, F14>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>, WebAttribute<ISelect, R14, F14>]): RetrieveMultipleRecords<IEntity, ISelect, IExpand, IFilter, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13 & F14, R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13 & R14>;
-    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>]): RetrieveMultipleRecords<IEntity, ISelect, IExpand, IFilter, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13, R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13>;
-    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>]): RetrieveMultipleRecords<IEntity, ISelect, IExpand, IFilter, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12, R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12>;
-    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>]): RetrieveMultipleRecords<IEntity, ISelect, IExpand, IFilter, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11, R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11>;
-    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>]): RetrieveMultipleRecords<IEntity, ISelect, IExpand, IFilter, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10, R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10>;
-    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>]): RetrieveMultipleRecords<IEntity, ISelect, IExpand, IFilter, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9, R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9>;
-    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>]): RetrieveMultipleRecords<IEntity, ISelect, IExpand, IFilter, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8, R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8>;
-    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>]): RetrieveMultipleRecords<IEntity, ISelect, IExpand, IFilter, F1 & F2 & F3 & F4 & F5 & F6 & F7, R1 & R2 & R3 & R4 & R5 & R6 & R7>;
-    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>]): RetrieveMultipleRecords<IEntity, ISelect, IExpand, IFilter, F1 & F2 & F3 & F4 & F5 & F6, R1 & R2 & R3 & R4 & R5 & R6>;
-    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>]): RetrieveMultipleRecords<IEntity, ISelect, IExpand, IFilter, F1 & F2 & F3 & F4 & F5, R1 & R2 & R3 & R4 & R5>;
-    select<R1, F1, R2, F2, R3, F3, R4, F4>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>]): RetrieveMultipleRecords<IEntity, ISelect, IExpand, IFilter, F1 & F2 & F3 & F4, R1 & R2 & R3 & R4>;
-    select<R1, F1, R2, F2, R3, F3>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>]): RetrieveMultipleRecords<IEntity, ISelect, IExpand, IFilter, F1 & F2 & F3, R1 & R2 & R3>;
-    select<R1, F1, R2, F2>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>]): RetrieveMultipleRecords<IEntity, ISelect, IExpand, IFilter, F1 & F2, R1 & R2>;
-    select<R1, F1>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>]): RetrieveMultipleRecords<IEntity, ISelect, IExpand, IFilter, F1, R1>;
-    select(vars: (x: ISelect) => WebAttribute<ISelect, any, any>[]): RetrieveMultipleRecords<IEntity, ISelect, IExpand, IFilter, FormattedResult, Result> {
-      this.selects = this.selects.concat(<any>taggedExec(vars));
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13, R14, F14, R15, F15>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>, WebAttribute<ISelect, R14, F14>, WebAttribute<ISelect, R15, F15>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13 & F14 & F15, Result & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13 & R14 & R15>;
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13, R14, F14>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>, WebAttribute<ISelect, R14, F14>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13 & F14, Result & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13 & R14>;
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13, Result & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13>;
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12, Result & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12>;
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11, Result & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11>;
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10, Result & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10>;
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9, Result & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9>;
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8, Result & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8>;
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7, Result & R1 & R2 & R3 & R4 & R5 & R6 & R7>;
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6, Result & R1 & R2 & R3 & R4 & R5 & R6>;
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5, Result & R1 & R2 & R3 & R4 & R5>;
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4, Result & R1 & R2 & R3 & R4>;
+    selectMore<R1, F1, R2, F2, R3, F3>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3, Result & R1 & R2 & R3>;
+    selectMore<R1, F1, R2, F2>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2, Result & R1 & R2>;
+    selectMore<R1, F1>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1, Result & R1>;
+    selectMore(vars: (x: ISelect) => WebAttribute<ISelect, any, any>[]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result> {
+      this.selects = this.selects.concat(parseSelects(vars));
       return this;
     }
 
 
     expand<IExpSelect, IExpFilter, IExpResult>(
       exps: (x: IExpand) => WebExpand<IExpand, IExpSelect, IExpFilter, IExpResult>,
-      selectVars?: (x: IExpSelect) => WebAttribute<IExpSelect, any, any>[],
-      optArgs?: ExtraExpandOptions<IExpSelect, IExpFilter>)
-      : RetrieveMultipleRecords<IEntity, ISelect, IExpand, IFilter, FormattedResult, Result & IExpResult> {
+      selectVars?: (x: IExpSelect) => WebAttribute<IExpSelect, any, any>[])
+      : RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, IExpResult & Result> {
 
       const expand = taggedExec(exps).toString();
       this.selects.push(expand);
+      this.expandKeys.push(expand);
 
       let options: string[] = [];
-      if (selectVars) options.push(`$select=${taggedExec(selectVars)}`);
-      if (optArgs) {
-        if (optArgs.top) options.push(`$top=${optArgs.top}`);
-        if (optArgs.orderBy) options.push(`$orderby=${taggedExec(optArgs.orderBy)} ${optArgs.sortOrder != SortOrder.Descending ? "asc" : "desc"}`)
-        if (optArgs.filter) options.push(`$filter=${taggedExec(optArgs.filter)}`);
-      }
+      if (selectVars) options.push(`$select=${parseSelects(selectVars)}`);
+
       this.expands.push(expand + (options.length > 0 ? `(${options.join(";")})` : ""));
-      return this;
+      return <any>this;
     }
 
     filter(filter: (x: IFilter) => WebFilter) {
@@ -473,21 +634,21 @@ namespace XQW {
       this.topAmount = amount;
       return this;
     }
-
-
-    includeFormattedValues(): Query<WebApiResult & FormattedResult & Result> {
+    
+    includeFormattedValues(): Query<(FormattedResult & Result)[]> {
       this.additionalHeaders.push(FORMATTED_VALUES_HEADER);
+      return this;
+    }
+
+    maxPageSize(size: number) {
+      this.additionalHeaders.push(MaxPageSizeHeader(size));
       return this;
     }
   }
 
 
 
-  export class RetrieveRecord<IEntity, ISelect, IExpand, FormattedResult, Result> extends Query<WebApiResult & Result> {
-    /**
-     * @internal
-     */
-    private entitySetName: string;
+  export class RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result> extends Query<Result> {
     /**
      * @internal
      */
@@ -496,60 +657,106 @@ namespace XQW {
      * @internal
      */
     protected expands: string[] = [];
+    /**
+     * @internal
+     */
+    protected expandKeys: string[] = [];
 
-    constructor(entityPicker: (x: WebEntities) => WebMapping<IEntity, ISelect, IExpand, any, Result, FormattedResult>, private id?: string) {
-      super("GET");
-      this.entitySetName = taggedExec(entityPicker).toString();
+    static Related<ISingle, ISelect, IExpand, IFixed, Result, FormattedResult>(
+      entityPicker: (x: WebEntities) => WebMappingRelated<ISingle, any>,
+      id: string,
+      relatedPicker: (x: ISingle) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>) {
+      return new RetrieveRecord<ISelect, IExpand, IFixed, Result, FormattedResult>(taggedExec(entityPicker).toString(), id, taggedExec(relatedPicker).toString());
     }
 
-    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13, R14, F14, R15, F15>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>, WebAttribute<ISelect, R14, F14>, WebAttribute<ISelect, R15, F15>]): RetrieveRecord<IEntity, ISelect, IExpand, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13 & F14 & F15, R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13 & R14 & R15>;
-    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13, R14, F14>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>, WebAttribute<ISelect, R14, F14>]): RetrieveRecord<IEntity, ISelect, IExpand, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13 & F14, R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13 & R14>;
-    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>]): RetrieveRecord<IEntity, ISelect, IExpand, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13, R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13>;
-    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>]): RetrieveRecord<IEntity, ISelect, IExpand, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12, R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12>;
-    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>]): RetrieveRecord<IEntity, ISelect, IExpand, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11, R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11>;
-    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>]): RetrieveRecord<IEntity, ISelect, IExpand, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10, R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10>;
-    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>]): RetrieveRecord<IEntity, ISelect, IExpand, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9, R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9>;
-    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>]): RetrieveRecord<IEntity, ISelect, IExpand, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8, R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8>;
-    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>]): RetrieveRecord<IEntity, ISelect, IExpand, F1 & F2 & F3 & F4 & F5 & F6 & F7, R1 & R2 & R3 & R4 & R5 & R6 & R7>;
-    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>]): RetrieveRecord<IEntity, ISelect, IExpand, F1 & F2 & F3 & F4 & F5 & F6, R1 & R2 & R3 & R4 & R5 & R6>;
-    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>]): RetrieveRecord<IEntity, ISelect, IExpand, F1 & F2 & F3 & F4 & F5, R1 & R2 & R3 & R4 & R5>;
-    select<R1, F1, R2, F2, R3, F3, R4, F4>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>]): RetrieveRecord<IEntity, ISelect, IExpand, F1 & F2 & F3 & F4, R1 & R2 & R3 & R4>;
-    select<R1, F1, R2, F2, R3, F3>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>]): RetrieveRecord<IEntity, ISelect, IExpand, F1 & F2 & F3, R1 & R2 & R3>;
-    select<R1, F1, R2, F2>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>]): RetrieveRecord<IEntity, ISelect, IExpand, F1 & F2, R1 & R2>;
-    select<R1, F1>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>]): RetrieveRecord<IEntity, ISelect, IExpand, F1, R1>;
-    select(vars: (x: ISelect) => WebAttribute<ISelect, any, any>[]): RetrieveRecord<IEntity, ISelect, IExpand, FormattedResult, Result> {
-      this.selects = this.selects.concat(<any>taggedExec(vars));
+    static Get<ISelect, IExpand, IFixed, Result, FormattedResult>(
+      entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>,
+      id: string) {
+      return new RetrieveRecord<ISelect, IExpand, IFixed, Result, FormattedResult>(taggedExec(entityPicker).toString(), id);
+    }
+
+    private constructor(private entitySetName: string, private id: string, private relatedNav?: string) {
+      super("GET");
+    }
+
+    handleResponse(req: XMLHttpRequest, successCallback: (r: Result) => any, errorCallback: (e: Error) => any) {
+      EntityLinkHelper.followLinks(parseRetrievedData<any>(req), this.expandKeys, successCallback, errorCallback);
+    }
+
+    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13, R14, F14, R15, F15>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>, WebAttribute<ISelect, R14, F14>, WebAttribute<ISelect, R15, F15>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13 & F14 & F15, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13 & R14 & R15>;
+    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13, R14, F14>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>, WebAttribute<ISelect, R14, F14>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13 & F14, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13 & R14>;
+    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13>;
+    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12>;
+    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11>;
+    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10>;
+    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9>;
+    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8>;
+    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7>;
+    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6, IFixed & R1 & R2 & R3 & R4 & R5 & R6>;
+    select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5, IFixed & R1 & R2 & R3 & R4 & R5>;
+    select<R1, F1, R2, F2, R3, F3, R4, F4>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4, IFixed & R1 & R2 & R3 & R4>;
+    select<R1, F1, R2, F2, R3, F3>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3, IFixed & R1 & R2 & R3>;
+    select<R1, F1, R2, F2>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2, IFixed & R1 & R2>;
+    select<R1, F1>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>]): RetrieveRecord<ISelect, IExpand, IFixed, F1, IFixed & R1>;
+    select(vars: (x: ISelect) => WebAttribute<ISelect, any, any>[]): RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result> {
+      this.selects = parseSelects(vars);
+      return this;
+    }
+
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13, R14, F14, R15, F15>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>, WebAttribute<ISelect, R14, F14>, WebAttribute<ISelect, R15, F15>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13 & F14 & F15, Result & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13 & R14 & R15>;
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13, R14, F14>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>, WebAttribute<ISelect, R14, F14>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13 & F14, Result & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13 & R14>;
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13, Result & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13>;
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12, Result & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12>;
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11, Result & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11>;
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10, Result & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10>;
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9, Result & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9>;
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8, Result & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8>;
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7, Result & R1 & R2 & R3 & R4 & R5 & R6 & R7>;
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6, Result & R1 & R2 & R3 & R4 & R5 & R6>;
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5, Result & R1 & R2 & R3 & R4 & R5>;
+    selectMore<R1, F1, R2, F2, R3, F3, R4, F4>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4, Result & R1 & R2 & R3 & R4>;
+    selectMore<R1, F1, R2, F2, R3, F3>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3, Result & R1 & R2 & R3>;
+    selectMore<R1, F1, R2, F2>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2, Result & R1 & R2>;
+    selectMore<R1, F1>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>]): RetrieveRecord<ISelect, IExpand, IFixed, F1, Result & R1>;
+    selectMore(vars: (x: ISelect) => WebAttribute<ISelect, any, any>[]): RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result> {
+      this.selects = this.selects.concat(parseSelects(vars));
       return this;
     }
 
     expand<IExpSelect, IExpFilter, IExpResult>(
       exps: (x: IExpand) => WebExpand<IExpand, IExpSelect, IExpFilter, IExpResult>,
       selectVars?: (x: IExpSelect) => WebAttribute<IExpSelect, any, any>[],
-      optArgs?: ExtraExpandOptions<IExpSelect, IExpFilter>)
-      : RetrieveRecord<IEntity, ISelect, IExpand, FormattedResult, Result & IExpResult> {
+      optArgs?: ExpandOptions<IExpSelect, IExpFilter>)
+      : RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result & IExpResult> {
 
       const expand = taggedExec(exps).toString();
       this.selects.push(expand);
+      this.expandKeys.push(expand);
 
       let options: string[] = [];
-      if (selectVars) options.push(`$select=${taggedExec(selectVars)}`);
+      if (selectVars) options.push(`$select=${parseSelects(selectVars)}`);
       if (optArgs) {
         if (optArgs.top) options.push(`$top=${optArgs.top}`);
         if (optArgs.orderBy) options.push(`$orderby=${taggedExec(optArgs.orderBy)} ${optArgs.sortOrder != SortOrder.Descending ? "asc" : "desc"}`)
         if (optArgs.filter) options.push(`$filter=${taggedExec(optArgs.filter)}`);
       }
       this.expands.push(expand + (options.length > 0 ? `(${options.join(";")})` : ""));
-      return this;
+      return <any>this;
     }
 
     getQueryString(): string {
       let options: string[] = [];
       if (this.selects.length > 0) options.push("$select=" + this.selects.join(","));
       if (this.expands.length > 0) options.push("$expand=" + this.expands.join(","));
-      return `${this.entitySetName}(${this.id})` + (options.length > 0 ? "?" + options.join("&") : "");
+
+      let prefix = `${this.entitySetName}(${this.id})`;
+      if (this.relatedNav) {
+        prefix += `/${this.relatedNav}`;
+      }
+      return prefix + (options.length > 0 ? "?" + options.join("&") : "");
     }
 
-    includeFormattedValues(): Query<WebApiResult & FormattedResult & Result> {
+    includeFormattedValues(): Query<FormattedResult & Result> {
       this.additionalHeaders.push(FORMATTED_VALUES_HEADER);
       return this;
     }
@@ -559,29 +766,30 @@ namespace XQW {
   /**
    * Contains information about a Create query
    */
-  export class CreateRecord<IEntity> extends Query<string> {
+  export class CreateRecord<ICreate> extends Query<string> {
     /** 
      * @internal 
      */
     private entitySetName: string;
 
-    constructor(entityPicker: (x: WebEntities) => WebMapping<IEntity, any, any, any, any, any>, private record?: IEntity) {
+    constructor(entityPicker: (x: WebEntities) => WebMappingCUD<ICreate, any>, private record?: ICreate) {
       super("POST");
       this.entitySetName = taggedExec(entityPicker).toString();
     }
+    
+    handleResponse(req: XMLHttpRequest, successCallback: (r: string) => any, errorCallback: (e: Error) => any) {
+      let header = req.getResponseHeader("OData-EntityId");
+      if (header) successCallback(header!.substr(-37, 36))
+      else errorCallback(new Error("No valid OData-EntityId found in header."));
+    }
 
-    setData(record: IEntity) {
+    setData(record: ICreate) {
       this.record = record;
       return this;
     }
 
-    protected getObjectToSend = () => JSON.stringify(this.record, attrToCrm);
-
-    protected handleResponse = (req: XMLHttpRequest) => {
-      let header = req.getResponseHeader("OData-EntityId");
-      return header && header.substr(-37, 36);
-    }
-
+    protected getObjectToSend = () => JSON.stringify(transformObject(this.record));
+    
     getQueryString(): string {
       return this.entitySetName;
     }
@@ -590,15 +798,19 @@ namespace XQW {
   /**
    * Contains information about a Delete query
    */
-  export class DeleteRecord<IEntity> extends Query<void> {
+  export class DeleteRecord extends Query<void> {
     /** 
      * @internal 
      */
     private entitySetName: string;
 
-    constructor(entityPicker: (x: WebEntities) => WebMapping<IEntity, any, any, any, any, any>, private id?: string) {
+    constructor(entityPicker: (x: WebEntities) => WebMappingCUD<any, any>, private id?: string) {
       super("DELETE");
       this.entitySetName = taggedExec(entityPicker).toString();
+    }
+
+    handleResponse(req: XMLHttpRequest, successCallback: () => any) {
+      successCallback();
     }
 
     setId(id: string) {
@@ -615,24 +827,28 @@ namespace XQW {
   /**
    * Contains information about an UpdateRecord query
    */
-  export class UpdateRecord<IEntity> extends Query<void> {
+  export class UpdateRecord<IUpdate> extends Query<void> {
     /** 
      * @internal 
      */
     private entitySetName: string;
 
-    constructor(entityPicker: (x: WebEntities) => WebMapping<IEntity, any, any, any, any, any>, private id?: string, private record?: IEntity) {
+    constructor(entityPicker: (x: WebEntities) => WebMappingCUD<any, IUpdate>, private id?: string, private record?: IUpdate) {
       super("PATCH");
       this.entitySetName = taggedExec(entityPicker).toString();
     }
 
-    setData(id: string, record: IEntity) {
+    handleResponse(req: XMLHttpRequest, successCallback: () => any) {
+      successCallback();
+    }
+
+    setData(id: string, record: IUpdate) {
       this.id = id;
       this.record = record;
       return this;
     }
 
-    protected getObjectToSend = () => JSON.stringify(this.record, attrToCrm);
+    protected getObjectToSend = () => JSON.stringify(transformObject(this.record));
 
     getQueryString(): string {
       return `${this.entitySetName}(${this.id})`;
@@ -675,8 +891,8 @@ namespace XQW {
     let funcInfo = analyzeFunc(f);
     let regex = objRegex(funcInfo.arg);
 
-    let obj = {};
-    let match;
+    let obj: { [k: string]: any } = {};
+    let match: any;
     while ((match = regex.exec(funcInfo.body)) != null) {
       if (!obj[match[1]]) {
         obj[match[1]] = XQW.makeTag(match[1]);
@@ -688,12 +904,19 @@ namespace XQW {
     return obj;
   }
 
+
   /**
    * @internal
    */
+  export var ApiUrl: string | null = null;
+  const DefaultApiVersion = "8.0";
+
+  export function getDefaultUrl(v: string) {
+    return getClientUrl() + `/api/data/v${v}/`;
+  }
   export function getApiUrl() {
-    let url = XrmQuery.ApiUrl;
-    return url ? url : getClientUrl() + "/api/data/v8.1/";
+    if (ApiUrl === null) ApiUrl = getDefaultUrl(DefaultApiVersion);
+    return ApiUrl;
   }
 
   declare var Xrm: any;
@@ -716,36 +939,58 @@ namespace XQW {
     }
   }
 
-  function keyToCrm(name: string) {
-    const idx = name.indexOf(LOOKUP_ID);
+  /**
+   * Converts a select object to CRM format
+   * @param name
+   */
+  function selectToCrm(name: string) {
+    const idx = name.indexOf(GUID_ENDING);
     if (idx == -1) return name;
     return `_${name.substr(0, idx)}_value`;
   }
 
-  function parseObject(obj: any) {
+
+  /**
+   * Helper function to perform tagged execution and mapping to array of selects
+   * @internal
+   */
+  function parseSelects(f: (x: any) => any): string[] {
+    return taggedExec<Object[]>(f).map(x => selectToCrm(x.toString()));
+  }
+
+  /**
+   * Transforms an object XrmQuery format to a CRM format
+   * @param obj
+   */
+  function transformObject(obj: any) {
     if (obj instanceof Object) {
-      const f = attrToCrm.bind(obj);
-      Object.keys(obj).forEach(key => {
-        let v = f(key, parseObject(obj[key]));
-        if (v !== undefined) obj[key] = v;
-      });
-      return obj;
+      var newObj = {};
+      Object.keys(obj).forEach(key => copyKeyVal(key, transformObject(obj[key]), newObj));
+      return newObj;
 
     } else if (obj instanceof Array) {
-      return obj.map(x => parseObject(x));
+      var arr: any[] = [];
+      obj.forEach((v, idx) => arr[idx] = transformObject(v));
+      return arr;
 
     } else {
       return obj;
     }
   }
 
-  function attrToCrm(key: string, value: any) {
-    const lookupIdx = key.indexOf(LOOKUP_ID);
+  /**
+   * Copies attributes from XrmQuery format to CRM format
+   * @param key
+   * @param value
+   */
+  function copyKeyVal(key: string, val: any, newObj: any) {
+    const lookupIdx = key.indexOf(BIND_ID);
     if (lookupIdx >= 0) {
-      const entity = key.substr(lookupIdx + LOOKUP_ID.length);
-      this[`${key.substr(0, lookupIdx)}@odata.bind`] = `/${entity}(${value})`;
-      return;
+      const setName = key.substr(lookupIdx + BIND_ID.length);
+      newObj[`${key.substr(0, lookupIdx)}@odata.bind`] = `/${setName}(${val})`;
+
+    } else {
+      newObj[key] = val;
     }
-    return value;
   }
 }

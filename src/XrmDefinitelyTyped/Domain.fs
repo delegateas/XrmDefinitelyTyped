@@ -21,6 +21,8 @@ type XdtGenerationSettings = {
   out: string option
   crmVersion: XrmVersion option
   skipForms: bool
+  jsLib: string option
+  tsLib: string option
   restNs: string option
   webNs: string option
   formIntersects: FormIntersect [] option
@@ -39,6 +41,9 @@ type RawState = {
   [<field : DataMember>]
   metadata: EntityMetadata[]
   
+  [<field : DataMember>]
+  nameMap: Map<string, (string * string)>
+
   [<field : DataMember>]
   bpfData: Entity[]
   

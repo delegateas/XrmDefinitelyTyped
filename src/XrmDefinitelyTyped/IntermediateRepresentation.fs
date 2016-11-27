@@ -24,6 +24,10 @@ module IntermediateRepresentation =
     logicalName: string
     varType: TsType
     specialType: SpecialType
+    targetEntitySets: string[] option
+    readable: bool
+    createable: bool
+    updateable: bool
   }
 
   type XrmRelationship = {
@@ -40,9 +44,10 @@ module IntermediateRepresentation =
     schemaName: string
     logicalName: string
     entitySetName: string
-    attr_vars: XrmAttribute list 
+    idAttr: string
+    attrs: XrmAttribute list 
     opt_sets: OptionSet list
-    rel_vars: XrmRelationship list
+    rels: XrmRelationship list
     relatedEntities: string list 
   }
 

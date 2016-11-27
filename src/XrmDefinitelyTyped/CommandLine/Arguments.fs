@@ -17,7 +17,17 @@ type Args private () =
       description="Output directory for the generated files."
       required=false }
 
-    { command="crmversion"
+    { command="jsLib"
+      altCommands=["jl"]
+      description="Directory where XrmQuery JavaScript files should be placed."
+      required=false }
+
+    { command="tsLib"
+      altCommands=["tl"]
+      description="Directory where XrmQuery TypeScript files should be placed."
+      required=false }
+
+    { command="crmVersion"
       altCommands=["cv"]
       description="Version of the targeted CRM"
       required=false }
@@ -128,7 +138,7 @@ type Args private () =
 
   static member flagArgMap = Args.makeArgMap Args.flagArgs
 
-  static member fullArgList = List.concat [Args.connectionArgs; Args.generationArgs; Args.flagArgs; [Args.useConfig]]
+  static member fullArgList = List.concat [ Args.connectionArgs; Args.generationArgs; Args.flagArgs; [Args.useConfig] ]
   static member argMap = Args.makeArgMap Args.fullArgList
 
   // Usage

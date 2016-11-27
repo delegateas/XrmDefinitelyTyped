@@ -1,13 +1,24 @@
 {
+    "compileOnSave": true,
     "compilerOptions": {
         "module": "commonjs",
         "target": "es5",
-        "noEmit": true,
         "noImplicitAny": false,
         "strictNullChecks": true,
-        "sourceMap": false,
+        "removeComments": false,
+        "experimentalDecorators": true,
+        "declaration": true,
+        "outDir": "build",
+        "sourceMap": true,
         "lib": [
             "dom", "es5", "es2015.promise"
         ]
-    }
+    },
+    "include": [
+        "src/**/*",
+        "typings/**/*"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
 }

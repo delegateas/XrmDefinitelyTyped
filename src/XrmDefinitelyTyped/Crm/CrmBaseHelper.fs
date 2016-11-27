@@ -68,16 +68,14 @@ module internal CrmBaseHelper =
     
     retrieveMultiple proxy logicalName q
 
-  // Retrieve all entity metadata (Ramon Puaj Puaj)
+  // Retrieve entity metadata for all entities
   let getAllEntityMetadataLight proxy =
     let request = RetrieveAllEntitiesRequest()
     request.EntityFilters <- Microsoft.Xrm.Sdk.Metadata.EntityFilters.Entity
-    request.RetrieveAsIfPublished <- true
-
     let resp = getResponse<RetrieveAllEntitiesResponse> proxy request
     resp.EntityMetadata
 
-  // Retrieve all entity metadata
+  // Retrieve all metadata for all entities
   let getAllEntityMetadata (proxy:OrganizationServiceProxy) =
     let request = RetrieveAllEntitiesRequest()
     request.EntityFilters <- Microsoft.Xrm.Sdk.Metadata.EntityFilters.All

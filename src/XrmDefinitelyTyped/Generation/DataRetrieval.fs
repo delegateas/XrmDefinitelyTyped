@@ -15,10 +15,24 @@ module DataRetrieval =
     printfn "Done!"
     proxy
 
+  // Retrieve CRM entity name map
+  let retrieveEntityNameMap mainProxy =
+    printf "Fetching entity names from CRM..."
+    
+    let metadata = 
+      getAllEntityMetadataLight mainProxy
+
+    let map =
+      metadata
+      |> Array.Parallel.map (fun m -> m.LogicalName, (m.SchemaName, m.EntitySetName))
+      |> Map.ofArray
+
+    printfn "Done!"
+    map
 
   // Retrieve CRM entity metadata
   let retrieveEntityMetadata entities mainProxy proxyGetter =
-    printf "Fetching entity metadata from CRM..."
+    printf "Fetching specific entity metadata from CRM..."
 
     let rawEntityMetadata = 
       match entities with
@@ -41,6 +55,9 @@ module DataRetrieval =
 
   /// Retrieve all the necessary CRM data
   let retrieveCrmData crmVersion entities mainProxy proxyGetter =
+    let nameMap = 
+      retrieveEntityNameMap mainProxy
+
     let rawEntityMetadata = 
       retrieveEntityMetadata entities mainProxy proxyGetter
     
@@ -62,6 +79,7 @@ module DataRetrieval =
     printfn "Done!"
 
     { RawState.metadata = rawEntityMetadata
+      nameMap = nameMap
       bpfData = bpfData
       formData = formData }
 

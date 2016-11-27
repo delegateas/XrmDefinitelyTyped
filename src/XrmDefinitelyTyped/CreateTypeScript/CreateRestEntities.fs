@@ -87,28 +87,29 @@ module internal CreateRestEntities =
 
     let is = 
       [ Interface.Create(baseName, 
-          vars = (e.attr_vars |> getOrgVariables),
-          superClass = superEntityName)
+          vars = (e.attrs |> getOrgVariables),
+          extends = [superEntityName])
         Interface.Create(e.schemaName, 
-          vars = (e.rel_vars |> getRelationshipVariables false),
-          superClass = baseName)
+          vars = (e.rels |> getRelationshipVariables false),
+          extends = [baseName])
         Interface.Create(resultName, 
-          vars = (e.rel_vars |> getRelationshipVariables true),
-          superClass = baseName)
+          vars = (e.rels |> getRelationshipVariables true),
+          extends = [baseName])
 
         // XrmQuery interfaces
         Interface.Create(selName, 
-          vars = (e.attr_vars |> getSelectVariables selName),
-          superClass = expName)
+          vars = (e.attrs |> getSelectVariables selName),
+          extends = [expName])
         Interface.Create(filterName, 
-          vars = (e.attr_vars |> getFilterVariables))
+          vars = (e.attrs |> getFilterVariables))
         Interface.Create(expName, 
-          vars = (e.rel_vars |> getExpandVariables e.schemaName))
+          vars = (e.rels |> getExpandVariables e.schemaName))
 
       ]
 
+    let ns = Namespace.Create(ns, declare = true, interfaces = is)
     List.concat 
-      [ CreateCommon.interfacesToNsLines ns is
+      [ CreateCommon.skipNsIfEmpty ns
         Interface.Create("RestEntities", vars = [mapping]) |> interfaceToString
       ]
 
@@ -123,12 +124,13 @@ module internal CreateRestEntities =
       es
       |> Array.map (fun e ->
         let bn = baseName e.schemaName 
-        [ Interface.Create(bn, superClass = superEntityName)
-          Interface.Create(resultName e.schemaName, superClass = bn)
+        [ Interface.Create(bn, extends = [superEntityName])
+          Interface.Create(resultName e.schemaName, extends = [bn])
           Interface.Create(selectName e.schemaName)
-          Interface.Create(e.schemaName, superClass = bn) ])
+          Interface.Create(e.schemaName, extends = [bn]) ])
       |> List.concat
       |> fun list -> queryMapping :: Interface.Create(superEntityName) :: list 
     
-    CreateCommon.interfacesToNsLines ns is
+    let ns = Namespace.Create(ns, declare = true, interfaces = is)
+    CreateCommon.skipNsIfEmpty ns
     

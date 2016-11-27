@@ -25,12 +25,12 @@ module internal CommandLineHelper =
 
   let (|GetArgVal|_|) input = 
     let m = Regex("^[/\-]([^:]+)(:\"?(.*)\"?)?$").Match(input)
-    if m.Success then Some (m.Groups.[1].Value.ToLower(), m.Groups.[3].Value)
+    if m.Success then Some (m.Groups.[1].Value, m.Groups.[3].Value)
     else None
 
 
-  let handleArg argMap parsedArgs k v =
-    match Map.tryFind k argMap with
+  let handleArg argMap parsedArgs (k: string) v =
+    match Map.tryFind (k.ToLower()) argMap with
     | Some a -> Map.add a.command v parsedArgs
     | None ->
       printfn "Option '%s' not recognized." k

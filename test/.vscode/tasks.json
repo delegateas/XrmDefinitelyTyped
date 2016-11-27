@@ -1,0 +1,9 @@
+{
+    "version": "0.1.0",
+    "command": "tsc",
+    "isShellCommand": true,
+    "args": ["-p", ".", "-w"],
+    "showOutput": "silent",
+    "problemMatcher": "$tsc",
+    "isWatching": true
+}

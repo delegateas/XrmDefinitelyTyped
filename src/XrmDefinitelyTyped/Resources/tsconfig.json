@@ -2,8 +2,9 @@
     "compilerOptions": {
         "stripInternal": true,
         "declaration": true,
+        "noImplicitAny": true,
         "strictNullChecks": true,
-        "outDir": "Build",
+        "outDir": "Dist",
         "lib": [ "dom", "es5", "es2015.promise" ]
     },
     "files": [
