@@ -90,10 +90,10 @@ var XrmQuery;
         return XQW.RetrieveMultipleRecords.Get(entityPicker);
     }
     XrmQuery.retrieveMultiple = retrieveMultiple;
-    function retrieveRelatedRecord(entityPicker, id, relatedPicker) {
+    function retrieveRelated(entityPicker, id, relatedPicker) {
         return XQW.RetrieveRecord.Related(entityPicker, id, relatedPicker);
     }
-    XrmQuery.retrieveRelatedRecord = retrieveRelatedRecord;
+    XrmQuery.retrieveRelated = retrieveRelated;
     function retrieveRelatedMultiple(entityPicker, id, relatedPicker) {
         return XQW.RetrieveMultipleRecords.Related(entityPicker, id, relatedPicker);
     }
@@ -336,9 +336,9 @@ var XQW;
             this.getObjectToSend = function () { return null; };
         }
         Query.prototype.promise = function () {
-            return promisifyCallback(this.executeCallback);
+            return promisifyCallback(this.execute);
         };
-        Query.prototype.executeCallback = function (successCallback, errorCallback) {
+        Query.prototype.execute = function (successCallback, errorCallback) {
             if (errorCallback === void 0) { errorCallback = function () { }; }
             this._executeRaw(successCallback, errorCallback, true);
         };
@@ -397,7 +397,7 @@ var XQW;
         };
         RetrieveMultipleRecords.prototype.getFirst = function (successCallback, errorCallback) {
             this.top(1);
-            this.executeCallback(function (res) { return successCallback(res && res.length > 0 ? res[0] : null); }, errorCallback);
+            this.execute(function (res) { return successCallback(res && res.length > 0 ? res[0] : null); }, errorCallback);
         };
         RetrieveMultipleRecords.prototype.promiseFirst = function () {
             return promisifyCallback(this.getFirst);

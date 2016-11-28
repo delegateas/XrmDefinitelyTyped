@@ -25,13 +25,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{83F16175
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "content", "content", "{8E6D5255-776D-4B61-85F9-73C37AA1FB9A}"
 	ProjectSection(SolutionItems) = preProject
+		docs\content\form-intersection.md = docs\content\form-intersection.md
+		docs\content\getting-started.md = docs\content\getting-started.md
 		docs\content\index.md = docs\content\index.md
+		docs\content\migration-guide-2.md = docs\content\migration-guide-2.md
 		docs\content\os-dts-usage.md = docs\content\os-dts-usage.md
-		docs\content\quick-start.md = docs\content\quick-start.md
 		docs\content\rest-dts-usage.md = docs\content\rest-dts-usage.md
 		docs\content\tool-usage.fsx = docs\content\tool-usage.fsx
 		docs\content\xrm-dts-usage.md = docs\content\xrm-dts-usage.md
-		docs\content\xrmquery-rest-usage.md = docs\content\xrmquery-rest-usage.md
+		docs\content\xrmquery-rest.md = docs\content\xrmquery-rest.md
+		docs\content\xrmquery-web.md = docs\content\xrmquery-web.md
 	EndProjectSection
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "XrmDefinitelyTyped", "src\XrmDefinitelyTyped\XrmDefinitelyTyped.fsproj", "{7E90D6CE-A10B-4858-A5BC-41DF7250CBCA}"

@@ -3,6 +3,139 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var XrmQuery;
+(function (XrmQuery) {
+    /**
+     * Instantiates specification of a query that can retrieve a specific record.
+     * @param entityPicker Function to select which entity-type should be targeted.
+     * @param id GUID of the wanted record.
+     */
+    function retrieve(entityPicker, id) {
+        return XQW.RetrieveRecord.Get(entityPicker, id);
+    }
+    XrmQuery.retrieve = retrieve;
+    /**
+     * Instantiates specification of a query that can retrieve multiple records of a certain entity.
+     * @param entityPicker Function to select which entity should be targeted.
+     */
+    function retrieveMultiple(entityPicker) {
+        return XQW.RetrieveMultipleRecords.Get(entityPicker);
+    }
+    XrmQuery.retrieveMultiple = retrieveMultiple;
+    /**
+     * Instantiates specification of a query that can retrieve a related record of a given record.
+     * @param entityPicker Function to select which entity-type the related record should be retrieved from.
+     * @param id GUID of the record of which the related record should be retrieved.
+     * @param relatedPicker Function to select which navigation property points to the related record.
+     */
+    function retrieveRelated(entityPicker, id, relatedPicker) {
+        return XQW.RetrieveRecord.Related(entityPicker, id, relatedPicker);
+    }
+    XrmQuery.retrieveRelated = retrieveRelated;
+    /**
+     * Instantiates specification of a query that can retrieve multiple related records of a given record.
+     * @param entityPicker  Function to select which entity-type the related records should be retrieved from.
+     * @param id GUID of the record of which the related records should be retrieved.
+     * @param relatedPicker Function to select which navigation property points to the related records.
+     */
+    function retrieveRelatedMultiple(entityPicker, id, relatedPicker) {
+        return XQW.RetrieveMultipleRecords.Related(entityPicker, id, relatedPicker);
+    }
+    XrmQuery.retrieveRelatedMultiple = retrieveRelatedMultiple;
+    /**
+     * Instantiates a query that can create a record.
+     * @param entityPicker Function to select which entity-type should be created.
+     * @param record Object of the record to be created.
+     */
+    function create(entityPicker, record) {
+        return new XQW.CreateRecord(entityPicker, record);
+    }
+    XrmQuery.create = create;
+    /**
+     * Instantiates a query that can update a specific record.
+     * @param entityPicker Function to select which entity-type should be updated.
+     * @param id GUID of the record to be updated.
+     * @param record Object containing the attributes to be updated.
+     */
+    function update(entityPicker, id, record) {
+        return new XQW.UpdateRecord(entityPicker, id, record);
+    }
+    XrmQuery.update = update;
+    /**
+     * Instantiates a query that can delete a specific record.
+     * @param entityPicker Function to select which entity-type should be deleted.
+     * @param id GUID of the record to be updated.
+     */
+    function deleteRecord(entityPicker, id) {
+        return new XQW.DeleteRecord(entityPicker, id);
+    }
+    XrmQuery.deleteRecord = deleteRecord;
+    /**
+     * Makes XrmQuery use the given custom url to access the Web API.
+     * @param url The url targeting the API. For example: '/api/data/v8.2/'
+     */
+    function setApiUrl(url) {
+        XQW.ApiUrl = url;
+    }
+    XrmQuery.setApiUrl = setApiUrl;
+    /**
+     * Makes XrmQuery use the given version to access the Web API.
+     * @param v Version to use for the API. For example: '8.2'
+     */
+    function setApiVersion(v) {
+        XQW.ApiUrl = XQW.getDefaultUrl(v);
+    }
+    XrmQuery.setApiVersion = setApiVersion;
+    /**
+     * @internal
+     */
+    function request(type, url, data, successCb, errorCb, preSend) {
+        if (errorCb === void 0) { errorCb = function () { }; }
+        var req = new XMLHttpRequest();
+        req.open(type, url, true);
+        req.setRequestHeader("Accept", "application/json");
+        req.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+        req.setRequestHeader("OData-MaxVersion", "4.0");
+        req.setRequestHeader("OData-Version", "4.0");
+        if (preSend)
+            preSend(req);
+        req.onreadystatechange = function () {
+            if (this.readyState == 4) {
+                req.onreadystatechange = null;
+                if (this.status == 200 || this.status == 204)
+                    successCb(this);
+                else
+                    errorCb(new Error(this.response));
+            }
+        };
+        req.send(data);
+    }
+    XrmQuery.request = request;
+    /**
+     * Send a request to the Web API with the given parameters.
+     * @param type Type of request, i.e. "GET", "POST", etc
+     * @param queryString Query-string to use for the API. For example: 'accounts?$count=true'
+     * @param data Object to send with request
+     * @param successCb Success callback handler function
+     * @param errorCb Error callback handler function
+     * @param configure Modify the request before it it sent to the endpoint - like adding headers.
+     */
+    function sendRequest(type, queryString, data, successCb, errorCb, configure) {
+        request(type, encodeURI(XQW.getApiUrl() + queryString), data, successCb, errorCb, configure);
+    }
+    XrmQuery.sendRequest = sendRequest;
+    /**
+     * Send a request to the Web API with the given parameters and return a promise.
+     * @param type Type of request, i.e. "GET", "POST", etc
+     * @param queryString Query-string to use for the API. For example: 'accounts?$count=true'
+     * @param data Object to send with request
+     * @param configure Modify the request before it it sent to the endpoint - like adding headers.
+     */
+    function promiseRequest(type, queryString, data, configure) {
+        XQW.promisifyCallback(function (success, error) { return sendRequest(type, queryString, data, success, error, configure); });
+    }
+    XrmQuery.promiseRequest = promiseRequest;
+})(XrmQuery || (XrmQuery = {}));
 var Filter;
 (function (Filter) {
     function equals(v1, v2) { return comp(v1, "eq", v2); }
@@ -76,81 +209,6 @@ var Filter;
         return fs.reduceRight(function (acc, c) { return biFilter(c, conj, acc); }, last);
     }
 })(Filter || (Filter = {}));
-var XrmQuery;
-(function (XrmQuery) {
-    function setApiUrl(url) {
-        XQW.ApiUrl = url;
-    }
-    XrmQuery.setApiUrl = setApiUrl;
-    function setApiVersion(v) {
-        XQW.ApiUrl = XQW.getDefaultUrl(v);
-    }
-    XrmQuery.setApiVersion = setApiVersion;
-    function retrieveMultiple(entityPicker) {
-        return XQW.RetrieveMultipleRecords.Get(entityPicker);
-    }
-    XrmQuery.retrieveMultiple = retrieveMultiple;
-    function retrieveRelatedRecord(entityPicker, id, relatedPicker) {
-        return XQW.RetrieveRecord.Related(entityPicker, id, relatedPicker);
-    }
-    XrmQuery.retrieveRelatedRecord = retrieveRelatedRecord;
-    function retrieveRelatedMultiple(entityPicker, id, relatedPicker) {
-        return XQW.RetrieveMultipleRecords.Related(entityPicker, id, relatedPicker);
-    }
-    XrmQuery.retrieveRelatedMultiple = retrieveRelatedMultiple;
-    function retrieve(entityPicker, id) {
-        return XQW.RetrieveRecord.Get(entityPicker, id);
-    }
-    XrmQuery.retrieve = retrieve;
-    function create(entityPicker, record) {
-        return new XQW.CreateRecord(entityPicker, record);
-    }
-    XrmQuery.create = create;
-    function update(entityPicker, id, record) {
-        return new XQW.UpdateRecord(entityPicker, id, record);
-    }
-    XrmQuery.update = update;
-    function deleteRecord(entityPicker, id) {
-        return new XQW.DeleteRecord(entityPicker, id);
-    }
-    XrmQuery.deleteRecord = deleteRecord;
-    /**
-     * @internal
-     */
-    function request(type, url, data, successCb, errorCb, preSend) {
-        var req = new XMLHttpRequest();
-        req.open(type, url, true);
-        req.setRequestHeader("Accept", "application/json");
-        req.setRequestHeader("Content-Type", "application/json; charset=utf-8");
-        req.setRequestHeader("OData-MaxVersion", "4.0");
-        req.setRequestHeader("OData-Version", "4.0");
-        if (preSend)
-            preSend(req);
-        req.onreadystatechange = function () {
-            if (this.readyState == 4) {
-                req.onreadystatechange = null;
-                if (this.status == 200 || this.status == 204)
-                    successCb(this);
-                else
-                    errorCb(new Error(this.response));
-            }
-        };
-        req.send(data);
-    }
-    XrmQuery.request = request;
-    function sendCbRequest(type, queryString, data, successCb, errorCb, preSend) {
-        request(type, encodeURI(XQW.getApiUrl() + queryString), data, successCb, errorCb, preSend);
-    }
-    XrmQuery.sendCbRequest = sendCbRequest;
-    function sendRequest(type, queryString, data, configure) {
-        if (!Promise)
-            throw new Error("Promises are not natively supported in this browser. Add a polyfill to use it.");
-        return new Promise(function (resolve, reject) {
-            sendCbRequest(type, queryString, data, resolve, reject, configure);
-        });
-    }
-    XrmQuery.sendRequest = sendRequest;
-})(XrmQuery || (XrmQuery = {}));
 var XQW;
 (function (XQW) {
     var FORMATTED_VALUE_ID = "OData.Community.Display.V1.FormattedValue";
@@ -219,6 +277,7 @@ var XQW;
             callbackFunc(resolve, reject);
         });
     }
+    XQW.promisifyCallback = promisifyCallback;
     var LinkHelper = (function () {
         function LinkHelper(toReturn, successCallback, errorCallback) {
             var _this = this;
@@ -336,19 +395,19 @@ var XQW;
             this.getObjectToSend = function () { return null; };
         }
         Query.prototype.promise = function () {
-            return promisifyCallback(this.executeCallback);
+            return promisifyCallback(this.execute);
         };
-        Query.prototype.executeCallback = function (successCallback, errorCallback) {
+        Query.prototype.execute = function (successCallback, errorCallback) {
             if (errorCallback === void 0) { errorCallback = function () { }; }
-            this._executeRaw(successCallback, errorCallback, true);
+            this.executeRaw(successCallback, errorCallback, true);
         };
-        Query.prototype._executeRaw = function (successCallback, errorCallback, parseResult) {
+        Query.prototype.executeRaw = function (successCallback, errorCallback, parseResult) {
             var _this = this;
             if (errorCallback === void 0) { errorCallback = function () { }; }
             if (parseResult === void 0) { parseResult = false; }
             var config = function (req) { return _this.additionalHeaders.forEach(function (h) { return req.setRequestHeader(h.type, h.value); }); };
             var successHandler = function (req) { return parseResult ? _this.handleResponse(req, successCallback, errorCallback) : successCallback(req); };
-            return XrmQuery.sendCbRequest(this.requestType, this.getQueryString(), this.getObjectToSend(), successHandler, errorCallback, config);
+            return XrmQuery.sendRequest(this.requestType, this.getQueryString(), this.getObjectToSend(), successHandler, errorCallback, config);
         };
         return Query;
     }());
@@ -397,7 +456,7 @@ var XQW;
         };
         RetrieveMultipleRecords.prototype.getFirst = function (successCallback, errorCallback) {
             this.top(1);
-            this.executeCallback(function (res) { return successCallback(res && res.length > 0 ? res[0] : null); }, errorCallback);
+            this.execute(function (res) { return successCallback(res && res.length > 0 ? res[0] : null); }, errorCallback);
         };
         RetrieveMultipleRecords.prototype.promiseFirst = function () {
             return promisifyCallback(this.getFirst);
@@ -754,7 +813,7 @@ var XQW;
     function transformObject(obj) {
         if (obj instanceof Object) {
             var newObj = {};
-            Object.keys(obj).forEach(function (key) { return copyKeyVal(key, transformObject(obj[key]), newObj); });
+            Object.keys(obj).forEach(function (key) { return parseAttribute(key, transformObject(obj[key]), newObj); });
             return newObj;
         }
         else if (obj instanceof Array) {
@@ -767,11 +826,11 @@ var XQW;
         }
     }
     /**
-     * Copies attributes from XrmQuery format to CRM format
+     * Parses attributes from XrmQuery format to CRM format
      * @param key
      * @param value
      */
-    function copyKeyVal(key, val, newObj) {
+    function parseAttribute(key, val, newObj) {
         var lookupIdx = key.indexOf(BIND_ID);
         if (lookupIdx >= 0) {
             var setName = key.substr(lookupIdx + BIND_ID.length);

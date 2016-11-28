@@ -1,10 +1,10 @@
 import { expect } from 'chai';
 import { suite, test, slow, timeout, skip, only } from "mocha-typescript";
-import FakeRequests from './fakeRequests';
+import FakeRequests from '../../common/fakeRequests';
 import * as sinon from 'sinon';
 
 @suite 
-class Web_CreateManipulation extends FakeRequests {
+class Web_CreateUpdate_Attributes extends FakeRequests {
     
     @test
     "simple create"() {
@@ -13,10 +13,9 @@ class Web_CreateManipulation extends FakeRequests {
 
         var callback = sinon.spy();
         XrmQuery.create(x => x.accounts, { parentaccountid_bind$accounts: relatedAccountId })
-            .executeCallback(callback);
+            .execute(callback);
 
-
-        // Request tests 
+        // Check request is valid 
         expect(this.requests.length).to.equal(1);
         var req = this.requests[0];
         expect(req.url).to.equal(`accounts`);

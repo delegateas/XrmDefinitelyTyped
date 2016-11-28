@@ -36,3 +36,9 @@ popd
 :: Clean up
 del paket.dependencies paket.lock
 rmdir /S /Q packages
+
+
+:: Generate default .config file if one does not already exist
+if not exist XrmDefinitelyTyped.exe.config (
+	XrmDefinitelyTyped.exe -gc
+)

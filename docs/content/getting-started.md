@@ -1,4 +1,4 @@
-Quick-start guide
+Getting started
 =================
 
 Get up and running with XrmDefinitelyTyped in a few minutes by following this guide.
@@ -6,7 +6,7 @@ Get up and running with XrmDefinitelyTyped in a few minutes by following this gu
 Prerequisities
 --------------
 
-* Latest [TypeScript version](http://www.typescriptlang.org/index.html#download-links) installed
+* Latest [TypeScript](http://www.typescriptlang.org/index.html#download-links) installed
 * TypeScript is set up to compile `.ts` files in your project
 
 
@@ -32,15 +32,25 @@ Step-by-step
 5. Start coding!
 
 
-Recommended file setup
+Recommended form script file-setup
 ----------------------
 
 
-Either declare the Xrm object to be the form your want it to match:
+Either make a new variable (`Page`), and set it to `Xrm.Page` casted to the desired form type:
 
     [lang=typescript]
-    /// <reference path="../../typings/XRM/Form/contact/Main/Information.d.ts" />
+    namespace DG.Contact {
+        const Page = <Form.contact.Main.Information>Xrm.Page;
 
+        export function onLoad() {
+            // Code here..
+            Page.getAttribute("firstname");
+        }
+    }
+
+Or declare the Xrm object to be the form your want it to match:
+
+    [lang=typescript]
     namespace DG.Contact {
         declare var Xrm: Xrm<Form.contact.Main.Information>;
 
@@ -50,20 +60,6 @@ Either declare the Xrm object to be the form your want it to match:
         }
     }
 
-
-Or make a new variable (`Page`), and set it to `Xrm.Page` casted to the desired form type:
-
-    [lang=typescript]
-    /// <reference path="../../typings/XRM/Form/contact/Main/Information.d.ts" />
-
-    namespace DG.Contact {
-        const Page = <Form.contact.Main.Information>Xrm.Page;
-
-        export function onLoad() {
-            // Code here..
-            Page.getAttribute("firstname");
-        }
-    }
 
 
 [install]: files/install-latest.cmd

@@ -91,10 +91,12 @@
     <EmbeddedResource Include="Resources\Dist\dg.xrmquery.web.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Dist\dg.xrmquery.web.promise.min.js" />
     <EmbeddedResource Include="Resources/metadata.d.ts" />
     <EmbeddedResource Include="Resources\xrm.d.ts" />
     <EmbeddedResource Include="Resources\dg.xrmquery.web.ts" />
     <EmbeddedResource Include="Resources\dg.xrmquery.rest.ts" />
+    <Content Include="Resources\es6-promise.auto.min.js" />
     <Content Include="Resources\tsconfig.json" />
     <Compile Include="TypeScript/TypeScript.fs" />
     <Compile Include="TypeScript/TsStringUtil.fs" />
@@ -147,8 +149,9 @@
   </ItemGroup>
   <Target Name="BeforeBuild">
     <Exec Command="tsc -p $(ProjectDir)Resources" />
-    <Exec Command="java -jar $(ProjectDir)..\..\tools\closure\compiler.jar --js $(ProjectDir)Resources\Dist\dg.xrmquery.web.js --js_output_file $(ProjectDir)Resources\Dist\dg.xrmquery.web.min.js" />
     <Exec Command="java -jar $(ProjectDir)..\..\tools\closure\compiler.jar --js $(ProjectDir)Resources\Dist\dg.xrmquery.rest.js --js_output_file $(ProjectDir)Resources\Dist\dg.xrmquery.rest.min.js" />
+    <Exec Command="java -jar $(ProjectDir)..\..\tools\closure\compiler.jar --js $(ProjectDir)Resources\Dist\dg.xrmquery.web.js --js_output_file $(ProjectDir)Resources\Dist\dg.xrmquery.web.min.js" />
+    <Exec Command="java -jar $(ProjectDir)..\..\tools\closure\compiler.jar --js $(ProjectDir)Resources\es6-promise.auto.min.js $(ProjectDir)Resources\Dist\dg.xrmquery.web.js --js_output_file $(ProjectDir)Resources\Dist\dg.xrmquery.web.promise.min.js --warning_level=QUIET" />
   </Target>
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1' Or $(TargetFrameworkVersion) == 'v4.6.2' Or $(TargetFrameworkVersion) == 'v4.6.3')">

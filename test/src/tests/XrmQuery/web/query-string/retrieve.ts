@@ -1,0 +1,80 @@
+import { expect } from 'chai';
+import { suite, test, slow, timeout, skip, only } from "mocha-typescript";
+
+@suite
+class Web_Retrieve_QueryString {
+
+    accountId: string;
+
+    before() {
+        this.accountId = "ACCOUNT_ID";
+    }
+
+    @test
+    "retrieve accounts"() {
+        const qs = XrmQuery.retrieve(x => x.accounts, this.accountId)
+            .getQueryString();
+
+        expect(qs).to.equal(`accounts(${this.accountId})`);
+    }
+
+
+    @test
+    "simple select"() {
+        const qs = XrmQuery.retrieve(x => x.accounts, this.accountId)
+            .select(x => [x.name, x.accountnumber])
+            .getQueryString();
+
+        expect(qs).to.equal(`accounts(${this.accountId})?$select=name,accountnumber`);
+    }
+
+
+
+    @test
+    "simple expand"() {
+        const qs = XrmQuery.retrieve(x => x.accounts, this.accountId)
+            .expand(x => x.contact_customer_accounts)
+            .getQueryString();
+
+        expect(qs).to.equal(`accounts(${this.accountId})?$select=contact_customer_accounts&$expand=contact_customer_accounts`);
+    }
+
+    @test
+    "expand with selects"() {
+        const qs = XrmQuery.retrieve(x => x.accounts, this.accountId)
+            .expand(x => x.contact_customer_accounts, x => [x.fullname, x.emailaddress1])
+            .getQueryString();
+
+        expect(qs).to.equal(`accounts(${this.accountId})?$select=contact_customer_accounts&$expand=contact_customer_accounts($select=fullname,emailaddress1)`);
+    }
+
+    @test
+    "expand with selects and extra options"() {
+        const qs = XrmQuery.retrieve(x => x.accounts, this.accountId)
+            .expand(x => x.contact_customer_accounts, x => [x.fullname], { top: 2, sortOrder: SortOrder.Descending, orderBy: x => x.firstname })
+            .getQueryString();
+
+        expect(qs).to.equal(`accounts(${this.accountId})?$select=contact_customer_accounts&$expand=contact_customer_accounts($select=fullname;$top=2;$orderby=firstname desc)`);
+    }
+
+    @test
+    "expand with selects and filters"() {
+        const contactId = "CONTACT_ID";
+        const contactFirstName = "CONTACT_NAME";
+
+        const qs = XrmQuery.retrieve(x => x.accounts, this.accountId)
+            .expand(x => x.contact_customer_accounts, x => [x.fullname],
+            {
+                filter: x =>
+                    Filter.and(
+                        Filter.equals(x.firstname, contactFirstName),
+                        Filter.equals(x.contactid, Filter.makeGuid(contactId))
+                    )
+            }
+            )
+            .getQueryString();
+
+        expect(qs).to.equal(`accounts(${this.accountId})?$select=contact_customer_accounts&$expand=contact_customer_accounts($select=fullname;$filter=(firstname eq '${contactFirstName}' and contactid eq ${contactId}))`);
+    }
+
+}

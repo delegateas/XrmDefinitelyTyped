@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import { suite, test, slow, timeout, skip, only } from "mocha-typescript";
 
 @suite 
-class Web_QueryString {
+class Web_RetrieveMultiple_QueryString {
     
     @test 
     "retrieve accounts"() {
@@ -69,9 +69,17 @@ class Web_QueryString {
     }
 
 
-
     @test 
     "simple expand"() {
+        const qs = XrmQuery.retrieveMultiple(x => x.accounts)
+            .expand(x => x.contact_customer_accounts)
+            .getQueryString();
+
+        expect(qs).to.equal("accounts?$select=contact_customer_accounts&$expand=contact_customer_accounts");
+    }
+
+    @test 
+    "simple expand with selects"() {
         const qs = XrmQuery.retrieveMultiple(x => x.accounts)
             .expand(x => x.contact_customer_accounts, x => [x.fullname, x.emailaddress1])
             .getQueryString();

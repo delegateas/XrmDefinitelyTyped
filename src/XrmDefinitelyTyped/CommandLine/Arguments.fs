@@ -92,7 +92,7 @@ type Args private () =
   ]
 
 
-  (** Flag arguments, which make the program act differently than normal *)
+  (** Special arguments, which make the program act differently than normal *)
   static member saveFlag = 
     { command="save"
       altCommands=[]
@@ -154,8 +154,9 @@ type Args private () =
     config.Add("url", "https://INSTANCE.crm4.dynamics.com/XRMServices/2011/Organization.svc")
     config.Add("username","admin@INSTANCE.onmicrosoft.com")
     config.Add("password", "pass@word1")
-    config.Add("out", "../WebResources/typings")
-    config.Add("entities", "account,contact")
+    config.Add("out", "../WebResources/typings/XRM")
+    config.Add("jsLib", "../WebResources/src/lib")
+    config.Add("entities", "account, contact")
     configmanager.Save(ConfigurationSaveMode.Modified)
     printfn "A configuration file has been set up with dummy values. Change them to fit your environment."
 

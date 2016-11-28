@@ -131,6 +131,7 @@ module FileGeneration =
 
     [ gSettings.webNs ?|> fun _ -> "dg.xrmquery.web.js"
       gSettings.webNs ?|> fun _ -> "dg.xrmquery.web.min.js"
+      gSettings.webNs ?|> fun _ -> "dg.xrmquery.web.promise.min.js"
       gSettings.restNs ?|> fun _ -> "dg.xrmquery.rest.js"
       gSettings.restNs ?|> fun _ -> "dg.xrmquery.rest.min.js"
     ] |> List.choose id |> List.iter (copyResourceDirectly path)

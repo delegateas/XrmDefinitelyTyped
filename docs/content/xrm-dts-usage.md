@@ -3,8 +3,8 @@ Xrm Object Model
 
 The [Xrm object model][xrm] can be accessed from web resources in your 
 solution. To start using the declaration files, one can drag in a reference to 
-`xrm.d.ts` which is located in the root folder, `typings/XRM/`. 
-This contains the base description of the API.
+`xrm.d.ts` which is located in the root folder of the generated files. 
+This contains the base description of the client-side form-scripting API.
 
   [xrm]: https://msdn.microsoft.com/en-us/library/gg328255.aspx
   [rest]: https://msdn.microsoft.com/en-us/library/gg334427.aspx#BKMK_SDKREST
@@ -19,14 +19,10 @@ Contact entity form.
 Specific Contact Form Example
 -----------------------------
 
-First off you need to reference the declaration file which matches the form 
-you want to add some client-side code to. These declaration files can be found 
-at `typings/XRM/Form/<EntityType>/<FormType>/<FormName>.d.ts`.
-
 In this example, we want to add code to the standard Contact form called 
 'Information', which is of the 'Main' form type. This can be found at 
-`typings/XRM/Form/contact/Main/Information.d.ts`. Simply by adding this, 
-you get access to the entire Xrm object model API for the current form page!
+`Form/contact/Main/Information.d.ts`. Simply by adding this to your TypeScript context, 
+you get access to the entire Xrm object model API for that form!
 
 
 We just need to tell the compiler what page we are currently on 
@@ -43,8 +39,7 @@ We just need to tell the compiler what page we are currently on
 Below is an example of an initial setup for your code file.
 
     [lang=typescript]
-    /// <reference path="../../typings/XRM/Form/contact/Main/Information.d.ts" />
-
+    
     namespace DG.Contact {
         declare var Xrm: Xrm<Form.contact.Main.Information>;
 

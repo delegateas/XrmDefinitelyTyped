@@ -1,41 +1,148 @@
 
-interface WebEntities { }
-declare var GetGlobalContext: any;
+namespace XrmQuery {
 
-interface WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult> {
-  __WebMappingRetrieve: ISelect;
-}
+  /**
+   * Instantiates specification of a query that can retrieve a specific record.
+   * @param entityPicker Function to select which entity-type should be targeted.
+   * @param id GUID of the wanted record.
+   */
+  export function retrieve<ISelect, IExpand, IFixed, Result, FormattedResult>(
+    entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>,
+    id: string) {
+    return XQW.RetrieveRecord.Get<ISelect, IExpand, IFixed, Result, FormattedResult>(entityPicker, id);
+  }
 
-interface WebMappingCUD<ICreate, IUpdate> {
-  __WebMappingCUD: ICreate & IUpdate;
-}
+  /**
+   * Instantiates specification of a query that can retrieve multiple records of a certain entity.
+   * @param entityPicker Function to select which entity should be targeted.
+   */
+  export function retrieveMultiple<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(
+    entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>) {
+    return XQW.RetrieveMultipleRecords.Get<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(entityPicker);
+  }
 
-interface WebMappingRelated<ISingle, IMultiple> {
-  _WebMappingRelated: ISingle & IMultiple;
-}
+  /**
+   * Instantiates specification of a query that can retrieve a related record of a given record.
+   * @param entityPicker Function to select which entity-type the related record should be retrieved from.
+   * @param id GUID of the record of which the related record should be retrieved.
+   * @param relatedPicker Function to select which navigation property points to the related record.
+   */
+  export function retrieveRelated<ISingle, ISelect, IExpand, IFixed, Result, FormattedResult>(
+    entityPicker: (x: WebEntities) => WebMappingRelated<ISingle, any>,
+    id: string,
+    relatedPicker: (x: ISingle) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>) {
+    return XQW.RetrieveRecord.Related<ISingle, ISelect, IExpand, IFixed, Result, FormattedResult>(entityPicker, id, relatedPicker);
+  }
 
-interface WebAttribute<ISelect, Result, Formatted> {
-  __WebAttribute: ISelect;
-}
+  /**
+   * Instantiates specification of a query that can retrieve multiple related records of a given record.
+   * @param entityPicker  Function to select which entity-type the related records should be retrieved from.
+   * @param id GUID of the record of which the related records should be retrieved.
+   * @param relatedPicker Function to select which navigation property points to the related records.
+   */
+  export function retrieveRelatedMultiple<IMultiple, ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(
+    entityPicker: (x: WebEntities) => WebMappingRelated<any, IMultiple>,
+    id: string,
+    relatedPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>) {
+    return XQW.RetrieveMultipleRecords.Related<IMultiple, ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(entityPicker, id, relatedPicker);
+  }
 
-interface WebExpand<IExpand, ChildSelect, ChildFilter, Result> {
-  __WebExpandable: IExpand;
-}
+  /**
+   * Instantiates a query that can create a record.
+   * @param entityPicker Function to select which entity-type should be created.
+   * @param record Object of the record to be created.
+   */
+  export function create<ICreate>(
+    entityPicker: (x: WebEntities) => WebMappingCUD<ICreate, any>,
+    record?: ICreate) {
+    return new XQW.CreateRecord<ICreate>(entityPicker, record);
+  }
 
-interface WebFilter {
-  __WebFilter: any;
-}
+  /**
+   * Instantiates a query that can update a specific record.
+   * @param entityPicker Function to select which entity-type should be updated.
+   * @param id GUID of the record to be updated.
+   * @param record Object containing the attributes to be updated.
+   */
+  export function update<IUpdate>(
+    entityPicker: (x: WebEntities) => WebMappingCUD<any, IUpdate>,
+    id?: string,
+    record?: IUpdate) {
+    return new XQW.UpdateRecord<IUpdate>(entityPicker, id, record);
+  }
 
-const enum SortOrder {
-  Ascending = 1,
-  Descending = 2,
-}
+  /**
+   * Instantiates a query that can delete a specific record.
+   * @param entityPicker Function to select which entity-type should be deleted.
+   * @param id GUID of the record to be updated.
+   */
+  export function deleteRecord(
+    entityPicker: (x: WebEntities) => WebMappingCUD<any, any>,
+    id?: string) {
+    return new XQW.DeleteRecord(entityPicker, id);
+  }
 
-interface ExpandOptions<ISelect, IFilter> {
-  filter?: (f: IFilter) => WebFilter;
-  top?: number;
-  orderBy?: (s: ISelect) => WebAttribute<ISelect, any, any>;
-  sortOrder?: SortOrder;
+  /**
+   * Makes XrmQuery use the given custom url to access the Web API.
+   * @param url The url targeting the API. For example: '/api/data/v8.2/'
+   */
+  export function setApiUrl(url: string | null) {
+    XQW.ApiUrl = url;
+  }
+
+  /**
+   * Makes XrmQuery use the given version to access the Web API.
+   * @param v Version to use for the API. For example: '8.2'
+   */
+  export function setApiVersion(v: string) {
+    XQW.ApiUrl = XQW.getDefaultUrl(v);
+  }
+
+  /**
+   * @internal
+   */
+  export function request(type: XQW.HttpRequestType, url: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb: (err: Error) => any = () => { }, preSend?: (req: XMLHttpRequest) => void) {
+    let req = new XMLHttpRequest()
+    req.open(type, url, true);
+    req.setRequestHeader("Accept", "application/json");
+    req.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+    req.setRequestHeader("OData-MaxVersion", "4.0");
+    req.setRequestHeader("OData-Version", "4.0");
+    if (preSend) preSend(req);
+
+    req.onreadystatechange = function (this) {
+      if (this.readyState == 4) {
+        req.onreadystatechange = <any>null;
+        if (this.status == 200 || this.status == 204) successCb(this);
+        else errorCb(new Error(this.response));
+      }
+    };
+    req.send(data);
+  }
+
+  /**
+   * Send a request to the Web API with the given parameters.
+   * @param type Type of request, i.e. "GET", "POST", etc
+   * @param queryString Query-string to use for the API. For example: 'accounts?$count=true'
+   * @param data Object to send with request
+   * @param successCb Success callback handler function
+   * @param errorCb Error callback handler function
+   * @param configure Modify the request before it it sent to the endpoint - like adding headers.
+   */
+  export function sendRequest(type: XQW.HttpRequestType, queryString: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb?: (err: Error) => any, configure?: (req: XMLHttpRequest) => void) {
+    request(type, encodeURI(XQW.getApiUrl() + queryString), data, successCb, errorCb, configure);
+  }
+
+  /**
+   * Send a request to the Web API with the given parameters and return a promise.
+   * @param type Type of request, i.e. "GET", "POST", etc
+   * @param queryString Query-string to use for the API. For example: 'accounts?$count=true'
+   * @param data Object to send with request
+   * @param configure Modify the request before it it sent to the endpoint - like adding headers.
+   */
+  export function promiseRequest(type: XQW.HttpRequestType, queryString: string, data: any, configure?: (req: XMLHttpRequest) => void) {
+    XQW.promisifyCallback((success, error?) => sendRequest(type, queryString, data, success, error, configure));
+  }
 }
 
 
@@ -105,93 +212,44 @@ namespace Filter {
 }
 
 
-namespace XrmQuery {
+interface WebEntities { }
+declare var GetGlobalContext: any;
 
-  export function setApiUrl(url: string | null) {
-    XQW.ApiUrl = url;
-  }
-  export function setApiVersion(v: string) {
-    XQW.ApiUrl = XQW.getDefaultUrl(v);
-  }
-
-  export function retrieveMultiple<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(
-    entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>) {
-    return XQW.RetrieveMultipleRecords.Get<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(entityPicker);
-  }
-
-  export function retrieveRelatedRecord<ISingle, ISelect, IExpand, IFixed, Result, FormattedResult>(
-    entityPicker: (x: WebEntities) => WebMappingRelated<ISingle, any>,
-    id: string,
-    relatedPicker: (x: ISingle) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>) {
-    return XQW.RetrieveRecord.Related<ISingle, ISelect, IExpand, IFixed, Result, FormattedResult>(entityPicker, id, relatedPicker);
-  }
-
-  export function retrieveRelatedMultiple<IMultiple, ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(
-    entityPicker: (x: WebEntities) => WebMappingRelated<any, IMultiple>,
-    id: string,
-    relatedPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>) {
-    return XQW.RetrieveMultipleRecords.Related<IMultiple, ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(entityPicker, id, relatedPicker);
-  }
-
-  export function retrieve<ISelect, IExpand, IFixed, Result, FormattedResult>(
-    entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>,
-    id: string) {
-    return XQW.RetrieveRecord.Get<ISelect, IExpand, IFixed, Result, FormattedResult>(entityPicker, id);
-  }
-
-  export function create<ICreate>(
-    entityPicker: (x: WebEntities) => WebMappingCUD<ICreate, any>,
-    record?: ICreate) {
-    return new XQW.CreateRecord<ICreate>(entityPicker, record);
-  }
-
-  export function update<IUpdate>(
-    entityPicker: (x: WebEntities) => WebMappingCUD<any, IUpdate>,
-    id?: string,
-    record?: IUpdate) {
-    return new XQW.UpdateRecord<IUpdate>(entityPicker, id, record);
-  }
-
-  export function deleteRecord(
-    entityPicker: (x: WebEntities) => WebMappingCUD<any, any>,
-    id?: string) {
-    return new XQW.DeleteRecord(entityPicker, id);
-  }
-
-  /**
-   * @internal
-   */
-  export function request(type: XQW.HttpRequestType, url: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb: (err: Error) => any, preSend?: (req: XMLHttpRequest) => void) {
-    let req = new XMLHttpRequest()
-    req.open(type, url, true);
-    req.setRequestHeader("Accept", "application/json");
-    req.setRequestHeader("Content-Type", "application/json; charset=utf-8");
-    req.setRequestHeader("OData-MaxVersion", "4.0");
-    req.setRequestHeader("OData-Version", "4.0");
-    if (preSend) preSend(req);
-
-    req.onreadystatechange = function (this) {
-      if (this.readyState == 4) {
-        req.onreadystatechange = <any>null;
-        if (this.status == 200 || this.status == 204) successCb(this);
-        else errorCb(new Error(this.response));
-      }
-    };
-    req.send(data);
-  }
-
-  export function sendCbRequest(type: XQW.HttpRequestType, queryString: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb: (err: Error) => any, preSend?: (req: XMLHttpRequest) => void) {
-    request(type, encodeURI(XQW.getApiUrl() + queryString), data, successCb, errorCb, preSend);
-  }
-
-  export function sendRequest(type: XQW.HttpRequestType, queryString: string, data: any, configure?: (req: XMLHttpRequest) => void) {
-    if (!Promise) throw new Error("Promises are not natively supported in this browser. Add a polyfill to use it.");
-    return new Promise<XMLHttpRequest>((resolve, reject) => {
-      sendCbRequest(type, queryString, data, resolve, reject, configure);
-    });
-  }
+interface WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult> {
+  __WebMappingRetrieve: ISelect;
 }
 
+interface WebMappingCUD<ICreate, IUpdate> {
+  __WebMappingCUD: ICreate & IUpdate;
+}
+
+interface WebMappingRelated<ISingle, IMultiple> {
+  _WebMappingRelated: ISingle & IMultiple;
+}
+
+interface WebAttribute<ISelect, Result, Formatted> {
+  __WebAttribute: ISelect;
+}
+
+interface WebExpand<IExpand, ChildSelect, ChildFilter, Result> {
+  __WebExpandable: IExpand;
+}
+
+interface WebFilter {
+  __WebFilter: any;
+}
+
+const enum SortOrder {
+  Ascending = 1,
+  Descending = 2,
+}
+
+interface ExpandOptions<ISelect, IFilter> {
+  filter?: (f: IFilter) => WebFilter;
+  top?: number;
+  orderBy?: (s: ISelect) => WebAttribute<ISelect, any, any>;
+  sortOrder?: SortOrder;
+}
 
 
 namespace XQW {
@@ -271,7 +329,7 @@ namespace XQW {
     return arr.length > 0 && typeof (arr[0]) === "string";
   }
 
-  function promisifyCallback<T>(callbackFunc: (success: (t: T) => any, errorCb?: (e: Error) => any) => any): Promise<T> {
+  export function promisifyCallback<T>(callbackFunc: (success: (t: T) => any, errorCb?: (e: Error) => any) => any): Promise<T> {
     if (!Promise) throw new Error("Promises are not natively supported in this browser. Add a polyfill to use it.");
     return new Promise<T>((resolve, reject) => {
       callbackFunc(resolve, reject)
@@ -425,23 +483,23 @@ namespace XQW {
     protected getObjectToSend: () => any = () => null;
 
     promise() {
-      return promisifyCallback(this.executeCallback);
+      return promisifyCallback(this.execute);
     }
 
-    executeCallback(successCallback: (x: T) => any, errorCallback: (err: Error) => any = () => { }) {
-      this._executeRaw(successCallback, errorCallback, true);
+    execute(successCallback: (x: T) => any, errorCallback: (err: Error) => any = () => { }) {
+      this.executeRaw(successCallback, errorCallback, true);
     }
 
     
     /**
      * @internal
      */
-    _executeRaw(successCallback: (x: T) => any, errorCallback: (err: Error) => any, parseResult: true): void;
-    _executeRaw(successCallback: (x: XMLHttpRequest) => any, errorCallback: (err: Error) => any, parseResult: false): void;
-    _executeRaw(successCallback: (x: T | XMLHttpRequest) => any, errorCallback: (err: Error) => any = () => { }, parseResult: boolean = false) {
+    executeRaw(successCallback: (x: T) => any, errorCallback: (err: Error) => any, parseResult: true): void;
+    executeRaw(successCallback: (x: XMLHttpRequest) => any, errorCallback: (err: Error) => any, parseResult: false): void;
+    executeRaw(successCallback: (x: T | XMLHttpRequest) => any, errorCallback: (err: Error) => any = () => { }, parseResult: boolean = false) {
       let config = (req: XMLHttpRequest) => this.additionalHeaders.forEach(h => req.setRequestHeader(h.type, h.value));
       let successHandler = (req: XMLHttpRequest) => parseResult ? this.handleResponse(req, successCallback, errorCallback) : successCallback(req);
-      return XrmQuery.sendCbRequest(this.requestType, this.getQueryString(), this.getObjectToSend(), successHandler, errorCallback, config);
+      return XrmQuery.sendRequest(this.requestType, this.getQueryString(), this.getObjectToSend(), successHandler, errorCallback, config);
     }
   }
 
@@ -498,7 +556,7 @@ namespace XQW {
 
     getFirst(successCallback: (r: Result | null) => any, errorCallback?: (e: Error) => any) {
       this.top(1);
-      this.executeCallback(res => successCallback(res && res.length > 0 ? res[0] : null), errorCallback);
+      this.execute(res => successCallback(res && res.length > 0 ? res[0] : null), errorCallback);
     }
 
     promiseFirst(): Promise<Result> {
@@ -965,7 +1023,7 @@ namespace XQW {
   function transformObject(obj: any) {
     if (obj instanceof Object) {
       var newObj = {};
-      Object.keys(obj).forEach(key => copyKeyVal(key, transformObject(obj[key]), newObj));
+      Object.keys(obj).forEach(key => parseAttribute(key, transformObject(obj[key]), newObj));
       return newObj;
 
     } else if (obj instanceof Array) {
@@ -979,11 +1037,11 @@ namespace XQW {
   }
 
   /**
-   * Copies attributes from XrmQuery format to CRM format
+   * Parses attributes from XrmQuery format to CRM format
    * @param key
    * @param value
    */
-  function copyKeyVal(key: string, val: any, newObj: any) {
+  function parseAttribute(key: string, val: any, newObj: any) {
     const lookupIdx = key.indexOf(BIND_ID);
     if (lookupIdx >= 0) {
       const setName = key.substr(lookupIdx + BIND_ID.length);

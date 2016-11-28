@@ -1,16 +1,16 @@
 import { expect } from 'chai';
 import { suite, test, slow, timeout, skip, only } from "mocha-typescript";
-import FakeRequests from './fakeRequests';
+import FakeRequests from '../../common/fakeRequests';
 import * as sinon from 'sinon';
 
 @suite 
-class Web_RetrieveManipulation extends FakeRequests {
+class Web_Retrieve_Attributes extends FakeRequests {
 
     accountId: string;
     contactId: string;
     currencyId: string;
     contactName: string;
-    currencyName; string;
+    currencyName: string;
 
     before() {
         super.before();
@@ -23,25 +23,27 @@ class Web_RetrieveManipulation extends FakeRequests {
     }
 
     @test
-    "testing of entity reference values (_guid)"() {
+    "rename of entity reference keys from _XXX_value to XXX_guid"() {
 
         var callback = sinon.spy();
         XrmQuery.retrieve(x => x.accounts, this.accountId)
             .select(x => [ x.primarycontactid_guid, x.transactioncurrencyid_guid ])
-            .executeCallback(callback);
+            .expand(x => x.primarycontactid, x => [x.firstname])
+            .execute(callback);
 
-        // Request tests
+        // Check requests
         expect(this.requests.length).to.equal(1);
         var req = this.requests[0];
         expect(req.method).to.equal("GET");
         expect(req.url).to.equal(`accounts(${this.accountId})?$select=_primarycontactid_value,_transactioncurrencyid_value`);
 
-        // Respond and check that body is parsed correctly
+        // Respond
         req.respond(200, {}, JSON.stringify({
             _primarycontactid_value: this.contactId,
             _transactioncurrencyid_value: this.currencyId
         }));
 
+        // Check that body is parsed and renamed accordingly
         sinon.assert.calledWith(callback, {
             primarycontactid_guid: this.contactId, 
             transactioncurrencyid_guid: this.currencyId
@@ -49,24 +51,23 @@ class Web_RetrieveManipulation extends FakeRequests {
     }
 
 
-
     @test
-    "testing of formatted values"() {
+    "rename of formatted value keys"() {
 
         var callback = sinon.spy();
         XrmQuery.retrieve(x => x.accounts, this.accountId)
             .select(x => [ x.primarycontactid_guid, x.transactioncurrencyid_guid ])
             .includeFormattedValues()
-            .executeCallback(callback);
+            .execute(callback);
 
-        // Request tests
+        // Check requests
         expect(this.requests.length).to.equal(1);
         var req = this.requests[0];
         expect(req.method).to.equal("GET");
         expect(req.url).to.equal(`accounts(${this.accountId})?$select=_primarycontactid_value,_transactioncurrencyid_value`);
         expect(req.requestHeaders["Prefer"]).to.equal('odata.include-annotations="OData.Community.Display.V1.FormattedValue"');
         
-        // Respond and check that body is parsed correctly
+        // Respond
         req.respond(200, {}, JSON.stringify({
             _primarycontactid_value: this.contactId,
             _transactioncurrencyid_value: this.currencyId,
@@ -74,6 +75,7 @@ class Web_RetrieveManipulation extends FakeRequests {
             "transactioncurrencyid@OData.Community.Display.V1.FormattedValue": this.currencyName
         }));
 
+        // Check that body is parsed and renamed accordingly
         sinon.assert.calledWith(callback, {
             primarycontactid_guid: this.contactId, 
             primarycontactid_formatted: this.contactName,
@@ -82,3 +84,16 @@ class Web_RetrieveManipulation extends FakeRequests {
         });
     }
 }
+
+
+
+interface Test {
+    blah: number;
+    argh;
+}
+
+interface Test2 {
+    blah: string;
+}
+
+var x: Test & Test2;

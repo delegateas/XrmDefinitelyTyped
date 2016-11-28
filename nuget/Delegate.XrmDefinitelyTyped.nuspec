@@ -21,10 +21,6 @@
     <file src="..\src\XrmDefinitelyTyped\bin\Release\FSharp.Core.dll" target="content\bin\dgtools" />
     <file src="..\src\XrmDefinitelyTyped\bin\Release\XrmDefinitelyTyped.exe" target="content\bin\dgtools" />
     <file src="..\src\XrmDefinitelyTyped\bin\Release\XrmDefinitelyTyped.xml" target="content\bin\dgtools" />
-    <file src="..\src\XrmDefinitelyTyped\bin\Release\Resources\dg.xrmquery.web.js" target="content\bin\dgtools" />
-    <file src="..\src\XrmDefinitelyTyped\bin\Release\Resources\dg.xrmquery.web.min.js" target="content\bin\dgtools" />
-    <file src="..\src\XrmDefinitelyTyped\bin\Release\Resources\dg.xrmquery.rest.js" target="content\bin\dgtools" />
-    <file src="..\src\XrmDefinitelyTyped\bin\Release\Resources\dg.xrmquery.rest.min.js" target="content\bin\dgtools" />
     <file src="..\files\install-latest.cmd" target="content\bin\dgtools" />
   </files>
 </package>
