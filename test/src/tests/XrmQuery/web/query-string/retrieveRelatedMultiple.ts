@@ -5,9 +5,11 @@ import { suite, test, slow, timeout, skip, only } from "mocha-typescript";
 class Web_RetrieveRelated_QueryString {
     
     accountId: string;
+    viewId: string;
 
     before() {
-        this.accountId = "ACCOUNT_ID";
+        this.accountId = "SOME_ACCOUNT_GUID";
+        this.viewId = "SOME_VIEW_GUID";
     }
 
     @test 
@@ -48,4 +50,30 @@ class Web_RetrieveRelated_QueryString {
         expect(qs).to.equal(`accounts(${this.accountId})/contact_customer_accounts?$select=dg_TestAccount&$expand=dg_TestAccount($select=accountnumber)`);
     }
 
+    @test 
+    "fetchXml"() {
+        const qs = XrmQuery.retrieveRelatedMultiple(x => x.accounts, this.accountId, x => x.account_master_account)
+            .fetchXml(`<fetch mapping='logical'><entity name='account'><attribute name='accountid'/><attribute name='name'/></entity></fetch>`)
+            .getQueryString();
+
+        expect(qs).to.equal(`accounts(${this.accountId})/account_master_account?fetchXml=%3Cfetch%20mapping='logical'%3E%3Centity%20name='account'%3E%3Cattribute%20name='accountid'/%3E%3Cattribute%20name='name'/%3E%3C/entity%3E%3C/fetch%3E`);
+    }
+
+    @test 
+    "userQuery"() {
+        const qs = XrmQuery.retrieveRelatedMultiple(x => x.accounts, this.accountId, x => x.account_master_account)
+            .usePredefinedQuery("userQuery", this.viewId)
+            .getQueryString();
+
+        expect(qs).to.equal(`accounts(${this.accountId})/account_master_account?userQuery=${this.viewId}`);
+    }
+
+    @test 
+    "savedQuery"() {
+        const qs = XrmQuery.retrieveRelatedMultiple(x => x.accounts, this.accountId, x => x.account_master_account)
+            .usePredefinedQuery("savedQuery", this.viewId)
+            .getQueryString();
+
+        expect(qs).to.equal(`accounts(${this.accountId})/account_master_account?savedQuery=${this.viewId}`);
+    }
 }

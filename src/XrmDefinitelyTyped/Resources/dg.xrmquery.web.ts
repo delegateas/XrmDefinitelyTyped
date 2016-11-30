@@ -508,15 +508,19 @@ namespace XQW {
     /**
      * @internal
      */
-    protected selects: string[] = [];
+    private specialQuery: string | undefined = undefined;
     /**
      * @internal
      */
-    protected expands: string[] = [];
+    private selects: string[] = [];
     /**
      * @internal
      */
-    protected expandKeys: string[] = [];
+    private expands: string[] = [];
+    /**
+     * @internal
+     */
+    private expandKeys: string[] = [];
     /**
      * @internal
      */
@@ -565,6 +569,12 @@ namespace XQW {
 
 
     getQueryString(): string {
+      let prefix = this.entitySetName;
+      if (this.id && this.relatedNav) {
+        prefix += `(${this.id})/${this.relatedNav}`;
+      }
+      if (this.specialQuery) return prefix + this.specialQuery;
+
       let options: string[] = [];
       if (this.selects.length > 0) {
         options.push("$select=" + this.selects.join(","));
@@ -583,10 +593,6 @@ namespace XQW {
       }
       if (this.topAmount != null) {
         options.push("$top=" + this.topAmount);
-      }
-      let prefix = this.entitySetName;
-      if (this.id && this.relatedNav) {
-        prefix += `(${this.id})/${this.relatedNav}`;
       }
       return prefix + (options.length > 0 ? `?${options.join("&")}` : "");
     }
@@ -692,14 +698,39 @@ namespace XQW {
       this.topAmount = amount;
       return this;
     }
-    
+
+    maxPageSize(size: number) {
+      this.additionalHeaders.push(MaxPageSizeHeader(size));
+      return this;
+    }
+
+
+    /**
+     * Sets a header that lets you retrieve formatted values as well. Should be used after using select and expand of attributes.
+     */
     includeFormattedValues(): Query<(FormattedResult & Result)[]> {
       this.additionalHeaders.push(FORMATTED_VALUES_HEADER);
       return this;
     }
 
-    maxPageSize(size: number) {
-      this.additionalHeaders.push(MaxPageSizeHeader(size));
+    /**
+     * Sets up the query to filter the entity using the provided FetchXML
+     * @param xml The query in FetchXML format
+     */
+    fetchXml(xml: string): Query<Result[]> {
+      this.specialQuery = `?fetchXml=${encodeURI(xml)}`;
+      return this;
+    }
+
+
+    /**
+     * Sets up the query to filter the entity using the predefined-query.
+     * @param xml The query in FetchXML format
+     */
+    usePredefinedQuery(type: "savedQuery", guid: string): Query<Result[]>;
+    usePredefinedQuery(type: "userQuery", guid: string): Query<Result[]>;
+    usePredefinedQuery(type: string, guid: string): Query<Result[]> {
+      this.specialQuery = `?${type}=${guid}`;
       return this;
     }
   }

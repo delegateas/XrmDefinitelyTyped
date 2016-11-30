@@ -422,6 +422,10 @@ var XQW;
             /**
              * @internal
              */
+            _this.specialQuery = undefined;
+            /**
+             * @internal
+             */
             _this.selects = [];
             /**
              * @internal
@@ -462,6 +466,12 @@ var XQW;
             return promisifyCallback(this.getFirst);
         };
         RetrieveMultipleRecords.prototype.getQueryString = function () {
+            var prefix = this.entitySetName;
+            if (this.id && this.relatedNav) {
+                prefix += "(" + this.id + ")/" + this.relatedNav;
+            }
+            if (this.specialQuery)
+                return prefix + this.specialQuery;
             var options = [];
             if (this.selects.length > 0) {
                 options.push("$select=" + this.selects.join(","));
@@ -480,10 +490,6 @@ var XQW;
             }
             if (this.topAmount != null) {
                 options.push("$top=" + this.topAmount);
-            }
-            var prefix = this.entitySetName;
-            if (this.id && this.relatedNav) {
-                prefix += "(" + this.id + ")/" + this.relatedNav;
             }
             return prefix + (options.length > 0 ? "?" + options.join("&") : "");
         };
@@ -544,12 +550,27 @@ var XQW;
             this.topAmount = amount;
             return this;
         };
+        RetrieveMultipleRecords.prototype.maxPageSize = function (size) {
+            this.additionalHeaders.push(MaxPageSizeHeader(size));
+            return this;
+        };
+        /**
+         * Sets a header that lets you retrieve formatted values as well. Should be used after using select and expand of attributes.
+         */
         RetrieveMultipleRecords.prototype.includeFormattedValues = function () {
             this.additionalHeaders.push(FORMATTED_VALUES_HEADER);
             return this;
         };
-        RetrieveMultipleRecords.prototype.maxPageSize = function (size) {
-            this.additionalHeaders.push(MaxPageSizeHeader(size));
+        /**
+         * Sets up the query to filter the entity using the provided FetchXML
+         * @param xml The query in FetchXML format
+         */
+        RetrieveMultipleRecords.prototype.fetchXml = function (xml) {
+            this.specialQuery = "?fetchXml=" + encodeURI(xml);
+            return this;
+        };
+        RetrieveMultipleRecords.prototype.usePredefinedQuery = function (type, guid) {
+            this.specialQuery = "?" + type + "=" + guid;
             return this;
         };
         return RetrieveMultipleRecords;

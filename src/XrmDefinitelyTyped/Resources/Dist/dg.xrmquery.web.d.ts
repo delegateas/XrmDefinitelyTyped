@@ -193,8 +193,22 @@ declare namespace XQW {
         orderDesc(vars: (x: ISelect) => WebAttribute<ISelect, any, any>): this;
         skip(amount: number): this;
         top(amount: number): this;
-        includeFormattedValues(): Query<(FormattedResult & Result)[]>;
         maxPageSize(size: number): this;
+        /**
+         * Sets a header that lets you retrieve formatted values as well. Should be used after using select and expand of attributes.
+         */
+        includeFormattedValues(): Query<(FormattedResult & Result)[]>;
+        /**
+         * Sets up the query to filter the entity using the provided FetchXML
+         * @param xml The query in FetchXML format
+         */
+        fetchXml(xml: string): Query<Result[]>;
+        /**
+         * Sets up the query to filter the entity using the predefined-query.
+         * @param xml The query in FetchXML format
+         */
+        usePredefinedQuery(type: "savedQuery", guid: string): Query<Result[]>;
+        usePredefinedQuery(type: "userQuery", guid: string): Query<Result[]>;
     }
     class RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result> extends Query<Result> {
         private entitySetName;

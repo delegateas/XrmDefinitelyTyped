@@ -3,7 +3,13 @@ import { suite, test, slow, timeout, skip, only } from "mocha-typescript";
 
 @suite 
 class Web_RetrieveMultiple_QueryString {
-    
+
+    viewId: string;
+
+    before() {
+        this.viewId = "SOME_VIEW_ID";
+    }
+
     @test 
     "retrieve accounts"() {
         const qs = XrmQuery.retrieveMultiple(x => x.accounts)
@@ -87,4 +93,31 @@ class Web_RetrieveMultiple_QueryString {
         expect(qs).to.equal("accounts?$select=contact_customer_accounts&$expand=contact_customer_accounts($select=fullname,emailaddress1)");
     }
 
+    @test 
+    "fetchXml"() {
+        const qs = XrmQuery.retrieveMultiple(x => x.accounts)
+            .fetchXml(`<fetch mapping='logical'><entity name='account'><attribute name='accountid'/><attribute name='name'/></entity></fetch>`)
+            .getQueryString();
+
+        expect(qs).to.equal("accounts?fetchXml=%3Cfetch%20mapping='logical'%3E%3Centity%20name='account'%3E%3Cattribute%20name='accountid'/%3E%3Cattribute%20name='name'/%3E%3C/entity%3E%3C/fetch%3E");
+    }
+
+
+    @test 
+    "userQuery"() {
+        const qs = XrmQuery.retrieveMultiple(x => x.accounts)
+            .usePredefinedQuery("userQuery", this.viewId)
+            .getQueryString();
+
+        expect(qs).to.equal(`accounts?userQuery=${this.viewId}`);
+    }
+
+    @test 
+    "savedQuery"() {
+        const qs = XrmQuery.retrieveMultiple(x => x.accounts)
+            .usePredefinedQuery("savedQuery", this.viewId)
+            .getQueryString();
+
+        expect(qs).to.equal(`accounts?savedQuery=${this.viewId}`);
+    }
 }

@@ -28,7 +28,6 @@ class Web_Retrieve_Attributes extends FakeRequests {
         var callback = sinon.spy();
         XrmQuery.retrieve(x => x.accounts, this.accountId)
             .select(x => [ x.primarycontactid_guid, x.transactioncurrencyid_guid ])
-            .expand(x => x.primarycontactid, x => [x.firstname])
             .execute(callback);
 
         // Check requests
