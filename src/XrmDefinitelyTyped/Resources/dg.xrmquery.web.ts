@@ -554,7 +554,7 @@ namespace XQW {
       super("GET");
     }
 
-    handleResponse(req: XMLHttpRequest, successCallback: (r: Result[]) => any, errorCallback: (e: Error) => any) {
+    protected handleResponse(req: XMLHttpRequest, successCallback: (r: Result[]) => any, errorCallback: (e: Error) => any) {
       PageLinkHelper.followLinks(parseRetrievedData<MultiResult>(req), this.expandKeys, successCallback, errorCallback);
     }
 
@@ -717,7 +717,7 @@ namespace XQW {
      * Sets up the query to filter the entity using the provided FetchXML
      * @param xml The query in FetchXML format
      */
-    fetchXml(xml: string): Query<Result[]> {
+    useFetchXml(xml: string): Query<Result[]> {
       this.specialQuery = `?fetchXml=${encodeURI(xml)}`;
       return this;
     }
@@ -768,7 +768,7 @@ namespace XQW {
       super("GET");
     }
 
-    handleResponse(req: XMLHttpRequest, successCallback: (r: Result) => any, errorCallback: (e: Error) => any) {
+    protected handleResponse(req: XMLHttpRequest, successCallback: (r: Result) => any, errorCallback: (e: Error) => any) {
       EntityLinkHelper.followLinks(parseRetrievedData<any>(req), this.expandKeys, successCallback, errorCallback);
     }
 
@@ -866,7 +866,7 @@ namespace XQW {
       this.entitySetName = taggedExec(entityPicker).toString();
     }
     
-    handleResponse(req: XMLHttpRequest, successCallback: (r: string) => any, errorCallback: (e: Error) => any) {
+    protected handleResponse(req: XMLHttpRequest, successCallback: (r: string) => any, errorCallback: (e: Error) => any) {
       let header = req.getResponseHeader("OData-EntityId");
       if (header) successCallback(header!.substr(-37, 36))
       else errorCallback(new Error("No valid OData-EntityId found in header."));
@@ -898,7 +898,7 @@ namespace XQW {
       this.entitySetName = taggedExec(entityPicker).toString();
     }
 
-    handleResponse(req: XMLHttpRequest, successCallback: () => any) {
+    protected handleResponse(req: XMLHttpRequest, successCallback: () => any) {
       successCallback();
     }
 
@@ -927,7 +927,7 @@ namespace XQW {
       this.entitySetName = taggedExec(entityPicker).toString();
     }
 
-    handleResponse(req: XMLHttpRequest, successCallback: () => any) {
+    protected handleResponse(req: XMLHttpRequest, successCallback: () => any) {
       successCallback();
     }
 

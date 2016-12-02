@@ -453,6 +453,14 @@ namespace XQR {
       this.record = record;
     }
 
+    execute(successCallback?: () => any, errorCallback?: (err: Error) => any) {
+      SDK.REST.updateRecord(
+        this.id,
+        this.record,
+        this.logicalName,
+        successCallback ? successCallback : NoOp,
+        errorCallback ? errorCallback : NoOp);
+    }
   }
 
   /**

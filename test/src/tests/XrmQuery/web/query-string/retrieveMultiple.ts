@@ -96,7 +96,7 @@ class Web_RetrieveMultiple_QueryString {
     @test 
     "fetchXml"() {
         const qs = XrmQuery.retrieveMultiple(x => x.accounts)
-            .fetchXml(`<fetch mapping='logical'><entity name='account'><attribute name='accountid'/><attribute name='name'/></entity></fetch>`)
+            .useFetchXml(`<fetch mapping='logical'><entity name='account'><attribute name='accountid'/><attribute name='name'/></entity></fetch>`)
             .getQueryString();
 
         expect(qs).to.equal("accounts?fetchXml=%3Cfetch%20mapping='logical'%3E%3Centity%20name='account'%3E%3Cattribute%20name='accountid'/%3E%3Cattribute%20name='name'/%3E%3C/entity%3E%3C/fetch%3E");

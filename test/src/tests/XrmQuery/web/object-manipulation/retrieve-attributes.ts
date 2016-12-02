@@ -83,16 +83,3 @@ class Web_Retrieve_Attributes extends FakeRequests {
         });
     }
 }
-
-
-
-interface Test {
-    blah: number;
-    argh;
-}
-
-interface Test2 {
-    blah: string;
-}
-
-var x: Test & Test2;

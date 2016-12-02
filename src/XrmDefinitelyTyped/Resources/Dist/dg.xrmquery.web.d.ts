@@ -151,7 +151,7 @@ declare namespace XQW {
         static Get<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>;
         static Related<IMultiple, ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(entityPicker: (x: WebEntities) => WebMappingRelated<any, IMultiple>, id: string, relatedPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>;
         private constructor(entitySetName, id?, relatedNav?);
-        handleResponse(req: XMLHttpRequest, successCallback: (r: Result[]) => any, errorCallback: (e: Error) => any): void;
+        protected handleResponse(req: XMLHttpRequest, successCallback: (r: Result[]) => any, errorCallback: (e: Error) => any): void;
         getFirst(successCallback: (r: Result | null) => any, errorCallback?: (e: Error) => any): void;
         promiseFirst(): Promise<Result>;
         getQueryString(): string;
@@ -202,7 +202,7 @@ declare namespace XQW {
          * Sets up the query to filter the entity using the provided FetchXML
          * @param xml The query in FetchXML format
          */
-        fetchXml(xml: string): Query<Result[]>;
+        useFetchXml(xml: string): Query<Result[]>;
         /**
          * Sets up the query to filter the entity using the predefined-query.
          * @param xml The query in FetchXML format
@@ -217,7 +217,7 @@ declare namespace XQW {
         static Related<ISingle, ISelect, IExpand, IFixed, Result, FormattedResult>(entityPicker: (x: WebEntities) => WebMappingRelated<ISingle, any>, id: string, relatedPicker: (x: ISingle) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>): RetrieveRecord<ISelect, IExpand, IFixed, Result, FormattedResult>;
         static Get<ISelect, IExpand, IFixed, Result, FormattedResult>(entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>, id: string): RetrieveRecord<ISelect, IExpand, IFixed, Result, FormattedResult>;
         private constructor(entitySetName, id, relatedNav?);
-        handleResponse(req: XMLHttpRequest, successCallback: (r: Result) => any, errorCallback: (e: Error) => any): void;
+        protected handleResponse(req: XMLHttpRequest, successCallback: (r: Result) => any, errorCallback: (e: Error) => any): void;
         select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13, R14, F14, R15, F15>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>, WebAttribute<ISelect, R14, F14>, WebAttribute<ISelect, R15, F15>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13 & F14 & F15, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13 & R14 & R15>;
         select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13, R14, F14>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>, WebAttribute<ISelect, R14, F14>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13 & F14, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13 & R14>;
         select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13>;
@@ -258,7 +258,7 @@ declare namespace XQW {
     class CreateRecord<ICreate> extends Query<string> {
         private record;
         constructor(entityPicker: (x: WebEntities) => WebMappingCUD<ICreate, any>, record?: ICreate);
-        handleResponse(req: XMLHttpRequest, successCallback: (r: string) => any, errorCallback: (e: Error) => any): void;
+        protected handleResponse(req: XMLHttpRequest, successCallback: (r: string) => any, errorCallback: (e: Error) => any): void;
         setData(record: ICreate): this;
         protected getObjectToSend: () => string;
         getQueryString(): string;
@@ -269,7 +269,7 @@ declare namespace XQW {
     class DeleteRecord extends Query<void> {
         private id;
         constructor(entityPicker: (x: WebEntities) => WebMappingCUD<any, any>, id?: string);
-        handleResponse(req: XMLHttpRequest, successCallback: () => any): void;
+        protected handleResponse(req: XMLHttpRequest, successCallback: () => any): void;
         setId(id: string): this;
         getQueryString(): string;
     }
@@ -280,7 +280,7 @@ declare namespace XQW {
         private id;
         private record;
         constructor(entityPicker: (x: WebEntities) => WebMappingCUD<any, IUpdate>, id?: string, record?: IUpdate);
-        handleResponse(req: XMLHttpRequest, successCallback: () => any): void;
+        protected handleResponse(req: XMLHttpRequest, successCallback: () => any): void;
         setData(id: string, record: IUpdate): this;
         protected getObjectToSend: () => string;
         getQueryString(): string;

@@ -565,7 +565,7 @@ var XQW;
          * Sets up the query to filter the entity using the provided FetchXML
          * @param xml The query in FetchXML format
          */
-        RetrieveMultipleRecords.prototype.fetchXml = function (xml) {
+        RetrieveMultipleRecords.prototype.useFetchXml = function (xml) {
             this.specialQuery = "?fetchXml=" + encodeURI(xml);
             return this;
         };

@@ -22,10 +22,10 @@ Specific Contact Form Example
 In this example, we want to add code to the standard Contact form called 
 'Information', which is of the 'Main' form type. This can be found at 
 `Form/contact/Main/Information.d.ts`. Simply by adding this to your TypeScript context, 
-you get access to the entire Xrm object model API for that form!
+you get access to the specific Xrm object model API for that form!
 
 
-We just need to tell the compiler what page we are currently on 
+We just need to tell the compiler what page we are currently making logic for
 (`Form.contact.Main.Information`), which can be done in two ways:
 
     [lang=typescript]
@@ -39,7 +39,6 @@ We just need to tell the compiler what page we are currently on
 Below is an example of an initial setup for your code file.
 
     [lang=typescript]
-    
     namespace DG.Contact {
         declare var Xrm: Xrm<Form.contact.Main.Information>;
 
@@ -49,7 +48,7 @@ Below is an example of an initial setup for your code file.
     }
 
 
-> Note when using modules, you need to export all functions you want to call 
+> Note when using namespaces, you need to export all functions you want to call 
 > outside of it. In this case the `onLoad()` function needs to be used by CRM, 
 > and therefore needs to be exported.
 

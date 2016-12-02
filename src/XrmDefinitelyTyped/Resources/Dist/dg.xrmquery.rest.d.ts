@@ -107,6 +107,7 @@ declare namespace XQR {
      */
     class UpdateRecord<O> {
         constructor(entityPicker: (x: RestEntities) => RestMapping<O, any, any, any, any>, id: string, record: O);
+        execute(successCallback?: () => any, errorCallback?: (err: Error) => any): void;
     }
     /**
      * Contains information about a Delete query

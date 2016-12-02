@@ -3,9 +3,8 @@
 XrmDefinitelyTyped generates [TypeScript](http://www.typescriptlang.org/) 
 declaration files based on *your* Dynamics 365/CRM/xRM solution.
 
-It is the TypeScript equivalent of [CrmSvcUtil][crmsvcutil], but instead of 
-generating early-bound .NET classes for server-side code, it generates 
-TypeScript interfaces for all your client-side coding.
+It is the TypeScript equivalent of [CrmSvcUtil](https://msdn.microsoft.com/en-us/library/gg327844.aspx), but instead of 
+generating early-bound .NET classes for server-side code, it generates TypeScript interfaces for all your client-side coding.
 
 [Read more here](http://delegateas.github.io/Delegate.XrmDefinitelyTyped/)
 
@@ -31,8 +30,6 @@ Recommended environment: [Visual Studio 2015](https://www.visualstudio.com/downl
 
 
 ### Test
-
-Tests are located in the `test`-folder
 
 Recommended environment: [Visual Studio Code](https://code.visualstudio.com/)
 

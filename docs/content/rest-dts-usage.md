@@ -1,16 +1,7 @@
 The REST API
 ===========
 
-To work with the REST API you will need to reference the declaration file for 
-it, which can be found at `typings/XRM/rest.d.ts`. 
-
-To work on further with specific entities you should reference these as well.
-They are located in the `typings/XRM/Entity/` folder:
-
     [lang=typescript]
-    /// <reference path="../../typings/XRM/rest.d.ts" />
-    /// <reference path="../../typings/XRM/Entity/account.d.ts" />
-
     SDK.REST.retrieveRecord("<SomeGuid>",
         "Account", // Entity type
         "", // Select string

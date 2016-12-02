@@ -127,7 +127,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <Content Include="EnvInfo.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>IfNewer</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>

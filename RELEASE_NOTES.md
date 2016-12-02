@@ -1,7 +1,7 @@
 # Release Notes
 
-### 2.0.0
-* **The Web API is now supported**
+### 2.0.0 - December 2 2016
+* [**The Web API is now supported**](xrmquery-web.html)
 * Generation of REST and Web API entity interfaces is now opt-in, and they can be namespaced
 * Generation of `Form` interfaces can now be skipped
 * The `XrmQuery` functionality for the REST endpoint has been moved into `XrmQuery.Rest`
@@ -9,7 +9,8 @@
 * `base.d.ts` has been renamed to `xrm.d.ts`
 * Interfaces from the `IPage` namespace have been moved to the `Xrm` namespace
 * `IPage` entity interfaces have been deprecated in favor of intersection forms
-* It can now generate the context from a local metadata file
+* It can now generate the context from a local metadata file via the new `save`- and `load`-arguments
+* JavaScript library files (XrmQuery) can now be automatically updated when generating the context with the `jsLib`-argument
 
 ### 1.11.1 - November 1 2016
 * Better handling of tabs and sections when intersecting forms
