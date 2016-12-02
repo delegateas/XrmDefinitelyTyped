@@ -24,9 +24,8 @@ Step-by-step
 **Usage:**
 
 1. Run `XrmDefinitelyTyped.exe`. This will generate the desired declaration files at the specified location (or in the current folder if none specified)
+3. Make sure your `tsconfig.json` file includes the generated typings in the TypeScript context
 2. Create a TypeScript file, or convert your old .js files to .ts
-3. Reference the necessary declaration file(s) you need for your logic - see examples below. 
-   * *Note: this can be skipped if typings files are already included in your TypeScript compilation context*
 4. Making form logic? Cast the `Xrm.Page` object to the form you are coding towards
 5. Start coding!
 

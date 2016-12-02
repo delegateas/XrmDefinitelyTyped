@@ -1,12 +1,12 @@
 XrmQuery (REST)
 ===============
 
-With XrmQuery you can get intellisense for creating your query to your Dynamics 365/CRM database!
+With XrmQuery you utilize intellisense to create and structure your queries to your Dynamics 365/CRM system.
 
 Use the `-jsLib` argument of XrmDefinitelyTyped to define where the necessary JavaScript files should be placed.
 
 With the JavaScript in place, you can write the following code with full intellisense on 
-the entity and all of its attributes and relationships! It also provides helper functions which 
+the entity and all of its attributes and relationships. It also provides helper functions that 
 create the filter string for the query correctly based on the types given. XrmQuery provides intellisense
 and helper functions for all the options one can query with for [OData on CRM][odata-options].
 

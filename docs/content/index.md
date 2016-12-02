@@ -16,8 +16,9 @@ It generates data-specific declaration files for:
   * Global and entity-specific option sets
   * The standard [SDK.REST.js][rest] API for querying CRM via [OData][odata].
   * The standard [SDK.MetaData.js][metadata] API for querying the metadata of CRM.
-  * [XrmQuery][xrmquery], which uses generated declaration files to make it
-    possible to perform type-safe queries to CRM.
+  * [XrmQuery][xrmquery] for the Web API and the old REST endpoint. XrmQuery makes it
+    possible to perform fully type-safe queries to CRM.
+
 
 All this makes it possible to **catch bugs at compile-time** in your IDE (instead of at runtime on the CRM instance), 
 as well as providing  **full intellisense** for the APIs and entities, which greatly enhances the coding experience!
