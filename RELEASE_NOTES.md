@@ -1,5 +1,8 @@
 # Release Notes
 
+### 2.0.2 - December 8 2016
+* Fix: Intersection entity interfaces were not generated properly for the Web API (no entity set name)
+
 ### 2.0.1 - December 8 2016
 * More robust usage of `GetGlobalContext()`, since CRM will bug out in certain cases when it is executed
 

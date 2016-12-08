@@ -43,7 +43,7 @@ module IntermediateRepresentation =
     typecode: int
     schemaName: string
     logicalName: string
-    entitySetName: string
+    entitySetName: string option
     idAttr: string
     attrs: XrmAttribute list 
     opt_sets: OptionSet list

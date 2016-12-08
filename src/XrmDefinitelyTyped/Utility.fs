@@ -19,6 +19,11 @@ module Utility =
   /// Option default argument
   let (?|) = defaultArg
 
+  let stringToOption s =
+    match String.IsNullOrWhiteSpace(s) with
+    | true  -> None
+    | false -> Some s
+
   let parseInt str =
     let mutable intvalue = 0
     if System.Int32.TryParse(str, &intvalue) then Some(intvalue)

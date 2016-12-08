@@ -251,21 +251,25 @@ module internal CreateWebEntities =
         { ei.oneRelated with vars = e.rels |> List.choose (getRelatedVariable "" true) |> sortByName }
         { ei.manyRelated with vars = e.rels |> List.choose (getRelatedVariable "" false) |> sortByName }
       ]
-      
-    let mapping = 
-      Variable.Create(
-        e.entitySetName, 
-        TsType.Intersection 
-          [ retrieveMappingType e.schemaName ns
-            cudMappingType e.schemaName ns 
-            relatedMappingType e.schemaName ns
-          ]) 
+    
+    let namespacedLines = 
+      Namespace.Create(ns, declare = true, interfaces = is) |> CreateCommon.skipNsIfEmpty  
+    
+    let entityBindingLines =
+      match e.entitySetName with
+      | None -> []
+      | Some setName ->
+        let ty = 
+          TsType.Intersection 
+            [ retrieveMappingType e.schemaName ns
+              cudMappingType e.schemaName ns 
+              relatedMappingType e.schemaName ns
+            ]
+        
+        Interface.Create("WebEntities", vars = [ Variable.Create(setName, ty)  ]) 
+        |> interfaceToString
 
-    let ns = Namespace.Create(ns, declare = true, interfaces = is)
-    List.concat 
-      [ CreateCommon.skipNsIfEmpty ns
-        Interface.Create("WebEntities", vars = [ mapping ]) |> interfaceToString
-      ]
+    namespacedLines @ entityBindingLines
 
   /// Create blank interfaces for web-entities.d.ts
   let getBlankInterfacesLines ns es = 
