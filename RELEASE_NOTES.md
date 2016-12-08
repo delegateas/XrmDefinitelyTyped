@@ -1,5 +1,8 @@
 # Release Notes
 
+### 2.0.1 - December 8 2016
+* More robust usage of `GetGlobalContext()`, since CRM will bug out in certain cases when it is executed
+
 ### 2.0.0 - December 2 2016
 * [**The Web API is now supported**](xrmquery-web.html)
 * Generation of REST and Web API entity interfaces is now opt-in, and they can be namespaced

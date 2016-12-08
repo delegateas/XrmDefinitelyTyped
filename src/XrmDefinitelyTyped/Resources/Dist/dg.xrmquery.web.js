@@ -793,22 +793,19 @@ var XQW;
      * @internal
      */
     function getClientUrl() {
-        if (GetGlobalContext && GetGlobalContext().getClientUrl) {
-            return GetGlobalContext().getClientUrl();
+        try {
+            if (GetGlobalContext && GetGlobalContext().getClientUrl) {
+                return GetGlobalContext().getClientUrl();
+            }
         }
-        else {
+        catch (e) { }
+        try {
             if (Xrm && Xrm.Page && Xrm.Page.context) {
-                try {
-                    return Xrm.Page.context.getClientUrl();
-                }
-                catch (e) {
-                    throw new Error("Xrm.Page.context.getClientUrl is not available.");
-                }
-            }
-            else {
-                throw new Error("Context is not available.");
+                return Xrm.Page.context.getClientUrl();
             }
         }
+        catch (e) { }
+        throw new Error("Context is not available.");
     }
     /**
      * Converts a select object to CRM format

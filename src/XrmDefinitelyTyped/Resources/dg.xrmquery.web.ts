@@ -253,7 +253,7 @@ interface ExpandOptions<ISelect, IFilter> {
 
 
 namespace XQW {
-  
+
   const FORMATTED_VALUE_ID = "OData.Community.Display.V1.FormattedValue";
   const FORMATTED_VALUE_SUFFIX = "@" + FORMATTED_VALUE_ID;
   const FORMATTED_VALUES_HEADER = { type: "Prefer", value: `odata.include-annotations="${FORMATTED_VALUE_ID}"` };
@@ -309,7 +309,7 @@ namespace XQW {
       return value;
     }
   }
-  
+
   /* A bit slower (but nicer) implementation using RegEx */
   //const pattern = /^(_)?(.+?)(_value)?(@OData\.Community\.Display\.V1\.FormattedValue)?$/;
   //function reviver(name: string, value) {
@@ -367,10 +367,10 @@ namespace XQW {
 
         }, this.errorCallback);
       },
-      (err: Error) => {
-        this.callbackReceived();
-        this.errorCallback(err);
-      });
+        (err: Error) => {
+          this.callbackReceived();
+          this.errorCallback(err);
+        });
     }
 
     protected populateRecord(rec: any, expandKeys: ExpandKey[]) {
@@ -422,7 +422,7 @@ namespace XQW {
           });
         }
       });
-      
+
       this.allSent();
     }
   }
@@ -455,7 +455,7 @@ namespace XQW {
 
     private constructor(obj: MultiResult, expandKeys: ExpandKey[], successCallback: (t: any) => any, errorCallback: (e: Error) => any) {
       super(obj.value, successCallback, errorCallback);
-      
+
       let nextPage = obj["@odata.nextLink"];
       if (nextPage) {
         this.followLink(nextPage, expandKeys, vals => {
@@ -490,7 +490,7 @@ namespace XQW {
       this.executeRaw(successCallback, errorCallback, true);
     }
 
-    
+
     /**
      * @internal
      */
@@ -865,7 +865,7 @@ namespace XQW {
       super("POST");
       this.entitySetName = taggedExec(entityPicker).toString();
     }
-    
+
     protected handleResponse(req: XMLHttpRequest, successCallback: (r: string) => any, errorCallback: (e: Error) => any) {
       let header = req.getResponseHeader("OData-EntityId");
       if (header) successCallback(header!.substr(-37, 36))
@@ -878,7 +878,7 @@ namespace XQW {
     }
 
     protected getObjectToSend = () => JSON.stringify(transformObject(this.record));
-    
+
     getQueryString(): string {
       return this.entitySetName;
     }
@@ -1013,19 +1013,17 @@ namespace XQW {
    * @internal
    */
   function getClientUrl() {
-    if (GetGlobalContext && GetGlobalContext().getClientUrl) {
-      return GetGlobalContext().getClientUrl();
-    }
-    else {
-      if (Xrm && Xrm.Page && Xrm.Page.context) {
-        try {
-          return Xrm.Page.context.getClientUrl();
-        } catch (e) {
-          throw new Error("Xrm.Page.context.getClientUrl is not available.");
-        }
+    try {
+      if (GetGlobalContext && GetGlobalContext().getClientUrl) {
+        return GetGlobalContext().getClientUrl();
       }
-      else { throw new Error("Context is not available."); }
-    }
+    } catch (e) { }
+    try {
+      if (Xrm && Xrm.Page && Xrm.Page.context) {
+        return Xrm.Page.context.getClientUrl();
+      }
+    } catch (e) { }
+    throw new Error("Context is not available.");
   }
 
   /**
