@@ -5,14 +5,15 @@ XrmQuery (Web API)
 With XrmQuery you can utilize intellisense and type-support to create and structure Web API queries for your 
 Dynamics 365/CRM instance.
 
-The syntax of XrmQuery is very similar the [method syntax of LINQ](https://msdn.microsoft.com/en-us/library/bb397947.aspx).
+The syntax of XrmQuery is very similar to the [method syntax of LINQ](https://msdn.microsoft.com/en-us/library/bb397947.aspx),
+which makes for a great developer experience.
 
-***Try it out yourself - it's an absolute pleasure to use in any IDE with TypeScript support!***
+Try it out yourself by running XrmDefinitelyTyped with the `-web` and `-jsLib` [arguments](tool-usage.html).
 
 Supported features
 --------
 * Create, update and delete
-* Basic query functionality - `retrieve`, `retrieveMultiple`, `retrieveRelated`, `retrieveRelatedMultiple`
+* Basic query functionality: `retrieve`, `retrieveMultiple`, `retrieveRelated`, `retrieveRelatedMultiple`
 * Full type-support for all query options, such as `select`, `filter`, `expand` and `orderBy`
 * FetchXML and pre-defined query filtering
 * ES6 promises - use `dg.xrmquery.promise.min.js` to include polyfill for IE
@@ -21,7 +22,7 @@ Supported features
 * Handle as many entities and attributes as desired, without increasing the size of the JavaScript library code 
   (which is 15KB minified, or 21KB with ES6-promise polyfill)
 * No need to register a CRM app in the Azure AD to generate the declaration files
-* Retrieval of formatted values, and accessing them as `<record>.<attribute-name>_formatted` instead of 
+* Retrieval of formatted values, and easier access to them with `<record>.<attribute-name>_formatted` instead of 
   `<record>["<attribute-name>@OData.Community.Display.V1.FormattedValue"]`
 
 
