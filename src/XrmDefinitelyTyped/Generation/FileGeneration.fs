@@ -101,7 +101,7 @@ module FileGeneration =
 
 
   /// Generate the declaration files stored as resources
-  let generateDtsResourceFiles crmVersion state =
+  let generateDtsResourceFiles crmVersion gSettings state =
     // Extend xrm.d.ts with version specific additions
     getBaseExtensions crmVersion
     |> Seq.map (getResourceLines >> stripReferenceLines)
@@ -112,10 +112,10 @@ module FileGeneration =
         sprintf "%s/xrm.d.ts" state.outputDir, lines)
  
     // Copy stable declaration files directly
-    [ "metadata.d.ts"
-      "dg.xrmquery.web.d.ts"
-      "dg.xrmquery.rest.d.ts"
-    ] |> List.iter (copyResourceDirectly state.outputDir)
+    [ Some "metadata.d.ts"
+      gSettings.webNs ?|> fun _ -> "dg.xrmquery.web.d.ts"
+      gSettings.restNs ?|> fun _ -> "dg.xrmquery.rest.d.ts"
+    ] |> List.choose id |> List.iter (copyResourceDirectly state.outputDir)
 
     [ "sdk.d.ts"
     ] |> List.iter (copyResourceDirectly (sprintf "%s/_internal" state.outputDir))
@@ -124,6 +124,8 @@ module FileGeneration =
   /// Copy the js files stored as resources
   let copyJsLibResourceFiles (gSettings: XdtGenerationSettings) =
     if gSettings.jsLib.IsNone then ()
+    else
+
     let path = gSettings.jsLib ?| "."
     
     if Directory.Exists path |> not then 
@@ -139,6 +141,8 @@ module FileGeneration =
   /// Copy the ts files stored as resources
   let copyTsLibResourceFiles (gSettings: XdtGenerationSettings) =
     if gSettings.tsLib.IsNone then ()
+    else
+
     let path = gSettings.tsLib ?| "."
     
     if Directory.Exists path |> not then 

@@ -39,7 +39,7 @@ module GenerationMain =
     // Generate the files
     let data =
       interpretCrmData out formIntersects rawState 
-      |>> generateDtsResourceFiles crmVersion 
+      |>> generateDtsResourceFiles crmVersion gSettings 
       |>> generateEnumFiles 
       |>> generateEntityEnumFiles 
 
