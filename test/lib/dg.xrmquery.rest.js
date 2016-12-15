@@ -346,6 +346,9 @@ var XQR;
             this.id = id;
             this.record = record;
         }
+        UpdateRecord.prototype.execute = function (successCallback, errorCallback) {
+            SDK.REST.updateRecord(this.id, this.record, this.logicalName, successCallback ? successCallback : NoOp, errorCallback ? errorCallback : NoOp);
+        };
         return UpdateRecord;
     }());
     XQR.UpdateRecord = UpdateRecord;

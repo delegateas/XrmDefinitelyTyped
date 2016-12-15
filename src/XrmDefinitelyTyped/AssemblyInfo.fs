@@ -7,8 +7,8 @@ open System.Reflection
 [<assembly: AssemblyDescriptionAttribute("Tool to generate TypeScript declaration files for MS CRM Dynamics client-side coding.")>]
 [<assembly: AssemblyCompanyAttribute("Delegate A/S")>]
 [<assembly: AssemblyCopyrightAttribute("Copyright (c) Delegate A/S 2015")>]
-[<assembly: AssemblyVersionAttribute("2.0.2")>]
-[<assembly: AssemblyFileVersionAttribute("2.0.2")>]
+[<assembly: AssemblyVersionAttribute("2.0.3")>]
+[<assembly: AssemblyFileVersionAttribute("2.0.3")>]
 do ()
 
 module internal AssemblyVersionInformation =
@@ -17,5 +17,5 @@ module internal AssemblyVersionInformation =
     let [<Literal>] AssemblyDescription = "Tool to generate TypeScript declaration files for MS CRM Dynamics client-side coding."
     let [<Literal>] AssemblyCompany = "Delegate A/S"
     let [<Literal>] AssemblyCopyright = "Copyright (c) Delegate A/S 2015"
-    let [<Literal>] AssemblyVersion = "2.0.2"
-    let [<Literal>] AssemblyFileVersion = "2.0.2"
+    let [<Literal>] AssemblyVersion = "2.0.3"
+    let [<Literal>] AssemblyFileVersion = "2.0.3"

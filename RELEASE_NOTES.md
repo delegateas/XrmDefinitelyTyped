@@ -1,5 +1,8 @@
 # Release Notes
 
+### 2.0.3 - December 15 2016
+* Generation of lib and declaration files is now properly skipped if they are not specified in the configuration
+
 ### 2.0.2 - December 8 2016
 * Fix: Intersection entity interfaces were not generated properly for the Web API (no entity set name)
 
