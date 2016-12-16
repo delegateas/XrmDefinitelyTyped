@@ -483,7 +483,7 @@ namespace XQW {
     protected getObjectToSend: () => any = () => null;
 
     promise() {
-      return promisifyCallback(this.execute);
+      return promisifyCallback(this.execute.bind(this));
     }
 
     execute(successCallback: (x: T) => any, errorCallback: (err: Error) => any = () => { }) {
@@ -564,7 +564,7 @@ namespace XQW {
     }
 
     promiseFirst(): Promise<Result> {
-      return promisifyCallback(this.getFirst);
+      return promisifyCallback(this.getFirst.bind(this));
     }
 
 

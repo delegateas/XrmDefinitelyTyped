@@ -140,7 +140,7 @@ declare namespace XQW {
         abstract getQueryString(): string;
         protected abstract handleResponse(req: XMLHttpRequest, successCallback: (t: T) => any, errorCallback: (e: Error) => any): void;
         protected getObjectToSend: () => any;
-        promise(): Promise<T>;
+        promise(): Promise<{}>;
         execute(successCallback: (x: T) => any, errorCallback?: (err: Error) => any): void;
         executeRaw(successCallback: (x: XMLHttpRequest) => any, errorCallback: (err: Error) => any, parseResult: false): void;
     }

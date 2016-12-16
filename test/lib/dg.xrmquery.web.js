@@ -395,7 +395,7 @@ var XQW;
             this.getObjectToSend = function () { return null; };
         }
         Query.prototype.promise = function () {
-            return promisifyCallback(this.execute);
+            return promisifyCallback(this.execute.bind(this));
         };
         Query.prototype.execute = function (successCallback, errorCallback) {
             if (errorCallback === void 0) { errorCallback = function () { }; }
@@ -463,7 +463,7 @@ var XQW;
             this.execute(function (res) { return successCallback(res && res.length > 0 ? res[0] : null); }, errorCallback);
         };
         RetrieveMultipleRecords.prototype.promiseFirst = function () {
-            return promisifyCallback(this.getFirst);
+            return promisifyCallback(this.getFirst.bind(this));
         };
         RetrieveMultipleRecords.prototype.getQueryString = function () {
             var prefix = this.entitySetName;
