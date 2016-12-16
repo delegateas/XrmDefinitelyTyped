@@ -1,5 +1,8 @@
 # Release Notes
 
+### 2.0.4 - December 16 2016
+* Promises now works properly in all cases
+
 ### 2.0.3 - December 15 2016
 * Generation of lib and declaration files is now properly skipped if they are not specified in the configuration
 
