@@ -121,7 +121,7 @@ namespace XrmQuery {
   }
 
   /**
-   * Send a request to the Web API with the given parameters.
+   * Sends a request to the Web API with the given parameters.
    * @param type Type of request, i.e. "GET", "POST", etc
    * @param queryString Query-string to use for the API. For example: 'accounts?$count=true'
    * @param data Object to send with request
@@ -129,19 +129,19 @@ namespace XrmQuery {
    * @param errorCb Error callback handler function
    * @param configure Modify the request before it it sent to the endpoint - like adding headers.
    */
-  export function sendRequest(type: XQW.HttpRequestType, queryString: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb?: (err: Error) => any, configure?: (req: XMLHttpRequest) => void) {
+  export function sendRequest(type: XQW.HttpRequestType, queryString: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb?: (err: Error) => any, configure?: (req: XMLHttpRequest) => void): void {
     request(type, encodeURI(XQW.getApiUrl() + queryString), data, successCb, errorCb, configure);
   }
 
   /**
-   * Send a request to the Web API with the given parameters and return a promise.
+   * Sends a request to the Web API with the given parameters and returns a promise.
    * @param type Type of request, i.e. "GET", "POST", etc
    * @param queryString Query-string to use for the API. For example: 'accounts?$count=true'
    * @param data Object to send with request
    * @param configure Modify the request before it it sent to the endpoint - like adding headers.
    */
-  export function promiseRequest(type: XQW.HttpRequestType, queryString: string, data: any, configure?: (req: XMLHttpRequest) => void) {
-    XQW.promisifyCallback((success, error?) => sendRequest(type, queryString, data, success, error, configure));
+  export function promiseRequest(type: XQW.HttpRequestType, queryString: string, data: any, configure?: (req: XMLHttpRequest) => void): Promise<XMLHttpRequest> {
+    return XQW.promisifyCallback((success, error?) => sendRequest(type, queryString, data, success, error, configure));
   }
 }
 
@@ -162,9 +162,9 @@ namespace Filter {
   export function ands(fs: WebFilter[]): WebFilter { return nestedFilter(fs, "and") }
   export function ors(fs: WebFilter[]): WebFilter { return nestedFilter(fs, "or") }
 
-  export function startsWith(v1: string, v2: string): WebFilter { return dataFunc("startswith", v1, v2) }
-  export function substringOf(v1: string, v2: string): WebFilter { return dataFunc("substringof", v1, v2) }
-  export function endsWith(v1: string, v2: string): WebFilter { return dataFunc("endswith", v1, v2) }
+  export function startsWith(val: string, prefix: string): WebFilter { return dataFunc("startswith", val, prefix) }
+  export function contains(val: string, needle: string): WebFilter { return dataFunc("contains", val, needle) }
+  export function endsWith(val: string, suffix: string): WebFilter { return dataFunc("endswith", val, suffix) }
 
   /**
    * Makes a string into a GUID that can be sent to the OData source
@@ -482,11 +482,11 @@ namespace XQW {
     protected abstract handleResponse(req: XMLHttpRequest, successCallback: (t: T) => any, errorCallback: (e: Error) => any): void;
     protected getObjectToSend: () => any = () => null;
 
-    promise() {
-      return promisifyCallback(this.execute.bind(this));
+    promise(): Promise<T> {
+      return promisifyCallback<T>(this.execute.bind(this));
     }
 
-    execute(successCallback: (x: T) => any, errorCallback: (err: Error) => any = () => { }) {
+    execute(successCallback: (x: T) => any, errorCallback: (err: Error) => any = () => { }): void {
       this.executeRaw(successCallback, errorCallback, true);
     }
 
@@ -564,7 +564,7 @@ namespace XQW {
     }
 
     promiseFirst(): Promise<Result> {
-      return promisifyCallback(this.getFirst.bind(this));
+      return promisifyCallback<Result>(this.getFirst.bind(this));
     }
 
 
