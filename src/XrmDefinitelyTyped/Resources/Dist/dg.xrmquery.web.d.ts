@@ -54,7 +54,7 @@ declare namespace XrmQuery {
      */
     function setApiVersion(v: string): void;
     /**
-     * Send a request to the Web API with the given parameters.
+     * Sends a request to the Web API with the given parameters.
      * @param type Type of request, i.e. "GET", "POST", etc
      * @param queryString Query-string to use for the API. For example: 'accounts?$count=true'
      * @param data Object to send with request
@@ -64,13 +64,13 @@ declare namespace XrmQuery {
      */
     function sendRequest(type: XQW.HttpRequestType, queryString: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb?: (err: Error) => any, configure?: (req: XMLHttpRequest) => void): void;
     /**
-     * Send a request to the Web API with the given parameters and return a promise.
+     * Sends a request to the Web API with the given parameters and returns a promise.
      * @param type Type of request, i.e. "GET", "POST", etc
      * @param queryString Query-string to use for the API. For example: 'accounts?$count=true'
      * @param data Object to send with request
      * @param configure Modify the request before it it sent to the endpoint - like adding headers.
      */
-    function promiseRequest(type: XQW.HttpRequestType, queryString: string, data: any, configure?: (req: XMLHttpRequest) => void): void;
+    function promiseRequest(type: XQW.HttpRequestType, queryString: string, data: any, configure?: (req: XMLHttpRequest) => void): Promise<XMLHttpRequest>;
 }
 declare namespace Filter {
     function equals<T extends null | string | number | Date | XQW.Guid>(v1: T, v2: T): WebFilter;
@@ -84,9 +84,9 @@ declare namespace Filter {
     function not(f1: WebFilter): WebFilter;
     function ands(fs: WebFilter[]): WebFilter;
     function ors(fs: WebFilter[]): WebFilter;
-    function startsWith(v1: string, v2: string): WebFilter;
-    function substringOf(v1: string, v2: string): WebFilter;
-    function endsWith(v1: string, v2: string): WebFilter;
+    function startsWith(val: string, prefix: string): WebFilter;
+    function contains(val: string, needle: string): WebFilter;
+    function endsWith(val: string, suffix: string): WebFilter;
     /**
      * Makes a string into a GUID that can be sent to the OData source
      */
@@ -140,7 +140,7 @@ declare namespace XQW {
         abstract getQueryString(): string;
         protected abstract handleResponse(req: XMLHttpRequest, successCallback: (t: T) => any, errorCallback: (e: Error) => any): void;
         protected getObjectToSend: () => any;
-        promise(): Promise<{}>;
+        promise(): Promise<T>;
         execute(successCallback: (x: T) => any, errorCallback?: (err: Error) => any): void;
         executeRaw(successCallback: (x: XMLHttpRequest) => any, errorCallback: (err: Error) => any, parseResult: false): void;
     }

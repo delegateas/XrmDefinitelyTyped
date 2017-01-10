@@ -112,7 +112,7 @@ var XrmQuery;
     }
     XrmQuery.request = request;
     /**
-     * Send a request to the Web API with the given parameters.
+     * Sends a request to the Web API with the given parameters.
      * @param type Type of request, i.e. "GET", "POST", etc
      * @param queryString Query-string to use for the API. For example: 'accounts?$count=true'
      * @param data Object to send with request
@@ -125,14 +125,14 @@ var XrmQuery;
     }
     XrmQuery.sendRequest = sendRequest;
     /**
-     * Send a request to the Web API with the given parameters and return a promise.
+     * Sends a request to the Web API with the given parameters and returns a promise.
      * @param type Type of request, i.e. "GET", "POST", etc
      * @param queryString Query-string to use for the API. For example: 'accounts?$count=true'
      * @param data Object to send with request
      * @param configure Modify the request before it it sent to the endpoint - like adding headers.
      */
     function promiseRequest(type, queryString, data, configure) {
-        XQW.promisifyCallback(function (success, error) { return sendRequest(type, queryString, data, success, error, configure); });
+        return XQW.promisifyCallback(function (success, error) { return sendRequest(type, queryString, data, success, error, configure); });
     }
     XrmQuery.promiseRequest = promiseRequest;
 })(XrmQuery || (XrmQuery = {}));
@@ -160,11 +160,11 @@ var Filter;
     Filter.ands = ands;
     function ors(fs) { return nestedFilter(fs, "or"); }
     Filter.ors = ors;
-    function startsWith(v1, v2) { return dataFunc("startswith", v1, v2); }
+    function startsWith(val, prefix) { return dataFunc("startswith", val, prefix); }
     Filter.startsWith = startsWith;
-    function substringOf(v1, v2) { return dataFunc("substringof", v1, v2); }
-    Filter.substringOf = substringOf;
-    function endsWith(v1, v2) { return dataFunc("endswith", v1, v2); }
+    function contains(val, needle) { return dataFunc("contains", val, needle); }
+    Filter.contains = contains;
+    function endsWith(val, suffix) { return dataFunc("endswith", val, suffix); }
     Filter.endsWith = endsWith;
     /**
      * Makes a string into a GUID that can be sent to the OData source

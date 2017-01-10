@@ -1,5 +1,10 @@
 # Release Notes
 
+### 2.0.5 - January 10 2017
+* Fix: `Filter.substringof` changed to be `Filter.contains` in the Web API
+* Added matching generic return type on `promise()` of Query
+* Helper function `promiseRequest` method now also correctly returns the promise
+
 ### 2.0.4 - December 16 2016
 * Promises now works properly in all cases
 
