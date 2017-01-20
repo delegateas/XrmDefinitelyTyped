@@ -147,8 +147,8 @@ namespace XrmQuery {
 
 
 namespace Filter {
-  export function equals<T extends null | string | number | Date | XQW.Guid>(v1: T, v2: T): WebFilter { return comp(v1, "eq", v2) }
-  export function notEquals<T extends null | string | number | Date | XQW.Guid>(v1: T, v2: T): WebFilter { return comp(v1, "ne", v2) }
+  export function equals<T extends null | string | number | Date | XQW.Guid | boolean>(v1: T, v2: T): WebFilter { return comp(v1, "eq", v2) }
+  export function notEquals<T extends null | string | number | Date | XQW.Guid | boolean>(v1: T, v2: T): WebFilter { return comp(v1, "ne", v2) }
 
   export function greaterThan<T extends number | Date>(v1: T, v2: T): WebFilter { return comp(v1, "gt", v2) }
   export function greaterThanOrEqual<T extends number | Date>(v1: T, v2: T): WebFilter { return comp(v1, "ge", v2) }

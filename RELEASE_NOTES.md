@@ -1,5 +1,8 @@
 # Release Notes
 
+### 2.0.6 - January 20 2017
+* Made `boolean` a valid filter type in the Web API 
+
 ### 2.0.5 - January 10 2017
 * Fix: `Filter.substringof` changed to be `Filter.contains` in the Web API
 * Added matching generic return type on `promise()` of Query

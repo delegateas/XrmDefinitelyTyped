@@ -73,8 +73,8 @@ declare namespace XrmQuery {
     function promiseRequest(type: XQW.HttpRequestType, queryString: string, data: any, configure?: (req: XMLHttpRequest) => void): Promise<XMLHttpRequest>;
 }
 declare namespace Filter {
-    function equals<T extends null | string | number | Date | XQW.Guid>(v1: T, v2: T): WebFilter;
-    function notEquals<T extends null | string | number | Date | XQW.Guid>(v1: T, v2: T): WebFilter;
+    function equals<T extends null | string | number | Date | XQW.Guid | boolean>(v1: T, v2: T): WebFilter;
+    function notEquals<T extends null | string | number | Date | XQW.Guid | boolean>(v1: T, v2: T): WebFilter;
     function greaterThan<T extends number | Date>(v1: T, v2: T): WebFilter;
     function greaterThanOrEqual<T extends number | Date>(v1: T, v2: T): WebFilter;
     function lessThan<T extends number | Date>(v1: T, v2: T): WebFilter;
