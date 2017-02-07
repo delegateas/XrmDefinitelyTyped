@@ -1254,7 +1254,7 @@
     /**
      * Sets the tab to be collapsed or expanded.
      */
-    setDisplayState(state: CollapsableDisplayState | string): void;
+    setDisplayState(state: CollapsableDisplayState): void;
 
     /**
      * Returns the Xrm.Page.ui object.
@@ -1349,7 +1349,7 @@
      * @param level The level of the message.
      * @param uniqueId A unique identifier for the message used with clearFormNotification to remove the notification.
      */
-    setFormNotification(message: string, level: NotificationLevel | string, uniqueId: string): boolean;
+    setFormNotification(message: string, level: NotificationLevel, uniqueId: string): boolean;
 
     /**
      * Method to cause the ribbon to re-evaluate data that controls what is displayed in it.
@@ -1381,7 +1381,7 @@
     /**
      * Use this method to expand or collapse the business process flow control.
      */
-    setDisplayState(val: CollapsableDisplayState | string): void;
+    setDisplayState(val: CollapsableDisplayState): void;
 
     /**
      * Use getVisible to retrieve whether the business process control is visible.
