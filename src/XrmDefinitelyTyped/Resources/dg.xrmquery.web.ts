@@ -6,19 +6,19 @@ namespace XrmQuery {
    * @param entityPicker Function to select which entity-type should be targeted.
    * @param id GUID of the wanted record.
    */
-  export function retrieve<ISelect, IExpand, IFixed, Result, FormattedResult>(
+  export function retrieve<ISelect, IExpand, IFixed, FormattedResult, Result>(
     entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>,
     id: string) {
-    return XQW.RetrieveRecord.Get<ISelect, IExpand, IFixed, Result, FormattedResult>(entityPicker, id);
+    return XQW.RetrieveRecord.Get<ISelect, IExpand, IFixed, FormattedResult, Result>(entityPicker, id);
   }
 
   /**
    * Instantiates specification of a query that can retrieve multiple records of a certain entity.
    * @param entityPicker Function to select which entity should be targeted.
    */
-  export function retrieveMultiple<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(
+  export function retrieveMultiple<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(
     entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>) {
-    return XQW.RetrieveMultipleRecords.Get<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(entityPicker);
+    return XQW.RetrieveMultipleRecords.Get<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(entityPicker);
   }
 
   /**
@@ -27,11 +27,11 @@ namespace XrmQuery {
    * @param id GUID of the record of which the related record should be retrieved.
    * @param relatedPicker Function to select which navigation property points to the related record.
    */
-  export function retrieveRelated<ISingle, ISelect, IExpand, IFixed, Result, FormattedResult>(
+  export function retrieveRelated<ISingle, ISelect, IExpand, IFixed, FormattedResult, Result>(
     entityPicker: (x: WebEntities) => WebMappingRelated<ISingle, any>,
     id: string,
     relatedPicker: (x: ISingle) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>) {
-    return XQW.RetrieveRecord.Related<ISingle, ISelect, IExpand, IFixed, Result, FormattedResult>(entityPicker, id, relatedPicker);
+    return XQW.RetrieveRecord.Related<ISingle, ISelect, IExpand, IFixed, FormattedResult, Result>(entityPicker, id, relatedPicker);
   }
 
   /**
@@ -40,11 +40,11 @@ namespace XrmQuery {
    * @param id GUID of the record of which the related records should be retrieved.
    * @param relatedPicker Function to select which navigation property points to the related records.
    */
-  export function retrieveRelatedMultiple<IMultiple, ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(
+  export function retrieveRelatedMultiple<IMultiple, ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(
     entityPicker: (x: WebEntities) => WebMappingRelated<any, IMultiple>,
     id: string,
     relatedPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>) {
-    return XQW.RetrieveMultipleRecords.Related<IMultiple, ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(entityPicker, id, relatedPicker);
+    return XQW.RetrieveMultipleRecords.Related<IMultiple, ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(entityPicker, id, relatedPicker);
   }
 
   /**
@@ -538,16 +538,16 @@ namespace XQW {
      */
     private topAmount: number | null = null;
 
-    static Get<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(
+    static Get<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(
       entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>) {
-      return new RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(taggedExec(entityPicker).toString());
+      return new RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(taggedExec(entityPicker).toString());
     }
 
-    static Related<IMultiple, ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(
+    static Related<IMultiple, ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(
       entityPicker: (x: WebEntities) => WebMappingRelated<any, IMultiple>,
       id: string,
       relatedPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>) {
-      return new RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(taggedExec(entityPicker).toString(), id, taggedExec(relatedPicker).toString());
+      return new RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(taggedExec(entityPicker).toString(), id, taggedExec(relatedPicker).toString());
     }
 
     private constructor(private entitySetName: string, private id?: string, private relatedNav?: string) {
@@ -751,17 +751,17 @@ namespace XQW {
      */
     protected expandKeys: string[] = [];
 
-    static Related<ISingle, ISelect, IExpand, IFixed, Result, FormattedResult>(
+    static Related<ISingle, ISelect, IExpand, IFixed, FormattedResult, Result>(
       entityPicker: (x: WebEntities) => WebMappingRelated<ISingle, any>,
       id: string,
       relatedPicker: (x: ISingle) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>) {
-      return new RetrieveRecord<ISelect, IExpand, IFixed, Result, FormattedResult>(taggedExec(entityPicker).toString(), id, taggedExec(relatedPicker).toString());
+      return new RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result>(taggedExec(entityPicker).toString(), id, taggedExec(relatedPicker).toString());
     }
 
-    static Get<ISelect, IExpand, IFixed, Result, FormattedResult>(
+    static Get<ISelect, IExpand, IFixed, FormattedResult, Result>(
       entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>,
       id: string) {
-      return new RetrieveRecord<ISelect, IExpand, IFixed, Result, FormattedResult>(taggedExec(entityPicker).toString(), id);
+      return new RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result>(taggedExec(entityPicker).toString(), id);
     }
 
     private constructor(private entitySetName: string, private id: string, private relatedNav?: string) {
@@ -816,7 +816,7 @@ namespace XQW {
       exps: (x: IExpand) => WebExpand<IExpand, IExpSelect, IExpFilter, IExpResult>,
       selectVars?: (x: IExpSelect) => WebAttribute<IExpSelect, any, any>[],
       optArgs?: ExpandOptions<IExpSelect, IExpFilter>)
-      : RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result & IExpResult> {
+      : RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, IExpResult & Result> {
 
       const expand = taggedExec(exps).toString();
       this.selects.push(expand);

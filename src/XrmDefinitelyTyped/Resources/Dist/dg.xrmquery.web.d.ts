@@ -4,26 +4,26 @@ declare namespace XrmQuery {
      * @param entityPicker Function to select which entity-type should be targeted.
      * @param id GUID of the wanted record.
      */
-    function retrieve<ISelect, IExpand, IFixed, Result, FormattedResult>(entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>, id: string): XQW.RetrieveRecord<ISelect, IExpand, IFixed, Result, FormattedResult>;
+    function retrieve<ISelect, IExpand, IFixed, FormattedResult, Result>(entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>, id: string): XQW.RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result>;
     /**
      * Instantiates specification of a query that can retrieve multiple records of a certain entity.
      * @param entityPicker Function to select which entity should be targeted.
      */
-    function retrieveMultiple<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>): XQW.RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>;
+    function retrieveMultiple<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>): XQW.RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>;
     /**
      * Instantiates specification of a query that can retrieve a related record of a given record.
      * @param entityPicker Function to select which entity-type the related record should be retrieved from.
      * @param id GUID of the record of which the related record should be retrieved.
      * @param relatedPicker Function to select which navigation property points to the related record.
      */
-    function retrieveRelated<ISingle, ISelect, IExpand, IFixed, Result, FormattedResult>(entityPicker: (x: WebEntities) => WebMappingRelated<ISingle, any>, id: string, relatedPicker: (x: ISingle) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>): XQW.RetrieveRecord<ISelect, IExpand, IFixed, Result, FormattedResult>;
+    function retrieveRelated<ISingle, ISelect, IExpand, IFixed, FormattedResult, Result>(entityPicker: (x: WebEntities) => WebMappingRelated<ISingle, any>, id: string, relatedPicker: (x: ISingle) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>): XQW.RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result>;
     /**
      * Instantiates specification of a query that can retrieve multiple related records of a given record.
      * @param entityPicker  Function to select which entity-type the related records should be retrieved from.
      * @param id GUID of the record of which the related records should be retrieved.
      * @param relatedPicker Function to select which navigation property points to the related records.
      */
-    function retrieveRelatedMultiple<IMultiple, ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(entityPicker: (x: WebEntities) => WebMappingRelated<any, IMultiple>, id: string, relatedPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>): XQW.RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>;
+    function retrieveRelatedMultiple<IMultiple, ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(entityPicker: (x: WebEntities) => WebMappingRelated<any, IMultiple>, id: string, relatedPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>): XQW.RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>;
     /**
      * Instantiates a query that can create a record.
      * @param entityPicker Function to select which entity-type should be created.
@@ -148,8 +148,8 @@ declare namespace XQW {
         private entitySetName;
         private id;
         private relatedNav;
-        static Get<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>;
-        static Related<IMultiple, ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>(entityPicker: (x: WebEntities) => WebMappingRelated<any, IMultiple>, id: string, relatedPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>;
+        static Get<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>;
+        static Related<IMultiple, ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(entityPicker: (x: WebEntities) => WebMappingRelated<any, IMultiple>, id: string, relatedPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>;
         private constructor(entitySetName, id?, relatedNav?);
         protected handleResponse(req: XMLHttpRequest, successCallback: (r: Result[]) => any, errorCallback: (e: Error) => any): void;
         getFirst(successCallback: (r: Result | null) => any, errorCallback?: (e: Error) => any): void;
@@ -214,8 +214,8 @@ declare namespace XQW {
         private entitySetName;
         private id;
         private relatedNav;
-        static Related<ISingle, ISelect, IExpand, IFixed, Result, FormattedResult>(entityPicker: (x: WebEntities) => WebMappingRelated<ISingle, any>, id: string, relatedPicker: (x: ISingle) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>): RetrieveRecord<ISelect, IExpand, IFixed, Result, FormattedResult>;
-        static Get<ISelect, IExpand, IFixed, Result, FormattedResult>(entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>, id: string): RetrieveRecord<ISelect, IExpand, IFixed, Result, FormattedResult>;
+        static Related<ISingle, ISelect, IExpand, IFixed, FormattedResult, Result>(entityPicker: (x: WebEntities) => WebMappingRelated<ISingle, any>, id: string, relatedPicker: (x: ISingle) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>): RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result>;
+        static Get<ISelect, IExpand, IFixed, FormattedResult, Result>(entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>, id: string): RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result>;
         private constructor(entitySetName, id, relatedNav?);
         protected handleResponse(req: XMLHttpRequest, successCallback: (r: Result) => any, errorCallback: (e: Error) => any): void;
         select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13, R14, F14, R15, F15>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>, WebAttribute<ISelect, R14, F14>, WebAttribute<ISelect, R15, F15>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13 & F14 & F15, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13 & R14 & R15>;
@@ -248,7 +248,7 @@ declare namespace XQW {
         selectMore<R1, F1, R2, F2, R3, F3>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3, Result & R1 & R2 & R3>;
         selectMore<R1, F1, R2, F2>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2, Result & R1 & R2>;
         selectMore<R1, F1>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>]): RetrieveRecord<ISelect, IExpand, IFixed, F1, Result & R1>;
-        expand<IExpSelect, IExpFilter, IExpResult>(exps: (x: IExpand) => WebExpand<IExpand, IExpSelect, IExpFilter, IExpResult>, selectVars?: (x: IExpSelect) => WebAttribute<IExpSelect, any, any>[], optArgs?: ExpandOptions<IExpSelect, IExpFilter>): RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result & IExpResult>;
+        expand<IExpSelect, IExpFilter, IExpResult>(exps: (x: IExpand) => WebExpand<IExpand, IExpSelect, IExpFilter, IExpResult>, selectVars?: (x: IExpSelect) => WebAttribute<IExpSelect, any, any>[], optArgs?: ExpandOptions<IExpSelect, IExpFilter>): RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, IExpResult & Result>;
         getQueryString(): string;
         includeFormattedValues(): Query<FormattedResult & Result>;
     }
