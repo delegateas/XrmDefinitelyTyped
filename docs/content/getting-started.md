@@ -16,7 +16,7 @@ Step-by-step
 **Setup:**
 
 1. Download the [self-contained install file][install], and place it in a folder relative to your web resource project folder.
-2. Run the `install.cmd` file to install the latest version of XrmDefinitelyTyped along with its dependencies in the folder.
+2. Run the `install-latest.cmd` file to install the latest version of XrmDefinitelyTyped along with its dependencies in the folder.
 3. Edit the `appSettings` in the generated configuration file (`XrmDefinitelyTyped.exe.config`) to fit your Dynamics CRM environment and needs
    (see [arguments available to XDT](tool-usage.html)).
 
