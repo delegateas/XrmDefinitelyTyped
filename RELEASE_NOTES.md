@@ -1,5 +1,9 @@
 # Release Notes
 
+### 2.0.7 - February 7 2017
+* `Result` and `FormattedResult` interfaces were incorrectly initialized for retrieve queries
+* Removed string type as a valid parameter in certain function definitions of `xrm.d.ts`
+
 ### 2.0.6 - January 20 2017
 * Made `boolean` a valid filter type in the Web API 
 
