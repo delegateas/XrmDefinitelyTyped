@@ -1,16 +1,16 @@
 import { expect } from 'chai';
 import { suite, test, slow, timeout, skip, only } from "mocha-typescript";
 
-@suite 
+@suite
 class Web_RetrieveRelated_QueryString {
-    
+
     accountId: string;
 
     before() {
         this.accountId = "ACCOUNT_ID";
     }
 
-    @test 
+    @test
     "retrieve accounts"() {
         const qs = XrmQuery.retrieveRelated(x => x.accounts, this.accountId, x => x.primarycontactid)
             .getQueryString();
@@ -19,7 +19,7 @@ class Web_RetrieveRelated_QueryString {
     }
 
 
-    @test 
+    @test
     "simple select"() {
         const qs = XrmQuery.retrieveRelated(x => x.accounts, this.accountId, x => x.primarycontactid)
             .select(x => [x.fullname, x.parentcustomerid_guid])
@@ -30,7 +30,7 @@ class Web_RetrieveRelated_QueryString {
 
 
 
-    @test 
+    @test
     "simple expand"() {
         const qs = XrmQuery.retrieveRelated(x => x.accounts, this.accountId, x => x.primarycontactid)
             .expand(x => x.dg_TestAccount)
@@ -39,7 +39,7 @@ class Web_RetrieveRelated_QueryString {
         expect(qs).to.equal(`accounts(${this.accountId})/primarycontactid?$select=dg_TestAccount&$expand=dg_TestAccount`);
     }
 
-    @test 
+    @test
     "expand with selects"() {
         const qs = XrmQuery.retrieveRelated(x => x.accounts, this.accountId, x => x.primarycontactid)
             .expand(x => x.dg_TestAccount, x => [x.accountnumber])
@@ -48,7 +48,7 @@ class Web_RetrieveRelated_QueryString {
         expect(qs).to.equal(`accounts(${this.accountId})/primarycontactid?$select=dg_TestAccount&$expand=dg_TestAccount($select=accountnumber)`);
     }
 
-    @test 
+    @test
     "expand with selects and extra options"() {
         const qs = XrmQuery.retrieveRelated(x => x.accounts, this.accountId, x => x.primarycontactid)
             .expand(x => x.contact_customer_contacts, x => [x.fullname], { top: 2, sortOrder: SortOrder.Descending, orderBy: x => x.firstname })
@@ -57,23 +57,21 @@ class Web_RetrieveRelated_QueryString {
         expect(qs).to.equal(`accounts(${this.accountId})/primarycontactid?$select=contact_customer_contacts&$expand=contact_customer_contacts($select=fullname;$top=2;$orderby=firstname desc)`);
     }
 
-        @test 
-        "expand with selects and filters"() {
+    @test
+    "expand with selects and filters"() {
         const contactId = "CONTACT_ID";
         const contactFirstName = "CONTACT_NAME";
 
         const qs = XrmQuery.retrieveRelated(x => x.accounts, this.accountId, x => x.primarycontactid)
-            .expand(x => x.contact_customer_contacts, x => [x.fullname], 
-                { filter: x => 
+            .expand(x => x.contact_customer_contacts, x => [x.fullname],
+            {
+                filter: x =>
                     Filter.and(
                         Filter.equals(x.firstname, contactFirstName),
                         Filter.equals(x.contactid, Filter.makeGuid(contactId))
                     )
-                }
-            )
-            .getQueryString();
+            }).getQueryString();
 
         expect(qs).to.equal(`accounts(${this.accountId})/primarycontactid?$select=contact_customer_contacts&$expand=contact_customer_contacts($select=fullname;$filter=(firstname eq '${contactFirstName}' and contactid eq ${contactId}))`);
     }
-
 }
