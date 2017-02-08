@@ -4,6 +4,10 @@ XrmDefintelyTyped
 XrmDefinitelyTyped generates [TypeScript](http://www.typescriptlang.org/) 
 declaration files based on *your* Dynamics 365/CRM/xRM solution.
 
+<form method="get" action="files/install-latest.cmd">
+<center><button type="submit" class="btn">Download installer</button></center>
+</form>
+
 What is it?
 -----------
 
