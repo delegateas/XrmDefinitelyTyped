@@ -115,7 +115,7 @@
     <Compile Include="CreateTypeScript\CreateSdkRestDts.fs" />
     <Compile Include="CreateTypeScript/CreateFormDts.fs" />
     <Compile Include="Generation/DataRetrieval.fs" />
-    <Compile Include="Generation/InterfaceSetup.fs" />
+    <Compile Include="Generation\Setup.fs" />
     <Compile Include="Generation\FileGeneration.fs" />
     <Compile Include="Generation\GenerationMain.fs" />
     <Compile Include="XrmDefinitelyTyped.fs" />

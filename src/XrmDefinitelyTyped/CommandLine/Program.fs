@@ -31,7 +31,7 @@ let getRetrieveSettings parsedArgs =
 let getGenerationSettings parsedArgs =
   let formIntersects = getListArg parsedArgs "formintersect" (fun definition -> 
     let nameSplit = definition.IndexOf(":")
-    if nameSplit < 0 then failwithf "No name specfication found in form-intersect list at: '%s'" definition
+    if nameSplit < 0 then failwithf "Missing name specification in form-intersect list at: '%s'" definition
 
     let name = definition.Substring(0, nameSplit) |> Utility.sanitizeString
     let list = definition.Substring(nameSplit + 1)

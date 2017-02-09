@@ -5,7 +5,7 @@ open Utility
 
 open CrmBaseHelper
 open DataRetrieval
-open InterfaceSetup
+open Setup
 open FileGeneration
 
 module GenerationMain =

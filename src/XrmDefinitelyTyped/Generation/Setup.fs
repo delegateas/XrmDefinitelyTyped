@@ -8,7 +8,7 @@ open InterpretEntityMetadata
 open InterpretBpfJson
 open InterpretFormXml
 
-module InterfaceSetup =
+module Setup =
 
   let intersectMappedSets a b = Map.ofSeq (seq {
     for KeyValue(k, va) in a do
