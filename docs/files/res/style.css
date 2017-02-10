@@ -87,6 +87,7 @@ body {
   font-family: Gudea, serif;
   padding-top: 0px;
   padding-bottom: 40px;
+  overflow-y: scroll;
 }
 
 table:not(.pre) {
