@@ -72,10 +72,6 @@ module internal CommandLineHelper =
 
   // Check if args against current expected args
   let checkArgs expectedArgs parsedArgs =
-    let validArgs = 
-      expectedArgs
-      |> List.map (fun a -> a.command :: a.altCommands) |> List.concat 
-      |> List.map (fun c -> c.ToLower()) |> Set.ofList 
 
     let argIsInMap (aMap:Map<string, _>) a =
       a.command :: a.altCommands |> List.exists aMap.ContainsKey

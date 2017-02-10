@@ -42,7 +42,7 @@ module Setup =
   let intersectForms formDict =
     Array.distinctBy fst
     >> Array.Parallel.map (intersectFormContentByGuid formDict)
-    >> Seq.mapi (fun idx (name, (deps, a, c, t)) -> 
+    >> Seq.map (fun (name, (deps, a, c, t)) -> 
       { XrmForm.name = name
         entityName = "_special"
         entityDependencies = deps |> Set.toSeq
