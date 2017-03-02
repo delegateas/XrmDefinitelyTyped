@@ -1,5 +1,5 @@
-XrmDefintelyTyped
-=================
+XrmDefinitelyTyped
+==================
 
 XrmDefinitelyTyped generates [TypeScript](http://www.typescriptlang.org/) 
 declaration files based on *your* Dynamics 365/CRM/xRM solution.
