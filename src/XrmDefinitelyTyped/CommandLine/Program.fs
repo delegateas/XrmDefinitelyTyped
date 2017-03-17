@@ -96,7 +96,7 @@ let connectGen parsedArgs =
 let executeWithArgs argv =
   let parsedArgs = parseArgs argv Args.argMap
 
-  match parsedArgs |> Map.tryPick (fun k v -> Args.flagArgMap.TryFind k) with
+  match parsedArgs |> Map.tryPick (fun k _ -> Args.flagArgMap.TryFind k) with
   | Some flagArg when flagArg = Args.genConfigFlag -> 
     Args.genConfig()
 
@@ -120,7 +120,11 @@ let main argv =
   try 
     showDescription()
     if argv.Length > 0 && Args.helpArgs.Contains argv.[0] then showUsage()
+    else if argv.Length = 0 && Args.configFileMissing() then 
+      printfn "No configuration file found."
+      Args.genConfig()
     else executeWithArgs (List.ofArray argv)
+
     0
   with ex ->
     eprintfn "%s" ex.Message
