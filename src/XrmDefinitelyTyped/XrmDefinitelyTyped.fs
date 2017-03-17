@@ -5,7 +5,6 @@ open System.IO
 open System.Runtime.Serialization.Json
 
 open Utility
-open DataRetrieval
 open GenerationMain
 
 type XrmDefinitelyTyped private () = 

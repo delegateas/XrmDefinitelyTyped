@@ -1,5 +1,7 @@
 ﻿namespace DG.XrmDefinitelyTyped
 
+open System
+open System.IO
 open System.Configuration
 
 type ArgInfo = 
@@ -146,6 +148,9 @@ type Args private () =
     @"Usage: XrmDefinitelyTyped.exe /url:http://<serverName>/<organizationName>/XRMServices/2011/Organization.svc /u:<username> /p:<password>"
   
   static member helpArgs = [ "?"; "help"; "-h"; "-help"; "--help"; "/h"; "/help" ] |> Set.ofList
+
+  static member configFileMissing () =
+    File.Exists(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile) |> not
 
   static member genConfig () =
     let configmanager = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None)
