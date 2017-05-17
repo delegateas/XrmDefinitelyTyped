@@ -62,8 +62,8 @@ Each attribute and control on the form will have the correct type, which
 gives you type safety on the following values and functions!
 
 In case an invalid string is entered as an argument to one of the 
-string-specific functions, it will return an empty interface with no
-functionality. This makes it easy to see if a string has been entered 
+string-specific functions, it will not be able to match and the compiler will show an error. 
+This makes it easy to see if a string has been entered 
 incorrectly, or if you are trying to access an element that is not present 
 on the form.
 

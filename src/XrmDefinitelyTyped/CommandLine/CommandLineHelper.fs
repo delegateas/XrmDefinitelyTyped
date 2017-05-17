@@ -23,8 +23,8 @@ let getListArg (args:Map<string,string>) arg transformer =
     | _ -> None
 
 let (|GetArgVal|_|) input = 
-  let m = Regex("^[/\-]([^:]+)(:\"?(.*)\"?)?$").Match(input)
-  if m.Success then Some (m.Groups.[1].Value, m.Groups.[3].Value)
+  let m = Regex("^[/\-]?([^:=]+)((:|=)\"?(.*?)\"?)?$").Match(input)
+  if m.Success then Some (m.Groups.[1].Value, m.Groups.[4].Value)
   else None
 
 

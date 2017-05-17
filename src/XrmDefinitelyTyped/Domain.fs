@@ -6,7 +6,7 @@ open Microsoft.Xrm.Sdk.Metadata
 open Microsoft.Xrm.Sdk.Client
 open System.Runtime.Serialization
 
-type XrmVersion = int * int * int * int
+type Version = int * int * int * int
 type FormIntersect = string * Guid[]
 
 type XrmAuthentication = {
@@ -19,8 +19,9 @@ type XrmAuthentication = {
 
 type XdtGenerationSettings = {
   out: string option
-  crmVersion: XrmVersion option
+  crmVersion: Version option
   skipForms: bool
+  oneFile: bool
   jsLib: string option
   tsLib: string option
   restNs: string option
@@ -37,6 +38,9 @@ type XdtRetrievalSettings = {
 /// Serializable record containing necessary (meta)data
 [<DataContract>]
 type RawState = {
+
+  [<field : DataMember>]
+  crmVersion: Version
 
   [<field : DataMember>]
   metadata: EntityMetadata[]

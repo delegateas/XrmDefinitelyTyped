@@ -55,6 +55,7 @@ let getGenerationSettings parsedArgs =
     tsLib = Map.tryFind "tsLib" parsedArgs 
     crmVersion = getArg parsedArgs "crmVersion" parseVersion
     skipForms = getArg parsedArgs "skipForms" parseBoolish ?| false
+    oneFile = getArg parsedArgs "oneFile" parseBoolish ?| false
     restNs = getArg parsedArgs "rest" nsSanitizer
     webNs = getArg parsedArgs "web" nsSanitizer
     formIntersects = formIntersects 

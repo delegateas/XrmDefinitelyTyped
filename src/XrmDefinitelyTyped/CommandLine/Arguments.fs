@@ -49,6 +49,11 @@ type Args private () =
       description="Set to true if form interfaces should not be generated"
       required=false }
 
+    { command="oneFile"
+      altCommands=["of"]
+      description="Set to true if all the dynamic parts of the generated declarations should be put into a single file."
+      required=false }
+
     { command="rest"
       altCommands=["r"]
       description="Flag to generate REST API entities. Setting it to a value sets up a namespace for them."
@@ -159,9 +164,11 @@ type Args private () =
     config.Add("url", "https://INSTANCE.crm4.dynamics.com/XRMServices/2011/Organization.svc")
     config.Add("username","admin@INSTANCE.onmicrosoft.com")
     config.Add("password", "pass@word1")
-    config.Add("out", "../WebResources/typings/XRM")
-    config.Add("jsLib", "../WebResources/src/lib")
+    config.Add("out", "../typings/XRM")
+    config.Add("solutions", "")
     config.Add("entities", "account, contact")
+    config.Add("web", "")
+    config.Add("jsLib", "../src/lib")
     configmanager.Save(ConfigurationSaveMode.Modified)
     printfn "A configuration file has been set up with dummy values. Change them to fit your environment."
 

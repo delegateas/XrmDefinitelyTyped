@@ -43,7 +43,7 @@ let defaultCollectionFuncs emptyType defaultType =
 
 
 /// Generate Xrm.Page.data.entity.attributes.get(<string>) functions.
-let getAttributeCollection (attributes:XrmFormAttribute list) =
+let getAttributeCollection (attributes: XrmFormAttribute list) =
   let getFuncs = 
     attributes
     |> List.map (fun (name,ty) ->
@@ -57,7 +57,7 @@ let getAttributeCollection (attributes:XrmFormAttribute list) =
 
 
 /// Generate Xrm.Page.ui.controls.get(<string>) functions.
-let getControlCollection (controls:XrmFormControl list) =
+let getControlCollection (controls: XrmFormControl list) =
   let getFuncs = 
     controls
     |> List.map (fun (name, aType, cType) ->
@@ -71,7 +71,7 @@ let getControlCollection (controls:XrmFormControl list) =
 
 
 /// Generate Xrm.Page.ui.tabs.get(<string>) functions.
-let getTabCollection (tabs:XrmFormTab list) =
+let getTabCollection (tabs: XrmFormTab list) =
   let getFuncs =
     tabs
     |> List.map (fun (iname, name, sections) ->
@@ -89,7 +89,7 @@ let getTabCollection (tabs:XrmFormTab list) =
 
 
 /// Generate Xrm.Page.ui.tabs.get(<someTab>).sections.get(<string>) functions.
-let getSectionCollections (tabs:XrmFormTab list) =
+let getSectionCollections (tabs: XrmFormTab list) =
   let getFuncs sections = 
     sections
     |> List.map (fun name -> 
@@ -105,7 +105,7 @@ let getSectionCollections (tabs:XrmFormTab list) =
 
 
 /// Generate Xrm.Page.getAttribute(<string>) functions.
-let getAttributeFuncs (attributes:XrmFormAttribute list) =
+let getAttributeFuncs (attributes: XrmFormAttribute list) =
   let attrFuncs = 
     attributes
     |> List.map (fun (name, ty) ->
@@ -123,7 +123,7 @@ let getAttributeFuncs (attributes:XrmFormAttribute list) =
 
   
 /// Generate Xrm.Page.getControl(<string>) functions.
-let getControlFuncs (controls:XrmFormControl list) =
+let getControlFuncs (controls: XrmFormControl list) =
   let ctrlFuncs = 
     controls
     |> List.map (fun (name, aType, cType) ->
@@ -141,7 +141,7 @@ let getControlFuncs (controls:XrmFormControl list) =
 
 
 /// Generate internal namespace for keeping track all the collections.
-let getFormNamespace (form:XrmForm) =
+let getFormNamespace (form: XrmForm) =
   Namespace.Create(form.name,
     interfaces = 
       [ getAttributeCollection form.attributes 
@@ -152,7 +152,7 @@ let getFormNamespace (form:XrmForm) =
 
 
 /// Generate the interface for the Xrm.Page of the form.
-let getFormInterface (form:XrmForm) =
+let getFormInterface (form: XrmForm) =
   let superClass = 
     sprintf "Xrm.PageBase<%s.Attributes,%s.Tabs,%s.Controls>"
       form.name form.name form.name
@@ -165,7 +165,7 @@ let getFormInterface (form:XrmForm) =
 
 /// Generate the namespace containing all the form interface and internal 
 /// namespaces for collections.
-let getFormDts (form:XrmForm) = 
+let getFormDts (form: XrmForm) = 
   let nsName = 
     sprintf "Form.%s%s" 
       (form.entityName |> Utility.sanitizeString)

@@ -1,5 +1,6 @@
 ﻿module internal DG.XrmDefinitelyTyped.InterpretFormXml
 
+open System
 open System.Xml.Linq
 open System.Text.RegularExpressions
 
@@ -42,13 +43,13 @@ let classIds =
     ("9C5CA0A1-AB4D-4781-BE7E-8DFBE867B87E", Timer)
   ] |> List.map (fun (id,t) -> id.ToUpper(), t) |> Map.ofList
     
-let getAttribute (enums:Map<string,TsType>) (_, attr, controlClass) =
-  if attr = null then None else 
+let getAttribute (enums:Map<string,TsType>) (_, attrName, controlClass) =
+  if String.IsNullOrEmpty attrName then None else 
 
   let aType = 
     match controlClass with
     | Picklist 
-    | StatusReason  -> AttributeType.OptionSet (enums.TryFind(attr) ?| TsType.Number)
+    | StatusReason  -> AttributeType.OptionSet (enums.TryFind(attrName) ?| TsType.Number)
     | RadioButtons 
     | CheckBox      -> AttributeType.OptionSet TsType.Boolean
         
@@ -73,11 +74,11 @@ let getAttribute (enums:Map<string,TsType>) (_, attr, controlClass) =
 
     | _             -> AttributeType.Default TsType.Any
         
-  Some (attr, aType)
+  Some (attrName, aType)
 
 
 let getControl  (enums:Map<string,TsType>) (controlField:ControlField): XrmFormControl option =
-  let controlId, datafield, controlClass = controlField
+  let controlId, attrName, controlClass = controlField
   if controlClass = QuickView then None else
 
   let aType = 
@@ -154,7 +155,7 @@ let getCompositeField (id, datafieldname, _) subFieldName ty : ControlField =
 let (|IsCompositeAddress|_|) (str:string) = 
   let regex = Regex.Match(str, "^address(\d)_composite$")
   match regex.Success with
-  | true -> Some (System.Int32.Parse(regex.Groups.[1].Value))
+  | true -> Some (Int32.Parse(regex.Groups.[1].Value))
   | false -> None
 
 /// Finds all composite fields and adds the sub-fields that they bring along
@@ -180,7 +181,7 @@ let getCompositeFields : ControlField list -> ControlField list =
 /// Function to interpret a single FormXml
 let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list option) (systemForm:Entity) =
   let bpfFields = bpfFields ?| []
-  let form = XElement.Parse(systemForm.Attributes.["formxml"].ToString())
+  let form = XElement.Parse(systemForm.GetAttributeValue<string>("formxml"))
 
   let tabs = 
     form.Descendants(XName.Get("tab"))
@@ -194,9 +195,11 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
         |> Seq.map (fun s -> getValue s "name")
         |> Seq.filter (fun s -> s <> null && s.Length > 0)
         |> List.ofSeq
+        |> List.sort
 
       Some (Utility.sanitizeString tabName, tabName, sections))
-    |> Seq.filter (fun (iname, _, _) -> iname <> null && iname.Length > 0) 
+    |> Seq.filter (fun (name, _, _) -> String.IsNullOrEmpty name |> not) 
+    |> Seq.sortBy (fun (name, _, _) -> name)
     |> List.ofSeq
 
 
@@ -215,9 +218,9 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
 
   let compositeFields = getCompositeFields controlFields
 
-  let name = systemForm.Attributes.["name"].ToString()
-  let typeInt = (systemForm.Attributes.["type"] :?> OptionSetValue).Value
-  let logicalName = systemForm.Attributes.["objecttypecode"].ToString()
+  let name = systemForm.GetAttributeValue<string>("name")
+  let typeInt = systemForm.GetAttributeValue<OptionSetValue>("type").Value
+  let logicalName = systemForm.GetAttributeValue<string>("objecttypecode")
 
   systemForm.Id, 
   { XrmForm.name =  name |> Utility.sanitizeString
@@ -227,12 +230,15 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
     attributes = 
       controlFields @ compositeFields @ bpfFields
       |> List.choose (getAttribute enums)
-      |> List.distinctBy (fun x -> fst x)
+      |> List.distinctBy fst
+      |> List.sortBy fst
 
     controls = 
       controlFields @ compositeFields @ bpfFields
       |> List.choose (getControl enums)
       |> renameControls
+      |> List.sortBy (fun (name, _, _) -> name)
+
     tabs = tabs
   }
 

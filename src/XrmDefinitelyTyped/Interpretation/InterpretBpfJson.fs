@@ -71,7 +71,7 @@ let rec analyze (data:List<InnerData>) =
 let interpretBpfs (workflows:Entity[]): Map<string,ControlField list> = 
   workflows
   |> Array.map (fun e ->
-    let data = e.Attributes.["clientdata"] :?> string |> parseJson<OuterData>
+    let data = e.GetAttributeValue<string>("clientdata") |> parseJson<OuterData>
     analyze data.steps.list)
   |> Array.concat
   |> Array.groupBy fst

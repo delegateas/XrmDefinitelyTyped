@@ -32,11 +32,11 @@ let project = "XrmDefinitelyTyped"
 
 // Short summary of the project
 // (used as description in AssemblyInfo and as a short summary for NuGet package)
-let summary = "Tool to generate TypeScript declaration files for MS CRM Dynamics client-side coding."
+let summary = "Tool to generate TypeScript declaration files for MS Dynamics 365/CRM client-side coding."
 
 // Longer description of the project
 // (used as a description for NuGet package; line breaks are automatically cleaned up)
-let description = "Tool to generate TypeScript declaration files for MS CRM Dynamics client-side coding."
+let description = "Tool to generate TypeScript declaration files for MS Dynamics 365/CRM client-side coding."
 
 // List of author names (for NuGet package)
 let authors = [ "Delegate A/S"; "Martin Kasban Tange" ]
@@ -172,7 +172,7 @@ Target "NuGet" (fun _ ->
         Tags = tags
         NoDefaultExcludes = true
         AccessKey = getBuildParamOrDefault "delegateas-nugetkey" ""
-        Dependencies = [ "Microsoft.CrmSdk.CoreAssemblies", "8.1.0" ]
+        Dependencies = [ ]
         References = [] 
 
         OutputPath = "bin"
@@ -352,7 +352,7 @@ Target "All" DoNothing
   ==> "All"
   =?> ("ReleaseDocs",isLocalBuild)
 
-"All" 
+"Build" 
   ==> "NuGet"
   ==> "BuildPackage"
 

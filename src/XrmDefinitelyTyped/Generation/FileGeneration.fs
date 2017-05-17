@@ -11,23 +11,6 @@ open CreateOptionSetDts
 open CreateFormDts
 
 
-(** Reference helpers *)
-
-let makeRef = sprintf "/// <reference path=\"%s.d.ts\" />"
-let makeRefSub n = sprintf "/// <reference path=\"%s%s.d.ts\" />" (String.replicate n "../")
-
-let xrmRef n = makeRefSub n "xrm"
-let sdkRef n = makeRefSub n "_internal/sdk"
-
-let restRef n = makeRefSub n "dg.xrmquery.rest"
-let webEntityRef n = makeRefSub n "_internal/web-entities"
-let restEntityRef n = makeRefSub n "_internal/rest-entities"
-
-let entityEnumRef n name = makeRefSub n (sprintf "_internal/EntityEnum/%s" name)
-let enumRef n name = makeRefSub n (sprintf "_internal/Enum/%s" name)
-let enumsToRefs enums = enums |> List.map (sprintf "../Enum/%s" >> makeRef)
-
-
 (** Resource helpers *)
 let getResourceLines resName =
   let assembly = Assembly.GetExecutingAssembly()
@@ -75,12 +58,15 @@ let getBaseExtensions crmVersion =
 let clearOldOutputFiles out =
   printf "Clearing old files..."
   let rec emptyDir path =
-    Directory.EnumerateFiles(path, "*.d.ts") |> Seq.iter File.Delete
-    let dirs = Directory.EnumerateDirectories(path, "*") 
-    dirs |> Seq.iter (fun dir ->
+    Directory.EnumerateFiles(path, "*.d.ts") 
+    |> Seq.iter File.Delete
+
+    Directory.EnumerateDirectories(path, "*")  
+    |> Seq.iter (fun dir ->
       emptyDir dir
       try Directory.Delete dir
-      with ex -> ())
+      with _ -> ()
+    )
 
   Directory.CreateDirectory out |> ignore
   emptyDir out
@@ -90,12 +76,12 @@ let clearOldOutputFiles out =
 /// Generate the required output folder structure
 let generateFolderStructure out (gSettings: XdtGenerationSettings) =
   printf "Generating folder structure..."
-  if gSettings.skipForms then Directory.CreateDirectory (sprintf "%s/Form" out) |> ignore
-  if gSettings.restNs.IsSome then Directory.CreateDirectory (sprintf "%s/REST" out) |> ignore
-  if gSettings.webNs.IsSome then Directory.CreateDirectory (sprintf "%s/Web" out) |> ignore
   Directory.CreateDirectory (sprintf "%s/_internal" out) |> ignore
-  Directory.CreateDirectory (sprintf "%s/_internal/Enum" out) |> ignore
-  Directory.CreateDirectory (sprintf "%s/_internal/EntityEnum" out) |> ignore
+  if not gSettings.oneFile then 
+    if gSettings.skipForms then Directory.CreateDirectory (sprintf "%s/Form" out) |> ignore
+    if gSettings.restNs.IsSome then Directory.CreateDirectory (sprintf "%s/REST" out) |> ignore
+    if gSettings.webNs.IsSome then Directory.CreateDirectory (sprintf "%s/Web" out) |> ignore
+    Directory.CreateDirectory (sprintf "%s/_internal/Enum" out) |> ignore
   printfn "Done!"
 
 
@@ -152,99 +138,90 @@ let copyTsLibResourceFiles (gSettings: XdtGenerationSettings) =
   ] |> List.choose id |> List.iter (copyResourceDirectly path)
 
 
-/// Generate the Enum files
-let generateEnumFiles state =
-  printf "Writing Enum files..."
-  state.entities
-  |> getUniquePicklists
-  |> Array.Parallel.iter (fun os ->
-    File.WriteAllLines(
+/// Generate the Enum definitions
+let generateEnumDefs state =
+  printf "Generating Enum definitions..."
+  let defs = 
+    state.entities
+    |> getUniquePicklists
+    |> Array.Parallel.map (fun os ->
       sprintf "%s/_internal/Enum/%s.d.ts" state.outputDir os.displayName,
-      getOptionSetEnum os))
+      getOptionSetEnum os)
+
   printfn "Done!"
-
-
-/// Generate the EntityEnum files
-let generateEntityEnumFiles state =
-  printf "Writing EntityEnum files..."
-  state.entities
-  |> Array.Parallel.map (fun em -> 
-    em.logicalName, 
-    em.opt_sets |> List.map (fun os -> os.displayName))
-
-  |> Array.Parallel.iter (fun (name, enums) ->
-    File.WriteAllLines(
-      sprintf "%s/_internal/EntityEnum/%s.d.ts" state.outputDir name, 
-      enumsToRefs enums))
-  printfn "Done!"
+  defs
 
 /// rest.d.ts
-let generateRestFile ns state =
-  state.entities
-  |> CreateSdkRestDts.getFullRestNamespace ns
-  |> fun lines ->  
-    File.WriteAllLines(
-      sprintf "%s/rest.d.ts" state.outputDir, 
-      restEntityRef 0 :: lines)
+let generateRestDef ns state =
+  let lines =
+    state.entities
+    |> CreateSdkRestDts.getFullRestNamespace ns
+
+  sprintf "%s/rest.d.ts" state.outputDir, 
+  lines
 
 
-/// Generate blank REST entity files
-let generateBaseRestEntityFile ns state =
-  state.entities
-  |> CreateRestEntities.getBlankEntityInterfaces ns
-  |> fun lines -> 
-    File.WriteAllLines(
-      sprintf "%s/_internal/rest-entities.d.ts" state.outputDir, 
+/// Generate blank REST entity definitions
+let generateBaseRestEntityDef ns state =
+  let lines = 
+    state.entities
+    |> CreateRestEntities.getBlankEntityInterfaces ns
+
+  sprintf "%s/_internal/rest-entities.d.ts" state.outputDir, 
+  lines
+
+/// Generate the REST entity definitions
+let generateRestEntityDefs ns state =
+  printf "Generating REST entity definitions..."
+  let defs = 
+    state.entities
+    |> Array.Parallel.map (fun e ->
+      let name = e.logicalName
+      let lines = CreateRestEntities.getEntityInterfaces ns e
+      sprintf "%s/REST/%s.d.ts" state.outputDir name, 
       lines)
 
-/// Generate the REST entity files
-let generateRestEntityFiles ns state =
-  printf "Writing REST entity files..."
-  state.entities
-  |> Array.Parallel.map (fun e -> e.logicalName, CreateRestEntities.getEntityInterfaces ns e)
-  |> Array.Parallel.iter (fun (name, lines) ->
-    File.WriteAllLines(sprintf "%s/REST/%s.d.ts" state.outputDir name, 
-      sdkRef 1 :: restRef 1 :: restEntityRef 1 :: entityEnumRef 1 name :: lines))
   printfn "Done!"
+  defs
 
 
-/// Generate blank web entity files
-let generateBaseWebEntityFile ns state =
-  state.entities
-  |> CreateWebEntities.getBlankInterfacesLines ns
-  |> fun lines -> 
-    File.WriteAllLines(
-      sprintf "%s/_internal/web-entities.d.ts" state.outputDir, 
+/// Generate blank web entity definitions
+let generateBaseWebEntityDef ns state =
+  let lines = 
+    state.entities
+    |> CreateWebEntities.getBlankInterfacesLines ns
+  
+  sprintf "%s/_internal/web-entities.d.ts" state.outputDir, 
+  lines
+
+/// Generate the web entity definitions
+let generateWebEntityDefs ns state =
+  printf "Generating Web entity definitions..."
+  let defs = 
+    state.entities
+    |> Array.Parallel.map (fun (e) ->
+      let name = e.logicalName
+      let lines = CreateWebEntities.getEntityInterfaceLines ns e
+
+      sprintf "%s/Web/%s.d.ts" state.outputDir name, 
       lines)
 
-/// Generate the web entity files
-let generateWebEntityFiles ns state =
-  printf "Writing Web entity files..."
-  state.entities
-  |> Array.Parallel.map (fun e -> e.logicalName, CreateWebEntities.getEntityInterfaceLines ns e)
-  |> Array.Parallel.iter (fun (name, lines) ->
-    File.WriteAllLines(sprintf "%s/Web/%s.d.ts" state.outputDir name, 
-      webEntityRef 1 :: entityEnumRef 1 name :: lines))
   printfn "Done!"
+  defs
 
-/// Generate the Form files
-let generateFormFiles state =
-  printf "Writing Form files..."
-  state.forms
-  |> Array.Parallel.iter (fun xrmForm ->
-    let path = sprintf "%s/Form/%s%s" state.outputDir xrmForm.entityName (xrmForm.formType ?|> sprintf "/%s" ?| "")
-    Directory.CreateDirectory path |> ignore
+/// Generate the Form definitions
+let generateFormDefs state =
+  printf "Generation Form definitions..."
+  let defs = 
+    state.forms
+    |> Array.Parallel.map (fun xrmForm ->
+      let path = sprintf "%s/Form/%s%s" state.outputDir xrmForm.entityName (xrmForm.formType ?|> sprintf "/%s" ?| "")
       
-    let depth = if xrmForm.formType.IsSome then 3 else 2
+      // TODO: check for forms with same name
+      let lines = getFormDts xrmForm
+      sprintf "%s/%s.d.ts" path xrmForm.name, 
+      lines
+    )
 
-    let enumRefs = 
-      xrmForm.entityDependencies 
-      |> Seq.map (entityEnumRef depth)
-      |> List.ofSeq
-
-    // TODO: check for forms with same name
-    let lines = xrmForm |> getFormDts
-    File.WriteAllLines(sprintf "%s/%s.d.ts" path xrmForm.name, 
-      xrmRef depth :: (List.append enumRefs lines))
-  )
   printfn "Done!"
+  defs

@@ -9,7 +9,7 @@ open GenerationMain
 
 type XrmDefinitelyTyped private () = 
 
-  static member GenerateFromCrm(url, username, password, ?domain, ?ap, ?outDir, ?jsLib, ?tsLib, ?entities, ?solutions, ?crmVersion, ?skipForms, ?restNs, ?webNs, ?formIntersects) = 
+  static member GenerateFromCrm(url, username, password, ?domain, ?ap, ?outDir, ?jsLib, ?tsLib, ?entities, ?solutions, ?crmVersion, ?skipForms, ?oneFile, ?restNs, ?webNs, ?formIntersects) = 
     let xrmAuth = 
       { XrmAuthentication.url = Uri(url)
         username = username
@@ -28,6 +28,7 @@ type XrmDefinitelyTyped private () =
         tsLib = tsLib
         crmVersion = crmVersion
         skipForms = skipForms ?| false
+        oneFile = oneFile ?| false
         restNs = restNs
         webNs = webNs
         formIntersects = formIntersects

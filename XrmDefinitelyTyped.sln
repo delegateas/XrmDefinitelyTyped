@@ -42,8 +42,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nuget", "nuget", "{32CC141A-51F1-4F07-9599-64DEEF9961DA}"
 	ProjectSection(SolutionItems) = preProject
 		nuget\Delegate.XrmDefinitelyTyped.nuspec = nuget\Delegate.XrmDefinitelyTyped.nuspec
-		nuget\getAssemblies.cmd = nuget\getAssemblies.cmd
-		install.ps1 = install.ps1
+		Run.fsx = Run.fsx
+		Run.ps1 = Run.ps1
+		XrmDefinitelyTyped.exe.config = XrmDefinitelyTyped.exe.config
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "resources", "resources", "{D42B01E3-EDD6-4699-AD6B-BADAFD80369C}"

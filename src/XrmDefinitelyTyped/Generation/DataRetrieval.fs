@@ -17,12 +17,9 @@ let connectToCrm xrmAuth =
 // Retrieve CRM entity name map
 let retrieveEntityNameMap mainProxy =
   printf "Fetching entity names from CRM..."
-    
-  let metadata = 
-    getAllEntityMetadataLight mainProxy
 
   let map =
-    metadata
+    getAllEntityMetadataLight mainProxy
     |> Array.Parallel.map (fun m -> m.LogicalName, (m.SchemaName, m.EntitySetName))
     |> Map.ofArray
 
@@ -60,12 +57,15 @@ let retrieveCrmData crmVersion entities mainProxy proxyGetter =
   let rawEntityMetadata = 
     retrieveEntityMetadata entities mainProxy proxyGetter
     
-  printf "Fetching BPF metadata from CRM..."
   let bpfData = 
     match crmVersion .>= (6,0,0,0) with
-    | true  -> getBpfData mainProxy
     | false -> [||]
-  printfn "Done!"
+    | true  -> 
+      printf "Fetching BPF metadata from CRM..."
+      let data = getBpfData mainProxy
+      printfn "Done!"
+      data
+
 
   printf "Fetching FormXmls from CRM..."
   let formData =
@@ -77,10 +77,13 @@ let retrieveCrmData crmVersion entities mainProxy proxyGetter =
     |> Map.ofArray
   printfn "Done!"
 
-  { RawState.metadata = rawEntityMetadata
+  { 
+    RawState.metadata = rawEntityMetadata
     nameMap = nameMap
     bpfData = bpfData
-    formData = formData }
+    formData = formData 
+    crmVersion = crmVersion
+  }
 
 
 /// Gets all the entities related to the given solutions and merges with the given entities
@@ -104,7 +107,9 @@ let getFullEntityList entities solutions proxy =
   | 0 -> 
     printfn "Creating context for all entities"
     None
+
   | _ -> 
     let entitySet = finalEntities |> Set.toArray 
-    printfn "Creating context for the following entities: %s" (String.Join(",", entitySet))
+    printfn "Creating context for the following entities:"
+    entitySet |> Array.iter (printfn "\t- %s")
     Some entitySet

@@ -1,5 +1,12 @@
 # Release Notes
 
+### 2.1.0 - May 17 2017
+* Removed NuGet dependencies and added necessary assemblies directly as files -- making it easy to use the tool straight from NuGet
+* New argument `oneFile` makes XrmDefinitelyTyped concatenate all the dynamic parts of the typings into one file `context.d.ts`
+* Automatic generation of config file, if one does not exist and no arguments are passed to executable
+* Fixed automatic CRM version check
+* General clean-up of code and structure
+
 ### 2.0.7 - February 7 2017
 * `Result` and `FormattedResult` interfaces were incorrectly initialized for retrieve queries
 * Removed string type as a valid parameter in certain function definitions of `xrm.d.ts`

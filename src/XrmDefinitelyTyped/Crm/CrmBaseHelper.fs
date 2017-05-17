@@ -202,14 +202,15 @@ let retrieveSolutionEntities proxy solutionName =
   solutions
   |> Seq.map (fun sol ->
     let solutionComponentFilter = 
-      [ ("solutionid", sol.Attributes.["solutionid"]) 
+      [ ("solutionid", sol.GetAttributeValue<obj>("solutionid")) 
         ("componenttype", 1 :> obj) // 1 = Entity
       ] |> Map.ofList
 
     getEntitiesFilter proxy "solutioncomponent" 
       ["solutionid"; "objectid"; "componenttype"] solutionComponentFilter
     |> Seq.map (fun sc -> 
-      getEntityLogicalNameFromId proxy (sc.Attributes.["objectid"] :?> Guid))
+      getEntityLogicalNameFromId proxy (sc.GetAttributeValue<Guid>("objectid"))
+    )
   )
   |> Seq.concat
 
