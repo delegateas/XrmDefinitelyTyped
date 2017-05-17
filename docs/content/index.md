@@ -4,9 +4,16 @@ XrmDefinitelyTyped
 XrmDefinitelyTyped generates [TypeScript](http://www.typescriptlang.org/) 
 declaration files based on *your* Dynamics 365/CRM/xRM solution.
 
-<form method="get" action="files/install-latest.cmd">
-<center><button type="submit" class="btn">Download installer</button></center>
-</form>
+<div class="row">
+  <div class="span1"></div>
+  <div class="span6">
+    <div class="well well-small" id="nuget">
+      XrmDefinitelyTyped can be <a href="https://nuget.org/packages/Delegate.XrmDefinitelyTyped">installed and updated via NuGet</a>:
+      <pre>PM> Install-Package Delegate.XrmDefinitelyTyped</pre>
+    </div>
+  </div>
+  <div class="span1"></div>
+</div>
 
 What is it?
 -----------
