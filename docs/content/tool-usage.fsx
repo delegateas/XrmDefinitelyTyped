@@ -32,7 +32,8 @@ Here is the full list of arguments for configuring the tool:
 | web               | w           | Generates declaration files for the Web API endpoint. If given a string, all the interfaces will be put in a namespace of that name. For example -web=WebNs puts all interfaces in namespace "WebNs"
 | rest              | r           | Generates declaration files for the REST API endpoint. If given a string, all the interfaces will be put in a namespace of that name. For example -rest=RestNs puts all interfaces in namespace "RestNs"
 | crmVersion        | cv          | Version of CRM that it should generate declaration files for.
-| skipForms         | sf          | Skip generation of form declaration files.
+| oneFile           | of          | Set to true if all the dynamic parts of the generated declarations should be put into a single file.
+| skipForms         | sf          | Set to true to skip generation of form declaration files.
 | formIntersect     | fi          | Comma-separated list of named semicolon-separated lists of form GUIDs that should be intersected. Example: <br /> <code>MyAccountIntersect: 284FF02B-BDD1-4BB0-9BCF-6CFDBDA130D4;16068A3B-D428-4430-AEF6-397CE2AEFE07, MyContactIntersect: F4B3397C-C1A5-40BE-89DD-CEA5F7064D1D;824CFA3C-3EB4-4746-BA3C-7F1DFCA114C0</code>
 | useconfig         | uc          | Also applies the arguments found in the `.config` file.
 
