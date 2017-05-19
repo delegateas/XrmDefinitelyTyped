@@ -26,6 +26,24 @@ Supported features
   `<record>["<attribute-name>@OData.Community.Display.V1.FormattedValue"]`
 
 
+Setup
+----------
+
+Running XrmDefinitelyTyped with the `web` and `jsLib` arguments generates the declaration files 
+for `XrmQuery` for the Web API along with the necessary JavaScript code to make it work.
+
+The generated JavaScript files for the Web API are:
+
+* `dg.xrmquery.web.js`: The non-minified version of the XrmQuery library
+* `dg.xrmquery.web.min.js`: The minified version of the XrmQuery library
+* `dg.xrmquery.web.promise.min.js`: The minified version of the XrmQuery library with Promise polyfill included (to make it work in IE)
+
+Each of them are different flavours of the same library. 
+I do, however, suggest using the minified version with the Promise polyfill in order to support all browsers.
+
+In order to use it on a form in CRM, you need to create it as a web resource first, and then include it on the form 
+before any of your other web resources.
+
 Usage
 ----------
 
