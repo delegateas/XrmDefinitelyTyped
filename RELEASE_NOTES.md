@@ -1,5 +1,8 @@
 # Release Notes
 
+### 2.1.1 - May 20 2017
+* Fixes creation of typings directories
+
 ### 2.1.0 - May 17 2017
 * Removed NuGet dependencies and added necessary assemblies directly as files -- making it easy to use the tool straight from NuGet
 * New argument `oneFile` makes XrmDefinitelyTyped concatenate all the dynamic parts of the typings into one file `context.d.ts`
