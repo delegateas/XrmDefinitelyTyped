@@ -65,7 +65,7 @@ let generateFromRaw gSettings rawState =
   | false -> 
     defs 
     |> Array.Parallel.iter (fun (path, lines) -> 
-      Directory.CreateDirectory path |> ignore
+      Directory.CreateDirectory (Path.GetDirectoryName(path)) |> ignore
       File.WriteAllLines(path, lines)
     )
   | true  -> 
