@@ -42,9 +42,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "nuget", "nuget", "{32CC141A-51F1-4F07-9599-64DEEF9961DA}"
 	ProjectSection(SolutionItems) = preProject
 		nuget\Delegate.XrmDefinitelyTyped.nuspec = nuget\Delegate.XrmDefinitelyTyped.nuspec
-		Run.fsx = Run.fsx
-		Run.ps1 = Run.ps1
-		XrmDefinitelyTyped.exe.config = XrmDefinitelyTyped.exe.config
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "resources", "resources", "{D42B01E3-EDD6-4699-AD6B-BADAFD80369C}"
@@ -54,7 +51,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "resources", "resources", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "files", "files", "{7C93ECC0-D23F-4B9D-9CD7-89C0BBCF0136}"
 	ProjectSection(SolutionItems) = preProject
-		files\install-latest.cmd = files\install-latest.cmd
+		files\Run.fsx = files\Run.fsx
+		files\Run.ps1 = files\Run.ps1
+		files\XrmDefinitelyTyped.exe.config = files\XrmDefinitelyTyped.exe.config
 	EndProjectSection
 EndProject
 Global
