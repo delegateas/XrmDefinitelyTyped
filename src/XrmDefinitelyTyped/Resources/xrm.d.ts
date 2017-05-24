@@ -1574,10 +1574,12 @@
   }
 }
 
+
+type BaseXrm = typeof Xrm;
 /**
  * Client-side xRM object model.
  */
-interface Xrm<T extends Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>> {
+interface Xrm<T extends Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>> extends BaseXrm {
   /**
    * The Xrm.Page object model, which contains data about the current page.
    */

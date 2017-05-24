@@ -18,6 +18,6 @@
     "mocha-typescript": "^1.0.11",
     "sinon": "^1.17.6",
     "ts-node": "^1.7.0",
-    "typescript": "^2.2.0-dev.20161118"
+    "typescript": "^2.3.3"
   }
 }
