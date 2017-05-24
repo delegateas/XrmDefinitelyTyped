@@ -8,6 +8,8 @@ namespace Test.Account {
         Page.getAttribute("creditlimit").setValue(100);
         Page.getAttribute("donotemail").setValue(true);
         Page.getAttribute("address1_shippingmethodcode").setValue(account_address1_shippingmethodcode.Airborne);
+
+        let x: undefined = Page.getAttribute("doesnotexist");
     }
 
 }

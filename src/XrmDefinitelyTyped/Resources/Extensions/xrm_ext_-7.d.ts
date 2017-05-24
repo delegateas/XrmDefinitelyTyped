@@ -1,6 +1,6 @@
 ﻿/// <reference path="..\xrm.d.ts" />
 declare namespace Xrm {
-    interface PageTab<T extends SectionCollectionBase> extends EmptyPageTab {
+    interface PageTab<T extends SectionCollectionBase> {
         /**
          * Add an event handler on tab state change.
          *

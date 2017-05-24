@@ -25,10 +25,9 @@ let getControlInterface cType aType =
   | _, x                            -> TsType.Custom (sprintf "Xrm.%AControl" x)
 
 /// Default collection functions which also use the "get" function name.
-let defaultCollectionFuncs emptyType defaultType = 
+let defaultCollectionFuncs defaultType = 
   [ Function.Create("get", 
-      [ Variable.Create("name", TsType.String) ], 
-      TsType.Custom emptyType)
+      [ Variable.Create("name", TsType.String) ], TsType.Undefined)
 
     Function.Create("get", [], TsType.Array (TsType.Custom defaultType))
     Function.Create("get", 
@@ -51,7 +50,7 @@ let getAttributeCollection (attributes: XrmFormAttribute list) =
       let returnType = getAttributeInterface ty
       Function.Create("get", [Variable.Create("name", paramType)], returnType))
 
-  let defaultFuncs = defaultCollectionFuncs "Xrm.EmptyAttribute" "Xrm.Attribute<any>"
+  let defaultFuncs = defaultCollectionFuncs "Xrm.Attribute<any>"
   Interface.Create("Attributes", extends = ["Xrm.AttributeCollectionBase"],
     funcs = getFuncs @ defaultFuncs)
 
@@ -65,7 +64,7 @@ let getControlCollection (controls: XrmFormControl list) =
       let returnType = getControlInterface cType aType          
       Function.Create("get", [Variable.Create("name", paramType)], returnType))
 
-  let defaultFuncs = defaultCollectionFuncs "Xrm.EmptyControl" "Xrm.BaseControl"
+  let defaultFuncs = defaultCollectionFuncs "Xrm.BaseControl"
   Interface.Create("Controls", extends = ["Xrm.ControlCollectionBase"],
     funcs = getFuncs @ defaultFuncs)
 
@@ -81,7 +80,6 @@ let getTabCollection (tabs: XrmFormTab list) =
 
   let defaultFuncs = 
     defaultCollectionFuncs 
-      "Xrm.EmptyPageTab" 
       "Xrm.PageTab<Xrm.Collection<Xrm.PageSection>>"
 
   Interface.Create("Tabs", extends = ["Xrm.TabCollectionBase"],
@@ -97,7 +95,7 @@ let getSectionCollections (tabs: XrmFormTab list) =
       Function.Create("get", [ Variable.Create("name", paramType) ], 
         TsType.Custom "Xrm.PageSection"))
 
-  let defaultFuncs = defaultCollectionFuncs "Xrm.EmptyPageSection" "Xrm.PageSection"
+  let defaultFuncs = defaultCollectionFuncs "Xrm.PageSection"
   tabs |> List.map (fun (iname, name, sections) ->
     Interface.Create(iname, extends = ["Xrm.SectionCollectionBase"],
       funcs = getFuncs sections @ defaultFuncs))
@@ -117,7 +115,7 @@ let getAttributeFuncs (attributes: XrmFormAttribute list) =
   let defaultFunc =
     Function.Create("getAttribute", 
       [ Variable.Create("attributeName", TsType.String) ], 
-      TsType.Custom "Xrm.EmptyAttribute")
+      TsType.Undefined )
   attrFuncs @ [ defaultFunc ]
 
 
@@ -135,7 +133,7 @@ let getControlFuncs (controls: XrmFormControl list) =
   let defaultFunc =
     Function.Create("getControl", 
       [ Variable.Create("controlName", TsType.String) ], 
-      TsType.Custom "Xrm.EmptyControl")
+      TsType.Undefined)
   ctrlFuncs @ [ defaultFunc ]
 
 

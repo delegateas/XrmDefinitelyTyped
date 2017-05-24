@@ -185,12 +185,6 @@
   interface TabCollectionBase extends CollectionBase<PageTab<SectionCollection>> {
   }
 
-  /**
-   * No attribute was found.
-   */
-  interface EmptyAttribute {
-  }
-
   type AttributeType =
     "boolean" | "datetime" | "decimal" | "double" | "integer" | "lookup"
     | "memo" | "money" | "optionset" | "string";
@@ -207,7 +201,7 @@
   /**
    * Interface for an standard entity attribute.
    */
-  interface Attribute<T> extends EmptyAttribute {
+  interface Attribute<T> {
     /**
      * Collection of controls associated with the attribute.
      */
@@ -396,11 +390,6 @@
     getSelectedOption(): Option<T> | null;
   }
 
-  /**
-   * No control was found.
-   */
-  interface EmptyControl {
-  }
 
   type ControlType =
     "standard" | "iframe" | "lookup" | "optionset" | "subgrid"
@@ -409,7 +398,7 @@
   /**
    * Interface for a standard form control.
    */
-  interface BaseControl extends EmptyControl {
+  interface BaseControl {
     /**
      * Get information about the type of control.
      */
@@ -483,7 +472,7 @@
   }
 
 
-  interface Control<T extends Xrm.EmptyAttribute> extends BaseControl {
+  interface Control<T extends Xrm.Attribute<any>> extends BaseControl {
     /**
      * Get the attribute this control is bound to.
      */
@@ -1176,16 +1165,11 @@
     message: string;
   }
 
-  /**
-   * No section was found.
-   */
-  interface EmptyPageSection {
-  }
 
   /**
    * Interface for a section on a form.
    */
-  interface PageSection extends EmptyPageSection {
+  interface PageSection {
     /**
      * A collection of controls in the section.
      */
@@ -1224,18 +1208,12 @@
     getVisible(): boolean;
   }
 
-  /**
-   * No tab was found.
-   */
-  interface EmptyPageTab {
-  }
-
   type CollapsableDisplayState = "expanded" | "collapsed";
 
   /**
    * Interface for a tab on a form.
    */
-  interface PageTab<T extends SectionCollectionBase> extends EmptyPageTab {
+  interface PageTab<T extends SectionCollectionBase> {
     /**
      * Collection of sections within this tab.
      */
