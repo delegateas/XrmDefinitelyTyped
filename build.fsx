@@ -57,7 +57,7 @@ let gitOwner = "delegateas"
 let gitHome = "https://github.com/" + gitOwner
 
 // The name of the project on GitHub
-let gitName = "Delegate.XrmDefinitelyTyped"
+let gitName = "XrmDefinitelyTyped"
 
 // The profile where the docs project is posted 
 let docsGitHome = "https://github.com/delegateas"
