@@ -1,7 +1,11 @@
 # Release Notes
 
+### 2.1.2 - May 24 2017
+* Fixed bug when trying to access elements in the `Xrm`-namespace, while using `declare var Xrm: Xrm<...>`
+* Replaced all returns of the `Empty...` interfaces with the `undefined` type
+
 ### 2.1.1 - May 20 2017
-* Fixes creation of typings directories
+* Fixed creation of typings directories
 
 ### 2.1.0 - May 17 2017
 * Removed NuGet dependencies and added necessary assemblies directly as files -- making it easy to use the tool straight from NuGet
