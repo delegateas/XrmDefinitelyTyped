@@ -134,6 +134,8 @@ Target "CleanDocs" (fun _ ->
 // Build library & test project
 
 Target "BuildSetup" (fun _ ->
+
+  // Setup closure if it does not exist
   let closureToolsFolder = @"tools/closure"
   CreateDir closureToolsFolder
 
@@ -147,6 +149,18 @@ Target "BuildSetup" (fun _ ->
     match paketFilePath with
     | Some path  -> CopyFile closureCompiler path
     | None -> failwithf "No .jar file found for closure compiler"
+
+  // Setup EnvInfo.config file if it does not exist
+  let envConfigPath = @"src\XrmDefinitelyTyped\EnvInfo.config"
+  if not(fileExists envConfigPath) then
+    Path.GetDirectoryName envConfigPath |> CreateDir
+    File.WriteAllLines(envConfigPath, 
+      [
+        "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
+        "<appSettings>"
+        "</appSettings>"
+      ]
+    )
 )
 
 
