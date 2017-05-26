@@ -116,7 +116,7 @@ Target "AssemblyInfo" (fun _ ->
 // src folder to support multiple project outputs
 Target "CopyBinaries" (fun _ ->
   !! "src/**/*.??proj"
-  |>  Seq.map (fun f -> ((System.IO.Path.GetDirectoryName f) @@ "bin/Release", "bin" @@ (System.IO.Path.GetFileNameWithoutExtension f)))
+  |>  Seq.map (fun f -> ((Path.GetDirectoryName f) @@ "bin/Release", "bin" @@ (Path.GetFileNameWithoutExtension f)))
   |>  Seq.iter (fun (fromDir, toDir) -> CopyDir toDir fromDir (fun _ -> true))
 )
 
@@ -137,7 +137,7 @@ Target "CleanDocs" (fun _ ->
 Target "BuildSetup" (fun _ ->
 
   // Setup closure if it does not exist
-  let closureToolsFolder = @"tools/closure"
+  let closureToolsFolder = Path.GetFullPath @"tools\closure"
   CreateDir closureToolsFolder
 
   let closureCompiler = closureToolsFolder @@ @"compiler.jar"
@@ -152,10 +152,10 @@ Target "BuildSetup" (fun _ ->
     | None -> failwithf "No .jar file found for closure compiler"
 
   // Setup EnvInfo.config file if it does not exist
-  let envConfigPath = @"src\XrmDefinitelyTyped\EnvInfo.config"
-  if not(fileExists envConfigPath) then
-    Path.GetDirectoryName envConfigPath |> CreateDir
-    File.WriteAllLines(envConfigPath, 
+  let envInfoPath = Path.GetFullPath @"src/XrmDefinitelyTyped/EnvInfo.config"
+
+  if not(fileExists envInfoPath) then
+    File.WriteAllLines(envInfoPath, 
       [
         "<?xml version=\"1.0\" encoding=\"utf-8\"?>"
         "<appSettings>"
@@ -177,13 +177,13 @@ Target "Test" (fun _ ->
   let result = 
     ExecProcess 
       (fun info -> 
-        let pathToRelease = @"src\XrmDefinitelyTyped\bin\Release"
+        let pathToRelease = Path.GetFullPath @"src/XrmDefinitelyTyped/bin/Release"
         info.FileName <- pathToRelease @@ @"XrmDefinitelyTyped.exe"
         info.WorkingDirectory <- pathToRelease
         info.Arguments <-
-          [     
+          [
             "load", "../../XdtData.json"
-            "out", "../../../../test/typings/XRMyy"
+            "out", "../../../../test/typings/XRM"
             "jsLib", "../../../../test/lib"
             "rest", "RestNs"
             "web", "WebNs"

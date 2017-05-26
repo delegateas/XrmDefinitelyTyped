@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es5",
+        "stripInternal": true,
+        "declaration": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "lib": [
+            "dom", "es2015", "es2015.promise"
+        ],
+        "outDir": "Resources/Dist"
+    },
+    "include": [
+        "Resources/dg.xrmquery.rest.ts",
+        "Resources/dg.xrmquery.web.ts"
+    ]
+}

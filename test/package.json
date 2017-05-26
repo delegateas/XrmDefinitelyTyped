@@ -1,5 +1,7 @@
 {
   "name": "xdt-test",
+  "description": "N/A",
+  "repository": "N/A",
   "version": "1.0.0",
   "scripts": {
     "test": "mocha --compilers ts:ts-node/register,tsx:ts-node/register src/tests/**/*.ts",

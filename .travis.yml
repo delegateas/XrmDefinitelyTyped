@@ -1,0 +1,11 @@
+language: csharp
+
+sudo: false  # use the new container-based Travis infrastructure 
+
+before_install:
+  - nvm install node
+  - if [[ `npm -v` != 4* ]]; then npm i -g npm@latest; fi
+  - chmod +x build.sh
+ 
+script: 
+  - ./build.sh All

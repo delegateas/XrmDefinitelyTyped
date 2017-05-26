@@ -25,8 +25,8 @@ Recommended environment: [Visual Studio 2017](https://www.visualstudio.com/downl
 **Requirements:**
 
 * [F# 4.0+](https://www.microsoft.com/en-us/download/details.aspx?id=48179)
+* [Node.js and npm](https://nodejs.org/)
 * [TypeScript 2.0+](https://www.microsoft.com/en-us/download/details.aspx?id=48593)
-* [Java JRE/SDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) (to minimize JavaScript code with closure)
 
 **Building the project**
 
