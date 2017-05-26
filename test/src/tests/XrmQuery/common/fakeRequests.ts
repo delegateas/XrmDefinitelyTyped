@@ -1,5 +1,7 @@
 import * as sinon from 'sinon';
 
+declare var global: any;
+
 abstract class FakeRequests {
     public requests: sinon.SinonFakeXMLHttpRequest[];
 

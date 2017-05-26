@@ -1,5 +1,7 @@
 import execFile from './execfile'; 
 
+declare var global: any;
+
 // Setup window
 global.window = { location: {} };
 global.GetGlobalContext = () => ({ getClientUrl: () => "" });

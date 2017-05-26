@@ -194,3 +194,9 @@ paket-files
 docs/content/license.md
 docs/content/release-notes.md
 
+/test/lib/dg.xrmquery.web.min.js
+/test/lib/dg.xrmquery.web.promise.min.js
+/test/lib/dg.xrmquery.rest.js
+/test/lib/dg.xrmquery.rest.min.js
+/test/lib/dg.xrmquery.web.js
+/graph.png
