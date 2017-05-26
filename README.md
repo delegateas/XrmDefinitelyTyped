@@ -20,13 +20,22 @@ generating early-bound .NET classes for server-side code, it generates TypeScrip
 
 ### Build
 
-Recommended environment: [Visual Studio 2015](https://www.visualstudio.com/downloads/)
+Recommended environment: [Visual Studio 2017](https://www.visualstudio.com/downloads/)
 
 **Requirements:**
 
 * [F# 4.0+](https://www.microsoft.com/en-us/download/details.aspx?id=48179)
 * [TypeScript 2.0+](https://www.microsoft.com/en-us/download/details.aspx?id=48593)
 * [Java JRE/SDK](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) (to minimize JavaScript code with closure)
+
+**Building the project**
+
+This project is created from [ProjectScaffold](http://fsprojects.github.io/ProjectScaffold/index.html), 
+which uses [FAKE](http://fsharp.github.io/FAKE/) to automate a lot of the build tasks (setup, build, test, docs, nuget package, releases, etc).
+
+Before you can build/run the project from Visual Studio, you need to run `build` from the command-line in the root folder. 
+This will trigger the default FAKE build. FAKE handles setting up the project and it's dependencies as needed, before running the actual MSBuild task on the project. 
+Once it has been set up correctly by FAKE, you will be able to build the project using Visual Studio from then on.
 
 
 ### Test
