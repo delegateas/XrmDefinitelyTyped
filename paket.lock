@@ -24,6 +24,3 @@ GITHUB
   remote: fsharp/FAKE
     modules/Octokit/Octokit.fsx (1ada6a9c84aada940bd7e6a7b63c0dc62e2fa56e)
       Octokit (>= 0.20)
-HTTP
-  remote: http://dl.google.com
-    compiler-latest.zip (/closure-compiler/compiler-latest.zip)

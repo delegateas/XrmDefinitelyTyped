@@ -150,6 +150,10 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
+  <Target Name="BeforeBuild">
+    <Exec Command="npm install" />
+    <Exec Command="npm start" />
+  </Target>
   <Choose>
     <When Condition="$(TargetFrameworkIdentifier) == '.NETFramework' And ($(TargetFrameworkVersion) == 'v4.5.2' Or $(TargetFrameworkVersion) == 'v4.5.3' Or $(TargetFrameworkVersion) == 'v4.6' Or $(TargetFrameworkVersion) == 'v4.6.1' Or $(TargetFrameworkVersion) == 'v4.6.2' Or $(TargetFrameworkVersion) == 'v4.6.3' Or $(TargetFrameworkVersion) == 'v4.7')">
       <ItemGroup>
@@ -177,8 +181,4 @@
       </ItemGroup>
     </When>
   </Choose>
-  <Target Name="BeforeBuild">
-    <Exec Command="npm install" />
-    <Exec Command="npm start" />
-  </Target>
 </Project>
