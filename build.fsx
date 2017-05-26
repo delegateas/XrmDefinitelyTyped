@@ -136,21 +136,6 @@ Target "CleanDocs" (fun _ ->
 
 Target "BuildSetup" (fun _ ->
 
-  // Setup closure if it does not exist
-  let closureToolsFolder = Path.GetFullPath @"tools\closure"
-  CreateDir closureToolsFolder
-
-  let closureCompiler = closureToolsFolder @@ @"compiler.jar"
-
-  if not(fileExists closureCompiler) then
-    let paketFilePath = 
-      Directory.EnumerateFiles("paket-files/dl.google.com", "*.jar", SearchOption.TopDirectoryOnly)
-      |> Seq.tryHead
-
-    match paketFilePath with
-    | Some path  -> CopyFile closureCompiler path
-    | None -> failwithf "No .jar file found for closure compiler"
-
   // Setup EnvInfo.config file if it does not exist
   let envInfoPath = Path.GetFullPath @"src/XrmDefinitelyTyped/EnvInfo.config"
 
