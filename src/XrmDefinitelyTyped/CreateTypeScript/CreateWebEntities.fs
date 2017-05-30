@@ -231,10 +231,13 @@ let getBlankEntityInterfaces e =
 /// Create entity interfaces
 let getEntityInterfaceLines ns e = 
   let ei = getBlankEntityInterfaces e
-    
+
+  let attrSet = e.attrs |> List.map (fun a -> a.logicalName) |> Set.ofList
+  let availableNavProp (r: XrmRelationship) = attrSet.Contains r.navProp |> not
+
   let is = 
     [ { ei._base with vars = e.attrs |> List.map getBaseVariable |> concatDistinctSort } 
-      { ei.rels with vars = e.rels |> List.map getRelationVars |> sortByName }
+      { ei.rels with vars = e.rels |> List.filter availableNavProp |> List.map getRelationVars |> sortByName }
         
       { ei.cu with vars = e.attrs |> List.map (getCreateUpdateVariables true true) |> concatDistinctSort }
       { ei.create with vars = e.attrs |> List.map (getCreateUpdateVariables true false) |> concatDistinctSort }
