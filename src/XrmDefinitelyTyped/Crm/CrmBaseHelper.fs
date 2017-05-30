@@ -76,7 +76,7 @@ let getAllEntityMetadataLight proxy =
 let getAllEntityMetadata (proxy:OrganizationServiceProxy) =
   let request = RetrieveAllEntitiesRequest()
   request.EntityFilters <- Microsoft.Xrm.Sdk.Metadata.EntityFilters.All
-  request.RetrieveAsIfPublished <- true
+  request.RetrieveAsIfPublished <- false
 
   let resp = getResponse<RetrieveAllEntitiesResponse> proxy request
   resp.EntityMetadata
