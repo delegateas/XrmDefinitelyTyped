@@ -4,8 +4,8 @@
   "repository": "N/A",
   "version": "1.0.0",
   "scripts": {
-    "test": "mocha --compilers ts:ts-node/register,tsx:ts-node/register src/tests/**/*.ts",
-    "test-watch": "mocha --watch --compilers ts:ts-node/register,tsx:ts-node/register --require tests/utils/init.ts tests/**/*.ts"
+    "test": "mocha --compilers ts:ts-node/register,tsx:ts-node/register \"./src/tests/**/*.ts\"",
+    "test-watch": "mocha --watch --compilers ts:ts-node/register,tsx:ts-node/register --require \"./src/tests/utils/init.ts\" \"./src/tests/**/*.ts\""
   },
   "author": "Delegate A/S, Martin Kasban Tange",
   "license": "MIT",
