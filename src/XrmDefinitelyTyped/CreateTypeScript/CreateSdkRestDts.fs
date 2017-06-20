@@ -50,8 +50,8 @@ let getFullRestNamespace ns es =
         Function.Create("retrieveRecord",
           [ Variable.Create("id", TsType.String); 
             typeVar; 
-            Variable.Create("select", TsType.String); 
-            Variable.Create("expand", TsType.String);
+            Variable.Create("select", TsType.Union [TsType.String; TsType.Null]); 
+            Variable.Create("expand", TsType.Union [TsType.String; TsType.Null]);
             successCbSingle eResultType; errorCb ],
           TsType.Void)
         Function.Create("updateRecord",
@@ -88,8 +88,8 @@ let getFullRestNamespace ns es =
       Function.Create("retrieveRecord",
         [ Variable.Create("id", TsType.String); 
           typeVar; 
-          Variable.Create("select", TsType.String); 
-          Variable.Create("expand", TsType.String);
+          Variable.Create("select", TsType.Union [TsType.String; TsType.Null]); 
+          Variable.Create("expand", TsType.Union [TsType.String; TsType.Null]);
           successCbSingle eType; errorCb ],
         TsType.Void)
       Function.Create("updateRecord",
