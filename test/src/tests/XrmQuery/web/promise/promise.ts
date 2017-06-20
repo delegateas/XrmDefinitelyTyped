@@ -1,7 +1,7 @@
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
 import { suite, test, slow, timeout, skip, only } from "mocha-typescript";
-import FakeRequests from '../../common/fakeRequests';
+import FakeRequests from '../../../common/fakeRequests';
 import * as sinon from 'sinon';
 
 const expect = chai.expect;
