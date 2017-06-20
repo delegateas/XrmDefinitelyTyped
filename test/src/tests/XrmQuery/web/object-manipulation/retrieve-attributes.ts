@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { suite, test, slow, timeout, skip, only } from "mocha-typescript";
-import FakeRequests from '../../common/fakeRequests';
+import FakeRequests from '../../../common/fakeRequests';
 import * as sinon from 'sinon';
 
 @suite 
