@@ -39,6 +39,7 @@ let getOrgVariables (list: XrmAttribute list) =
       | SpecialType.OptionSet       -> TsType.SpecificGeneric("SDK.OptionSet", [v.varType])
       | SpecialType.Money           -> TsType.Custom "SDK.Money"
       | SpecialType.EntityReference -> TsType.Custom "SDK.EntityReference"
+      | SpecialType.Decimal         -> TsType.String
       | _ -> v.varType
       |> fun ty -> TsType.Union [ty; TsType.Null]
     Variable.Create(v.schemaName, vType, optional = true))

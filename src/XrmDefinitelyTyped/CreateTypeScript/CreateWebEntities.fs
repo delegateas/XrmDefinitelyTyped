@@ -104,6 +104,7 @@ let getResultDef a =
   match a.specialType with
   | SpecialType.EntityReference -> getEntityRefDef guidName a
   | SpecialType.Money -> name, [ a, vType, None; currencyId, TsType.String, Some guidName ]
+  | SpecialType.Decimal -> name, [a, TsType.Number, None]
   | _ -> name, [ a, vType, None ]
 
 (** Variable functions *)
