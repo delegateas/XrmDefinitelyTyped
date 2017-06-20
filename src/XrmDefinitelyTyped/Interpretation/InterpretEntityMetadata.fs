@@ -15,16 +15,14 @@ let toSome convertFunc (nullable:System.Nullable<'a>) =
 let typeConv = function   
   | AttributeTypeCode.Boolean   -> TsType.Boolean
   | AttributeTypeCode.DateTime  -> TsType.Date
-  | AttributeTypeCode.Integer   -> TsType.Number
     
   | AttributeTypeCode.Memo      
   | AttributeTypeCode.EntityName
-  | AttributeTypeCode.Double    
-  | AttributeTypeCode.Decimal   
   | AttributeTypeCode.String    -> TsType.String
 
-  | AttributeTypeCode.BigInt    
   | AttributeTypeCode.Integer
+  | AttributeTypeCode.Double  
+  | AttributeTypeCode.BigInt    
   | AttributeTypeCode.Money     
   | AttributeTypeCode.Picklist  
   | AttributeTypeCode.State     
@@ -65,6 +63,8 @@ let interpretAttribute map entityNames (a:AttributeMetadata) =
     | AttributeTypeCode.Owner     -> TsType.String, SpecialType.EntityReference
         
     | AttributeTypeCode.Uniqueidentifier -> TsType.String, SpecialType.Guid
+    | AttributeTypeCode.Decimal   -> 
+      toSome typeConv a.AttributeType, SpecialType.Decimal
     | _ -> toSome typeConv a.AttributeType, SpecialType.Default
 
   let attr = 

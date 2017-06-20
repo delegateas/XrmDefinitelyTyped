@@ -16,6 +16,7 @@ type SpecialType =
   | Money 
   | Guid 
   | EntityReference
+  | Decimal
 
 type XrmAttribute = { 
   schemaName: string
@@ -120,4 +121,3 @@ type InterpretedState = {
   forms: XrmForm[]
   bpfControls: Map<string,ControlField list>
 }
-
