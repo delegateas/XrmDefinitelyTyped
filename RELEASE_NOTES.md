@@ -3,8 +3,8 @@
 ### 2.2.0 - June 20 2017
 * Added some of the new Dynamics 365 form functionality
 * `SDK.REST.retrieveRecord` now allows `null` values in the select and expand parameters
-* `double` attributes are now typed as `number`'s instead of `string`'s for both endpoints
-* `decimal` attributes are now typed as `number`'s in the WebAPI, and as `string`'s in the old REST endpoint
+* `double` attributes are now typed as `number`s instead of `string`s for both endpoints
+* `decimal` attributes are now typed as `number`s in the WebAPI, and as `string`s in the old REST endpoint
 * Fixed generated output when targeting all entities
 
 ### 2.1.2 - May 24 2017
