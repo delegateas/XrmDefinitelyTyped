@@ -1,5 +1,8 @@
 # Release Notes
 
+### 2.2.1 - June 23 2017
+* Fixed filtering and ordering by entity references in XrmQuery for the Web API
+
 ### 2.2.0 - June 20 2017
 * Added some of the new Dynamics 365 form functionality
 * `SDK.REST.retrieveRecord` now allows `null` values in the select and expand parameters
