@@ -104,7 +104,7 @@ let getResultDef a =
   match a.specialType with
   | SpecialType.EntityReference -> getEntityRefDef guidName a
   | SpecialType.Money -> name, [ a, vType, None; currencyId, TsType.String, Some guidName ]
-  | SpecialType.Decimal -> name, [a, TsType.Number, None]
+  | SpecialType.Decimal -> name, [ a, TsType.Number, None ]
   | _ -> name, [ a, vType, None ]
 
 (** Variable functions *)
@@ -129,9 +129,16 @@ let getSelectVariable parent (a: XrmAttribute) =
 let getFilterVariable (a: XrmAttribute) = 
   let vType = 
     match a.specialType with
-    | SpecialType.Guid  -> TsType.Custom "XQW.Guid"
+    | SpecialType.EntityReference 
+    | SpecialType.Guid -> TsType.Custom "XQW.Guid"
     | _ -> a.varType
-  Variable.Create(a.logicalName, vType)
+  
+  let name = 
+    match a.specialType with
+    | SpecialType.EntityReference -> guidName a
+    | _ -> a.logicalName
+
+  Variable.Create(name, vType)
 
 let getCreateUpdateVariables isCreate isUpdate (a: XrmAttribute) = 
   match 

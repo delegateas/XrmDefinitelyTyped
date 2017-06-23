@@ -132,6 +132,10 @@ declare namespace XQW {
     interface Guid {
         __XqwGuid: any;
     }
+    function makeTag(name: string): {
+        __str: string;
+        toString: () => any;
+    };
     function promisifyCallback<T>(callbackFunc: (success: (t: T) => any, errorCb?: (e: Error) => any) => any): Promise<T>;
     abstract class Query<T> {
         protected requestType: HttpRequestType;
@@ -185,7 +189,7 @@ declare namespace XQW {
         selectMore<R1, F1, R2, F2, R3, F3>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3, Result & R1 & R2 & R3>;
         selectMore<R1, F1, R2, F2>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2, Result & R1 & R2>;
         selectMore<R1, F1>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1, Result & R1>;
-        expand<IExpSelect, IExpFilter, IExpResult>(exps: (x: IExpand) => WebExpand<IExpand, IExpSelect, IExpFilter, IExpResult>, selectVars?: (x: IExpSelect) => WebAttribute<IExpSelect, any, any>[]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, IExpResult & Result>;
+        expand<IExpSelect, IExpFilter, IExpResult>(exps: (x: IExpand) => WebExpand<IExpand, IExpSelect, IExpFilter, IExpResult>, selectVarFunc?: (x: IExpSelect) => WebAttribute<IExpSelect, any, any>[]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, IExpResult & Result>;
         filter(filter: (x: IFilter) => WebFilter): this;
         orFilter(filter: (x: IFilter) => WebFilter): this;
         andFilter(filter: (x: IFilter) => WebFilter): this;
@@ -248,7 +252,7 @@ declare namespace XQW {
         selectMore<R1, F1, R2, F2, R3, F3>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3, Result & R1 & R2 & R3>;
         selectMore<R1, F1, R2, F2>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2, Result & R1 & R2>;
         selectMore<R1, F1>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>]): RetrieveRecord<ISelect, IExpand, IFixed, F1, Result & R1>;
-        expand<IExpSelect, IExpFilter, IExpResult>(exps: (x: IExpand) => WebExpand<IExpand, IExpSelect, IExpFilter, IExpResult>, selectVars?: (x: IExpSelect) => WebAttribute<IExpSelect, any, any>[], optArgs?: ExpandOptions<IExpSelect, IExpFilter>): RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, IExpResult & Result>;
+        expand<IExpSelect, IExpFilter, IExpResult>(exps: (x: IExpand) => WebExpand<IExpand, IExpSelect, IExpFilter, IExpResult>, selectVarFunc?: (x: IExpSelect) => WebAttribute<IExpSelect, any, any>[], optArgs?: ExpandOptions<IExpSelect, IExpFilter>): RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, IExpResult & Result>;
         getQueryString(): string;
         includeFormattedValues(): Query<FormattedResult & Result>;
     }

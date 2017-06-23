@@ -23,7 +23,7 @@ class Web_Retrieve_Attributes extends FakeRequests {
     }
 
     @test
-    "rename of entity reference keys from _XXX_value to XXX_guid"() {
+    "rename of entity reference keys from _XXX_value to XXX_guid in select"() {
 
         var callback = sinon.spy();
         XrmQuery.retrieve(x => x.accounts, this.accountId)
@@ -47,6 +47,34 @@ class Web_Retrieve_Attributes extends FakeRequests {
             primarycontactid_guid: this.contactId, 
             transactioncurrencyid_guid: this.currencyId
         });
+    }
+
+    @test
+    "rename of entity reference keys from _XXX_value to XXX_guid in filter"() {
+        var callback = sinon.spy();
+        XrmQuery.retrieveMultiple(x => x.accounts)
+            .filter(x => Filter.equals(x.primarycontactid_guid, Filter.makeGuid("test")))
+            .execute(callback);
+
+        // Check requests
+        expect(this.requests.length).to.equal(1);
+        var req = this.requests[0];
+        expect(req.method).to.equal("GET");
+        expect(req.url).to.equal(`accounts?$filter=_primarycontactid_value%20eq%20test`);
+    }
+
+    @test
+    "rename of entity reference keys from _XXX_value to XXX_guid in orderby"() {
+        var callback = sinon.spy();
+        XrmQuery.retrieveMultiple(x => x.accounts)
+            .orderAsc(x => x.primarycontactid_guid)
+            .execute(callback);
+
+        // Check requests
+        expect(this.requests.length).to.equal(1);
+        var req = this.requests[0];
+        expect(req.method).to.equal("GET");
+        expect(req.url).to.equal(`accounts?$orderby=_primarycontactid_value%20asc`);
     }
 
 

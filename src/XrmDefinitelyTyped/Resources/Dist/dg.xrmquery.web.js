@@ -224,9 +224,6 @@ var XQW;
     var FORMATTED_ENDING = "_formatted";
     var NEXT_LINK_ID = "@odata.nextLink";
     var MaxPageSizeHeader = function (size) { return ({ type: "Prefer", value: "odata.maxpagesize=" + size }); };
-    /**
-     * @internal
-     */
     function makeTag(name) {
         return { __str: name, toString: function () { return this.__str; } };
     }
@@ -506,30 +503,30 @@ var XQW;
             this.selects = this.selects.concat(parseSelects(vars));
             return this;
         };
-        RetrieveMultipleRecords.prototype.expand = function (exps, selectVars) {
+        RetrieveMultipleRecords.prototype.expand = function (exps, selectVarFunc) {
             var expand = taggedExec(exps).toString();
             this.selects.push(expand);
             this.expandKeys.push(expand);
             var options = [];
-            if (selectVars)
-                options.push("$select=" + parseSelects(selectVars));
+            if (selectVarFunc)
+                options.push("$select=" + parseSelects(selectVarFunc));
             this.expands.push(expand + (options.length > 0 ? "(" + options.join(";") + ")" : ""));
             return this;
         };
         RetrieveMultipleRecords.prototype.filter = function (filter) {
-            this.filters = taggedExec(filter);
+            this.filters = parseWithTransform(filter);
             return this;
         };
         RetrieveMultipleRecords.prototype.orFilter = function (filter) {
             if (this.filters)
-                this.filters = Filter.or(this.filters, taggedExec(filter));
+                this.filters = Filter.or(this.filters, parseWithTransform(filter));
             else
                 this.filter(filter);
             return this;
         };
         RetrieveMultipleRecords.prototype.andFilter = function (filter) {
             if (this.filters)
-                this.filters = Filter.and(this.filters, taggedExec(filter));
+                this.filters = Filter.and(this.filters, parseWithTransform(filter));
             else
                 this.filter(filter);
             return this;
@@ -537,8 +534,8 @@ var XQW;
         /**
          * @internal
          */
-        RetrieveMultipleRecords.prototype.order = function (vars, by) {
-            this.ordering.push(taggedExec(vars) + " " + by);
+        RetrieveMultipleRecords.prototype.order = function (varFunc, by) {
+            this.ordering.push(parseWithTransform(varFunc) + " " + by);
             return this;
         };
         RetrieveMultipleRecords.prototype.orderAsc = function (vars) {
@@ -611,28 +608,28 @@ var XQW;
         RetrieveRecord.prototype.handleResponse = function (req, successCallback, errorCallback) {
             EntityLinkHelper.followLinks(parseRetrievedData(req), this.expandKeys, successCallback, errorCallback);
         };
-        RetrieveRecord.prototype.select = function (vars) {
-            this.selects = parseSelects(vars);
+        RetrieveRecord.prototype.select = function (varFunc) {
+            this.selects = parseSelects(varFunc);
             return this;
         };
-        RetrieveRecord.prototype.selectMore = function (vars) {
-            this.selects = this.selects.concat(parseSelects(vars));
+        RetrieveRecord.prototype.selectMore = function (varFunc) {
+            this.selects = this.selects.concat(parseSelects(varFunc));
             return this;
         };
-        RetrieveRecord.prototype.expand = function (exps, selectVars, optArgs) {
+        RetrieveRecord.prototype.expand = function (exps, selectVarFunc, optArgs) {
             var expand = taggedExec(exps).toString();
             this.selects.push(expand);
             this.expandKeys.push(expand);
             var options = [];
-            if (selectVars)
-                options.push("$select=" + parseSelects(selectVars));
+            if (selectVarFunc)
+                options.push("$select=" + parseSelects(selectVarFunc));
             if (optArgs) {
                 if (optArgs.top)
                     options.push("$top=" + optArgs.top);
                 if (optArgs.orderBy)
-                    options.push("$orderby=" + taggedExec(optArgs.orderBy) + " " + (optArgs.sortOrder != 2 /* Descending */ ? "asc" : "desc"));
+                    options.push("$orderby=" + parseWithTransform(optArgs.orderBy) + " " + (optArgs.sortOrder != 2 /* Descending */ ? "asc" : "desc"));
                 if (optArgs.filter)
-                    options.push("$filter=" + taggedExec(optArgs.filter));
+                    options.push("$filter=" + parseWithTransform(optArgs.filter));
             }
             this.expands.push(expand + (options.length > 0 ? "(" + options.join(";") + ")" : ""));
             return this;
@@ -739,8 +736,8 @@ var XQW;
     /**
      * @internal
      */
-    function taggedExec(f) {
-        return f(tagMatches(f));
+    function taggedExec(f, transformer) {
+        return f(tagMatches(f, transformer));
     }
     /**
      * @internal
@@ -764,17 +761,18 @@ var XQW;
     /**
      * @internal
      */
-    function tagMatches(f) {
+    function tagMatches(f, transformer) {
         var funcInfo = analyzeFunc(f);
         var regex = objRegex(funcInfo.arg);
+        var transformerFunc = transformer ? transformer : function (x) { return x; };
         var obj = {};
         var match;
         while ((match = regex.exec(funcInfo.body)) != null) {
             if (!obj[match[1]]) {
-                obj[match[1]] = XQW.makeTag(match[1]);
+                obj[match[1]] = XQW.makeTag(transformerFunc(match[1]));
             }
             if (match[3]) {
-                obj[match[1]][match[3]] = XQW.makeTag(match[1] + "/" + match[3]);
+                obj[match[1]][match[3]] = XQW.makeTag(match[1] + "/" + transformerFunc(match[3]));
             }
         }
         return obj;
@@ -813,10 +811,10 @@ var XQW;
         throw new Error("Context is not available.");
     }
     /**
-     * Converts a select object to CRM format
+     * Converts a XrmQuery select/filter name to the Web API format
      * @param name
      */
-    function selectToCrm(name) {
+    function xrmQueryToCrm(name) {
         var idx = name.indexOf(GUID_ENDING);
         if (idx == -1)
             return name;
@@ -826,8 +824,15 @@ var XQW;
      * Helper function to perform tagged execution and mapping to array of selects
      * @internal
      */
-    function parseSelects(f) {
-        return taggedExec(f).map(function (x) { return selectToCrm(x.toString()); });
+    function parseSelects(selectFunc) {
+        return parseWithTransform(selectFunc).map(function (x) { return x.toString(); });
+    }
+    /**
+     * Parses a given function and transforms any XrmQuery-specific values to it's corresponding CRM format
+     * @param filterFunc
+     */
+    function parseWithTransform(filterFunc) {
+        return taggedExec(filterFunc, xrmQueryToCrm);
     }
     /**
      * Transforms an object XrmQuery format to a CRM format

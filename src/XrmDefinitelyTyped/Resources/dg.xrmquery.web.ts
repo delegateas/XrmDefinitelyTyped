@@ -275,9 +275,6 @@ namespace XQW {
     __XqwGuid: any;
   }
 
-  /**
-   * @internal
-   */
   export function makeTag(name: string) {
     return { __str: name, toString: function () { return this.__str } }
   }
@@ -642,7 +639,7 @@ namespace XQW {
 
     expand<IExpSelect, IExpFilter, IExpResult>(
       exps: (x: IExpand) => WebExpand<IExpand, IExpSelect, IExpFilter, IExpResult>,
-      selectVars?: (x: IExpSelect) => WebAttribute<IExpSelect, any, any>[])
+      selectVarFunc?: (x: IExpSelect) => WebAttribute<IExpSelect, any, any>[])
       : RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, IExpResult & Result> {
 
       const expand = taggedExec(exps).toString();
@@ -650,25 +647,25 @@ namespace XQW {
       this.expandKeys.push(expand);
 
       let options: string[] = [];
-      if (selectVars) options.push(`$select=${parseSelects(selectVars)}`);
+      if (selectVarFunc) options.push(`$select=${parseSelects(selectVarFunc)}`);
 
       this.expands.push(expand + (options.length > 0 ? `(${options.join(";")})` : ""));
       return <any>this;
     }
 
     filter(filter: (x: IFilter) => WebFilter) {
-      this.filters = taggedExec(filter);
+      this.filters = parseWithTransform(filter);
       return this;
     }
 
     orFilter(filter: (x: IFilter) => WebFilter) {
-      if (this.filters) this.filters = Filter.or(this.filters, taggedExec(filter));
+      if (this.filters) this.filters = Filter.or(this.filters, parseWithTransform(filter));
       else this.filter(filter);
       return this;
     }
 
     andFilter(filter: (x: IFilter) => WebFilter) {
-      if (this.filters) this.filters = Filter.and(this.filters, taggedExec(filter));
+      if (this.filters) this.filters = Filter.and(this.filters, parseWithTransform(filter));
       else this.filter(filter);
       return this;
     }
@@ -676,8 +673,8 @@ namespace XQW {
     /**
      * @internal
      */
-    private order(vars: (x: ISelect) => WebAttribute<ISelect, any, any>, by: string) {
-      this.ordering.push(taggedExec(vars) + " " + by);
+    private order(varFunc: (x: ISelect) => WebAttribute<ISelect, any, any>, by: string) {
+      this.ordering.push(parseWithTransform(varFunc) + " " + by);
       return this;
     }
 
@@ -787,8 +784,8 @@ namespace XQW {
     select<R1, F1, R2, F2, R3, F3>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3, IFixed & R1 & R2 & R3>;
     select<R1, F1, R2, F2>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2, IFixed & R1 & R2>;
     select<R1, F1>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>]): RetrieveRecord<ISelect, IExpand, IFixed, F1, IFixed & R1>;
-    select(vars: (x: ISelect) => WebAttribute<ISelect, any, any>[]): RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result> {
-      this.selects = parseSelects(vars);
+    select(varFunc: (x: ISelect) => WebAttribute<ISelect, any, any>[]): RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result> {
+      this.selects = parseSelects(varFunc);
       return this;
     }
 
@@ -807,14 +804,14 @@ namespace XQW {
     selectMore<R1, F1, R2, F2, R3, F3>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3, Result & R1 & R2 & R3>;
     selectMore<R1, F1, R2, F2>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2, Result & R1 & R2>;
     selectMore<R1, F1>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>]): RetrieveRecord<ISelect, IExpand, IFixed, F1, Result & R1>;
-    selectMore(vars: (x: ISelect) => WebAttribute<ISelect, any, any>[]): RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result> {
-      this.selects = this.selects.concat(parseSelects(vars));
+    selectMore(varFunc: (x: ISelect) => WebAttribute<ISelect, any, any>[]): RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result> {
+      this.selects = this.selects.concat(parseSelects(varFunc));
       return this;
     }
 
     expand<IExpSelect, IExpFilter, IExpResult>(
       exps: (x: IExpand) => WebExpand<IExpand, IExpSelect, IExpFilter, IExpResult>,
-      selectVars?: (x: IExpSelect) => WebAttribute<IExpSelect, any, any>[],
+      selectVarFunc?: (x: IExpSelect) => WebAttribute<IExpSelect, any, any>[],
       optArgs?: ExpandOptions<IExpSelect, IExpFilter>)
       : RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, IExpResult & Result> {
 
@@ -823,11 +820,11 @@ namespace XQW {
       this.expandKeys.push(expand);
 
       let options: string[] = [];
-      if (selectVars) options.push(`$select=${parseSelects(selectVars)}`);
+      if (selectVarFunc) options.push(`$select=${parseSelects(selectVarFunc)}`);
       if (optArgs) {
         if (optArgs.top) options.push(`$top=${optArgs.top}`);
-        if (optArgs.orderBy) options.push(`$orderby=${taggedExec(optArgs.orderBy)} ${optArgs.sortOrder != SortOrder.Descending ? "asc" : "desc"}`)
-        if (optArgs.filter) options.push(`$filter=${taggedExec(optArgs.filter)}`);
+        if (optArgs.orderBy) options.push(`$orderby=${parseWithTransform(optArgs.orderBy)} ${optArgs.sortOrder != SortOrder.Descending ? "asc" : "desc"}`)
+        if (optArgs.filter) options.push(`$filter=${parseWithTransform(optArgs.filter)}`);
       }
       this.expands.push(expand + (options.length > 0 ? `(${options.join(";")})` : ""));
       return <any>this;
@@ -948,8 +945,8 @@ namespace XQW {
   /**
    * @internal
    */
-  function taggedExec<T>(f: (x: any) => T): T {
-    return f(tagMatches(f));
+  function taggedExec<T>(f: (x: any) => T, transformer?: (x: string) => string): T {
+    return f(tagMatches(f, transformer));
   }
 
   /**
@@ -976,18 +973,19 @@ namespace XQW {
   /**
    * @internal
    */
-  function tagMatches(f: (x: any) => any) {
+  function tagMatches(f: (x: any) => any, transformer?: (x: string) => string) {
     let funcInfo = analyzeFunc(f);
     let regex = objRegex(funcInfo.arg);
 
+    let transformerFunc = transformer ? transformer : (x: string) => x;
     let obj: { [k: string]: any } = {};
     let match: any;
     while ((match = regex.exec(funcInfo.body)) != null) {
       if (!obj[match[1]]) {
-        obj[match[1]] = XQW.makeTag(match[1]);
+        obj[match[1]] = XQW.makeTag(transformerFunc(match[1]));
       }
       if (match[3]) {
-        obj[match[1]][match[3]] = XQW.makeTag(match[1] + "/" + match[3]);
+        obj[match[1]][match[3]] = XQW.makeTag(match[1] + "/" + transformerFunc(match[3]));
       }
     }
     return obj;
@@ -1027,10 +1025,10 @@ namespace XQW {
   }
 
   /**
-   * Converts a select object to CRM format
+   * Converts a XrmQuery select/filter name to the Web API format
    * @param name
    */
-  function selectToCrm(name: string) {
+  function xrmQueryToCrm(name: string) {
     const idx = name.indexOf(GUID_ENDING);
     if (idx == -1) return name;
     return `_${name.substr(0, idx)}_value`;
@@ -1041,8 +1039,16 @@ namespace XQW {
    * Helper function to perform tagged execution and mapping to array of selects
    * @internal
    */
-  function parseSelects(f: (x: any) => any): string[] {
-    return taggedExec<Object[]>(f).map(x => selectToCrm(x.toString()));
+  function parseSelects(selectFunc: (x: any) => any[]): string[] {
+    return parseWithTransform(selectFunc).map((x: any) => x.toString());
+  }
+
+  /**
+   * Parses a given function and transforms any XrmQuery-specific values to it's corresponding CRM format
+   * @param filterFunc
+   */
+  function parseWithTransform(filterFunc: (x: any) => any) {
+    return taggedExec(filterFunc, xrmQueryToCrm);
   }
 
   /**
