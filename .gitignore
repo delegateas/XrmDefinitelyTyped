@@ -11,6 +11,7 @@
 node_modules
 EnvInfo.config
 
+
 #Fake build
 .fake/*
 
@@ -200,4 +201,6 @@ docs/content/release-notes.md
 /test/lib/dg.xrmquery.rest.js
 /test/lib/dg.xrmquery.rest.min.js
 /test/lib/dg.xrmquery.web.js
+/src/XrmDefinitelyTyped/Resources/Dist
 /graph.png
+
