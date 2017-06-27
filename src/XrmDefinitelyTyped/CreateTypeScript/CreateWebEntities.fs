@@ -203,8 +203,8 @@ let getRelatedVariable ns referencing (r: XrmRelationship) =
 type EntityInterfaces = {
   _base: Interface
   _fixed: Interface
-  cu: Interface
-  rels: Interface
+  createAndUpdate: Interface
+  relationships: Interface
   oneRelated: Interface
   manyRelated: Interface
   create: Interface
@@ -222,10 +222,10 @@ let getBlankEntityInterfaces e =
   let cu = e.schemaName
   { _base = Interface.Create(bn, extends = [superEntityName])
     _fixed = Interface.Create(fixedName e.schemaName, vars = [ Variable.Create(e.idAttribute, TsType.String) ], extends = [ superResultFixed ])
-    rels = Interface.Create(rn) 
+    relationships = Interface.Create(rn) 
     oneRelated = Interface.Create(oneRelName e.schemaName) 
     manyRelated = Interface.Create(manyRelName e.schemaName) 
-    cu = Interface.Create(cu, extends = [bn; rn]) 
+    createAndUpdate = Interface.Create(cu, extends = [bn; rn]) 
     create = Interface.Create(createName e.schemaName, extends = [cu]) 
     update = Interface.Create(updateName e.schemaName, extends = [cu]) 
     result = Interface.Create(resultName e.schemaName, extends = [bn; rn]) 
@@ -246,9 +246,9 @@ let getEntityInterfaceLines ns e =
 
   let is = 
     [ { ei._base with vars = e.attributes |> List.map getBaseVariable |> concatDistinctSort } 
-      { ei.rels with vars = e.relationships |> List.filter availableNavProp |> List.map getRelationVars |> sortByName }
+      { ei.relationships with vars = e.relationships |> List.filter availableNavProp |> List.map getRelationVars |> sortByName }
         
-      { ei.cu with vars = e.attributes |> List.map (getCreateUpdateVariables true true) |> concatDistinctSort }
+      { ei.createAndUpdate with vars = e.attributes |> List.map (getCreateUpdateVariables true true) |> concatDistinctSort }
       { ei.create with vars = e.attributes |> List.map (getCreateUpdateVariables true false) |> concatDistinctSort }
       { ei.update with vars = e.attributes |> List.map (getCreateUpdateVariables false true) |> concatDistinctSort }
 
@@ -296,7 +296,7 @@ let getBlankInterfacesLines ns es =
     es 
     |> Array.Parallel.map (fun e ->
       let ei = getBlankEntityInterfaces e
-      [ ei._base; ei._fixed; ei.cu; ei.rels; ei.result; ei.formattedResult; ei.select; ei.expand; ei.filter; ei.create; ei.update ])
+      [ ei._base; ei._fixed; ei.createAndUpdate; ei.relationships; ei.result; ei.formattedResult; ei.select; ei.expand; ei.filter; ei.create; ei.update ])
     |> List.concat
     |> fun list -> 
       Interface.Create(superEntityName) :: 
