@@ -247,7 +247,7 @@ let interpretFormXmls (entityMetadata: XrmEntity[]) (formData:Map<string,Entity[
   entityMetadata
   |> Array.map (fun em ->
       let enums = 
-        em.attrs
+        em.attributes
         |> List.filter (fun attr -> attr.specialType = SpecialType.OptionSet)
         |> List.map (fun attr -> attr.logicalName, attr.varType)
         |> Map.ofList

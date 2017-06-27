@@ -221,7 +221,7 @@ let getBlankEntityInterfaces e =
   let rn = relName e.schemaName
   let cu = e.schemaName
   { _base = Interface.Create(bn, extends = [superEntityName])
-    _fixed = Interface.Create(fixedName e.schemaName, vars = [ Variable.Create(e.idAttr, TsType.String) ], extends = [ superResultFixed ])
+    _fixed = Interface.Create(fixedName e.schemaName, vars = [ Variable.Create(e.idAttribute, TsType.String) ], extends = [ superResultFixed ])
     rels = Interface.Create(rn) 
     oneRelated = Interface.Create(oneRelName e.schemaName) 
     manyRelated = Interface.Create(manyRelName e.schemaName) 
@@ -240,26 +240,27 @@ let getBlankEntityInterfaces e =
 let getEntityInterfaceLines ns e = 
   let ei = getBlankEntityInterfaces e
 
-  let attrSet = e.attrs |> List.map (fun a -> a.logicalName) |> Set.ofList
+  let attrSet = e.attributes |> List.map (fun a -> a.logicalName) |> Set.ofList
+  let attrs = attrSet |> Set.toArray
   let availableNavProp (r: XrmRelationship) = attrSet.Contains r.navProp |> not
 
   let is = 
-    [ { ei._base with vars = e.attrs |> List.map getBaseVariable |> concatDistinctSort } 
-      { ei.rels with vars = e.rels |> List.filter availableNavProp |> List.map getRelationVars |> sortByName }
+    [ { ei._base with vars = e.attributes |> List.map getBaseVariable |> concatDistinctSort } 
+      { ei.rels with vars = e.relationships |> List.filter availableNavProp |> List.map getRelationVars |> sortByName }
         
-      { ei.cu with vars = e.attrs |> List.map (getCreateUpdateVariables true true) |> concatDistinctSort }
-      { ei.create with vars = e.attrs |> List.map (getCreateUpdateVariables true false) |> concatDistinctSort }
-      { ei.update with vars = e.attrs |> List.map (getCreateUpdateVariables false true) |> concatDistinctSort }
+      { ei.cu with vars = e.attributes |> List.map (getCreateUpdateVariables true true) |> concatDistinctSort }
+      { ei.create with vars = e.attributes |> List.map (getCreateUpdateVariables true false) |> concatDistinctSort }
+      { ei.update with vars = e.attributes |> List.map (getCreateUpdateVariables false true) |> concatDistinctSort }
 
-      { ei.select with vars = e.attrs |> List.map (getSelectVariable ei.select) |> sortByName } 
-      { ei.filter with vars = e.attrs |> List.map getFilterVariable |> sortByName }
-      { ei.expand with vars = e.rels |> List.map (getExpandVariable ei.expand) |> sortByName }
+      { ei.select with vars = e.attributes |> List.map (getSelectVariable ei.select) |> sortByName } 
+      { ei.filter with vars = e.attributes |> List.map getFilterVariable |> sortByName }
+      { ei.expand with vars = e.relationships |> List.map (getExpandVariable ei.expand) |> sortByName }
 
-      { ei.formattedResult with vars = e.attrs |> List.map getFormattedResultVariable |> concatDistinctSort }
-      { ei.result with vars = entityTag :: (List.map getResultVariable e.attrs |> concatDistinctSort) }
+      { ei.formattedResult with vars = e.attributes |> List.map getFormattedResultVariable |> concatDistinctSort }
+      { ei.result with vars = entityTag :: (List.map getResultVariable e.attributes |> concatDistinctSort) }
 
-      { ei.oneRelated with vars = e.rels |> List.choose (getRelatedVariable "" true) |> sortByName }
-      { ei.manyRelated with vars = e.rels |> List.choose (getRelatedVariable "" false) |> sortByName }
+      { ei.oneRelated with vars = e.relationships |> List.choose (getRelatedVariable "" true) |> sortByName }
+      { ei.manyRelated with vars = e.relationships |> List.choose (getRelatedVariable "" false) |> sortByName }
     ]
     
   let namespacedLines = 

@@ -16,5 +16,5 @@ let getOptionSetEnum (os:OptionSet) =
 
 let getUniquePicklists (es:XrmEntity[]) =
   es
-  |> Array.Parallel.map (fun e -> e.opt_sets) |> List.concat
+  |> Array.Parallel.map (fun e -> e.optionSets) |> List.concat
   |> Seq.distinctBy (fun os -> os.displayName) |> Array.ofSeq

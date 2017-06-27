@@ -86,23 +86,23 @@ let getEntityInterfaces ns e =
 
   let is = 
     [ Interface.Create(baseName, 
-        vars = (e.attrs |> getOrgVariables),
+        vars = (e.attributes |> getOrgVariables),
         extends = [superEntityName])
       Interface.Create(e.schemaName, 
-        vars = (e.rels |> getRelationshipVariables false),
+        vars = (e.relationships |> getRelationshipVariables false),
         extends = [baseName])
       Interface.Create(resultName, 
-        vars = (e.rels |> getRelationshipVariables true),
+        vars = (e.relationships |> getRelationshipVariables true),
         extends = [baseName])
 
       // XrmQuery interfaces
       Interface.Create(selName, 
-        vars = (e.attrs |> getSelectVariables selName),
+        vars = (e.attributes |> getSelectVariables selName),
         extends = [expName])
       Interface.Create(filterName, 
-        vars = (e.attrs |> getFilterVariables))
+        vars = (e.attributes |> getFilterVariables))
       Interface.Create(expName, 
-        vars = (e.rels |> getExpandVariables e.schemaName))
+        vars = (e.relationships |> getExpandVariables e.schemaName))
 
     ]
 

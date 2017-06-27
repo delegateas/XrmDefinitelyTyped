@@ -43,10 +43,10 @@ type XrmEntity = {
   schemaName: string
   logicalName: string
   entitySetName: string option
-  idAttr: string
-  attrs: XrmAttribute list 
-  opt_sets: OptionSet list
-  rels: XrmRelationship list
+  idAttribute: string
+  attributes: XrmAttribute list 
+  optionSets: OptionSet list
+  relationships: XrmRelationship list
   relatedEntities: string list 
 }
 

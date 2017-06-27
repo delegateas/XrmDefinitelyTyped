@@ -88,7 +88,7 @@ let interpretRelationship schemaNames nameMap referencing (rel:OneToManyRelation
     else rel.ReferencingEntity
     
   Map.tryFind rLogical nameMap
-  ?>>? fun (rSchema, _) -> Set.contains rSchema schemaNames
+  //?>>? fun (rSchema, _) -> Set.contains rSchema schemaNames
   ?|> fun (rSchema, rSetName) ->
     let name =
       match rel.ReferencedEntity = rel.ReferencingEntity with
@@ -121,7 +121,7 @@ let interpretM2MRelationship schemaNames nameMap logicalName (rel:ManyToManyRela
     | false -> rel.Entity2LogicalName
     
   Map.tryFind rLogical nameMap
-  ?>>? fun (rSchema, _) -> Set.contains rSchema schemaNames
+  //?>>? fun (rSchema, _) -> Set.contains rSchema schemaNames
   ?|> fun (rSchema, rSetName) ->
       
     let xRel = 
@@ -185,9 +185,9 @@ let interpretEntity schemaNames nameMap (metadata:EntityMetadata) =
     schemaName = metadata.SchemaName
     logicalName = metadata.LogicalName
     entitySetName = metadata.EntitySetName |> Utility.stringToOption
-    idAttr = metadata.PrimaryIdAttribute
-    attrs = attr_vars
-    rels = rel_vars
-    opt_sets = opt_sets
+    idAttribute = metadata.PrimaryIdAttribute
+    attributes = attr_vars
+    relationships = rel_vars
+    optionSets = opt_sets
     relatedEntities = rel_entities 
   }
