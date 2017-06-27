@@ -7,9 +7,9 @@ open InterpretOptionSetMetadata
 open Microsoft.Xrm.Sdk.Metadata
 
   
-let toSome convertFunc (nullable:System.Nullable<'a>) =
+let toSome convertFunc (nullable: System.Nullable<'a>) =
   match nullable.HasValue with
-  | true -> convertFunc (nullable.GetValueOrDefault())
+  | true -> nullable.GetValueOrDefault() |> convertFunc
   | false -> TsType.Any
 
 let typeConv = function   
@@ -30,7 +30,7 @@ let typeConv = function
   | _                           -> TsType.Any
 
 
-let interpretAttribute map entityNames (a:AttributeMetadata) =
+let interpretAttribute nameMap entityNames (a: AttributeMetadata) =
   let aType = a.AttributeType.GetValueOrDefault()
   if a.AttributeOf <> null ||
       aType = AttributeTypeCode.Virtual ||
@@ -46,13 +46,14 @@ let interpretAttribute map entityNames (a:AttributeMetadata) =
     match a with
     | :? LookupAttributeMetadata as lam -> 
       lam.Targets
-      |> Array.choose (fun k -> Map.tryFind k map ?|> snd)
+      |> Array.choose (fun k -> Map.tryFind k nameMap ?|> snd)
       |> Some
     | _ -> None
 
   let vType, sType = 
     match aType with
     | AttributeTypeCode.Money     -> TsType.Number, SpecialType.Money
+    
     | AttributeTypeCode.Picklist
     | AttributeTypeCode.State
     | AttributeTypeCode.Status    -> TsType.Custom options.Value.displayName, SpecialType.OptionSet
@@ -62,18 +63,12 @@ let interpretAttribute map entityNames (a:AttributeMetadata) =
     | AttributeTypeCode.Customer  
     | AttributeTypeCode.Owner     -> TsType.String, SpecialType.EntityReference
         
-    | AttributeTypeCode.Uniqueidentifier -> TsType.String, SpecialType.Guid
-    | AttributeTypeCode.Decimal   -> 
-      toSome typeConv a.AttributeType, SpecialType.Decimal
-    | _ -> toSome typeConv a.AttributeType, SpecialType.Default
+    | AttributeTypeCode.Uniqueidentifier 
+                                  -> TsType.String, SpecialType.Guid
 
-  let attr = 
-    match a.IsValidForCreate.GetValueOrDefault(false) <> a.IsValidForUpdate.GetValueOrDefault(false) with
-    | true -> Some a
-    | false -> None
+    | AttributeTypeCode.Decimal   -> toSome typeConv a.AttributeType, SpecialType.Decimal
+    | _                           -> toSome typeConv a.AttributeType, SpecialType.Default
 
-  if attr.IsSome then
-    ()
 
   options, Some {
     XrmAttribute.schemaName = a.SchemaName
@@ -87,12 +82,12 @@ let interpretAttribute map entityNames (a:AttributeMetadata) =
   }
 
 
-let interpretRelationship schemaNames map referencing (rel:OneToManyRelationshipMetadata) =
+let interpretRelationship schemaNames nameMap referencing (rel:OneToManyRelationshipMetadata) =
   let rLogical =
     if referencing then rel.ReferencedEntity
     else rel.ReferencingEntity
     
-  Map.tryFind rLogical map
+  Map.tryFind rLogical nameMap
   ?>>? fun (rSchema, _) -> Set.contains rSchema schemaNames
   ?|> fun (rSchema, rSetName) ->
     let name =
@@ -113,70 +108,78 @@ let interpretRelationship schemaNames map referencing (rel:OneToManyRelationship
           else rel.ReferencedEntityNavigationPropertyName
         referencing = referencing
         relatedSetName = rSetName
-        relatedSchemaName = rSchema }
+        relatedSchemaName = rSchema 
+      }
 
     rSchema, xRel
 
 
-let interpretM2MRelationship schemaNames map lname (rel:ManyToManyRelationshipMetadata) =
+let interpretM2MRelationship schemaNames nameMap logicalName (rel:ManyToManyRelationshipMetadata) =
   let rLogical =
-    match lname = rel.Entity2LogicalName with
+    match logicalName = rel.Entity2LogicalName with
     | true  -> rel.Entity1LogicalName
     | false -> rel.Entity2LogicalName
     
-  Map.tryFind rLogical map
+  Map.tryFind rLogical nameMap
   ?>>? fun (rSchema, _) -> Set.contains rSchema schemaNames
-  ?|> (fun (rSchema, rSetName) ->
+  ?|> fun (rSchema, rSetName) ->
       
     let xRel = 
       { XrmRelationship.schemaName = rel.SchemaName 
         attributeName = rel.SchemaName
         navProp = 
-          if lname = rel.Entity2LogicalName then rel.Entity1NavigationPropertyName
+          if logicalName = rel.Entity2LogicalName then rel.Entity1NavigationPropertyName
           else rel.Entity2NavigationPropertyName
         referencing = false
         relatedSetName = rSetName
-        relatedSchemaName = rSchema }
+        relatedSchemaName = rSchema 
+      }
     
-    rSchema, xRel)
+    rSchema, xRel
 
 
-let interpretEntity schemaNames map (metadata:EntityMetadata) =
-  if (metadata.Attributes = null) then failwith "No attributes found!"
+let interpretEntity schemaNames nameMap (metadata:EntityMetadata) =
+  if isNull metadata.Attributes then failwith "No attributes found!"
 
   let opt_sets, attr_vars = 
     metadata.Attributes 
-    |> Array.map (interpretAttribute map schemaNames)
+    |> Array.map (interpretAttribute nameMap schemaNames)
     |> Array.unzip
 
-  let attr_vars = attr_vars |> Array.choose id |> Array.toList
+  let attr_vars = 
+    attr_vars 
+    |> Array.choose id 
+    |> Array.toList
     
   let opt_sets = 
-    opt_sets |> Seq.choose id 
+    opt_sets 
+    |> Seq.choose id 
     |> Seq.distinctBy (fun x -> x.displayName) 
     |> Seq.toList
     
 
   let handleOneToMany referencing = function
-    | null -> Array.empty
-    | x -> x |> Array.choose (interpretRelationship schemaNames map referencing)
+    | null  -> Array.empty
+    | x     -> x |> Array.choose (interpretRelationship schemaNames nameMap referencing)
     
   let handleManyToMany logicalName = function
-    | null -> Array.empty
-    | x -> x |> Array.choose (interpretM2MRelationship schemaNames map logicalName)
+    | null  -> Array.empty
+    | x     -> x |> Array.choose (interpretM2MRelationship schemaNames nameMap logicalName)
 
 
   let rel_entities, rel_vars = 
-    [ metadata.OneToManyRelationships |> handleOneToMany false 
-      metadata.ManyToOneRelationships |> handleOneToMany true 
+    [ metadata.OneToManyRelationships  |> handleOneToMany false 
+      metadata.ManyToOneRelationships  |> handleOneToMany true 
       metadata.ManyToManyRelationships |> handleManyToMany metadata.LogicalName 
-    ] |> List.map Array.toList
-      |> List.concat
+    ] |> Array.concat
+      |> List.ofArray
       |> List.unzip
 
   let rel_entities = 
     rel_entities 
-    |> Set.ofList |> Set.remove metadata.SchemaName |> Set.toList
+    |> Set.ofList 
+    |> Set.remove metadata.SchemaName 
+    |> Set.toList
 
   { XrmEntity.typecode = metadata.ObjectTypeCode.GetValueOrDefault()
     schemaName = metadata.SchemaName
@@ -186,4 +189,5 @@ let interpretEntity schemaNames map (metadata:EntityMetadata) =
     attrs = attr_vars
     rels = rel_vars
     opt_sets = opt_sets
-    relatedEntities = rel_entities }
+    relatedEntities = rel_entities 
+  }
