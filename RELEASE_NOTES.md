@@ -1,5 +1,8 @@
 # Release Notes
 
+### 2.2.2 - June 27 2017
+* Bind variables are now generated based on N:1 relationships, instead of Lookup attributes
+
 ### 2.2.1 - June 23 2017
 * Fixed filtering and ordering by entity references in XrmQuery for the Web API
 
