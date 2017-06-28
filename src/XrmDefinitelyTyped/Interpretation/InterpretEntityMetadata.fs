@@ -82,13 +82,12 @@ let interpretAttribute nameMap entityNames (a: AttributeMetadata) =
   }
 
 
-let interpretRelationship schemaNames nameMap referencing (rel:OneToManyRelationshipMetadata) =
+let interpretRelationship schemaNames nameMap referencing (rel: OneToManyRelationshipMetadata) =
   let rLogical =
     if referencing then rel.ReferencedEntity
     else rel.ReferencingEntity
     
   Map.tryFind rLogical nameMap
-  //?>>? fun (rSchema, _) -> Set.contains rSchema schemaNames
   ?|> fun (rSchema, rSetName) ->
     let name =
       match rel.ReferencedEntity = rel.ReferencingEntity with
@@ -114,14 +113,13 @@ let interpretRelationship schemaNames nameMap referencing (rel:OneToManyRelation
     rSchema, xRel
 
 
-let interpretM2MRelationship schemaNames nameMap logicalName (rel:ManyToManyRelationshipMetadata) =
+let interpretM2MRelationship schemaNames nameMap logicalName (rel: ManyToManyRelationshipMetadata) =
   let rLogical =
     match logicalName = rel.Entity2LogicalName with
     | true  -> rel.Entity1LogicalName
     | false -> rel.Entity2LogicalName
     
   Map.tryFind rLogical nameMap
-  //?>>? fun (rSchema, _) -> Set.contains rSchema schemaNames
   ?|> fun (rSchema, rSetName) ->
       
     let xRel = 
@@ -141,18 +139,18 @@ let interpretM2MRelationship schemaNames nameMap logicalName (rel:ManyToManyRela
 let interpretEntity schemaNames nameMap (metadata:EntityMetadata) =
   if isNull metadata.Attributes then failwith "No attributes found!"
 
-  let opt_sets, attr_vars = 
+  let optionSets, attributes = 
     metadata.Attributes 
     |> Array.map (interpretAttribute nameMap schemaNames)
     |> Array.unzip
 
-  let attr_vars = 
-    attr_vars 
+  let attributes = 
+    attributes 
     |> Array.choose id 
     |> Array.toList
-    
-  let opt_sets = 
-    opt_sets 
+   
+  let optionSets = 
+    optionSets 
     |> Seq.choose id 
     |> Seq.distinctBy (fun x -> x.displayName) 
     |> Seq.toList
@@ -167,7 +165,7 @@ let interpretEntity schemaNames nameMap (metadata:EntityMetadata) =
     | x     -> x |> Array.choose (interpretM2MRelationship schemaNames nameMap logicalName)
 
 
-  let rel_entities, rel_vars = 
+  let relatedEntities, relationships = 
     [ metadata.OneToManyRelationships  |> handleOneToMany false 
       metadata.ManyToOneRelationships  |> handleOneToMany true 
       metadata.ManyToManyRelationships |> handleManyToMany metadata.LogicalName 
@@ -175,8 +173,8 @@ let interpretEntity schemaNames nameMap (metadata:EntityMetadata) =
       |> List.ofArray
       |> List.unzip
 
-  let rel_entities = 
-    rel_entities 
+  let relatedEntities = 
+    relatedEntities 
     |> Set.ofList 
     |> Set.remove metadata.SchemaName 
     |> Set.toList
@@ -186,8 +184,9 @@ let interpretEntity schemaNames nameMap (metadata:EntityMetadata) =
     logicalName = metadata.LogicalName
     entitySetName = metadata.EntitySetName |> Utility.stringToOption
     idAttribute = metadata.PrimaryIdAttribute
-    attributes = attr_vars
-    relationships = rel_vars
-    optionSets = opt_sets
-    relatedEntities = rel_entities 
+    attributes = attributes
+    optionSets = optionSets
+    relatedEntities = relatedEntities
+    allRelationships = relationships
+    availableRelationships = relationships |> List.filter (fun r -> schemaNames.Contains r.relatedSchemaName)
   }

@@ -140,6 +140,16 @@ let getFilterVariable (a: XrmAttribute) =
 
   Variable.Create(name, vType)
 
+
+let getBindVariables isCreate isUpdate attrMap (r: XrmRelationship) =
+  Map.tryFind r.attributeName attrMap
+  ?>> fun attr ->
+    match r.referencing && isCreate = attr.createable && isUpdate = attr.updateable with
+    | false -> None
+    | true  -> sprintf "%s_bind$%s" r.navProp r.relatedSetName |> Some
+  ?|> fun name -> Variable.Create(name, TsType.Union [ TsType.String; TsType.Null ], optional = true)
+
+
 let getCreateUpdateVariables isCreate isUpdate (a: XrmAttribute) = 
   match 
     a.specialType, 
@@ -148,14 +158,16 @@ let getCreateUpdateVariables isCreate isUpdate (a: XrmAttribute) =
 
   | SpecialType.EntityReference, true, Some varNames ->
     varNames 
-    |> Array.map (fun n -> Variable.Create(n, TsType.Union [ TsType.String; TsType.Null ], optional = true)) 
+    |> Array.map (fun name -> Variable.Create(name, TsType.Union [ TsType.String; TsType.Null ], optional = true)) 
     |> List.ofArray
   | _    -> []
+
 
 let getResultVariable (a: XrmAttribute) = 
   match a.specialType with
   | SpecialType.EntityReference -> getEntityRefDef guidName a |> snd |> List.map defToResVars
   | _ -> []
+
 
 let getRelationVars (r: XrmRelationship) = 
   TsType.Custom (resultName r.relatedSchemaName)
@@ -165,15 +177,18 @@ let getRelationVars (r: XrmRelationship) =
     | false -> TsType.Array
   |> fun ty -> Variable.Create(r.navProp, TsType.Union [ ty; TsType.Null ], optional = true)
 
+
 let getFormattedResultVariable (a: XrmAttribute) = 
   match hasFormattedValue a with
   | true  -> getResultDef a |> snd |> List.map defToFormattedVars
   | false -> []
 
+
 let getBaseVariable (a: XrmAttribute) = 
   match a.specialType with
   | SpecialType.EntityReference -> []
   | _ -> getResultDef a |> snd |> List.map defToBaseVars
+
 
 let getExpandVariable parent (r: XrmRelationship) = 
   let typeMapper =
@@ -195,9 +210,11 @@ let getExpandVariable parent (r: XrmRelationship) =
     
   Variable.Create(r.navProp, TsType.SpecificGeneric("WebExpand", tys))
 
-let getRelatedVariable ns referencing (r: XrmRelationship) = 
+
+let getRelatedVariable referencing (r: XrmRelationship) = 
   if r.referencing <> referencing then None
-  else Some <| Variable.Create(r.navProp, retrieveMappingType r.relatedSchemaName ns)
+  else Some <| Variable.Create(r.navProp, retrieveMappingType r.relatedSchemaName "")
+
 
 (** Code creation methods *)
 type EntityInterfaces = {
@@ -238,33 +255,32 @@ let getBlankEntityInterfaces e =
 
 /// Create entity interfaces
 let getEntityInterfaceLines ns e = 
-  let ei = getBlankEntityInterfaces e
+  let entityInterfaces = getBlankEntityInterfaces e
 
-  let attrSet = e.attributes |> List.map (fun a -> a.logicalName) |> Set.ofList
-  let attrs = attrSet |> Set.toArray
-  let availableNavProp (r: XrmRelationship) = attrSet.Contains r.navProp |> not
+  let attrMap = e.attributes |> List.map (fun a -> a.logicalName, a) |> Map.ofList
+  let availableNavProp (r: XrmRelationship) = attrMap.ContainsKey r.navProp |> not
+  
+  let interfaces = 
+    [ { entityInterfaces._base with vars = e.attributes |> List.map getBaseVariable |> concatDistinctSort } 
+      { entityInterfaces.relationships with vars = e.availableRelationships |> List.filter availableNavProp |> List.map getRelationVars |> sortByName }
+      
+      { entityInterfaces.createAndUpdate with vars = e.allRelationships |> List.choose (getBindVariables true true attrMap) |> sortByName }
+      { entityInterfaces.create with vars = e.allRelationships |> List.choose (getBindVariables true false attrMap) |> sortByName }
+      { entityInterfaces.update with vars = e.allRelationships |> List.choose (getBindVariables false true attrMap) |> sortByName }
+      
+      { entityInterfaces.select with vars = e.attributes |> List.map (getSelectVariable entityInterfaces.select) |> sortByName } 
+      { entityInterfaces.filter with vars = e.attributes |> List.map getFilterVariable |> sortByName }
+      { entityInterfaces.expand with vars = e.availableRelationships |> List.map (getExpandVariable entityInterfaces.expand) |> sortByName }
 
-  let is = 
-    [ { ei._base with vars = e.attributes |> List.map getBaseVariable |> concatDistinctSort } 
-      { ei.relationships with vars = e.relationships |> List.filter availableNavProp |> List.map getRelationVars |> sortByName }
-        
-      { ei.createAndUpdate with vars = e.attributes |> List.map (getCreateUpdateVariables true true) |> concatDistinctSort }
-      { ei.create with vars = e.attributes |> List.map (getCreateUpdateVariables true false) |> concatDistinctSort }
-      { ei.update with vars = e.attributes |> List.map (getCreateUpdateVariables false true) |> concatDistinctSort }
+      { entityInterfaces.formattedResult with vars = e.attributes |> List.map getFormattedResultVariable |> concatDistinctSort }
+      { entityInterfaces.result with vars = entityTag :: (List.map getResultVariable e.attributes |> concatDistinctSort) }
 
-      { ei.select with vars = e.attributes |> List.map (getSelectVariable ei.select) |> sortByName } 
-      { ei.filter with vars = e.attributes |> List.map getFilterVariable |> sortByName }
-      { ei.expand with vars = e.relationships |> List.map (getExpandVariable ei.expand) |> sortByName }
-
-      { ei.formattedResult with vars = e.attributes |> List.map getFormattedResultVariable |> concatDistinctSort }
-      { ei.result with vars = entityTag :: (List.map getResultVariable e.attributes |> concatDistinctSort) }
-
-      { ei.oneRelated with vars = e.relationships |> List.choose (getRelatedVariable "" true) |> sortByName }
-      { ei.manyRelated with vars = e.relationships |> List.choose (getRelatedVariable "" false) |> sortByName }
+      { entityInterfaces.oneRelated with vars = e.availableRelationships |> List.choose (getRelatedVariable true) |> sortByName }
+      { entityInterfaces.manyRelated with vars = e.availableRelationships |> List.choose (getRelatedVariable false) |> sortByName }
     ]
     
   let namespacedLines = 
-    Namespace.Create(ns, declare = true, interfaces = is) |> CreateCommon.skipNsIfEmpty  
+    Namespace.Create(ns, declare = true, interfaces = interfaces) |> CreateCommon.skipNsIfEmpty  
     
   let entityBindingLines =
     match e.entitySetName with
