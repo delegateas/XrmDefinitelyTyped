@@ -1,6 +1,9 @@
 # Release Notes
 
-### 2.2.2 - June 27 2017
+### 2.2.3 - June 29 2017
+* Fix: Promise polyfill was not being included properly in the new gulp compilation setup
+
+### 2.2.2 - June 28 2017
 * Bind variables are now generated based on N:1 relationships, instead of Lookup attributes
 
 ### 2.2.1 - June 23 2017
