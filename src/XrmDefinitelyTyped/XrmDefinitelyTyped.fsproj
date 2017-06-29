@@ -92,6 +92,7 @@
     <EmbeddedResource Include="Resources\Dist\dg.xrmquery.web.min.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
+    <Content Include="Resources\Dist\dg.xrmquery.web.promise.js" />
     <EmbeddedResource Include="Resources\Dist\dg.xrmquery.web.promise.min.js" />
     <EmbeddedResource Include="Resources/metadata.d.ts" />
     <EmbeddedResource Include="Resources\xrm.d.ts" />

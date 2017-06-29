@@ -36,7 +36,11 @@ gulp.task("compile-ts", function () {
 });
 
 gulp.task("concat-promise", function () {
-    return gulp.src(outDir + "/dg.xrmquery.web.js")
+    return gulp.src(
+        [
+            outDir + "/../es6-promise.auto.min.js",
+            outDir + "/dg.xrmquery.web.js"
+        ])
         .pipe(concat("dg.xrmquery.web.promise.js"))
         .pipe(gulp.dest(outDir));
 });
