@@ -16,13 +16,11 @@ class SdkRestInputArgs extends FakeRequests {
         // Check requests
         expect(this.requests.length).to.equal(1);
         const req = this.requests[0];
-        console.log(req);
 
         // Respond
         const responseCheck = { name: "it-works" };
         req.respond(200, {}, JSON.stringify({ d: responseCheck }));
 
-        console.log(req);
         sinon.assert.calledWith(callback, responseCheck);
     }
 
@@ -36,13 +34,11 @@ class SdkRestInputArgs extends FakeRequests {
         // Check requests
         expect(this.requests.length).to.equal(1);
         const req = this.requests[0];
-        console.log(req);
 
         // Respond
         const responseCheck = { name: "it-works" };
         req.respond(200, {}, JSON.stringify({ d: responseCheck }));
 
-        console.log(req);
         sinon.assert.calledWith(callback, responseCheck);
     }
 
