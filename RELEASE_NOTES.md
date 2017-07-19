@@ -1,5 +1,8 @@
 # Release Notes
 
+### 2.3.0 - July 19 2017
+* Updated XrmQuery to be compatible with TypeScript 2.4.1
+
 ### 2.2.4 - June 29 2017
 * Added new methods to grid control which are found in newer versions (i.e. `getAttributes()`)
 * Moved `setDisabled` and `getDisabled` from the `BaseControl` interface to the `Control` interface
