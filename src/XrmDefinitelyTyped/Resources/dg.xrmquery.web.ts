@@ -493,7 +493,7 @@ namespace XQW {
      */
     executeRaw(successCallback: (x: T) => any, errorCallback: (err: Error) => any, parseResult: true): void;
     executeRaw(successCallback: (x: XMLHttpRequest) => any, errorCallback: (err: Error) => any, parseResult: false): void;
-    executeRaw(successCallback: (x: T | XMLHttpRequest) => any, errorCallback: (err: Error) => any = () => { }, parseResult: boolean = false) {
+    executeRaw(successCallback: ((x: T) => any) & ((x: XMLHttpRequest) => any), errorCallback: (err: Error) => any = () => { }, parseResult: boolean = false): void {
       let config = (req: XMLHttpRequest) => this.additionalHeaders.forEach(h => req.setRequestHeader(h.type, h.value));
       let successHandler = (req: XMLHttpRequest) => parseResult ? this.handleResponse(req, successCallback, errorCallback) : successCallback(req);
       return XrmQuery.sendRequest(this.requestType, this.getQueryString(), this.getObjectToSend(), successHandler, errorCallback, config);
@@ -707,7 +707,7 @@ namespace XQW {
      */
     includeFormattedValues(): Query<(FormattedResult & Result)[]> {
       this.additionalHeaders.push(FORMATTED_VALUES_HEADER);
-      return this;
+      return <any>this;
     }
 
     /**
@@ -844,7 +844,7 @@ namespace XQW {
 
     includeFormattedValues(): Query<FormattedResult & Result> {
       this.additionalHeaders.push(FORMATTED_VALUES_HEADER);
-      return this;
+      return <any>this;
     }
   }
 
@@ -884,7 +884,7 @@ namespace XQW {
   /**
    * Contains information about a Delete query
    */
-  export class DeleteRecord extends Query<void> {
+  export class DeleteRecord extends Query<undefined> {
     /** 
      * @internal 
      */
@@ -895,7 +895,7 @@ namespace XQW {
       this.entitySetName = taggedExec(entityPicker).toString();
     }
 
-    protected handleResponse(req: XMLHttpRequest, successCallback: () => any) {
+    protected handleResponse(req: XMLHttpRequest, successCallback: (x?: undefined) => any) {
       successCallback();
     }
 
@@ -913,7 +913,7 @@ namespace XQW {
   /**
    * Contains information about an UpdateRecord query
    */
-  export class UpdateRecord<IUpdate> extends Query<void> {
+  export class UpdateRecord<IUpdate> extends Query<undefined> {
     /** 
      * @internal 
      */
@@ -924,7 +924,7 @@ namespace XQW {
       this.entitySetName = taggedExec(entityPicker).toString();
     }
 
-    protected handleResponse(req: XMLHttpRequest, successCallback: () => any) {
+    protected handleResponse(req: XMLHttpRequest, successCallback: (x?: undefined) => any) {
       successCallback();
     }
 

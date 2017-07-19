@@ -17,6 +17,6 @@
     "gulp-uglify": "3.0.0",
     "merge2": "1.0.3",
     "run-sequence": "1.2.2",
-    "typescript": "2.3.2"
+    "typescript": "2.4.1"
   }
 }
