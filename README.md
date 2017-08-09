@@ -12,8 +12,8 @@ generating early-bound .NET classes for server-side code, it generates TypeScrip
 ## Getting started
 
 * [Getting started](http://delegateas.github.io/Delegate.XrmDefinitelyTyped/getting-started.html)
+* [(Video) XrmDefinitelyTyped: Setup, configuration and usage](https://www.youtube.com/watch?v=kOj8AAylJIs)
 * [Arguments and usage](http://delegateas.github.io/Delegate.XrmDefinitelyTyped/tool-usage.html)
-
 
 ## Contribute
 
