@@ -10,6 +10,17 @@ Prerequisities
 * TypeScript is set up to compile `.ts` files in your project
 
 
+Video Guide
+------------
+
+<div class="video-container">
+	<iframe
+		frameborder="0"
+		allowfullscreen=""
+		src="https://www.youtube.com/embed/kOj8AAylJIs">
+    </iframe>
+</div>
+
 Step-by-step
 ------------
 
