@@ -117,4 +117,10 @@ declare namespace Xrm {
          */
         getClientState(): ClientState;
     }
+    interface context {
+        /**
+         * Provides access to the getClient and getClientState methods you can use to determine which client is being used and whether the client is connected to the server.
+         */
+        client: client;
+    }
 }
