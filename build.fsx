@@ -224,7 +224,12 @@ Target "NuGet" (fun _ ->
         Version = release.NugetVersion
         ReleaseNotes = toLines release.Notes }) 
     (@"nuget/" + fullProjectName + ".nuspec"))
-              
+//  Paket.Pack(fun p ->
+//        { p with
+//            OutputPath = "bin"
+//            Version = release.NugetVersion            
+//            ReleaseNotes = toLines release.Notes})
+//)        
 
 Target "PublishNuget" (fun _ ->
   Paket.Push(fun p -> 

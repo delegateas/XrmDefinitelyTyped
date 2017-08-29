@@ -1,5 +1,8 @@
 # Release Notes
 
+### 2.3.1 - August 29 2017
+* Form programming methods introduced in CRM 2013 no longer appear when using CRM 2011
+
 ### 2.3.0 - July 19 2017
 * Updated XrmQuery to be compatible with TypeScript 2.4.1
 
