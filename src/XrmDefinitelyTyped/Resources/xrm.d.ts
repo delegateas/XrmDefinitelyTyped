@@ -539,10 +539,7 @@
      * Interface for a DateTime form control.
      */
     interface DateControl extends Control<Attribute<Date>> {
-        /**
-         * Get whether a date control shows the time portion of the date.
-         */
-        getShowTime(): boolean;
+        
     }
 
 
@@ -571,16 +568,6 @@
          * Sets the default view for the lookup control dialog box.
          */
         setDefaultView(guid: string): void;
-
-        /**
-         * Use this method to apply changes to lookups based on values current just as the user is about to view results for the lookup.
-         */
-        addPreSearch(handler: Function): void;
-
-        /**
-         * Use this method to remove event handler functions that have previously been set for the PreSearch event.
-         */
-        removePreSearch(handler: Function): void;
     }
 
 
@@ -592,11 +579,6 @@
          * Refreshes the data displayed in a subgrid.
          */
         refresh(): void;
-
-        /**
-         * Use this method to get the logical name of the relationship used for the data displayed in the grid.
-         */
-        getRelationshipName(): string
     }
 
     /**
@@ -1326,11 +1308,6 @@
         getCurrentTheme(): string;
 
         /**
-         * Returns whether Autosave is enabled for the organization.
-         */
-        getIsAutoSaveEnabled(): boolean;
-
-        /**
          * Returns the language code identifier (LCID) value that represents the base language for the organization.
          */
         getOrgLcid(): number;
@@ -1345,11 +1322,6 @@
          */
         getQueryStringParameters(): any;
 
-        /** 
-         * Returns the difference between the local time and Coordinated Universal Time (UTC).
-         */
-        getTimeZoneOffsetMinutes(): number;
-
         /**
          * Returns the GUID of the SystemUser.Id value for the current user.
          */
@@ -1359,11 +1331,6 @@
          * Returns the LCID value that represents the provisioned language that the user selected as their preferred language.
          */
         getUserLcid(): number;
-
-        /**
-         * Returns the name of the current user.
-         */
-        getUserName(): string;
 
         /**
          * Returns an array of strings that represent the GUID values of each of the security roles that the user is associated with or any teams that the user is associated with.
@@ -1460,13 +1427,6 @@ declare namespace Xrm {
     interface Utility {
 
         /**
-         * Determine if an entity is an activity entity.
-         *
-         * @param entityName The logical name of an entity.
-         */
-        isActivityType(entityName: string): boolean;
-
-        /**
          * Opens an entity form for a new or existing entity record using the options you set as parameters.
          *
          * @param name The logical name of the entity.
@@ -1475,17 +1435,7 @@ declare namespace Xrm {
          * @param windowOptions You can choose to open a form in a new window by passing a dictionary object with a boolean openInNewWindow property set to true.
          */
         openEntityForm(name: string, id?: string, parameters?: any, windowOptions?: WindowOptions): void;
-
-        /**
-         * Opens a quick create form.
-         * 
-         * @param callback The function that will be called when a record is created. This function is passed a lookup object as a parameter.
-         * @param entityLogicalName The logical name of the entity to create.
-         * @param createFromEntity Designates a record that will provide default values based on mapped attribute values.
-         * @param parameters A dictionary object that passes extra query string parameters to the form. Invalid query string parameters will cause an error.
-         */
-        openQuickCreate(callback: (lookup: Lookup) => any, entityLogicalName: string, createFromEntity?: Lookup, parameters?: any): void;
-
+                
         /**
          * Opens an HTML web resource.
          * 

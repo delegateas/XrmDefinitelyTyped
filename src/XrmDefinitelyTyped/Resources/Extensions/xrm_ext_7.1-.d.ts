@@ -26,6 +26,11 @@ declare namespace Xrm {
          * Use this method to remove event handlers from the GridControl.OnLoad event.
          */
         removeOnLoad(reference: Function): void;
+
+        /**
+         * Use this method to get the logical name of the relationship used for the data displayed in the grid.
+         */
+        getRelationshipName(): string
     }
 
     interface Grid {
@@ -81,6 +86,35 @@ declare namespace Xrm {
          * Returns the primary attribute value for the record in the row.
          */
         getPrimaryAttributeValue(): string;
+    }
+
+    interface Utility {
+        /**
+         * Opens a quick create form.
+         * 
+         * @param callback The function that will be called when a record is created. This function is passed a lookup object as a parameter.
+         * @param entityLogicalName The logical name of the entity to create.
+         * @param createFromEntity Designates a record that will provide default values based on mapped attribute values.
+         * @param parameters A dictionary object that passes extra query string parameters to the form. Invalid query string parameters will cause an error.
+         */
+        openQuickCreate(callback: (lookup: Lookup) => any, entityLogicalName: string, createFromEntity?: Lookup, parameters?: any): void;
+    }
+
+    interface context {
+        /** 
+         * Returns the difference between the local time and Coordinated Universal Time (UTC).
+         */
+        getTimeZoneOffsetMinutes(): number;
+    }
+
+    /**
+     * Interface for a DateTime form control.
+     */
+    interface DateControl extends Control<Attribute<Date>> {
+        /**
+         * Get whether a date control shows the time portion of the date.
+         */
+        getShowTime(): boolean;
     }
 
 }

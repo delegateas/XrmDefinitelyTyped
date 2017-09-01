@@ -25,6 +25,16 @@ declare namespace Xrm {
          * @param entityType If this is set, the filter only applies to that entity type. Otherwise, it applies to all types of entities returned.
          */
         addCustomFilter(fetchXml: string, entityType?: string): void;
+
+        /**
+         * Use this method to apply changes to lookups based on values current just as the user is about to view results for the lookup.
+         */
+        addPreSearch(handler: Function): void;
+
+        /**
+         * Use this method to remove event handler functions that have previously been set for the PreSearch event.
+         */
+        removePreSearch(handler: Function): void;
     }
 
     interface DateControl extends Control<Attribute<Date>> {
@@ -101,6 +111,13 @@ declare namespace Xrm {
          * @param noCloseCallback A function to execute when the Cancel button is clicked.
          */
         confirmDialog(message: string, yesCloseCallback?: Function, noCloseCallback?: Function): void;
+
+        /**
+         * Determine if an entity is an activity entity.
+         *
+         * @param entityName The logical name of an entity.
+         */
+        isActivityType(entityName: string): boolean;
     }
 
     type ClientType = "Web" | "Outlook" | "Mobile";
@@ -122,5 +139,10 @@ declare namespace Xrm {
          * Provides access to the getClient and getClientState methods you can use to determine which client is being used and whether the client is connected to the server.
          */
         client: client;
+
+        /**
+         * Returns the name of the current user.
+         */
+        getUserName(): string;
     }
 }
