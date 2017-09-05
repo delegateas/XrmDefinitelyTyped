@@ -1,5 +1,8 @@
 # Release Notes
 
+### 2.3.3 - September 1 2017
+* Additonal form programming methods introduced in CRM 2013 as well as some introduced in CRM 2015, no longer appear when using CRM 2011
+
 ### 2.3.2 - August 29 2017
 * Fixed a bug when generating typings for 2011
 
