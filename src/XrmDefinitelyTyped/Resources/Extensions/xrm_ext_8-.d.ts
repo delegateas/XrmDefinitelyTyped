@@ -200,4 +200,14 @@ declare namespace Xrm {
          */
         movePrevious(callback?: (stringVal: ProcessStageMoveAnswer) => any): void;
     }
+
+    /**
+     * Interface for an OptionSet form control.
+     */
+    interface OptionSetControl<T> extends Control<OptionSetAttribute<T>> {
+        /**
+         * Returns an array of option objects representing the valid options for an option-set control.
+         */
+        getOptions(): Option<T>[];
+    }
 }

@@ -475,11 +475,6 @@
          * @param number The value of the option you want to remove.
          */
         removeOption(number: number): void;
-
-        /**
-         * Returns an array of option objects representing the valid options for an option-set control.
-         */
-        getOptions(): Option<T>[];
     }
 
 
