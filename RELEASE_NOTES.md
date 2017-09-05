@@ -1,5 +1,10 @@
 # Release Notes
 
+### 2.3.4 - September 5 2017
+* isOutlookClient() and isOutlookOnline() now correctly appears when using CRM 2011
+* Xrm.Page.ui.process and OptionSetControl.getOptions() which where introduced in CRM 2015, no longer appears in previous versions
+* Xrm.Page.data.process which where introduced in CRM 2016, no longer appears in previous versions
+
 ### 2.3.3 - September 1 2017
 * Additonal form programming methods introduced in CRM 2013 as well as some introduced in CRM 2015, no longer appear when using CRM 2011
 
