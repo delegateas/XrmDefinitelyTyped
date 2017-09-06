@@ -22,6 +22,7 @@ type XdtGenerationSettings = {
   crmVersion: Version option
   skipForms: bool
   oneFile: bool
+  useDeprecated: bool
   jsLib: string option
   tsLib: string option
   restNs: string option

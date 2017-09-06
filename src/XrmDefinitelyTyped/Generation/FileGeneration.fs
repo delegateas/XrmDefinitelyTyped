@@ -33,23 +33,23 @@ let stripReferenceLines : string list -> string list =
   List.skipWhile (fun l -> String.IsNullOrEmpty(l.Trim()) || l.StartsWith "/// <reference")
 
 
-let filterVersionedStrings crmVersion (prefix: string) (suffix: string) =
+let filterVersionedStrings crmVersion (useDeprecated: bool) (prefix: string) (suffix: string) =
   Array.filter (fun (n: string) ->
     n.StartsWith prefix &&
     n.EndsWith suffix &&
 
     n.Substring(prefix.Length, n.Length - prefix.Length - suffix.Length) 
     |> parseVersionCriteria 
-    ?|> matchesVersionCriteria crmVersion 
+    ?|> matchesVersionCriteria crmVersion useDeprecated
     ?| false
   )
 
-let getBaseExtensions crmVersion = 
+let getBaseExtensions crmVersion (useDeprecated: bool) = 
   let prefix = "xrm_ext_"
   let suffix = ".d.ts"
 
   allResourceNames
-  |> filterVersionedStrings crmVersion prefix suffix
+  |> filterVersionedStrings crmVersion useDeprecated prefix suffix
 
 
 (** Generation functionality *)
@@ -88,7 +88,7 @@ let generateFolderStructure out (gSettings: XdtGenerationSettings) =
 /// Generate the declaration files stored as resources
 let generateDtsResourceFiles crmVersion gSettings state =
   // Extend xrm.d.ts with version specific additions
-  getBaseExtensions crmVersion
+  getBaseExtensions crmVersion gSettings.useDeprecated
   |> Seq.map (getResourceLines >> stripReferenceLines)
   |> (getResourceLines "xrm.d.ts" |> Seq.singleton |> Seq.append)
   |> List.concat

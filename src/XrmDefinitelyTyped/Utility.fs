@@ -62,7 +62,7 @@ let parseJson<'t> (jsonString:string)  : 't =
 
 // Versioning
 type Version = int * int * int * int
-type VersionCriteria = Version option * Version option
+type VersionCriteria = Version option * Version option * Version option
 
 let parseVersion (str:string): Version =
   let vArr = str.Split('.')
@@ -73,7 +73,7 @@ let parseVersion (str:string): Version =
 let getIntGroup def (m:Match) (idx:int) = parseInt m.Groups.[idx].Value ?| def
 let getMinVersion = getIntGroup 0
 let getMaxVersion = getIntGroup Int32.MaxValue
-let criteriaRegex = Regex(@"^(?:(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:\.(\d+))?)?-(?:(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:\.(\d+))?)?$")
+let criteriaRegex = Regex(@"^(?:(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:\.(\d+))?)?-(?:(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:\.(\d+))?)?(-)?(?:(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:\.(\d+))?)?$")
 
 let parseVersionCriteria criteria: VersionCriteria option =
   let m = criteriaRegex.Match(criteria)
@@ -86,12 +86,28 @@ let parseVersionCriteria criteria: VersionCriteria option =
       | false -> None
       | true  -> Some (getMinVersion m 1, getMinVersion m 2, getMinVersion m 3, getMinVersion m 4)
 
-    let toVersion =
-      match m.Groups.[5].Success with
+    //Question is if group five should be required
+    let deprecationVersion =
+      match m.Groups.[9].Success with
       | false -> None
-      | true  -> Some (getMaxVersion m 5, getMaxVersion m 6, getMaxVersion m 7, getMaxVersion m 8)
+      | true  -> match m.Groups.[5].Success with
 
-    Some (fromVersion, toVersion)
+                 | false -> None
+                 | true  -> Some (getMaxVersion m 5, getMaxVersion m 6, getMaxVersion m 7, getMaxVersion m 8)
+
+    let toVersion =
+      match m.Groups.[9].Success with
+      | false -> match m.Groups.[5].Success with
+
+                 | false -> None
+                 | true  -> Some (getMaxVersion m 5, getMaxVersion m 6, getMaxVersion m 7, getMaxVersion m 8)
+
+      | true  -> match m.Groups.[10].Success with
+
+                 | false -> None
+                 | true  -> Some (getMaxVersion m 10, getMaxVersion m 11, getMaxVersion m 12, getMaxVersion m 13)
+
+    Some (fromVersion, deprecationVersion, toVersion)
 
 let versionCompare ((a1,b1,c1,d1): Version) ((a2,b2,c2,d2): Version) =
   ([a1;b1;c1;d1], [a2;b2;c2;d2])
@@ -119,9 +135,13 @@ let (.>) v1 v2 =
   v1 .<= v2 |> not
 
 /// Check if the version matches the version criteria
-let matchesVersionCriteria (versionToCheck: Version) (criteria: VersionCriteria) =
+let matchesVersionCriteria (versionToCheck: Version) (useDeprecated: bool) (criteria: VersionCriteria) =
   match criteria with
-  | None, None       -> true
-  | Some v1, None    -> v1 .<= versionToCheck
-  | None, Some v2    -> versionToCheck .< v2
-  | Some v1, Some v2 -> v1 .<= versionToCheck && versionToCheck .< v2
+  | None, None, None          -> true
+  | Some v1, None, None       -> v1 .<= versionToCheck
+  | None, None, Some v3       -> versionToCheck .< v3
+  | Some v1, None, Some v3    -> v1 .<= versionToCheck && versionToCheck .< v3
+  | None, Some v2, None       -> versionToCheck .< v2 || useDeprecated
+  | Some v1, Some v2, None    -> v1 .<= versionToCheck && (versionToCheck .< v2 || useDeprecated)
+  | None, Some v2, Some v3    -> (versionToCheck .< v2 || useDeprecated) && versionToCheck .< v3
+  | Some v1, Some v2, Some v3 -> v1 .<= versionToCheck && (versionToCheck .< v2 || useDeprecated) && versionToCheck .< v3

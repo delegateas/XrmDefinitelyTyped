@@ -34,6 +34,11 @@ type Args private () =
       description="Version of the targeted CRM"
       required=false }
 
+    { command="useDeprecated"
+      altCommands=["ud"]
+      description="Flag to include deprecated functionality"
+      required=false }
+
     { command="solutions"
       altCommands=["ss"]
       description="Comma-separated list of solutions names. Generates code for the entities found in these solutions."
