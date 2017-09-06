@@ -80,6 +80,12 @@
     <EmbeddedResource Include="Resources\Extensions\xrm_ext_8.2-.d.ts" />
     <EmbeddedResource Include="Resources\Extensions\xrm_ext_7-.d.ts" />
     <EmbeddedResource Include="Resources\Extensions\xrm_ext_-5.d.ts" />
+    <None Include="Resources\Extensions\xrm_ext_9-.d.ts" />
+    <EmbeddedResource Include="Resources\Extensions\xrm_ext_-8-.d.ts" />
+    <EmbeddedResource Include="Resources\Extensions\xrm_ext_7.1-8-.d.ts" />
+    <EmbeddedResource Include="Resources\Extensions\xrm_ext_8.2-8-.d.ts" />
+    <EmbeddedResource Include="Resources\Extensions\xrm_ext_6-8-.d.ts" />
+    <EmbeddedResource Include="Resources\Extensions\xrm_ext_7-8-.d.ts" />
     <EmbeddedResource Include="Resources\_internal\sdk.d.ts" />
     <EmbeddedResource Include="Resources\Dist\dg.xrmquery.rest.d.ts" />
     <EmbeddedResource Include="Resources\Dist\dg.xrmquery.rest.js">

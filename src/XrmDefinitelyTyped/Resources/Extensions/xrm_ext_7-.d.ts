@@ -32,11 +32,4 @@ declare namespace Xrm {
          */
         setVisible(visible: boolean): void;
     }
-
-    interface context {
-        /**
-         * Returns whether Autosave is enabled for the organization.
-         */
-        getIsAutoSaveEnabled(): boolean;
-    }
 }
