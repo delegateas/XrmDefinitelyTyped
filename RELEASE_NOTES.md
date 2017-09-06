@@ -1,5 +1,12 @@
 # Release Notes
 
+### 2.3.5 - September 6 2017
+* A new argument, "useDeprecated", has been added that toggles whether to include or exclude deprecated functionality.
+* The following functions have been moved into deprecation extensions due to the impending 9.0 release:
+* Xrm.Page.context: getQueryStringParameters, getTimeZoneOffsetMinutes, getUserId, getUserLcid, getUserName, getUserRoles, getIsAutoSaveEnabled, getOrgLcid, getOrgUniqueName
+* addOnKeyPress removeOnKeyPress, showAutoComplete, hideAutoComplete
+* Xrm.Utility: alertDialog, confirmDialog, isActivityType, openEntityForm, openQuickCreate, openWebResource
+
 ### 2.3.4 - September 5 2017
 * isOutlookClient() and isOutlookOnline() now correctly appears when using CRM 2011
 * Xrm.Page.ui.process and OptionSetControl.getOptions() which where introduced in CRM 2015, no longer appears in previous versions
