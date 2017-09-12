@@ -72,7 +72,7 @@ let parseVersion (str:string): Version =
   
 let getIntGroup def (m:Match) (idx:int) = parseInt m.Groups.[idx].Value ?| def
 let getMinVersion = getIntGroup 0
-let getMaxVersion = getIntGroup Int32.MaxValue
+let getMaxVersion (m:Match) (idx:int) = getIntGroup Int32.MaxValue m idx
 let criteriaRegex = Regex(@"^(?:(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:\.(\d+))?)?-(?:(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:\.(\d+))?)?(-)?(?:(\d+)(?:\.(\d+))?(?:\.(\d+))?(?:\.(\d+))?)?$")
 
 let parseVersionCriteria criteria: VersionCriteria option =
@@ -88,24 +88,17 @@ let parseVersionCriteria criteria: VersionCriteria option =
 
     //Question is if group five should be required
     let deprecationVersion =
-      match m.Groups.[9].Success with
+      match m.Groups.[9].Success && m.Groups.[5].Success with
+      | true -> Some (getMinVersion m 5, getMinVersion m 6, getMinVersion m 7, getMinVersion m 8)
       | false -> None
-      | true  -> match m.Groups.[5].Success with
-
-                 | false -> None
-                 | true  -> Some (getMaxVersion m 5, getMaxVersion m 6, getMaxVersion m 7, getMaxVersion m 8)
 
     let toVersion =
       match m.Groups.[9].Success with
-      | false -> match m.Groups.[5].Success with
-
-                 | false -> None
-                 | true  -> Some (getMaxVersion m 5, getMaxVersion m 6, getMaxVersion m 7, getMaxVersion m 8)
-
-      | true  -> match m.Groups.[10].Success with
-
-                 | false -> None
-                 | true  -> Some (getMaxVersion m 10, getMaxVersion m 11, getMaxVersion m 12, getMaxVersion m 13)
+      | false when m.Groups.[5].Success -> 
+        Some (getMinVersion m 5, getMinVersion m 6, getMinVersion m 7, getMinVersion m 8)
+      | true when m.Groups.[10].Success -> 
+        Some (getMinVersion m 10, getMinVersion m 11, getMinVersion m 12, getMinVersion m 13)
+      | _ -> None
 
     Some (fromVersion, deprecationVersion, toVersion)
 
