@@ -1,4 +1,10 @@
 # Release Notes
+### 2.3.6 - October 10 2017
+* All functionality in this release is only for CRM version 8.2 and above
+* A new argument, "views", has been added. When set, all Views in the loaded solutions will be generated and put into the supplied namespace.
+* The available languages installed in CRM are now retrieved and useable as an enum called LCID.
+* The image web resources for the loaded solutions are now retrieved and useable as a union type called WebResourceImage.
+* A helper function is now available for custom view icons and tooltips introduced in CRM 8.2.
 
 ### 2.3.5 - September 6 2017
 * A new argument, "useDeprecated", has been added that toggles whether to include or exclude deprecated functionality.
