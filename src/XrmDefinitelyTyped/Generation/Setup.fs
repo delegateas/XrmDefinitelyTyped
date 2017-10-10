@@ -7,6 +7,7 @@ open IntermediateRepresentation
 open InterpretEntityMetadata
 open InterpretBpfJson
 open InterpretFormXml
+open InterpretView
 
 
 let intersectMappedSets a b = Map.ofSeq (seq {
@@ -65,6 +66,9 @@ let interpretCrmData out toIntersect (rawState: RawState) =
   let entityMetadata =
     rawState.metadata |> Array.Parallel.map (interpretEntity schemaNames rawState.nameMap)
 
+  let viewData =
+    rawState.viewData |> Array.map(interpretView entityMetadata)
+
   let bpfControls = interpretBpfs rawState.bpfData
 
   let formDict = interpretFormXmls entityMetadata rawState.formData bpfControls
@@ -74,5 +78,8 @@ let interpretCrmData out toIntersect (rawState: RawState) =
   { InterpretedState.entities = entityMetadata
     bpfControls = bpfControls
     forms = forms
+    imageWebResourceNames = rawState.imageWebResourceNames
+    lcidData = rawState.lcidData
+    viewData = viewData
     outputDir = out 
   }

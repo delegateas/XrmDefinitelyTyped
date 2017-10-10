@@ -51,6 +51,12 @@ type XrmEntity = {
   relatedEntities: string list 
 }
 
+type XrmView = {
+  name: string;
+  entityName: string;
+  attributes: XrmAttribute list
+  linkedAttributes: XrmAttribute list
+}
 
 // Forms
 type ControlType = 
@@ -121,4 +127,7 @@ type InterpretedState = {
   entities: XrmEntity[]
   forms: XrmForm[]
   bpfControls: Map<string,ControlField list>
+  imageWebResourceNames: string[]
+  lcidData: int[]
+  viewData: XrmView[]
 }

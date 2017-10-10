@@ -1,4 +1,8 @@
 ﻿/// <reference path="..\xrm.d.ts" />
+
+//Function helper type for a function that can be set to be called by a view column to show an image with a tooltip instead of the ordinary data
+type TooltipFunc = (rowData: string, lcid: LCID) => [WebResourceImage, string]
+
 declare namespace Xrm {
     /**
      * Interface for a single result in the auto-completion list.

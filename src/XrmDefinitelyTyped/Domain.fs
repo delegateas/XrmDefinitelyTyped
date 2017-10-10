@@ -27,6 +27,7 @@ type XdtGenerationSettings = {
   tsLib: string option
   restNs: string option
   webNs: string option
+  viewNs: string option
   formIntersects: FormIntersect [] option
 }
 
@@ -54,4 +55,13 @@ type RawState = {
   
   [<field : DataMember>]
   formData: Map<string, Entity[]>
+
+  [<field : DataMember>]
+  imageWebResourceNames: string[]
+
+  [<field : DataMember>]
+  lcidData : int[]
+
+  [<field : DataMember>]
+  viewData : (string * (string * string list * ((string * string) * string list) list)) []
 }

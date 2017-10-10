@@ -9,7 +9,9 @@ open IntermediateRepresentation
 
 open CreateOptionSetDts
 open CreateFormDts
-
+open CreateType
+open CreateLCID
+open CreateView
 
 (** Resource helpers *)
 let getResourceLines resName =
@@ -74,7 +76,7 @@ let clearOldOutputFiles out =
 
 
 /// Generate the required output folder structure
-let generateFolderStructure out (gSettings: XdtGenerationSettings) =
+let generateFolderStructure out (gSettings: XdtGenerationSettings) rawVersion =
   printf "Generating folder structure..."
   Directory.CreateDirectory (sprintf "%s/_internal" out) |> ignore
   if not gSettings.oneFile then 
@@ -82,6 +84,7 @@ let generateFolderStructure out (gSettings: XdtGenerationSettings) =
     if gSettings.restNs.IsSome then Directory.CreateDirectory (sprintf "%s/REST" out) |> ignore
     if gSettings.webNs.IsSome then Directory.CreateDirectory (sprintf "%s/Web" out) |> ignore
     Directory.CreateDirectory (sprintf "%s/_internal/Enum" out) |> ignore
+    if rawVersion .>= (8,2,0,0) && gSettings.viewNs.IsSome then Directory.CreateDirectory (sprintf "%s/View" out) |> ignore
   printfn "Done!"
 
 
@@ -148,6 +151,40 @@ let generateEnumDefs state =
       sprintf "%s/_internal/Enum/%s.d.ts" state.outputDir os.displayName,
       getOptionSetEnum os)
 
+  printfn "Done!"
+  defs
+
+// Generate WebResource definitions
+let generateWebResourceDefs (state: InterpretedState) =
+  printf "Generating WebResources definitions..."
+  let defs =
+    sprintf "%s/_internal/WebResources.d.ts" state.outputDir,
+    state.imageWebResourceNames
+    |> getUnionType "WebResourceImage"
+
+  printfn "Done!"
+  defs
+
+ // Generate LCID definitions
+let generateLCIDDefs state =
+  printf "Generating LCID definitions..."
+  let defs =
+    sprintf "%s/_internal/Enum/LCID.d.ts" state.outputDir,
+    state.lcidData
+    |> createLCIDEnum
+
+  printfn "Done!"
+  defs
+
+// Generate View definitions
+let generateViewDefs ns state =
+  printf "Generating View definitions..."
+  let defs =
+    state.viewData
+    |> Array.Parallel.map (fun (view: XrmView) ->
+      sprintf "%s/View/%s/%s.d.ts" state.outputDir view.entityName view.name,
+      getViewInterface ns view)
+  
   printfn "Done!"
   defs
 

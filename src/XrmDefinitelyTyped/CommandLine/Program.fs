@@ -59,6 +59,7 @@ let getGenerationSettings parsedArgs =
     oneFile = getArg parsedArgs "oneFile" parseBoolish ?| false
     restNs = getArg parsedArgs "rest" nsSanitizer
     webNs = getArg parsedArgs "web" nsSanitizer
+    viewNs = getArg parsedArgs "views" nsSanitizer
     formIntersects = formIntersects 
   }
 

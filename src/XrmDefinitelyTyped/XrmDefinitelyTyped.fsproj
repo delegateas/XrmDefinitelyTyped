@@ -117,12 +117,16 @@
     <Compile Include="Interpretation/InterpretEntityMetadata.fs" />
     <Compile Include="Interpretation/InterpretFormXml.fs" />
     <Compile Include="Interpretation/InterpretBpfJson.fs" />
+    <Compile Include="Interpretation\InterpretView.fs" />
     <Compile Include="CreateTypeScript\CreateCommon.fs" />
     <Compile Include="CreateTypeScript/CreateOptionSetDts.fs" />
     <Compile Include="CreateTypeScript\CreateRestEntities.fs" />
     <Compile Include="CreateTypeScript\CreateWebEntities.fs" />
     <Compile Include="CreateTypeScript\CreateSdkRestDts.fs" />
     <Compile Include="CreateTypeScript/CreateFormDts.fs" />
+    <Compile Include="CreateTypeScript\CreateUnionType.fs" />
+    <Compile Include="CreateTypeScript\CreateLCID.fs" />
+    <Compile Include="CreateTypeScript\CreateView.fs" />
     <Compile Include="Generation/DataRetrieval.fs" />
     <Compile Include="Generation\Setup.fs" />
     <Compile Include="Generation\FileGeneration.fs" />

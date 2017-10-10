@@ -69,6 +69,12 @@ type Args private () =
       description="Flag to generate Web API entities. Setting it to a value sets up a namespace for them."
       required=false }
 
+    { command="views"
+      altCommands=["v"]
+      description="Flag to generate View interfaces. Setting it to a value sets up a namespace for them. CRM version 8.2 or higher required."
+      required=false
+    }
+
     { command="formintersect"
       altCommands=["fi"]
       description="Comma-separated list of named semicolon-separated lists of form GUIDs that should be intersected. "

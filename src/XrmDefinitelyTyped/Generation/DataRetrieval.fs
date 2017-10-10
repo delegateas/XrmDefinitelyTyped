@@ -5,6 +5,9 @@ open Utility
 
 open CrmBaseHelper
 open CrmDataHelper
+open DG.XrmDefinitelyTyped.InterpretView
+open Microsoft.Xrm.Sdk.Metadata
+open System.Text.RegularExpressions
 
 
 /// Connect to CRM with the given authentication
@@ -39,6 +42,66 @@ let retrieveEntityMetadata entities mainProxy proxyGetter =
   printfn "Done!"
   rawEntityMetadata
 
+let getEntityMetadataNameIfMissing entityName (rawEntityMetadata: EntityMetadata[]) = 
+  let option = Array.tryFind(fun (em: EntityMetadata) -> em.LogicalName = entityName) rawEntityMetadata
+
+  match option with
+  | None -> Some entityName
+  | Some x -> None
+
+// Retrieve missing entitymetadat that some views depend on
+let retrieveMissingViewDependingEntityMetadata parsedFetchXmlViews mainProxy rawEntityMetadata =
+  let allLinkedAttributes = 
+    parsedFetchXmlViews
+    |> Array.map (fun (_, (_, _, (linkedAttributes))) -> linkedAttributes)
+    |> List.concat
+    |> Array.ofList
+
+  let referencedEntityNames =
+    allLinkedAttributes
+    |> Array.map (fun ((entityName,_),_) -> entityName)
+    |> Array.distinct
+
+  let missingEntityMetadataNames =
+    referencedEntityNames
+    |> Array.choose(fun referencedEntityName -> getEntityMetadataNameIfMissing referencedEntityName rawEntityMetadata)
+  
+  getEntityMetadataBulk mainProxy missingEntityMetadataNames
+  
+// Retrieve CRM views
+let retrieveViews entitiesToFetch rawEntityMetadata mainProxy =
+  printf "Fetching specific views from CRM..."
+
+  let _,rawViews =
+    getViews entitiesToFetch mainProxy
+    |> Seq.fold (fun previous (entityName, name, fetchXml) ->
+    let (previousNames, previousViews) = previous
+    let regex = new Regex(@"[^a-zA-Z0-9_]")
+    let trimmedName = 
+      regex.Replace(name, "")
+      |> fun s -> if Char.IsNumber(s, 0) then "_" + s else s
+    let fullName = (sprintf "%s_%s" entityName trimmedName)
+
+    let duplicates, nextMap = 
+      match Map.tryFind fullName previousNames with
+      | Some i -> i, Map.add fullName (i + 1) previousNames
+      | None -> 0, Map.add fullName 1 previousNames
+    
+    let safeName = if duplicates > 0 then trimmedName + duplicates.ToString() else trimmedName
+    nextMap, (safeName, fetchXml)::previousViews) (Map.empty, [])
+
+  let fetchXmlParsedViews =
+    rawViews
+    |> List.map (fun (name, fetchxml) -> (name, intepretFetchXml fetchxml))
+    |> Array.ofList
+    
+  let missingEntityMetadata = 
+    rawEntityMetadata
+    |> retrieveMissingViewDependingEntityMetadata fetchXmlParsedViews mainProxy
+  
+  printfn "Done!"
+  fetchXmlParsedViews, missingEntityMetadata
+
 /// Retrieve version from CRM
 let retrieveCrmVersion mainProxy =
   printf "Retrieving CRM version..."
@@ -50,13 +113,32 @@ let retrieveCrmVersion mainProxy =
   version
 
 /// Retrieve all the necessary CRM data
-let retrieveCrmData crmVersion entities mainProxy proxyGetter =
+let retrieveCrmData crmVersion entities solutions mainProxy proxyGetter =
   let nameMap = 
     retrieveEntityNameMap mainProxy
 
-  let rawEntityMetadata = 
+  let originalRawEntityMetadata = 
     retrieveEntityMetadata entities mainProxy proxyGetter
+    |> Array.sortBy(fun md -> md.LogicalName)
     
+  let rawViewData, additionalEntityMetadata = 
+    match crmVersion .>= (8,2,0,0) with
+    | false -> [||], [||]
+    | true  -> retrieveViews entities originalRawEntityMetadata mainProxy
+
+  let imageWebResources =
+    match crmVersion .>= (8,2,0,0) with
+    | false -> [||]
+    | true  -> getImgWebResourceNames solutions mainProxy
+
+  let localIDs = 
+    match crmVersion .>= (8,2,0,0) with
+    | false -> [||]
+    | true  -> getLCIDS mainProxy
+
+  let rawEntityMetadata =
+    Array.append originalRawEntityMetadata additionalEntityMetadata
+
   let bpfData = 
     match crmVersion .>= (6,0,0,0) with
     | false -> [||]
@@ -80,6 +162,9 @@ let retrieveCrmData crmVersion entities mainProxy proxyGetter =
   { 
     RawState.metadata = rawEntityMetadata
     nameMap = nameMap
+    imageWebResourceNames = imageWebResources
+    lcidData = localIDs
+    viewData = rawViewData
     bpfData = bpfData
     formData = formData 
     crmVersion = crmVersion

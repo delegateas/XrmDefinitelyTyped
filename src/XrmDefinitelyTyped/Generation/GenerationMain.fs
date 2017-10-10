@@ -19,7 +19,7 @@ let retrieveRawState xrmAuth rSettings =
     getFullEntityList rSettings.entities rSettings.solutions mainProxy
       
   // Retrieve data from CRM
-  retrieveCrmData crmVersion entities mainProxy proxyGetter
+  retrieveCrmData crmVersion entities rSettings.solutions mainProxy proxyGetter
 
 
 /// Main generator function
@@ -30,7 +30,7 @@ let generateFromRaw gSettings rawState =
 
   // Pre-generation tasks 
   clearOldOutputFiles out
-  generateFolderStructure out gSettings
+  generateFolderStructure out gSettings rawState.crmVersion
 
   // Interpret data and generate resource files
   let data =
@@ -40,6 +40,15 @@ let generateFromRaw gSettings rawState =
     seq {
       yield! generateEnumDefs data
       if not gSettings.skipForms then yield! generateFormDefs data
+
+      match rawState.crmVersion .>= (8,2,0,0) with
+      | true -> 
+        yield generateWebResourceDefs data
+        yield generateLCIDDefs data
+        match gSettings.viewNs with
+        | Some ns -> yield! generateViewDefs ns data
+        | None -> ()
+      | false -> ()
 
       match gSettings.webNs with
       | Some ns -> 
@@ -55,7 +64,7 @@ let generateFromRaw gSettings rawState =
       | None -> ()
     }
     |> Array.ofSeq
-  
+
   printf "Writing to files..."
   copyJsLibResourceFiles gSettings
   copyTsLibResourceFiles gSettings
