@@ -69,16 +69,16 @@ let retrieveMissingViewDependingEntityMetadata parsedFetchXmlViews mainProxy raw
   getEntityMetadataBulk mainProxy missingEntityMetadataNames
   
 // Retrieve CRM views
-let retrieveViews entitiesToFetch rawEntityMetadata mainProxy =
+let retrieveViews entitiesToFetch rawEntityMetadata mainProxy :ViewData[] * EntityMetadata[] =
   printf "Fetching specific views from CRM..."
 
   let _,rawViews =
     getViews entitiesToFetch mainProxy
-    |> Seq.fold (fun previous (entityName, name, fetchXml) ->
+    |> Seq.fold (fun previous (entityName, viewName, fetchXml) ->
     let (previousNames, previousViews) = previous
     let regex = new Regex(@"[^a-zA-Z0-9_]")
     let trimmedName = 
-      regex.Replace(name, "")
+      regex.Replace(viewName, "")
       |> fun s -> if Char.IsNumber(s, 0) then "_" + s else s
     let fullName = (sprintf "%s_%s" entityName trimmedName)
 

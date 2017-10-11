@@ -53,7 +53,7 @@ type XrmEntity = {
 
 type XrmView = {
   name: string;
-  entityName: string;
+  entityName: EntityName;
   attributes: XrmAttribute list
   linkedAttributes: XrmAttribute list
 }

@@ -17,6 +17,8 @@ type XrmAuthentication = {
   ap: AuthenticationProviderType option
 }
 
+type OptionalNamespace = string option
+
 type XdtGenerationSettings = {
   out: string option
   crmVersion: Version option
@@ -25,17 +27,28 @@ type XdtGenerationSettings = {
   useDeprecated: bool
   jsLib: string option
   tsLib: string option
-  restNs: string option
-  webNs: string option
-  viewNs: string option
+  restNs: OptionalNamespace
+  webNs: OptionalNamespace
+  viewNs: OptionalNamespace
   formIntersects: FormIntersect [] option
 }
 
+type EntityName = string
+
 type XdtRetrievalSettings = {
-  entities: string[] option
+  entities: EntityName[] option
   solutions: string[] option
 }
 
+type ViewName = string
+type AttributeName = string
+type OwnedAttributes = AttributeName List
+type Alias = string
+type LinkedEntityName = string * Alias
+type LinkedEntity = LinkedEntityName * AttributeName list
+type LinkedAttributes = LinkedEntity list
+type ParsedFetchXml = (EntityName * OwnedAttributes * LinkedAttributes)
+type ViewData = (ViewName * ParsedFetchXml)
 
 /// Serializable record containing necessary (meta)data
 [<DataContract>]
@@ -48,7 +61,7 @@ type RawState = {
   metadata: EntityMetadata[]
   
   [<field : DataMember>]
-  nameMap: Map<string, (string * string)>
+  nameMap: Map<EntityName, (string * string)>
 
   [<field : DataMember>]
   bpfData: Entity[]
@@ -63,5 +76,5 @@ type RawState = {
   lcidData : int[]
 
   [<field : DataMember>]
-  viewData : (string * (string * string list * ((string * string) * string list) list)) []
+  viewData : ViewData []
 }

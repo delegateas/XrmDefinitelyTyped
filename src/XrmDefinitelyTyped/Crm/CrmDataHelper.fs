@@ -56,7 +56,7 @@ let getViews (entities: string[] option) proxy =
   let query = new QueryExpression("savedquery")
   query.ColumnSet <- new ColumnSet([| "name"; "querytype"; "returnedtypecode"; "fetchxml" |])
 
-  query.Criteria.AddCondition(new ConditionExpression("querytype", ConditionOperator.Equal, 0))
+  query.Criteria.AddCondition(new ConditionExpression("querytype", ConditionOperator.Equal, 0)) // Public Views
   query.Criteria.AddCondition(new ConditionExpression("fetchxml", ConditionOperator.NotNull))
   if entities.IsSome then
     query.Criteria.AddCondition(new ConditionExpression("returnedtypecode", ConditionOperator.In, entities.Value))
@@ -67,17 +67,22 @@ let getViews (entities: string[] option) proxy =
   
   resp.EntityCollection.Entities 
   |> Array.ofSeq
-  |> Array.map (fun viewEntity -> (viewEntity.Attributes.["returnedtypecode"].ToString(), viewEntity.Attributes.["name"].ToString(), viewEntity.Attributes.["fetchxml"].ToString()))
+  |> Array.map (fun viewEntity -> 
+      (viewEntity.GetAttributeValue<string>("returnedtypecode"), viewEntity.GetAttributeValue<string>("name"), viewEntity.GetAttributeValue<string>("fetchxml"))
+  )
 
-
+// Retrieve webresources of given type from given solution
 let getWebResourceNamesFromSolution (resourcetypes: int[]) (solution: string) proxy =
+  //Query the solution components for web resources
   let query = new QueryExpression("solutioncomponent")
-  query.Criteria.AddCondition(new ConditionExpression("componenttype", ConditionOperator.Equal, 61))
-
+  query.Criteria.AddCondition(new ConditionExpression("componenttype", ConditionOperator.Equal, 61)) // Web Resource
+  
+  //Make sure to only retrieve componentents belonging to the given solution
   let solutionLink = new LinkEntity("solutioncomponent", "solution", "solutionid", "solutionid", JoinOperator.Inner)
   solutionLink.LinkCriteria.AddCondition(new ConditionExpression("uniquename", ConditionOperator.Equal, solution))
   query.LinkEntities.Add(solutionLink)
 
+  //Get the web resources that match, the guids retrieved from solution component and the given types
   let webresourceLink = new LinkEntity("solutioncomponent", "webresource", "objectid", "webresourceid", JoinOperator.Inner)
   webresourceLink.Columns <- new ColumnSet([|"name"|])
   webresourceLink.LinkCriteria.AddCondition(new ConditionExpression("webresourcetype", ConditionOperator.In, resourcetypes))
@@ -94,6 +99,7 @@ let getWebResourceNamesFromSolution (resourcetypes: int[]) (solution: string) pr
   |> Seq.map (fun (sc: Entity) -> downcast sc.GetAttributeValue<AliasedValue>("webresource.name").Value : string)
   |> Array.ofSeq
 
+// Retrieve all web resources of the given type
 let getAllWebResourceNames (resourcetypes: int[]) proxy =
   let query = new QueryExpression("webresource")
   query.ColumnSet <- new ColumnSet([| "name" |])
@@ -104,16 +110,13 @@ let getAllWebResourceNames (resourcetypes: int[]) proxy =
 
   let resp = getResponse<RetrieveMultipleResponse> proxy request
 
-  let resources =
-    resp.EntityCollection.Entities
-    |> Array.ofSeq
-
-  resources 
-    |> Array.map (fun img -> downcast img.Attributes.Item("name") : string)
+  resp.EntityCollection.Entities
+  |> Seq.map (fun img -> img.GetAttributeValue<string>("name"))
+  |> Array.ofSeq
 
 //Retrieve image webresources
 let getImgWebResourceNames solutions proxy =
-  let imageTypes = [|5;6;7|]
+  let imageTypes = [|5;6;7|] //Web Resource Image Types (PNG, JPG, GIF)
 
   match solutions with
   | Some sol -> 

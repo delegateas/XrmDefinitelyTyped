@@ -7,7 +7,7 @@ open DG.XrmDefinitelyTyped.IntermediateRepresentation
 let xn s = XName.Get(s)
   
 // Function for getting the names of the columns in a fetch xml
-let getColumnNames (xml: XDocument) =
+let getColumnNames (xml: XDocument) :OwnedAttributes=
   xml.Element(xn "fetch").Element(xn "entity").Elements(xn "attribute")
   |> Seq.map (fun (e: XElement) -> e.Attribute(xn "name").Value)
   |> List.ofSeq
@@ -29,7 +29,7 @@ let getLinkEntityNameAndAlias (linkEntity: XElement) =
   name, alias
 
 // Function for getting the entity, attribute name pairs of the linked entities
-let getLinkedAttributes (xml: XDocument) = 
+let getLinkedAttributes (xml: XDocument) : LinkedAttributes= 
   let linkEntities = xml.Element(xn "fetch").Element(xn "entity").Elements(xn "link-entity")
   
   let linkedAttributes =
@@ -39,7 +39,7 @@ let getLinkedAttributes (xml: XDocument) =
   linkedAttributes |> List.ofSeq
 
 // Function to intepret a single view's fetch xml
-let intepretFetchXml fetchXml =
+let intepretFetchXml fetchXml :ParsedFetchXml =
   let xml = XDocument.Parse(fetchXml)
   
   let entityName =  xml.Element(xn "fetch").Element(xn "entity").Attribute(xn "name").Value
