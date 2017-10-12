@@ -1056,7 +1056,10 @@ namespace XQW {
    * @param obj
    */
   function transformObject(obj: any) {
-    if (obj instanceof Object) {
+    if (obj instanceof Date) {
+      return obj;
+
+    } else if (obj instanceof Object) {
       var newObj = {};
       Object.keys(obj).forEach(key => parseAttribute(key, transformObject(obj[key]), newObj));
       return newObj;
