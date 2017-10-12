@@ -1,4 +1,8 @@
 # Release Notes
+
+### 2.3.7 - October 12 2017
+* Fixed issue with updating a datetime or date only field using XrmQuery
+
 ### 2.3.6 - October 10 2017
 * All functionality in this release is only for CRM version 8.2 and above
 * A new argument, "views", has been added. When set, all Views in the loaded solutions will be generated and put into the supplied namespace.
