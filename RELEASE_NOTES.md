@@ -1,5 +1,8 @@
 # Release Notes
 
+### 2.3.8 - October 13 2017
+* Duplicate names in forms are now allowed
+
 ### 2.3.7 - October 12 2017
 * Fixed issue with updating a datetime or date only field using XrmQuery
 
