@@ -55,6 +55,17 @@ let varsToType =
   varsToInlineInterfaceString >> TsType.Custom
 
 let sortByName = List.sortBy (fun (x: Variable) -> x.name)
+let assignUniqueNames =
+  List.groupBy (fun (var: Variable) -> var.name)
+  >> List.map (fun (_, var) -> 
+         var
+//         |> Array.sortBy (fun var -> var.guid)
+         |> List.mapi (fun i var -> 
+                    if i = 0 then var
+                    else { var with name = sprintf "%s%i" var.name i }))
+  >> List.concat
+//  >> sortByName
+
 let concatDistinctSort = 
   List.concat >> List.distinctBy (fun (x: Variable) -> x.name) >> sortByName
 
@@ -262,21 +273,21 @@ let getEntityInterfaceLines ns e =
   
   let interfaces = 
     [ { entityInterfaces._base with vars = e.attributes |> List.map getBaseVariable |> concatDistinctSort } 
-      { entityInterfaces.relationships with vars = e.availableRelationships |> List.filter availableNavProp |> List.map getRelationVars |> sortByName }
+      { entityInterfaces.relationships with vars = e.availableRelationships |> List.filter availableNavProp |> List.map getRelationVars |> assignUniqueNames |> sortByName }
       
-      { entityInterfaces.createAndUpdate with vars = e.allRelationships |> List.choose (getBindVariables true true attrMap) |> sortByName }
-      { entityInterfaces.create with vars = e.allRelationships |> List.choose (getBindVariables true false attrMap) |> sortByName }
-      { entityInterfaces.update with vars = e.allRelationships |> List.choose (getBindVariables false true attrMap) |> sortByName }
+      { entityInterfaces.createAndUpdate with vars = e.allRelationships |> List.choose (getBindVariables true true attrMap) |> assignUniqueNames |> sortByName }
+      { entityInterfaces.create with vars = e.allRelationships |> List.choose (getBindVariables true false attrMap) |> assignUniqueNames |> sortByName }
+      { entityInterfaces.update with vars = e.allRelationships |> List.choose (getBindVariables false true attrMap) |> assignUniqueNames |> sortByName }
       
-      { entityInterfaces.select with vars = e.attributes |> List.map (getSelectVariable entityInterfaces.select) |> sortByName } 
-      { entityInterfaces.filter with vars = e.attributes |> List.map getFilterVariable |> sortByName }
-      { entityInterfaces.expand with vars = e.availableRelationships |> List.map (getExpandVariable entityInterfaces.expand) |> sortByName }
+      { entityInterfaces.select with vars = e.attributes |> List.map (getSelectVariable entityInterfaces.select) |> assignUniqueNames |> sortByName } 
+      { entityInterfaces.filter with vars = e.attributes |> List.map getFilterVariable |> assignUniqueNames |> sortByName }
+      { entityInterfaces.expand with vars = e.availableRelationships |> List.map (getExpandVariable entityInterfaces.expand) |> assignUniqueNames |> sortByName }
 
       { entityInterfaces.formattedResult with vars = e.attributes |> List.map getFormattedResultVariable |> concatDistinctSort }
       { entityInterfaces.result with vars = entityTag :: (List.map getResultVariable e.attributes |> concatDistinctSort) }
 
-      { entityInterfaces.oneRelated with vars = e.availableRelationships |> List.choose (getRelatedVariable true) |> sortByName }
-      { entityInterfaces.manyRelated with vars = e.availableRelationships |> List.choose (getRelatedVariable false) |> sortByName }
+      { entityInterfaces.oneRelated with vars = e.availableRelationships |> List.choose (getRelatedVariable true) |> assignUniqueNames |> sortByName }
+      { entityInterfaces.manyRelated with vars = e.availableRelationships |> List.choose (getRelatedVariable false) |> assignUniqueNames |> sortByName }
     ]
     
   let namespacedLines = 
