@@ -45,6 +45,7 @@ let intersectForms formDict =
   >> Seq.map (fun (name, (deps, a, c, t)) -> 
     { XrmForm.name = name
       entityName = "_special"
+      guid = None
       entityDependencies = deps |> Set.toSeq
       formType = None
       attributes = a |> Set.toList

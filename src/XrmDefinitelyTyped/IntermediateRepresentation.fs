@@ -113,6 +113,7 @@ type ControlField = string * string * ControlClassId
 type XrmForm = {
   entityName: string
   entityDependencies: string seq
+  guid: System.Guid option
   formType: string option
   name: string
   attributes: XrmFormAttribute list

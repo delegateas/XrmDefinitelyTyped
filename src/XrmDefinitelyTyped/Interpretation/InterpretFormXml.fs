@@ -225,6 +225,7 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
   systemForm.Id, 
   { XrmForm.name =  name |> Utility.sanitizeString
     entityName = logicalName
+    guid = Some systemForm.Id 
     entityDependencies = Seq.singleton logicalName
     formType = enum<FormType>(typeInt).ToString() |> Utility.sanitizeString |> Some
     attributes = 

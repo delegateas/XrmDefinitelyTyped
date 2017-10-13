@@ -1,5 +1,9 @@
 # Release Notes
 
+### 2.3.9 - October 13 2017
+* Forms with duplicate names are named starting from 1
+* Forms with duplicate names are ordered by their guid, to ensure a deterministic order
+
 ### 2.3.8 - October 13 2017
 * Duplicate names in forms are now allowed
 
