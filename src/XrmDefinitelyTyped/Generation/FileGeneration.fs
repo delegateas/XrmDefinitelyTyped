@@ -249,12 +249,21 @@ let generateWebEntityDefs ns state =
 /// Generate the Form definitions
 let generateFormDefs state =
   printf "Generation Form definitions..."
+  let getFormType xrmForm = xrmForm.formType ?|> sprintf "/%s" ?| ""
   let defs = 
     state.forms
+    |> Array.groupBy (fun (form: XrmForm) -> getFormType form, form.name)
+    |> Array.map (fun (_,forms) ->
+        forms
+        |> Array.mapi (fun i form ->
+          if i = 0 then form else
+          { form with name = sprintf "%s%i" form.name i }
+          )
+      )
+    |> Array.concat
     |> Array.Parallel.map (fun xrmForm ->
-      let path = sprintf "%s/Form/%s%s" state.outputDir xrmForm.entityName (xrmForm.formType ?|> sprintf "/%s" ?| "")
+      let path = sprintf "%s/Form/%s%s" state.outputDir xrmForm.entityName (getFormType xrmForm)
       
-      // TODO: check for forms with same name
       let lines = getFormDts xrmForm
       sprintf "%s/%s.d.ts" path xrmForm.name, 
       lines
