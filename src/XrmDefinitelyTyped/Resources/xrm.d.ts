@@ -1,6 +1,4 @@
 ﻿declare namespace Xrm {
-    var Page: Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>;
-
     /**
      * Enum which corresponds to the values of Xrm.Page.ui.getFormType()
      */
@@ -377,12 +375,11 @@
          * Returns the option object that is selected in an optionset attribute.
          */
         getSelectedOption(): Option<T> | null;
-    }
+	}
 
-
-    type ControlType =
-        "standard" | "iframe" | "lookup" | "optionset" | "subgrid"
-        | "webresource" | "notes" | "timercontrol" | "kbsearch";
+	type ControlType =
+		"standard" | "iframe" | "lookup" | "optionset" | "subgrid"
+		| "webresource" | "notes" | "timercontrol" | "kbsearch";
 
     /**
      * Interface for a standard form control.
@@ -1006,7 +1003,7 @@
         /**
          * Navigation for the page.
          */
-        navigation: Navigation;
+        navigation: navigation;
 
         /**
          * Method to get the form context for the record. 
@@ -1076,7 +1073,7 @@
         navigate(): void;
     }
 
-    interface Navigation {
+    interface navigation {
         /**
          * Navigation items for the page.
          */
@@ -1148,11 +1145,6 @@
          * UI of the page.
          */
         ui: Xrm.UiModule<U, V>;
-
-        /**
-         * The context of the page.
-         */
-        context: Xrm.context;
     }
 
     /**
@@ -1168,11 +1160,6 @@ type BaseXrm = typeof Xrm;
  * Client-side xRM object model.
  */
 interface Xrm<T extends Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>> extends BaseXrm {
-    /**
-     * The Xrm.Page object model, which contains data about the current page.
-     */
-    Page: T;
-
     /**
      * Various utility functions can be found here.
      */

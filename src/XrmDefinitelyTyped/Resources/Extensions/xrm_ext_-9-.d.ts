@@ -1,5 +1,15 @@
 ﻿/// <reference path="..\xrm.d.ts" />
 declare namespace Xrm {
+	var Page: Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>;
+	/**
+     * Interface for the base of an Xrm.Page
+     */
+	interface PageBase<T extends AttributeCollectionBase, U extends TabCollectionBase, V extends ControlCollectionBase> {
+        /**
+         * The context of the page.
+         */
+		context: Xrm.context;
+	}
 
     interface context {
         /**
@@ -79,4 +89,11 @@ declare namespace Xrm {
          */
         openWebResource(webResourceName: string, webResourceData?: string, width?: number, height?: number): Window;
     }
+}
+
+interface Xrm<T extends Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>> extends BaseXrm {
+    /**
+     * The Xrm.Page object model, which contains data about the current page.
+     */
+	Page: T;
 }
