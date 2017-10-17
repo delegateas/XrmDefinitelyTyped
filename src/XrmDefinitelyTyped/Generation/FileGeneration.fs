@@ -76,7 +76,7 @@ let clearOldOutputFiles out =
 
 
 /// Generate the required output folder structure
-let generateFolderStructure out (gSettings: XdtGenerationSettings) rawVersion =
+let generateFolderStructure out (gSettings: XdtGenerationSettings) =
   printf "Generating folder structure..."
   Directory.CreateDirectory (sprintf "%s/_internal" out) |> ignore
   if not gSettings.oneFile then 
@@ -84,7 +84,7 @@ let generateFolderStructure out (gSettings: XdtGenerationSettings) rawVersion =
     if gSettings.restNs.IsSome then Directory.CreateDirectory (sprintf "%s/REST" out) |> ignore
     if gSettings.webNs.IsSome then Directory.CreateDirectory (sprintf "%s/Web" out) |> ignore
     Directory.CreateDirectory (sprintf "%s/_internal/Enum" out) |> ignore
-    if rawVersion .>= (8,2,0,0) && gSettings.viewNs.IsSome then Directory.CreateDirectory (sprintf "%s/View" out) |> ignore
+    if gSettings.viewNs.IsSome then Directory.CreateDirectory (sprintf "%s/View" out) |> ignore
   printfn "Done!"
 
 

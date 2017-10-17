@@ -30,7 +30,7 @@ let generateFromRaw gSettings rawState =
 
   // Pre-generation tasks 
   clearOldOutputFiles out
-  generateFolderStructure out gSettings rawState.crmVersion
+  generateFolderStructure out gSettings
 
   // Interpret data and generate resource files
   let data =
@@ -41,7 +41,7 @@ let generateFromRaw gSettings rawState =
       yield! generateEnumDefs data
       if not gSettings.skipForms then yield! generateFormDefs data
 
-      match rawState.crmVersion .>= (8,2,0,0) with
+      match crmVersion .>= (8,2,0,0) with
       | true -> 
         yield generateWebResourceDefs data
         yield generateLCIDDefs data
