@@ -43,10 +43,22 @@ let classIds =
     ("9C5CA0A1-AB4D-4781-BE7E-8DFBE867B87E", Timer)
   ] |> List.map (fun (id,t) -> id.ToUpper(), t) |> Map.ofList
     
-let getAttribute (enums:Map<string,TsType>) (_, attrName, controlClass) =
+let getAttributeType (entity: XrmEntity) name =
+  let attribute =
+    entity.attributes
+    |> List.tryFind (fun a -> a.logicalName = name)
+
+  match attribute with
+  | None -> TsType.Undefined
+  | Some a -> a.varType
+
+let getAttribute (enums:Map<string,TsType>) entity (_, attrName, controlClass) =
   if String.IsNullOrEmpty attrName then None else 
+  
+  let attrType = getAttributeType entity attrName
 
   let aType = 
+    if attrType = TsType.Boolean && controlClass = ControlClassId.Picklist then AttributeType.OptionSet TsType.Boolean else
     match controlClass with
     | Picklist 
     | StatusReason  -> AttributeType.OptionSet (enums.TryFind(attrName) ?| TsType.Number)
@@ -77,12 +89,12 @@ let getAttribute (enums:Map<string,TsType>) (_, attrName, controlClass) =
   Some (attrName, aType)
 
 
-let getControl  (enums:Map<string,TsType>) (controlField:ControlField): XrmFormControl option =
-  let controlId, attrName, controlClass = controlField
+let getControl  (enums:Map<string,TsType>) entity (controlField:ControlField): XrmFormControl option =
+  let controlId, _, controlClass = controlField
   if controlClass = QuickView then None else
 
   let aType = 
-    getAttribute enums controlField
+    getAttribute enums entity controlField
     |> Option.map snd
 
     
@@ -179,7 +191,7 @@ let getCompositeFields : ControlField list -> ControlField list =
   ) >> List.concat
 
 /// Function to interpret a single FormXml
-let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list option) (systemForm:Entity) =
+let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list option) entity (systemForm:Entity) =
   let bpfFields = bpfFields ?| []
   let form = XElement.Parse(systemForm.GetAttributeValue<string>("formxml"))
 
@@ -230,13 +242,13 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
     formType = enum<FormType>(typeInt).ToString() |> Utility.sanitizeString |> Some
     attributes = 
       controlFields @ compositeFields @ bpfFields
-      |> List.choose (getAttribute enums)
+      |> List.choose (getAttribute enums entity)
       |> List.distinctBy fst
       |> List.sortBy fst
 
     controls = 
       controlFields @ compositeFields @ bpfFields
-      |> List.choose (getControl enums)
+      |> List.choose (getControl enums entity)
       |> renameControls
       |> List.sortBy (fun (name, _, _) -> name)
 
@@ -254,6 +266,6 @@ let interpretFormXmls (entityMetadata: XrmEntity[]) (formData:Map<string,Entity[
         |> Map.ofList
         
       formData.[em.logicalName]
-      |> Array.Parallel.map (interpretFormXml enums (bpfControls.TryFind em.logicalName)))
+      |> Array.Parallel.map (interpretFormXml enums (bpfControls.TryFind em.logicalName) em))
     |> Array.concat
   |> dict
