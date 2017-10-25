@@ -2,6 +2,7 @@
 
 open TsStringUtil
 open IntermediateRepresentation
+open Utility
 
 /// Translate internal attribute type to corresponding TypeScript interface.
 let getAttributeInterface = function
@@ -55,14 +56,23 @@ let getAttributeCollection (attributes: XrmFormAttribute list) =
     funcs = getFuncs @ defaultFuncs)
 
 
+/// Auxiliary function that determines if a control is to be included based on it's name and the crmVersion
+let includeControl (name: string) crmVersion =
+    (not (name.StartsWith("header_")) && not (name.StartsWith("footer_"))) || crmVersion .>= (6,0,0,0)
+
 /// Generate Xrm.Page.ui.controls.get(<string>) functions.
-let getControlCollection (controls: XrmFormControl list) =
+let getControlCollection (controls: XrmFormControl list) (crmVersion: Version)=
   let getFuncs = 
     controls
     |> List.map (fun (name, aType, cType) ->
       let paramType = getConstantType name
       let returnType = getControlInterface cType aType          
-      Function.Create("get", [Variable.Create("name", paramType)], returnType))
+      match includeControl name crmVersion with
+      | false -> None
+      | true ->
+        Some (Function.Create("get", [Variable.Create("name", paramType)], returnType))
+      )
+    |> List.choose id
 
   let defaultFuncs = defaultCollectionFuncs "Xrm.BaseControl"
   Interface.Create("Controls", extends = ["Xrm.ControlCollectionBase"],
@@ -121,14 +131,19 @@ let getAttributeFuncs (attributes: XrmFormAttribute list) =
 
   
 /// Generate Xrm.Page.getControl(<string>) functions.
-let getControlFuncs (controls: XrmFormControl list) =
+let getControlFuncs (controls: XrmFormControl list) (crmVersion: Version)=
   let ctrlFuncs = 
     controls
     |> List.map (fun (name, aType, cType) ->
       let paramType = getConstantType name
       let returnType = getControlInterface cType aType
-      Function.Create("getControl", 
-        [ Variable.Create("controlName", paramType) ], returnType))
+      match includeControl name crmVersion with
+      | false -> None
+      | true ->
+        Some (Function.Create("getControl", 
+               [ Variable.Create("controlName", paramType) ], returnType))
+      )
+    |> List.choose id
 
   let defaultFunc =
     Function.Create("getControl", 
@@ -139,18 +154,18 @@ let getControlFuncs (controls: XrmFormControl list) =
 
 
 /// Generate internal namespace for keeping track all the collections.
-let getFormNamespace (form: XrmForm) =
+let getFormNamespace (form: XrmForm) crmVersion =
   Namespace.Create(form.name,
     interfaces = 
       [ getAttributeCollection form.attributes 
-        getControlCollection form.controls 
+        getControlCollection form.controls crmVersion
         getTabCollection form.tabs ],
     namespaces = 
       [ Namespace.Create("Tabs", interfaces = getSectionCollections form.tabs) ])
 
 
 /// Generate the interface for the Xrm.Page of the form.
-let getFormInterface (form: XrmForm) =
+let getFormInterface (form: XrmForm) crmVersion =
   let superClass = 
     sprintf "Xrm.PageBase<%s.Attributes,%s.Tabs,%s.Controls>"
       form.name form.name form.name
@@ -158,12 +173,12 @@ let getFormInterface (form: XrmForm) =
   Interface.Create(form.name, extends = [superClass], 
     funcs = 
       getAttributeFuncs form.attributes @ 
-      getControlFuncs form.controls)
+      getControlFuncs form.controls crmVersion)
 
 
 /// Generate the namespace containing all the form interface and internal 
 /// namespaces for collections.
-let getFormDts (form: XrmForm) = 
+let getFormDts (form: XrmForm) crmVersion = 
   let nsName = 
     sprintf "Form.%s%s" 
       (form.entityName |> Utility.sanitizeString)
@@ -174,7 +189,7 @@ let getFormDts (form: XrmForm) =
   Namespace.Create(
     nsName,
     declare = true,
-    namespaces = [ getFormNamespace form ],
-    interfaces = [ getFormInterface form ]) 
+    namespaces = [ getFormNamespace form crmVersion],
+    interfaces = [ getFormInterface form crmVersion]) 
   |> nsToString
 
