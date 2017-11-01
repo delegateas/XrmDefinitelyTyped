@@ -57,14 +57,14 @@ declare namespace Xrm {
          * 
          * @param save true if the data should be saved after it is refreshed, otherwise false.
          */
-        refresh(save?: boolean): Then;
+		refresh(save?: boolean): Then<undefined>;
 
         /**
          * Saves the record asynchronously with the option to set callback functions to be executed after the save operation is completed.
          *
          * @param saveOptions This option is only applicable when used with appointment, recurring appointment, or service activity records.
          */
-        save(saveOptions?: SaveOptions): Then;
+		save(saveOptions?: SaveOptions): Then<undefined>;
     }
 
     interface Attribute<T> {

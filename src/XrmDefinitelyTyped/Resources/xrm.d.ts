@@ -656,11 +656,6 @@
          * Returns a Boolean value that indicates if any fields in the form have been modified.
          */
         getIsDirty(): boolean;
-
-        /**
-         * Saves the record synchronously with the options to close the form or open a new form after the save is completed.
-         */
-        save(): boolean;
     }
 
 
@@ -850,14 +845,14 @@
         UseSchedulingEngine: boolean;
     }
 
-    interface Then {
+    interface Then<T> {
         /**
          * A function which can add callback handlers after it has finished.
          *
          * @param successCallback A function to call when the operation succeeds.
          * @param errorCallback A function to call when the operation fails.
          */
-        then(successCallback?: Function, errorCallback?: ErrorCallback): void;
+        then(successCallback?: (result: T) => void, errorCallback?: ErrorCallback): void;
     }
 
     interface ErrorCallback {
