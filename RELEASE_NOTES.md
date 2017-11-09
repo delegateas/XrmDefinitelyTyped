@@ -1,5 +1,15 @@
 # Release Notes
 
+### 2.3.11 - November 09 2017
+* XrmQuery now handles additional cases where Guid parentheses can occur.
+
+### 2.3.10 - November 09 2017
+* Views, LCIDs and webresource images are now properly generated based on generation settings instead of rawstate.
+* Increased support for CRM 9.0.
+* Header and footer controls will no longer be generated when using CRM 2011.
+* Two Options formatted as Lists now get the proper type boolean instead of number.
+* Made XrmQuery automatically remove Guid parenthesis, if they are there.
+
 ### 2.3.9 - October 13 2017
 * Forms with duplicate names are named starting from 1
 * Forms with duplicate names are ordered by their guid, to ensure a deterministic order
