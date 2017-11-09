@@ -97,8 +97,16 @@ namespace Filter.REST {
 
 
 namespace XrmQuery.REST {
+   
+  export function stripGUID(guid: string) {
+    if (guid.startsWith("{") && guid.endsWith("}"))
+      return guid.substring(1, guid.length - 1);
+    else
+      return guid;
+  }
+
   export function retrieveRecord<O, S, E, R>(entityPicker: (x: RestEntities) => RestMapping<O, S, E, any, R>, id: string) {
-    return new XQR.RetrieveRecord(entityPicker, id);
+    return new XQR.RetrieveRecord(entityPicker, stripGUID(id));
   }
   export function retrieveMultipleRecords<O, S, E, F, R>(entityPicker: (x: RestEntities) => RestMapping<O, S, E, F, R>) {
     return new XQR.RetrieveMultipleRecords(entityPicker);
@@ -107,10 +115,10 @@ namespace XrmQuery.REST {
     return new XQR.CreateRecord(entityPicker, record);
   }
   export function updateRecord<O>(entityPicker: (x: RestEntities) => RestMapping<O, any, any, any, any>, id: string, record: O) {
-    return new XQR.UpdateRecord(entityPicker, id, record);
+    return new XQR.UpdateRecord(entityPicker, stripGUID(id), record);
   }
   export function deleteRecord<O>(entityPicker: (x: RestEntities) => RestMapping<O, any, any, any, any>, id: string) {
-    return new XQR.DeleteRecord(entityPicker, id);
+    return new XQR.DeleteRecord(entityPicker, stripGUID(id));
   }
 }
 
