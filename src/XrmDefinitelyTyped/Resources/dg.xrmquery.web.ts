@@ -167,7 +167,7 @@ namespace Filter {
 	/**
 	 * Makes a string into a GUID that can be sent to the OData source
 	 */
-  export function makeGuid(id: string): XQW.Guid { return <XQW.Guid><any>XQW.makeTag(id) }
+  export function makeGuid(id: string): XQW.Guid { return <XQW.Guid><any>XQW.makeTag(XQW.stripGUID(id)) }
 
 	/**
 	 * @internal
@@ -316,7 +316,7 @@ namespace XQW {
   //  else return value;
   //}
 
-  function stripGUID(guid: string) {
+  export function stripGUID(guid: string) {
     if (guid.startsWith("{") && guid.endsWith("}"))
       return guid.substring(1, guid.length - 1);
     else
