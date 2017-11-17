@@ -69,21 +69,6 @@ namespace XrmQuery {
     return new XQW.UpdateRecord<IUpdate>(entityPicker, id, record);
   }
 
-  /**
-   * Instantiates a query that can update a specific record.
-   * @param entityPicker Function to select which entity-type should be updated.
-   * @param id GUID of the record to be updated.
-   * @param record Object containing the attributes to be updated.
-   */
-  export function associate<ISource, ITarget>(
-      entityPicker: (x: WebEntities) => WebMappingCUD<any, ISource>,
-      id: string,
-      entityTargetPicker: (x: WebEntities) => WebMappingCUD<any, ITarget>,
-      targetId: string,
-      relation: string) {
-      return new XQW.AssociateRecord<ISource,ITarget>(entityPicker, id, entityTargetPicker, targetId, relation);
-  }
-
 	/**
 	 * Instantiates a query that can delete a specific record.
 	 * @param entityPicker Function to select which entity-type should be deleted.
@@ -965,46 +950,6 @@ namespace XQW {
     }
   }
 
-    /**
-	 * Contains information about an AssociateRecord query
-	 */
-  export class AssociateRecord<ISource,ITarget> extends Query<undefined> {
-      /** 
-       * @internal 
-       */
-      private entitySetName: string;
-      private entitySetNameTarget: string;
-      private targetId: string;
-      private relation: string;
-      private record: any;
-
-      constructor(entityPicker: (x: WebEntities) => WebMappingCUD<any, ISource>, private id: string, entityTargetPicker: (x: WebEntities) => WebMappingCUD<any, ITarget>, private targetid: string, private rel: string) {
-          super("POST");
-          this.id = id !== undefined ? stripGUID(id) : id;
-          this.entitySetName = taggedExec(entityPicker).toString();
-          this.entitySetNameTarget = taggedExec(entityTargetPicker).toString();
-          this.targetId = targetid !== undefined ? stripGUID(targetid) : targetid;
-          this.relation = rel;
-          this.record = {};
-          this.record["_bind$" + this.entitySetNameTarget] = this.targetId;
-      }
-
-      protected handleResponse(req: XMLHttpRequest, successCallback: (x?: undefined) => any) {
-          successCallback();
-      }
-
-      setData(id: string, record: any) {
-          this.id = stripGUID(id);
-          this.record = record;
-          return this;
-      }
-
-      protected getObjectToSend = () => JSON.stringify(transformObject(this.record));
-
-      getQueryString(): string {
-          return `${this.entitySetName}(${this.id})/${this.relation}`;
-      }
-  }
 
   /**
    * @internal
