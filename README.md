@@ -26,7 +26,7 @@ Recommended environment: [Visual Studio 2017](https://www.visualstudio.com/downl
 
 * [F# 4.0+](https://www.microsoft.com/en-us/download/details.aspx?id=48179)
 * [Node.js and npm](https://nodejs.org/)
-* [TypeScript 2.0 - 2.3.3](https://www.microsoft.com/en-us/download/details.aspx?id=48593)
+* [TypeScript 2.0<](https://www.microsoft.com/en-us/download/details.aspx?id=48593)
 
 **Building the project**
 
