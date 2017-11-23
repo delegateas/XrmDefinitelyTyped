@@ -1,5 +1,9 @@
 # Release Notes
 
+### 2.3.12 - November 23 2017
+* The WebEntities interface has been split up, as to comply with standards made in Typescript 2.4
+* As a fix for clashing names with the standard Typescript library in 2.4-2.6, all entity interfaces have been postfixed with "XDT" - this is a breaking change.
+
 ### 2.3.11 - November 09 2017
 * XrmQuery now handles additional cases where Guid parentheses can occur.
 
