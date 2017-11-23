@@ -12,6 +12,7 @@ let resultName x = strConcat x "Result"
 let selectName x = strConcat x "_Select"
 let filterName x = strConcat x "_Filter"
 let expName x = strConcat x "_Expand"
+let entityInterfaceName x = strConcat x "XDT"
 
 (** Type helper functions *)
 let arrayOf = TsType.Custom >> TsType.Array
@@ -70,6 +71,7 @@ let getRelationshipVariables isResult (list: XrmRelationship list) =
 
 /// Create entity interfaces
 let getEntityInterfaces ns e = 
+  let entityName = entityInterfaceName e.schemaName
   let baseName = baseName e.schemaName
   let selName = selectName e.schemaName
   let expName = expName e.schemaName
@@ -77,7 +79,7 @@ let getEntityInterfaces ns e =
   let filterName = filterName e.schemaName
 
   let mapping = 
-    [ e.schemaName; selName; expName; filterName; resultName ]
+    [ entityName; selName; expName; filterName; resultName ]
     |> CreateCommon.wrapNamesInNsIfAny ns
     |> fun interfaces ->
       Variable.Create(
@@ -88,7 +90,7 @@ let getEntityInterfaces ns e =
     [ Interface.Create(baseName, 
         vars = (e.attributes |> getOrgVariables),
         extends = [superEntityName])
-      Interface.Create(e.schemaName, 
+      Interface.Create(entityName, 
         vars = (e.availableRelationships |> getRelationshipVariables false),
         extends = [baseName])
       Interface.Create(resultName, 
