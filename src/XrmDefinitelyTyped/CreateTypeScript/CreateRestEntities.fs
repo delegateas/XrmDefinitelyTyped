@@ -12,7 +12,6 @@ let resultName x = strConcat x "Result"
 let selectName x = strConcat x "_Select"
 let filterName x = strConcat x "_Filter"
 let expName x = strConcat x "_Expand"
-let entityInterfaceName x = strConcat x "XDT"
 
 (** Type helper functions *)
 let arrayOf = TsType.Custom >> TsType.Array
@@ -71,7 +70,7 @@ let getRelationshipVariables isResult (list: XrmRelationship list) =
 
 /// Create entity interfaces
 let getEntityInterfaces ns e = 
-  let entityName = entityInterfaceName e.schemaName
+  let entityName = e.schemaName
   let baseName = baseName e.schemaName
   let selName = selectName e.schemaName
   let expName = expName e.schemaName

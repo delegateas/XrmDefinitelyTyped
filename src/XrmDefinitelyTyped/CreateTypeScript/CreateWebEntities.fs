@@ -27,7 +27,6 @@ let filterName = withEnding "_Filter"
 let expName = withEnding "_Expand"
 
 let superResultFixed = fixedName superEntityName
-let entityInterfaceName = withEnding "XDT" 
 
 let currencyId = {
   XrmAttribute.logicalName = "transactioncurrencyid"
@@ -248,7 +247,7 @@ type EntityInterfaces = {
 let getBlankEntityInterfaces e = 
   let bn = baseName e.schemaName;
   let rn = relName e.schemaName
-  let cu = entityInterfaceName e.schemaName
+  let cu = e.schemaName
   { _base = Interface.Create(bn, extends = [superEntityName])
     _fixed = Interface.Create(fixedName e.schemaName, vars = [ Variable.Create(e.idAttribute, TsType.String) ], extends = [ superResultFixed ])
     relationships = Interface.Create(rn) 
