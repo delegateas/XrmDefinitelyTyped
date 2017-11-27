@@ -3,9 +3,9 @@ import { suite, test, slow, timeout, skip, only } from "mocha-typescript";
 import FakeRequests from '../../../common/fakeRequests';
 import * as sinon from 'sinon';
 
-@suite 
+@suite
 class Web_CreateUpdate_Attributes extends FakeRequests {
-    
+
     @test
     "simple create"() {
         const relatedAccountId = "SOME_ACCOUNT_GUID";
@@ -30,6 +30,7 @@ class Web_CreateUpdate_Attributes extends FakeRequests {
         sinon.assert.calledWith(callback, newAccountId);
     }
 
+
     @test
     "simple delete"() {
         const relatedAccountId = "SOME_ACCOUNT_GUID";
@@ -43,7 +44,7 @@ class Web_CreateUpdate_Attributes extends FakeRequests {
         var req = this.requests[0];
         expect(req.url).to.equal(`accounts(SOME_ACCOUNT_GUID)`);
         expect(req.method).to.equal("DELETE");
-        
+
         // Check that body was created properly (no body on delete)
         var body = JSON.parse(req.requestBody);
         expect(body).to.deep.equal(null)
@@ -79,7 +80,6 @@ class Web_CreateUpdate_Attributes extends FakeRequests {
         req.respond(200, {}, "");
         sinon.assert.calledWith(callback);
     }
-    
 
     @test
     "associate"() {
@@ -94,40 +94,63 @@ class Web_CreateUpdate_Attributes extends FakeRequests {
         // Check request is valid 
         expect(this.requests.length).to.equal(1);
         var req = this.requests[0];
-        expect(req.url).to.equal(`accounts(SOME_ACCOUNT_GUID)/dg_account_contact`);
+        expect(req.url).to.equal(`accounts(SOME_ACCOUNT_GUID)/dg_account_contact/$ref`);
         expect(req.method).to.equal("POST");
-
         // Check that body was created properly
         var body = JSON.parse(req.requestBody);
-        expect(body).to.deep.equal({ '@odata.bind': `/contacts(${targetId})`})
-    
+        expect(body).to.deep.equal({ '@odata.id': `/api/data/v8.0/contacts(${targetId})` })
+
         // Check that response is gotten correctly from header (no response on associate)
         req.respond(200, {}, "");
         sinon.assert.calledWith(callback);
     }
 
     @test
-    "disassociate"() {
-        const accountId = "SOME_ACCOUNT_GUID";
+    "disassociate for single-valued"() {
+        const contactId = "SOME_CONTACT_GUID";
 
-        var relation = "dg_account_contact"
+        var relation = "SOME_ACCOUNT_LOOKUP_FIELD";
 
         var callback = sinon.spy();
-        XrmQuery.disassociate(x => x.accounts, accountId, relation).execute(callback);
+        XrmQuery.disassociate(x => x.contacts, contactId, relation).execute(callback);
 
         // Check request is valid 
         expect(this.requests.length).to.equal(1);
         var req = this.requests[0];
-        expect(req.url).to.equal(`accounts(SOME_ACCOUNT_GUID)/dg_account_contact`);
+        expect(req.url).to.equal(`contacts(SOME_CONTACT_GUID)/SOME_ACCOUNT_LOOKUP_FIELD/$ref`);
         expect(req.method).to.equal("DELETE");
 
         // Check that body was created properly (no body on disassociate)
         var body = JSON.parse(req.requestBody);
         expect(body).to.deep.equal(null)
-    
+
         // Check that response is gotten correctly from header (no response on disassociate)
         req.respond(200, {}, "");
         sinon.assert.calledWith(callback);
     }
 
+    @test
+    "disassociate for collection-valued"() {
+        const accountId = "SOME_ACCOUNT_GUID";
+        const targetId = "SOME_CONTACT_GUID";
+
+        var relation = "dg_account_contact";
+
+        var callback = sinon.spy();
+        XrmQuery.disassociate(x => x.accounts, accountId, relation, targetId).execute(callback);
+
+        // Check request is valid 
+        expect(this.requests.length).to.equal(1);
+        var req = this.requests[0];
+        expect(req.url).to.equal(`accounts(SOME_ACCOUNT_GUID)/dg_account_contact(SOME_CONTACT_GUID)/$ref`);
+        expect(req.method).to.equal("DELETE");
+
+        // Check that body was created properly (no body on disassociate)
+        var body = JSON.parse(req.requestBody);
+        expect(body).to.deep.equal(null)
+
+        // Check that response is gotten correctly from header (no response on disassociate)
+        req.respond(200, {}, "");
+        sinon.assert.calledWith(callback);
+    }
 }
