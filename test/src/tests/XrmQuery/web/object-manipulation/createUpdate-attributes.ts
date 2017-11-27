@@ -20,7 +20,7 @@ class Web_CreateUpdate_Attributes extends FakeRequests {
         var req = this.requests[0];
         expect(req.url).to.equal(`accounts`);
         expect(req.method).to.equal("POST");
-        
+
         // Check that body was created properly
         var body = JSON.parse(req.requestBody);
         expect(body).to.deep.equal({ 'parentaccountid@odata.bind': `/accounts(${relatedAccountId})` })
@@ -28,6 +28,29 @@ class Web_CreateUpdate_Attributes extends FakeRequests {
         // Check that response is gotten correctly from header
         req.respond(200, { 'OData-EntityId': newAccountId }, "");
         sinon.assert.calledWith(callback, newAccountId);
+    }
+
+    @test
+    "simple delete"() {
+        const relatedAccountId = "SOME_ACCOUNT_GUID";
+
+        var callback = sinon.spy();
+        XrmQuery.deleteRecord(x => x.accounts, relatedAccountId)
+            .execute(callback);
+
+        // Check request is valid 
+        expect(this.requests.length).to.equal(1);
+        var req = this.requests[0];
+        expect(req.url).to.equal(`accounts(SOME_ACCOUNT_GUID)`);
+        expect(req.method).to.equal("DELETE");
+        
+        // Check that body was created properly (no body on delete)
+        var body = JSON.parse(req.requestBody);
+        expect(body).to.deep.equal(null)
+
+        // Check that response is gotten correctly from header (no response on delete)
+        req.respond(200, {}, "");
+        sinon.assert.calledWith(callback);
     }
 
     @test
@@ -78,7 +101,31 @@ class Web_CreateUpdate_Attributes extends FakeRequests {
         var body = JSON.parse(req.requestBody);
         expect(body).to.deep.equal({ '@odata.bind': `/contacts(${targetId})`})
     
-        // Check that response is gotten correctly from header
+        // Check that response is gotten correctly from header (no response on associate)
+        req.respond(200, {}, "");
+        sinon.assert.calledWith(callback);
+    }
+
+    @test
+    "disassociate"() {
+        const accountId = "SOME_ACCOUNT_GUID";
+
+        var relation = "dg_account_contact"
+
+        var callback = sinon.spy();
+        XrmQuery.disassociate(x => x.accounts, accountId, relation).execute(callback);
+
+        // Check request is valid 
+        expect(this.requests.length).to.equal(1);
+        var req = this.requests[0];
+        expect(req.url).to.equal(`accounts(SOME_ACCOUNT_GUID)/dg_account_contact`);
+        expect(req.method).to.equal("DELETE");
+
+        // Check that body was created properly (no body on disassociate)
+        var body = JSON.parse(req.requestBody);
+        expect(body).to.deep.equal(null)
+    
+        // Check that response is gotten correctly from header (no response on disassociate)
         req.respond(200, {}, "");
         sinon.assert.calledWith(callback);
     }

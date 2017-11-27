@@ -6,14 +6,14 @@ declaration files based on *your* Dynamics 365/CRM/xRM solution.
 It is the TypeScript equivalent of [CrmSvcUtil](https://msdn.microsoft.com/en-us/library/gg327844.aspx), but instead of 
 generating early-bound .NET classes for server-side code, it generates TypeScript interfaces for all your client-side coding.
 
-[Read more here](http://delegateas.github.io/Delegate.XrmDefinitelyTyped/)
+[Read more here](https://github.com/delegateas/XrmDefinitelyTyped/wiki)
 
 
 ## Getting started
 
-* [Getting started](http://delegateas.github.io/Delegate.XrmDefinitelyTyped/getting-started.html)
+* [Getting started](https://github.com/delegateas/XrmDefinitelyTyped/wiki/Getting-started)
 * [(Video) XrmDefinitelyTyped: Setup, configuration and usage](https://www.youtube.com/watch?v=kOj8AAylJIs)
-* [Arguments and usage](http://delegateas.github.io/Delegate.XrmDefinitelyTyped/tool-usage.html)
+* [Arguments and usage](https://github.com/delegateas/XrmDefinitelyTyped/wiki/Tool-usage)
 
 ## Contribute
 
@@ -26,7 +26,7 @@ Recommended environment: [Visual Studio 2017](https://www.visualstudio.com/downl
 
 * [F# 4.0+](https://www.microsoft.com/en-us/download/details.aspx?id=48179)
 * [Node.js and npm](https://nodejs.org/)
-* [TypeScript 2.0+](https://www.microsoft.com/en-us/download/details.aspx?id=48593)
+* [TypeScript 2.0<](http://www.typescriptlang.org/index.html#download-links)
 
 **Building the project**
 

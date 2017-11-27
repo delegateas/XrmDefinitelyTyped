@@ -5,7 +5,7 @@ namespace XrmQuery {
 	 * @param id GUID of the wanted record.
 	 */
   export function retrieve<ISelect, IExpand, IFixed, FormattedResult, Result>(
-    entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>,
+    entityPicker: (x: WebEntitiesRetrieve) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>,
     id: string) {
     return XQW.RetrieveRecord.Get<ISelect, IExpand, IFixed, FormattedResult, Result>(entityPicker, id);
   }
@@ -15,7 +15,7 @@ namespace XrmQuery {
 	 * @param entityPicker Function to select which entity should be targeted.
 	 */
   export function retrieveMultiple<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(
-    entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>) {
+    entityPicker: (x: WebEntitiesRetrieve) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>) {
     return XQW.RetrieveMultipleRecords.Get<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(entityPicker);
   }
 
@@ -26,7 +26,7 @@ namespace XrmQuery {
 	 * @param relatedPicker Function to select which navigation property points to the related record.
 	 */
   export function retrieveRelated<ISingle, ISelect, IExpand, IFixed, FormattedResult, Result>(
-    entityPicker: (x: WebEntities) => WebMappingRelated<ISingle, any>,
+    entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>,
     id: string,
     relatedPicker: (x: ISingle) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>) {
     return XQW.RetrieveRecord.Related<ISingle, ISelect, IExpand, IFixed, FormattedResult, Result>(entityPicker, id, relatedPicker);
@@ -39,7 +39,7 @@ namespace XrmQuery {
 	 * @param relatedPicker Function to select which navigation property points to the related records.
 	 */
   export function retrieveRelatedMultiple<IMultiple, ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(
-    entityPicker: (x: WebEntities) => WebMappingRelated<any, IMultiple>,
+    entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>,
     id: string,
     relatedPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>) {
     return XQW.RetrieveMultipleRecords.Related<IMultiple, ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(entityPicker, id, relatedPicker);
@@ -51,7 +51,7 @@ namespace XrmQuery {
 	 * @param record Object of the record to be created.
 	 */
   export function create<ICreate>(
-    entityPicker: (x: WebEntities) => WebMappingCUD<ICreate, any>,
+    entityPicker: (x: WebEntitiesCUD) => WebMappingCUD<ICreate, any>,
     record?: ICreate) {
     return new XQW.CreateRecord<ICreate>(entityPicker, record);
   }
@@ -63,18 +63,20 @@ namespace XrmQuery {
 	 * @param record Object containing the attributes to be updated.
 	 */
   export function update<IUpdate>(
-    entityPicker: (x: WebEntities) => WebMappingCUD<any, IUpdate>,
+    entityPicker: (x: WebEntitiesCUD) => WebMappingCUD<any, IUpdate>,
     id?: string,
     record?: IUpdate) {
     return new XQW.UpdateRecord<IUpdate>(entityPicker, id, record);
   }
 
-  /**
-   * Instantiates a query that can update a specific record.
-   * @param entityPicker Function to select which entity-type should be updated.
-   * @param id GUID of the record to be updated.
-   * @param record Object containing the attributes to be updated.
-   */
+    /**
+     * Instantiates a query that can associate two specific records.
+     * @param entityPicker Function to select which entity-type should be associated.
+     * @param id GUID of the record to be associated.
+     * @param entityTargetPicker Function to select which entity-type should be associated to.
+     * @param targetId GUID of the record to be associated to.
+     * @param relation relation between the two records.
+     */
   export function associate<ISource, ITarget>(
       entityPicker: (x: WebEntities) => WebMappingCUD<any, ISource>,
       id: string,
@@ -84,13 +86,26 @@ namespace XrmQuery {
       return new XQW.AssociateRecord<ISource,ITarget>(entityPicker, id, entityTargetPicker, targetId, relation);
   }
 
+    /**
+     * Instantiates a query that can disassociate two specific records.
+     * @param entityPicker Function to select which entity-type should be disassociated.
+     * @param id GUID of the record to be disassociated.
+     * @param relation relation between the record and the associated record.
+     */
+  export function disassociate(
+      entityPicker: (x: WebEntities) => WebMappingCUD<any, any>,
+      id: string,
+      relation: string) {
+      return new XQW.DisassociateRecord(entityPicker, id, relation);
+  }
+
 	/**
 	 * Instantiates a query that can delete a specific record.
 	 * @param entityPicker Function to select which entity-type should be deleted.
 	 * @param id GUID of the record to be updated.
 	 */
   export function deleteRecord(
-    entityPicker: (x: WebEntities) => WebMappingCUD<any, any>,
+    entityPicker: (x: WebEntitiesCUD) => WebMappingCUD<any, any>,
     id?: string) {
     return new XQW.DeleteRecord(entityPicker, id);
   }
@@ -182,7 +197,7 @@ namespace Filter {
 	/**
 	 * Makes a string into a GUID that can be sent to the OData source
 	 */
-  export function makeGuid(id: string): XQW.Guid { return <XQW.Guid><any>XQW.makeTag(id) }
+  export function makeGuid(id: string): XQW.Guid { return <XQW.Guid><any>XQW.makeTag(XQW.stripGUID(id)) }
 
 	/**
 	 * @internal
@@ -220,12 +235,17 @@ namespace Filter {
 	 */
   function nestedFilter(fs: WebFilter[], conj: string): WebFilter {
     const last = fs.pop();
+    if (last === undefined) {
+      return <WebFilter><any>('');
+    }
     return fs.reduceRight((acc, c) => biFilter(c, conj, acc), last);
   }
 }
 
 
-interface WebEntities { }
+interface WebEntitiesRetrieve { }
+interface WebEntitiesRelated { }
+interface WebEntitiesCUD { }
 declare var GetGlobalContext: any;
 
 interface WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult> {
@@ -331,7 +351,7 @@ namespace XQW {
   //  else return value;
   //}
 
-  function stripGUID(guid: string) {
+  export function stripGUID(guid: string) {
     if (guid.startsWith("{") && guid.endsWith("}"))
       return guid.substring(1, guid.length - 1);
     else
@@ -556,12 +576,12 @@ namespace XQW {
     private topAmount: number | null = null;
 
     static Get<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(
-      entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>) {
+      entityPicker: (x: WebEntitiesRetrieve) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>) {
       return new RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(taggedExec(entityPicker).toString());
     }
 
     static Related<IMultiple, ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(
-      entityPicker: (x: WebEntities) => WebMappingRelated<any, IMultiple>,
+      entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>,
       id: string,
       relatedPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>) {
       return new RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(taggedExec(entityPicker).toString(), id, taggedExec(relatedPicker).toString());
@@ -770,14 +790,14 @@ namespace XQW {
     protected expandKeys: string[] = [];
 
     static Related<ISingle, ISelect, IExpand, IFixed, FormattedResult, Result>(
-      entityPicker: (x: WebEntities) => WebMappingRelated<ISingle, any>,
+      entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>,
       id: string,
       relatedPicker: (x: ISingle) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>) {
       return new RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result>(taggedExec(entityPicker).toString(), id, taggedExec(relatedPicker).toString());
     }
 
     static Get<ISelect, IExpand, IFixed, FormattedResult, Result>(
-      entityPicker: (x: WebEntities) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>,
+      entityPicker: (x: WebEntitiesRetrieve) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>,
       id: string) {
       return new RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result>(taggedExec(entityPicker).toString(), id);
     }
@@ -880,7 +900,7 @@ namespace XQW {
 		 */
     private entitySetName: string;
 
-    constructor(entityPicker: (x: WebEntities) => WebMappingCUD<ICreate, any>, private record?: ICreate) {
+    constructor(entityPicker: (x: WebEntitiesCUD) => WebMappingCUD<ICreate, any>, private record?: ICreate) {
       super("POST");
       this.entitySetName = taggedExec(entityPicker).toString();
     }
@@ -912,7 +932,7 @@ namespace XQW {
 		 */
     private entitySetName: string;
 
-    constructor(entityPicker: (x: WebEntities) => WebMappingCUD<any, any>, private id?: string) {
+    constructor(entityPicker: (x: WebEntitiesCUD) => WebMappingCUD<any, any>, private id?: string) {
       super("DELETE");
       this.id = id !== undefined ? stripGUID(id) : id;
       this.entitySetName = taggedExec(entityPicker).toString();
@@ -942,7 +962,7 @@ namespace XQW {
 		 */
     private entitySetName: string;
 
-    constructor(entityPicker: (x: WebEntities) => WebMappingCUD<any, IUpdate>, private id?: string, private record?: IUpdate) {
+    constructor(entityPicker: (x: WebEntitiesCUD) => WebMappingCUD<any, IUpdate>, private id?: string, private record?: IUpdate) {
       super("PATCH");
       this.id = id !== undefined ? stripGUID(id) : id;
       this.entitySetName = taggedExec(entityPicker).toString();
@@ -969,46 +989,77 @@ namespace XQW {
 	 * Contains information about an AssociateRecord query
 	 */
   export class AssociateRecord<ISource,ITarget> extends Query<undefined> {
-      /** 
-       * @internal 
-       */
-      private entitySetName: string;
-      private entitySetNameTarget: string;
-      private targetId: string;
-      private relation: string;
-      private record: any;
+        /** 
+         * @internal 
+         */
+    private entitySetName: string;
+    private entitySetNameTarget: string;
+    private targetId: string;
+    private relation: string;
+    private record: any;
+   
+    constructor(entityPicker: (x: WebEntities) => WebMappingCUD<any, ISource>, private id: string, entityTargetPicker: (x: WebEntities) => WebMappingCUD<any, ITarget>, private targetid: string, private rel: string) {
+      super("POST");
+      this.id = id !== undefined ? stripGUID(id) : id;
+      this.entitySetName = taggedExec(entityPicker).toString();
+      this.entitySetNameTarget = taggedExec(entityTargetPicker).toString();
+      this.targetId = targetid !== undefined ? stripGUID(targetid) : targetid;
+      this.relation = rel;
+      this.record = {};
+      this.record["_bind$" + this.entitySetNameTarget] = this.targetId;
+    }
 
-      constructor(entityPicker: (x: WebEntities) => WebMappingCUD<any, ISource>, private id: string, entityTargetPicker: (x: WebEntities) => WebMappingCUD<any, ITarget>, private targetid: string, private rel: string) {
-          super("POST");
-          this.id = id !== undefined ? stripGUID(id) : id;
-          this.entitySetName = taggedExec(entityPicker).toString();
-          this.entitySetNameTarget = taggedExec(entityTargetPicker).toString();
-          this.targetId = targetid !== undefined ? stripGUID(targetid) : targetid;
-          this.relation = rel;
-          this.record = {};
-          this.record["_bind$" + this.entitySetNameTarget] = this.targetId;
-      }
+    protected handleResponse(req: XMLHttpRequest, successCallback: (x?: undefined) => any) {
+      successCallback();
+    }
 
-      protected handleResponse(req: XMLHttpRequest, successCallback: (x?: undefined) => any) {
-          successCallback();
-      }
+    setData(id: string, record: any) {
+      this.id = stripGUID(id);
+      this.record = record;
+      return this;
+    }
 
-      setData(id: string, record: any) {
-          this.id = stripGUID(id);
-          this.record = record;
-          return this;
-      }
+    protected getObjectToSend = () => JSON.stringify(transformObject(this.record));
 
-      protected getObjectToSend = () => JSON.stringify(transformObject(this.record));
-
-      getQueryString(): string {
-          return `${this.entitySetName}(${this.id})/${this.relation}`;
-      }
+    getQueryString(): string {
+      return `${this.entitySetName}(${this.id})/${this.relation}`;
+    }
   }
 
-  /**
-   * @internal
-   */
+    /**
+     * Contains information about a Disassociate query
+     */
+  export class DisassociateRecord extends Query<undefined> {
+        /** 
+         * @internal 
+         */
+    private entitySetName: string;
+    private relation: string;
+
+    constructor(entityPicker: (x: WebEntities) => WebMappingCUD<any, any>, private id: string, private rel: string) {
+      super("DELETE");
+      this.id = id !== undefined ? stripGUID(id) : id;
+      this.entitySetName = taggedExec(entityPicker).toString();
+      this.relation = rel;
+    }
+
+    protected handleResponse(req: XMLHttpRequest, successCallback: (x?: undefined) => any) {
+      successCallback();
+    }
+
+    setId(id: string) {
+      this.id = stripGUID(id);
+      return this;
+    }
+
+    getQueryString(): string {
+        return `${this.entitySetName}(${this.id})/${this.relation}`;
+    }
+  }
+
+    /**
+     * @internal
+     */
   function startsWith(needle: string, haystack: string) {
     return haystack.lastIndexOf(needle, 0) === 0;
   }

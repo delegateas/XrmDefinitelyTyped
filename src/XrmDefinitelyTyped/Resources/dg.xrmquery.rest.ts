@@ -90,6 +90,9 @@ namespace Filter.REST {
    */
   function NestedFilter(fs: RestFilter[], conj: string): RestFilter {
     var last = fs.pop();
+    if (last === undefined) {
+      return <RestFilter><any>('');
+    }
     return fs.reduceRight((acc, c) => BiFilter(c, conj, acc), last);
   }
 }

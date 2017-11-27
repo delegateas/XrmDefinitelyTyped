@@ -297,15 +297,19 @@ let getEntityInterfaceLines ns e =
     match e.entitySetName with
     | None -> []
     | Some setName ->
-      let ty = 
-        TsType.Intersection 
-          [ retrieveMappingType e.schemaName ns
-            cudMappingType e.schemaName ns 
-            relatedMappingType e.schemaName ns
-          ]
+      let retrieve = 
+        Interface.Create("WebEntitiesRetrieve", vars = [Variable.Create(setName, retrieveMappingType e.schemaName ns)])
+        |> interfaceToString
+      
+      let related =
+        Interface.Create("WebEntitiesRelated", vars = [Variable.Create(setName, relatedMappingType e.schemaName ns)])
+        |> interfaceToString
+      
+      let cud =
+        Interface.Create("WebEntitiesCUD", vars = [Variable.Create(setName, cudMappingType e.schemaName ns)])
+        |> interfaceToString
         
-      Interface.Create("WebEntities", vars = [ Variable.Create(setName, ty)  ]) 
-      |> interfaceToString
+      retrieve @ related @ cud
 
   namespacedLines @ entityBindingLines
 
