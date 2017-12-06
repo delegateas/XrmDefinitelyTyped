@@ -87,8 +87,9 @@ let retrieveMappingType eName ns =
   |> getMapping eName ns retrieveMapping
 
 let cudMappingType eName ns =
-  [ createName; updateName ]
+  [ createName; updateName]
   |> getMapping eName ns cudMapping
+  
 
 let relatedMappingType eName ns =
   [ oneRelName; manyRelName ]
@@ -253,7 +254,7 @@ let getBlankEntityInterfaces e =
     relationships = Interface.Create(rn) 
     oneRelated = Interface.Create(oneRelName e.schemaName) 
     manyRelated = Interface.Create(manyRelName e.schemaName) 
-    createAndUpdate = Interface.Create(cu, extends = [bn; rn]) 
+    createAndUpdate = Interface.Create(cu, extends = [bn; rn])
     create = Interface.Create(createName e.schemaName, extends = [cu]) 
     update = Interface.Create(updateName e.schemaName, extends = [cu]) 
     result = Interface.Create(resultName e.schemaName, extends = [bn; rn]) 
@@ -278,7 +279,7 @@ let getEntityInterfaceLines ns e =
       { entityInterfaces.createAndUpdate with vars = e.allRelationships |> List.choose (getBindVariables true true attrMap) |> assignUniqueNames |> sortByName }
       { entityInterfaces.create with vars = e.allRelationships |> List.choose (getBindVariables true false attrMap) |> assignUniqueNames |> sortByName }
       { entityInterfaces.update with vars = e.allRelationships |> List.choose (getBindVariables false true attrMap) |> assignUniqueNames |> sortByName }
-      
+
       { entityInterfaces.select with vars = e.attributes |> List.map (getSelectVariable entityInterfaces.select) |> assignUniqueNames |> sortByName } 
       { entityInterfaces.filter with vars = e.attributes |> List.map getFilterVariable |> assignUniqueNames |> sortByName }
       { entityInterfaces.expand with vars = e.availableRelationships |> List.map (getExpandVariable entityInterfaces.expand) |> assignUniqueNames |> sortByName }
@@ -308,7 +309,7 @@ let getEntityInterfaceLines ns e =
       let cud =
         Interface.Create("WebEntitiesCUD", vars = [Variable.Create(setName, cudMappingType e.schemaName ns)])
         |> interfaceToString
-        
+      
       retrieve @ related @ cud
 
   namespacedLines @ entityBindingLines
