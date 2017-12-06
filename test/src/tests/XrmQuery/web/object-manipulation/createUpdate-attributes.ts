@@ -82,14 +82,38 @@ class Web_CreateUpdate_Attributes extends FakeRequests {
     }
 
     @test
-    "associate"() {
+    "associate for single-valued"() {
+        const contactId = "SOME_CONTACT_GUID";
+        const targetId = "SOME_ACCOUNT_GUID";
+
+        //var relation = "dg_account_contact"
+
+        var callback = sinon.spy();
+        XrmQuery.associateSingle(x => x.contacts, contactId, x => x.accounts, targetId, x => x.dg_TestAccount).execute(callback);
+
+        // Check request is valid 
+        expect(this.requests.length).to.equal(1);
+        var req = this.requests[0];
+        expect(req.url).to.equal(`contacts(SOME_CONTACT_GUID)/dg_TestAccount/$ref`);
+        expect(req.method).to.equal("PUT");
+        // Check that body was created properly
+        var body = JSON.parse(req.requestBody);
+        expect(body).to.deep.equal({ '@odata.id': `/api/data/v8.0/accounts(${targetId})` })
+
+        // Check that response is gotten correctly from header (no response on associate)
+        req.respond(200, {}, "");
+        sinon.assert.calledWith(callback);
+    }
+
+    @test
+    "associate for collection-valued"() {
         const accountId = "SOME_ACCOUNT_GUID";
         const targetId = "SOME_CONTACT_GUID";
 
         //var relation = "dg_account_contact"
 
         var callback = sinon.spy();
-        XrmQuery.associate(x => x.accounts, accountId, x => x.contacts, targetId, x => x.dg_account_contact).execute(callback);
+        XrmQuery.associateCollection(x => x.accounts, accountId, x => x.contacts, targetId, x => x.dg_account_contact).execute(callback);
 
         // Check request is valid 
         expect(this.requests.length).to.equal(1);
@@ -109,15 +133,12 @@ class Web_CreateUpdate_Attributes extends FakeRequests {
     "disassociate for single-valued"() {
         const contactId = "SOME_CONTACT_GUID";
 
-        //var relation = "SOME_ACCOUNT_LOOKUP_FIELD";
-
         var callback = sinon.spy();
         XrmQuery.disassociateSingle(x => x.contacts, contactId, x => x.parentcustomerid_account).execute(callback);
 
         // Check request is valid 
         expect(this.requests.length).to.equal(1);
         var req = this.requests[0];
-        //expect(req.url).to.equal(`contacts(SOME_CONTACT_GUID)/SOME_ACCOUNT_LOOKUP_FIELD/$ref`);
         expect(req.url).to.equal(`contacts(SOME_CONTACT_GUID)/parentcustomerid_account/$ref`);
         expect(req.method).to.equal("DELETE");
 
@@ -138,7 +159,7 @@ class Web_CreateUpdate_Attributes extends FakeRequests {
         //var relation = "dg_account_contact";
 
         var callback = sinon.spy();
-        XrmQuery.disassociateMultiple(x => x.accounts, accountId, x => x.dg_account_contact, targetId).execute(callback);
+        XrmQuery.disassociateCollection(x => x.accounts, accountId, x => x.dg_account_contact, targetId).execute(callback);
 
         // Check request is valid 
         expect(this.requests.length).to.equal(1);
