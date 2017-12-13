@@ -87,23 +87,23 @@ let getEntityInterfaces ns e =
 
   let is = 
     [ Interface.Create(baseName, 
-        vars = (e.attributes |> getOrgVariables),
+        vars = List.sort (e.attributes |> getOrgVariables),
         extends = [superEntityName])
       Interface.Create(entityName, 
-        vars = (e.availableRelationships |> getRelationshipVariables false),
+        vars = List.sort (e.availableRelationships |> getRelationshipVariables false),
         extends = [baseName])
       Interface.Create(resultName, 
-        vars = (e.availableRelationships |> getRelationshipVariables true),
+        vars = List.sort (e.availableRelationships |> getRelationshipVariables true),
         extends = [baseName])
 
       // XrmQuery interfaces
       Interface.Create(selName, 
-        vars = (e.attributes |> getSelectVariables selName),
+        vars = List.sort (e.attributes |> getSelectVariables selName),
         extends = [expName])
       Interface.Create(filterName, 
-        vars = (e.attributes |> getFilterVariables))
+        vars = List.sort (e.attributes |> getFilterVariables))
       Interface.Create(expName, 
-        vars = (e.availableRelationships |> getExpandVariables e.schemaName))
+        vars = List.sort (e.availableRelationships |> getExpandVariables e.schemaName))
 
     ]
 
