@@ -1,5 +1,8 @@
 # Release Notes
 
+### 2.5.0 - December 15 2017
+* REST API interfaces are now sorted
+
 ### 2.4.0 - November 24 2017
 * Reverted the name change after a more elegant fix was proposed, in which the user uses the namespace feature of XDT.
 
