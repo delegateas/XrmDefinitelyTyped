@@ -20,7 +20,6 @@ let attribute t = TsType.Generic("RestAttribute",t)
 let expandable t u = TsType.Generic("RestExpand", sprintf "%s,%s" (selectName t) (selectName u))
 let valueContainer t = TsType.SpecificGeneric("XQR.ValueContainerFilter", [ t ])
 let results = sprintf "%sResult" >> fun x -> TsType.Generic("SDK.Results", x) 
-let sortByName = List.sortBy (fun (x: Variable) -> x.name)
 
 (** TypeScript helper functions *)
 let getSelectVariables selectName (list: XrmAttribute list) = 
@@ -88,23 +87,23 @@ let getEntityInterfaces ns e =
 
   let is = 
     [ Interface.Create(baseName, 
-        vars = (e.attributes |> getOrgVariables |> sortByName),
+        vars = (e.attributes |> getOrgVariables),
         extends = [superEntityName])
       Interface.Create(entityName, 
-        vars = (e.availableRelationships |> getRelationshipVariables false |> sortByName),
+        vars = (e.availableRelationships |> getRelationshipVariables false),
         extends = [baseName])
       Interface.Create(resultName, 
-        vars = (e.availableRelationships |> getRelationshipVariables true |> sortByName),
+        vars = (e.availableRelationships |> getRelationshipVariables true),
         extends = [baseName])
 
       // XrmQuery interfaces
       Interface.Create(selName, 
-        vars = (e.attributes |> getSelectVariables selName |> sortByName),
+        vars = (e.attributes |> getSelectVariables selName),
         extends = [expName])
       Interface.Create(filterName, 
-        vars = (e.attributes |> getFilterVariables |> sortByName))
+        vars = (e.attributes |> getFilterVariables))
       Interface.Create(expName, 
-        vars = (e.availableRelationships |> getExpandVariables e.schemaName |> sortByName))
+        vars = (e.availableRelationships |> getExpandVariables e.schemaName))
 
     ]
 
