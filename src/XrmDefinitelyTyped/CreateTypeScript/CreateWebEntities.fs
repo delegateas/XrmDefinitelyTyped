@@ -79,10 +79,13 @@ let hasFormattedValue a =
   | _, TsType.Date -> true
   | _ -> false
 
+let mapGeneric name names =
+    TsType.Generic (name, names |> String.concat ",")
+
 let getMapping eName ns name =
   List.map (fun f -> f eName)
   >> CreateCommon.wrapNamesInNsIfAny ns
-  >> fun names -> TsType.Generic (name, names |> String.concat ",")
+  >> fun names -> mapGeneric name names
   
 let retrieveMappingType eName ns =
   [ selectName; expName; filterName; fixedName; resultName; fResultName ]
@@ -97,8 +100,8 @@ let relatedMappingType eName ns =
   |> getMapping eName ns relatedMapping
 
 let relationMappingType eName relName ns =
-  [ (fun _ -> selectName eName); (fun _ -> associateName relName)]
-  |> getMapping "" ns relationsMapping
+  [ selectName eName; associateName relName]
+  |> mapGeneric relationsMapping
 
 (** Definition functions *)
 let defToBaseVars (a, ty, nameTransform) =
