@@ -1,5 +1,8 @@
 # Release Notes
 
+### 2.5.1 - January 05 2018
+* Updated .NET framwork to 4.6.2 in order to fix issue with connecting to Dynamics 9.0
+
 ### 2.5.0 - December 15 2017
 * REST API interfaces are now sorted
 
