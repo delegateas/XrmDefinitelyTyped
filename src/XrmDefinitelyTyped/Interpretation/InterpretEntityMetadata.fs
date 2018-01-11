@@ -81,6 +81,9 @@ let interpretAttribute nameMap entityNames (a: AttributeMetadata) =
     updateable = a.IsValidForUpdate.GetValueOrDefault(false)
   }
 
+let sanitizeNavigationProptertyName string =
+    if string = null then "navigationPropertyNameNotDefined"
+    else string
 
 let interpretRelationship schemaNames nameMap referencing (rel: OneToManyRelationshipMetadata) =
   let rLogical =
@@ -105,6 +108,7 @@ let interpretRelationship schemaNames nameMap referencing (rel: OneToManyRelatio
         navProp = 
           if referencing then rel.ReferencingEntityNavigationPropertyName
           else rel.ReferencedEntityNavigationPropertyName
+          |> sanitizeNavigationProptertyName
         referencing = referencing
         relatedSetName = rSetName
         relatedSchemaName = rSchema 
@@ -128,6 +132,7 @@ let interpretM2MRelationship schemaNames nameMap logicalName (rel: ManyToManyRel
         navProp = 
           if logicalName = rel.Entity2LogicalName then rel.Entity1NavigationPropertyName
           else rel.Entity2NavigationPropertyName
+          |> sanitizeNavigationProptertyName
         referencing = false
         relatedSetName = rSetName
         relatedSchemaName = rSchema 
