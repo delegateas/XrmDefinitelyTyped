@@ -1,7 +1,7 @@
 # Release Notes
 
-### 2.x.x - Unreleased
-* Fixed and issue where in the case of the NavigationPropteryName attributes being null in the relationship metadata, the generated definition file was not valid typescript code. 
+### 2.5.2 - January 15 2018
+* Fixed an issue where in the case of the NavigationPropteryName attributes being null in the relationship metadata, the generated definition file was not valid typescript code. 
 
 ### 2.5.1 - January 05 2018
 * Updated .NET framwork to 4.6.2 in order to fix issue with connecting to Dynamics 9.0
