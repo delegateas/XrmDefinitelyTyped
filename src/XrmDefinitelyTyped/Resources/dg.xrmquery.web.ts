@@ -128,7 +128,7 @@ namespace XrmQuery {
 	 * @param configure Modify the request before it it sent to the endpoint - like adding headers.
 	 */
   export function sendRequest(type: XQW.HttpRequestType, queryString: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb?: (err: Error) => any, configure?: (req: XMLHttpRequest) => void): void {
-    request(type, encodeURI(XQW.getApiUrl() + queryString), data, successCb, errorCb, configure);
+    request(type, XQW.getApiUrl() + queryString, data, successCb, errorCb, configure);
   }
 
 	/**
@@ -174,9 +174,9 @@ namespace Filter {
 	 */
   function getVal(v: any) {
     if (v == null) return "null"
-    if (typeof v === "string") return `'${v}'`;
-    if (v instanceof Date) return v.toISOString();
-    return v.toString();
+    if (typeof v === "string") return encodeURIComponent(`'${v}'`);
+    if (v instanceof Date) return encodeURIComponent(v.toISOString());
+    return encodeURIComponent(v.toString());
   }
 
 	/**
