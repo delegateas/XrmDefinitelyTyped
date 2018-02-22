@@ -174,30 +174,30 @@ namespace Filter {
 	 */
   function getVal(v: any) {
     if (v == null) return "null"
-    if (typeof v === "string") return encodeURIComponent(`'${v}'`);
-    if (v instanceof Date) return encodeURIComponent(v.toISOString());
-    return encodeURIComponent(v.toString());
+    if (typeof v === "string") return `'${v}'`;
+    if (v instanceof Date) return v.toISOString();
+    return v.toString();
   }
 
 	/**
 	 * @internal
 	 */
   function comp<T>(val1: T, op: string, val2: T): WebFilter {
-    return <WebFilter><any>(`${getVal(val1)} ${op} ${getVal(val2)}`);
+    return <WebFilter><any>(encodeURIComponent(`${getVal(val1)} ${op} ${getVal(val2)}`));
   }
 
 	/**
 	 * @internal
 	 */
   function dataFunc<T>(funcName: string, val1: T, val2: T): WebFilter {
-    return <WebFilter><any>(`${funcName}(${getVal(val1)}, ${getVal(val2)})`);
+    return <WebFilter><any>(encodeURIComponent(`${funcName}(${getVal(val1)}, ${getVal(val2)})`));
   }
 
 	/**
 	 * @internal
 	 */
   function biFilter(f1: WebFilter, conj: string, f2: WebFilter): WebFilter {
-    return <WebFilter><any>(`(${f1} ${conj} ${f2})`);
+    return <WebFilter><any>(encodeURIComponent(`(${f1} ${conj} ${f2})`));
   }
 
 	/**
