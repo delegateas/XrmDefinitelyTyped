@@ -1145,8 +1145,17 @@
     /**
      * Interface for a generic Xrm.Page
      */
-    interface BasicPage extends PageBase<AttributeCollection, TabCollection, ControlCollection> {
-    }
+  interface BasicPage extends PageBase<AttributeCollection, TabCollection, ControlCollection> {
+    /**
+     * Generic getAttribute 
+     */
+    getAttribute(attrName: string): Xrm.Attribute<any> | undefined;
+
+    /**
+     * Generic getControl
+     */
+    getControl(ctrlName: string): Xrm.AnyControl | undefined;
+  }
 }
 
 

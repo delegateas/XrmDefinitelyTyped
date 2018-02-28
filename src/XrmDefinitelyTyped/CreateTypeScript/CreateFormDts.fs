@@ -9,6 +9,13 @@ let getAttributeInterface = function
   | AttributeType.OptionSet ty  -> TsType.SpecificGeneric ("Xrm.OptionSetAttribute", [ ty ])
   | AttributeType.Default ty    -> TsType.SpecificGeneric ("Xrm.Attribute", [ ty ])
   | x                           -> TsType.Custom (sprintf "Xrm.%AAttribute" x)
+
+let getAttributeMap = function
+  | AttributeType.OptionSet ty
+  | AttributeType.Default ty    -> ty
+  | AttributeType.Number        -> TsType.Number
+  | AttributeType.Date          -> TsType.Date
+  | AttributeType.Lookup        -> TsType.Custom "Xrm.EntityReference"
  
 /// Gets the corresponding enum of the option set if possible
 let getOptionSetType = function
@@ -55,6 +62,15 @@ let getAttributeCollection (attributes: XrmFormAttribute list) =
   Interface.Create("Attributes", extends = ["Xrm.AttributeCollectionBase"],
     funcs = getFuncs @ defaultFuncs)
 
+/// Generate Xrm.Page.data.entity.attributes Map.
+let getAttributeCollectionMap (attributes: XrmFormAttribute list) =
+  let getVars = 
+    attributes
+    |> List.map (fun (name,ty) ->
+      let returnType = getAttributeMap ty
+      Variable.Create(name, returnType))
+      
+  Interface.Create("AttributeValueMap", vars = getVars)
 
 /// Auxiliary function that determines if a control is to be included based on it's name and the crmVersion
 let includeControl (name: string) crmVersion =
@@ -78,6 +94,19 @@ let getControlCollection (controls: XrmFormControl list) (crmVersion: Version)=
   Interface.Create("Controls", extends = ["Xrm.ControlCollectionBase"],
     funcs = getFuncs @ defaultFuncs)
 
+/// Generate Xrm.Page.ui.controls map.
+let getControlCollectionMap (controls: XrmFormControl list) (crmVersion: Version)=
+  let getVars = 
+    controls
+    |> List.map (fun (name, aType, cType) ->
+      let returnType = getControlInterface cType aType          
+      match includeControl name crmVersion with
+      | false -> None
+      | true -> Some (Variable.Create(name, returnType))
+      )
+    |> List.choose id
+    
+  Interface.Create("ControlMap", vars = getVars)
 
 /// Generate Xrm.Page.ui.tabs.get(<string>) functions.
 let getTabCollection (tabs: XrmFormTab list) =
@@ -158,7 +187,9 @@ let getFormNamespace (form: XrmForm) crmVersion =
   Namespace.Create(form.name,
     interfaces = 
       [ getAttributeCollection form.attributes 
+        getAttributeCollectionMap form.attributes
         getControlCollection form.controls crmVersion
+        getControlCollectionMap form.controls crmVersion
         getTabCollection form.tabs ],
     namespaces = 
       [ Namespace.Create("Tabs", interfaces = getSectionCollections form.tabs) ])
