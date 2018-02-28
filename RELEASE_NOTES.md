@@ -1,4 +1,6 @@
 # Release Notes
+### 2.6.0 - February 28 2018
+* Fixed issue 44: Be Able To Define Custom Interface Definition Creation, https://github.com/delegateas/XrmDefinitelyTyped/issues/44
 
 ### 2.5.2 - January 15 2018
 * Fixed an issue where in the case of the NavigationPropteryName attributes being null in the relationship metadata, the generated definition file was not valid typescript code. 
