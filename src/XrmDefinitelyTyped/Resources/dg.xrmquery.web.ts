@@ -142,9 +142,9 @@ namespace XrmQuery {
     return XQW.promisifyCallback((success, error?) => sendRequest(type, queryString, data, success, error, configure));
   }
 
-    function encodeSpaces(str: string): string {
-        return str.replace(/ /g, "%20");
-    }
+  function encodeSpaces(str: string): string {
+    return str.replace(/ /g, "%20");
+  }
 }
 
 
@@ -215,20 +215,17 @@ namespace Filter {
     return fs.reduceRight((acc, c) => biFilter(c, conj, acc), last);
   }
 
-    /**
-     * @internal
-     */
+  /**
+   * @internal
+   */
   function encodeSpecialCharacters(queryString: string) {
-    queryString = encodeURI(queryString);
-    queryString = queryString.replace(/'/g, "''");
-
-    queryString = queryString.replace(/\+/g, "%2B");
-    queryString = queryString.replace(/\//g, "%2F");
-    queryString = queryString.replace(/\?/g, "%3F");
-
-    queryString = queryString.replace(/#/g, "%23");
-    queryString = queryString.replace(/&/g, "%26");
-    return queryString;
+    return encodeURI(queryString)
+      .replace(/'/g, "''")
+      .replace(/\+/g, "%2B")
+      .replace(/\//g, "%2F")
+      .replace(/\?/g, "%3F")
+      .replace(/#/g, "%23")
+      .replace(/&/g, "%26");
   }
 }
 
