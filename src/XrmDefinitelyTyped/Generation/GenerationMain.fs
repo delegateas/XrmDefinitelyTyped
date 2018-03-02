@@ -39,7 +39,7 @@ let generateFromRaw gSettings rawState =
   let defs = 
     seq {
       yield! generateEnumDefs data
-      if not gSettings.skipForms then yield! generateFormDefs data crmVersion
+      if not gSettings.skipForms then yield! generateFormDefs data crmVersion gSettings.generateMappings
 
       match crmVersion .>= (8,2,0,0) with
       | true -> 

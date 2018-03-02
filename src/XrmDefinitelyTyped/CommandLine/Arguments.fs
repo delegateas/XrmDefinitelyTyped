@@ -80,6 +80,11 @@ type Args private () =
       description="Comma-separated list of named semicolon-separated lists of form GUIDs that should be intersected. "
        + "Example: 'MyAccountIntersect: 284FF02B-BDD1-4BB0-9BCF-6CFDBDA130D4;16068A3B-D428-4430-AEF6-397CE2AEFE07, MyContactIntersect: F4B3397C-C1A5-40BE-89DD-CEA5F7064D1D;824CFA3C-3EB4-4746-BA3C-7F1DFCA114C0'"
       required=false }
+    
+    { command="generateMappings"
+      altCommands=["gm"]
+      description="Set to true if attribute and control mappings should be generated"
+      required=false }
   ]
 
   static member connectionArgs = [

@@ -9,7 +9,7 @@ open GenerationMain
 
 type XrmDefinitelyTyped private () = 
 
-  static member GenerateFromCrm(url, username, password, ?domain, ?ap, ?outDir, ?jsLib, ?tsLib, ?entities, ?solutions, ?crmVersion, ?useDeprecated, ?skipForms, ?oneFile, ?restNs, ?webNs, ?viewNs, ?formIntersects) = 
+  static member GenerateFromCrm(url, username, password, ?domain, ?ap, ?outDir, ?jsLib, ?tsLib, ?entities, ?solutions, ?crmVersion, ?useDeprecated, ?skipForms, ?oneFile, ?restNs, ?webNs, ?viewNs, ?formIntersects, ?generateMappings) = 
     let xrmAuth = 
       { XrmAuthentication.url = Uri(url)
         username = username
@@ -34,6 +34,7 @@ type XrmDefinitelyTyped private () =
         webNs = webNs
         viewNs = viewNs
         formIntersects = formIntersects
+        generateMappings = generateMappings ?| false
        }
     
     XrmDefinitelyTyped.GenerateFromCrm(xrmAuth, rSettings, gSettings)

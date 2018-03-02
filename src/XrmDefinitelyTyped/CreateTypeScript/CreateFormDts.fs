@@ -183,14 +183,18 @@ let getControlFuncs (controls: XrmFormControl list) (crmVersion: Version)=
 
 
 /// Generate internal namespace for keeping track all the collections.
-let getFormNamespace (form: XrmForm) crmVersion =
+let getFormNamespace (form: XrmForm) crmVersion generateMappings =
+  let baseInterfaces =
+    [ getAttributeCollection form.attributes
+      getControlCollection form.controls crmVersion
+      getTabCollection form.tabs ]
   Namespace.Create(form.name,
     interfaces = 
-      [ getAttributeCollection form.attributes 
-        getAttributeCollectionMap form.attributes
-        getControlCollection form.controls crmVersion
-        getControlCollectionMap form.controls crmVersion
-        getTabCollection form.tabs ],
+      (if generateMappings then 
+        baseInterfaces @ 
+        [getAttributeCollectionMap form.attributes
+         getControlCollectionMap form.controls crmVersion] 
+      else baseInterfaces),
     namespaces = 
       [ Namespace.Create("Tabs", interfaces = getSectionCollections form.tabs) ])
 
@@ -209,7 +213,7 @@ let getFormInterface (form: XrmForm) crmVersion =
 
 /// Generate the namespace containing all the form interface and internal 
 /// namespaces for collections.
-let getFormDts (form: XrmForm) crmVersion = 
+let getFormDts (form: XrmForm) crmVersion generateMappings = 
   let nsName = 
     sprintf "Form.%s%s" 
       (form.entityName |> Utility.sanitizeString)
@@ -220,7 +224,7 @@ let getFormDts (form: XrmForm) crmVersion =
   Namespace.Create(
     nsName,
     declare = true,
-    namespaces = [ getFormNamespace form crmVersion],
+    namespaces = [ getFormNamespace form crmVersion generateMappings],
     interfaces = [ getFormInterface form crmVersion]) 
   |> nsToString
 

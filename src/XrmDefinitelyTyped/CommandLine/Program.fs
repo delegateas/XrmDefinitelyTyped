@@ -61,6 +61,7 @@ let getGenerationSettings parsedArgs =
     webNs = getArg parsedArgs "web" nsSanitizer
     viewNs = getArg parsedArgs "views" nsSanitizer
     formIntersects = formIntersects 
+    generateMappings = getArg parsedArgs "generateMappings" parseBoolish ?| false
   }
 
 

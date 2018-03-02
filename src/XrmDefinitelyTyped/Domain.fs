@@ -31,6 +31,7 @@ type XdtGenerationSettings = {
   webNs: OptionalNamespace
   viewNs: OptionalNamespace
   formIntersects: FormIntersect [] option
+  generateMappings: bool
 }
 
 type EntityName = string
