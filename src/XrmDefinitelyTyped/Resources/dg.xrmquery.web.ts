@@ -128,7 +128,7 @@ namespace XrmQuery {
 	 * @param configure Modify the request before it it sent to the endpoint - like adding headers.
 	 */
   export function sendRequest(type: XQW.HttpRequestType, queryString: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb?: (err: Error) => any, configure?: (req: XMLHttpRequest) => void): void {
-    request(type, encodeURI(XQW.getApiUrl() + queryString), data, successCb, errorCb, configure);
+    request(type, encodeSpaces(XQW.getApiUrl() + queryString), data, successCb, errorCb, configure);
   }
 
 	/**
@@ -141,6 +141,10 @@ namespace XrmQuery {
   export function promiseRequest(type: XQW.HttpRequestType, queryString: string, data: any, configure?: (req: XMLHttpRequest) => void): Promise<XMLHttpRequest> {
     return XQW.promisifyCallback((success, error?) => sendRequest(type, queryString, data, success, error, configure));
   }
+
+    function encodeSpaces(str: string): string {
+        return str.replace(/ /g, "%20");
+    }
 }
 
 
@@ -174,9 +178,9 @@ namespace Filter {
 	 */
   function getVal(v: any) {
     if (v == null) return "null"
-    if (typeof v === "string") return `'${v}'`;
-    if (v instanceof Date) return v.toISOString();
-    return v.toString();
+    if (typeof v === "string") return `'${encodeSpecialCharacters(v)}'`;
+    if (v instanceof Date) return encodeSpecialCharacters(v.toISOString());
+    return encodeSpecialCharacters(v.toString());
   }
 
 	/**
@@ -209,6 +213,22 @@ namespace Filter {
       return <WebFilter><any>('');
     }
     return fs.reduceRight((acc, c) => biFilter(c, conj, acc), last);
+  }
+
+    /**
+     * @internal
+     */
+  function encodeSpecialCharacters(queryString: string) {
+    queryString = encodeURI(queryString);
+    queryString = queryString.replace(/'/g, "''");
+
+    queryString = queryString.replace(/\+/g, "%2B");
+    queryString = queryString.replace(/\//g, "%2F");
+    queryString = queryString.replace(/\?/g, "%3F");
+
+    queryString = queryString.replace(/#/g, "%23");
+    queryString = queryString.replace(/&/g, "%26");
+    return queryString;
   }
 }
 
@@ -726,7 +746,7 @@ namespace XQW {
 		 * @param xml The query in FetchXML format
 		 */
     useFetchXml(xml: string): Query<Result[]> {
-      this.specialQuery = `?fetchXml=${encodeURI(xml)}`;
+      this.specialQuery = `?fetchXml=${encodeURIComponent(xml)}`;
       return this;
     }
 
