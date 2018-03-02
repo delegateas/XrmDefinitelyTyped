@@ -1,4 +1,7 @@
 # Release Notes
+### 2.6.1 - March 02 2018
+* Made #44 optional
+
 ### 2.6.0 - February 28 2018
 * Fixed issue 44: Be Able To Define Custom Interface Definition Creation, https://github.com/delegateas/XrmDefinitelyTyped/issues/44
 
