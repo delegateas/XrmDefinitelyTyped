@@ -64,7 +64,7 @@ let getEntityMetadata entityLogicalName (xrmEntities: XrmEntity[]) =
 
 // Function to get the complete information of a view based on its parsed fetchxml
 let interpretView (xrmEntities: XrmEntity[]) parsedFetchXml =
-  let (viewName, (entityName, ownedAttributesNames, linkedAttributeInfo)) = parsedFetchXml
+  let (guid, viewName, (entityName, ownedAttributesNames, linkedAttributeInfo)) = parsedFetchXml
   let entityData = xrmEntities |> getEntityMetadata entityName
 
   let ownedAttributes = entityData.Value |> getAttributes ownedAttributesNames
@@ -87,7 +87,7 @@ let interpretView (xrmEntities: XrmEntity[]) parsedFetchXml =
     )
     |> List.concat
     |> List.distinctBy (fun (attr: XrmAttribute) -> attr.logicalName)
-
+  guid,
   { XrmView.name = viewName
     entityName = entityData.Value.logicalName
     attributes = ownedAttributes

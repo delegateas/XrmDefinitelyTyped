@@ -26,6 +26,7 @@ let retrieveRawState xrmAuth rSettings =
 let generateFromRaw gSettings rawState =
   let out = gSettings.out ?| "."
   let formIntersects = gSettings.formIntersects ?| [||]
+  let viewIntersects = gSettings.viewIntersects ?| [||]
   let crmVersion = gSettings.crmVersion ?| rawState.crmVersion
 
   // Pre-generation tasks 
@@ -34,7 +35,7 @@ let generateFromRaw gSettings rawState =
 
   // Interpret data and generate resource files
   let data =
-    interpretCrmData out formIntersects rawState 
+    interpretCrmData out formIntersects viewIntersects rawState 
 
   let defs = 
     seq {

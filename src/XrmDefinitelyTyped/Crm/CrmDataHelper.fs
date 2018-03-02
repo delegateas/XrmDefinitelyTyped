@@ -7,6 +7,7 @@ open Microsoft.Xrm.Sdk.Query
 open CrmBaseHelper
 open Microsoft.Crm.Sdk.Messages
 open Microsoft.Xrm.Sdk
+open System
 
 
 // Retrieve entity form xml
@@ -52,7 +53,7 @@ let getBpfData (proxy:OrganizationServiceProxy) =
   |> Array.ofSeq
 
 // Retrieve views
-let getViews (entities: string[] option) proxy =
+let getViews (entities: string[] option) proxy : (EntityName * Guid * ViewName * string) [] =
   let query = new QueryExpression("savedquery")
   query.ColumnSet <- new ColumnSet([| "name"; "querytype"; "returnedtypecode"; "fetchxml" |])
 
@@ -68,7 +69,10 @@ let getViews (entities: string[] option) proxy =
   resp.EntityCollection.Entities 
   |> Array.ofSeq
   |> Array.map (fun viewEntity -> 
-      (viewEntity.GetAttributeValue<string>("returnedtypecode"), viewEntity.GetAttributeValue<string>("name"), viewEntity.GetAttributeValue<string>("fetchxml"))
+      (viewEntity.GetAttributeValue<string>("returnedtypecode"), 
+        viewEntity.GetAttributeValue<Guid>("savedqueryid"),
+        viewEntity.GetAttributeValue<string>("name"), 
+        viewEntity.GetAttributeValue<string>("fetchxml"))
   )
 
 // Retrieve webresources of given type from given solution
