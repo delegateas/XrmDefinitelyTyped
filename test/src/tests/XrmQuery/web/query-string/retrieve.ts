@@ -77,4 +77,16 @@ class Web_Retrieve_QueryString {
         expect(qs).to.equal(`accounts(${this.accountId})?$select=contact_customer_accounts&$expand=contact_customer_accounts($select=fullname;$filter=(firstname eq '${contactFirstName}' and contactid eq ${contactId}))`);
     }
 
+    @test
+    "expand with selects and filters with special characters"() {
+        const qs = XrmQuery.retrieve(x => x.accounts, this.accountId)
+            .expand(x => x.contact_customer_accounts, x => [x.fullname],
+                {
+                    filter: x => Filter.equals(x.firstname, "*._-~'!()/+@?=:#;,$& %^[]{}<>\"\\|`")
+                }
+            )
+            .getQueryString();
+
+        expect(qs).to.equal(`accounts(${this.accountId})?$select=contact_customer_accounts&$expand=contact_customer_accounts($select=fullname;$filter=firstname eq '*._-~''!()%2F%2B@%3F=:%23;,$%26%20%25%5E%5B%5D%7B%7D%3C%3E%22%5C%7C%60')`);
+    }
 }
