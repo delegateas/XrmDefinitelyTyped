@@ -1,6 +1,6 @@
 ﻿/// <reference path="..\xrm.d.ts" />
 declare namespace Xrm {
-    interface SubGridControl extends BaseControl {
+	interface SubGridControl<T extends string> extends BaseControl {
         /**
          * Add event handlers to this event to run every time the subgrid refreshes. 
          * This includes when users sort the values by clicking the column headings. 
@@ -15,7 +15,7 @@ declare namespace Xrm {
         /**
          * Use this method to get access to the Grid available in the GridControl.
          */
-        getGrid(): Grid;
+        getGrid(): Grid<T>;
 
         /**
          * Use this method to get access to the ViewSelector available for the GridControl.
@@ -33,16 +33,16 @@ declare namespace Xrm {
         getRelationshipName(): string
     }
 
-    interface Grid {
+	interface Grid<T extends string> {
         /**
          * Returns a collection of every GridRow in the Grid.
          */
-        getRows(): Collection<GridRow>;
+        getRows(): Collection<GridRow<T>>;
 
         /**
          * Returns a collection of every selected GridRow in the Grid.
          */
-        getSelectedRows(): Collection<GridRow>;
+        getSelectedRows(): Collection<GridRow<T>>;
 
         /**
          * In the web application or the Dynamics CRM for Outlook client while connected to the server, this method returns the total number of records that match the filter criteria of the view, not limited by the number visible in a single page.
@@ -52,21 +52,21 @@ declare namespace Xrm {
         getTotalRecordCount(): number;
     }
 
-    interface GridRow {
+	interface GridRow<T extends string> {
         /**
          * Returns the GridRowData for the GridRow.
          */
-        getData(): GridRowData;
+        getData(): GridRowData<T>;
     }
 
-    interface GridRowData {
+	interface GridRowData<T extends string> {
         /**
          * Returns the GridEntity for the GridRowData.
          */
-        getEntity(): GridEntity;
+        getEntity(): GridEntity<T>;
     }
 
-    interface GridEntity {
+	interface GridEntity<T extends string> {
         /**
          * Returns the logical name for the record in the row.
          */
@@ -75,7 +75,7 @@ declare namespace Xrm {
         /**
          * Returns an entity reference for the record in the row.
          */
-        getEntityReference(): Xrm.EntityReference;
+        getEntityReference(): Xrm.EntityReference<T>;
 
         /**
          * Returns the id for the record in the row.

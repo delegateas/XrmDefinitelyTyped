@@ -33,7 +33,7 @@ let currencyId = {
   schemaName = "TransactionCurrencyId"
   specialType = SpecialType.EntityReference
   varType = TsType.String
-  targetEntitySets = Some [| "transactioncurrencies" |]
+  targetEntitySets = Some [| "transactioncurrency", "transactioncurrencies" |]
   readable = true
   createable = true
   updateable = true
@@ -47,7 +47,7 @@ let guidName (a: XrmAttribute) = sprintf "%s_guid" a.logicalName
 let formattedName (a: XrmAttribute) = sprintf "%s_formatted" a.logicalName
 
 let bindNames (a: XrmAttribute) = 
-  a.targetEntitySets ?|> Array.map (sprintf "%s_bind$%s" a.logicalName)
+  a.targetEntitySets ?|> Array.map (fun tes -> (sprintf "%s_bind$%s" a.logicalName (snd tes)))
 
 (** Various type helper functions *)
 let arrayOf = TsType.Custom >> TsType.Array

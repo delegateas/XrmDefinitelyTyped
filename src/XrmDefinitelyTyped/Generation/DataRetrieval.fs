@@ -139,6 +139,10 @@ let retrieveCrmData crmVersion entities solutions mainProxy proxyGetter =
   let rawEntityMetadata =
     Array.append originalRawEntityMetadata additionalEntityMetadata
 
+  let dd  =
+    rawEntityMetadata.[0].Attributes
+    |> Array.filter (fun a -> a.AttributeType.HasValue && a.AttributeType.Value = AttributeTypeCode.Lookup)
+
   let bpfData = 
     match crmVersion .>= (6,0,0,0) with
     | false -> [||]

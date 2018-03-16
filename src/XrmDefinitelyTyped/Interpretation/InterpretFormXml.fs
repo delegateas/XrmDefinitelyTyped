@@ -43,19 +43,26 @@ let classIds =
     ("9C5CA0A1-AB4D-4781-BE7E-8DFBE867B87E", Timer)
   ] |> List.map (fun (id,t) -> id.ToUpper(), t) |> Map.ofList
     
-let getAttributeType (entity: XrmEntity) name =
-  let attribute =
-    entity.attributes
-    |> List.tryFind (fun a -> a.logicalName = name)
+let getTargetEntities = function
+  | None -> ""
+  | Some (a: XrmAttribute) ->
+    match a.targetEntitySets with
+    | None -> ""
+    | Some tes -> let el = tes |> Array.unzip |> fst |> Array.toList
+                  List.fold(fun acc e -> sprintf "%s | \"%s\"" acc e) (sprintf "\"%s\"" el.Head) el.Tail
 
-  match attribute with
+let getAttributeType = function
   | None -> TsType.Undefined
   | Some a -> a.varType
 
-let getAttribute (enums:Map<string,TsType>) entity (_, attrName, controlClass) =
+let getAttribute (enums:Map<string,TsType>) (entity: XrmEntity) (_, attrName, controlClass) =
   if String.IsNullOrEmpty attrName then None else 
   
-  let attrType = getAttributeType entity attrName
+  let attribute =
+    entity.attributes
+    |> List.tryFind (fun a -> a.logicalName = attrName)
+
+  let attrType = getAttributeType attribute
 
   let aType = 
     if attrType = TsType.Boolean && controlClass = ControlClassId.Picklist then AttributeType.OptionSet TsType.Boolean else
@@ -73,7 +80,7 @@ let getAttribute (enums:Map<string,TsType>) entity (_, attrName, controlClass) =
 
     | PartyListLookup 
     | RegardingLookup 
-    | Lookup        -> AttributeType.Lookup
+    | Lookup        -> AttributeType.Lookup (getTargetEntities attribute)
 
     | DateTime      -> AttributeType.Date
 
@@ -224,6 +231,9 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
       let controlClass = getControlClass id classId
           
       let datafieldname = getValue c "datafieldname"
+
+      let parameters = c.Descendants(XName.Get("parameters"))
+      let targetEntities = parameters |> Seq.map (fun p -> getValue p "targetentitytype") |> Seq.toList
 
       id, datafieldname, controlClass)
     |> List.ofSeq

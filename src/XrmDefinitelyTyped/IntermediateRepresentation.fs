@@ -23,7 +23,7 @@ type XrmAttribute = {
   logicalName: string
   varType: TsType
   specialType: SpecialType
-  targetEntitySets: string[] option
+  targetEntitySets: (string * string)[] option
   readable: bool
   createable: bool
   updateable: bool
@@ -72,7 +72,7 @@ type ControlType =
 type AttributeType = 
   | Default of TsType
   | Number
-  | Lookup
+  | Lookup of string
   | Date
   | OptionSet of TsType
 
