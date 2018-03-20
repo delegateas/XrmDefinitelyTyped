@@ -33,7 +33,7 @@ let getControlInterface cType aType =
   | aType, ControlType.OptionSet    -> TsType.SpecificGeneric ("Xrm.OptionSetControl", [ getOptionSetType aType ])
   | Some (AttributeType.Lookup ty), ControlType.Lookup 
                                     -> TsType.Custom (sprintf "Xrm.LookupControl<%s>" ty)
-  | _, ControlType.SubGrid          -> TsType.Custom (sprintf "Xrm.SubGridControl<%s>" "Entity")
+  | _, ControlType.SubGrid tes      -> TsType.Custom (sprintf "Xrm.SubGridControl<%s>" tes)
   | _, x                            -> TsType.Custom (sprintf "Xrm.%AControl" x)
 
 /// Default collection functions which also use the "get" function name.

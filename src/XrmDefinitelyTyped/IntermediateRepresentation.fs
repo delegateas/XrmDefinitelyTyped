@@ -65,7 +65,7 @@ type ControlType =
   | Date
   | Lookup
   | OptionSet
-  | SubGrid
+  | SubGrid of string
   | WebResource
   | IFrame
 
@@ -107,7 +107,7 @@ type ControlClassId =
   | Other
   with override x.ToString() = x.GetType().Name
 
-type ControlField = string * string * ControlClassId
+type ControlField = string * string * ControlClassId * string option
 
 
 type XrmForm = {

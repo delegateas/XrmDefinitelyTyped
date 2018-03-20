@@ -51,7 +51,8 @@ let rec analyzeEntity (data:List<InnerData>) (fields:ControlField list) : Contro
     | StartsWith "ControlStep" () -> 
       ( d.controlId, 
         d.dataFieldName, 
-        getControlClass d.controlId d.classId) :: fields
+        getControlClass d.controlId d.classId,
+        None) :: fields
     | _ -> fields
   ) |> List.concat
 
@@ -79,7 +80,7 @@ let interpretBpfs (workflows:Entity[]): Map<string,ControlField list> =
     lname, 
     x |> Array.map snd 
     |> List.concat 
-    |> List.distinctBy (fun (id,_,_) -> id)
-    |> List.map (fun (id, datafieldname, controlClass) -> 
-      sprintf "header_process_%s" id, datafieldname, controlClass))
+    |> List.distinctBy (fun (id,_,_,_) -> id)
+    |> List.map (fun (id, datafieldname, controlClass, _) -> 
+      sprintf "header_process_%s" id, datafieldname, controlClass, None))
   |> Map.ofArray

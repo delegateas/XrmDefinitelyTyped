@@ -55,7 +55,7 @@ let getAttributeType = function
   | None -> TsType.Undefined
   | Some a -> a.varType
 
-let getAttribute (enums:Map<string,TsType>) (entity: XrmEntity) (_, attrName, controlClass) =
+let getAttribute (enums:Map<string,TsType>) (entity: XrmEntity) (_, attrName, controlClass, tes) =
   if String.IsNullOrEmpty attrName then None else 
   
   let attribute =
@@ -97,7 +97,7 @@ let getAttribute (enums:Map<string,TsType>) (entity: XrmEntity) (_, attrName, co
 
 
 let getControl  (enums:Map<string,TsType>) entity (controlField:ControlField): XrmFormControl option =
-  let controlId, _, controlClass = controlField
+  let controlId, _, controlClass, tes = controlField
   if controlClass = QuickView then None else
 
   let aType = 
@@ -123,7 +123,7 @@ let getControl  (enums:Map<string,TsType>) entity (controlField:ControlField): X
     | WebResource -> ControlType.WebResource
     | IFrame -> ControlType.IFrame 
         
-    | Subgrid -> ControlType.SubGrid
+    | Subgrid -> ControlType.SubGrid tes.Value
 
     | PartyListLookup 
     | RegardingLookup 
@@ -166,10 +166,11 @@ let renameControls (controls:XrmFormControl list) =
   |> List.concat
 
 
-let getCompositeField (id, datafieldname, _) subFieldName ty : ControlField =
+let getCompositeField (id, datafieldname, _, _) subFieldName ty : ControlField =
   sprintf "%s_compositionLinkControl_%s" id subFieldName,
   subFieldName,
-  ty
+  ty,
+  None
 
 let (|IsCompositeAddress|_|) (str:string) = 
   let regex = Regex.Match(str, "^address(\d)_composite$")
@@ -180,7 +181,7 @@ let (|IsCompositeAddress|_|) (str:string) =
 /// Finds all composite fields and adds the sub-fields that they bring along
 let getCompositeFields : ControlField list -> ControlField list =
   List.choose (fun field  ->
-    let (id, datafieldname, _) = field
+    let (id, datafieldname, _, _) = field
 
     match datafieldname with
     | null -> None
@@ -231,11 +232,19 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
       let controlClass = getControlClass id classId
           
       let datafieldname = getValue c "datafieldname"
+      
+      let targetEntities = 
+        c.Descendants(XName.Get("parameters")) 
+        |> Seq.collect (fun p -> p.Elements(XName.Get("TargetEntityType")))
+        |> Seq.map (fun e -> e.Value)
+        |> Seq.toList
 
-      let parameters = c.Descendants(XName.Get("parameters"))
-      let targetEntities = parameters |> Seq.map (fun p -> getValue p "targetentitytype") |> Seq.toList
-
-      id, datafieldname, controlClass)
+      if(targetEntities.Length > 0) then
+        let tes =
+          Seq.fold(fun acc e -> sprintf "%s | \"%s\"" acc e) (sprintf "\"%s\"" targetEntities.Head) targetEntities.Tail
+        id, datafieldname, controlClass, Some tes
+      else
+        id, datafieldname, controlClass, None)
     |> List.ofSeq
 
   let compositeFields = getCompositeFields controlFields
