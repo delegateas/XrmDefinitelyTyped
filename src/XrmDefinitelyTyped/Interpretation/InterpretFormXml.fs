@@ -43,11 +43,11 @@ let classIds =
     ("9C5CA0A1-AB4D-4781-BE7E-8DFBE867B87E", Timer)
   ] |> List.map (fun (id,t) -> id.ToUpper(), t) |> Map.ofList
     
-let getTargetEntities = function
-  | None -> ""
+let getTargetEntities (tes: string option) = function
+  | None -> if tes.IsSome then tes.Value else "string"
   | Some (a: XrmAttribute) ->
     match a.targetEntitySets with
-    | None -> ""
+    | None -> "string"
     | Some tes -> let el = tes |> Array.unzip |> fst |> Array.toList
                   List.fold(fun acc e -> sprintf "%s | \"%s\"" acc e) (sprintf "\"%s\"" el.Head) el.Tail
 
@@ -80,7 +80,7 @@ let getAttribute (enums:Map<string,TsType>) (entity: XrmEntity) (_, attrName, co
 
     | PartyListLookup 
     | RegardingLookup 
-    | Lookup        -> AttributeType.Lookup (getTargetEntities attribute)
+    | Lookup        -> AttributeType.Lookup (getTargetEntities tes attribute)
 
     | DateTime      -> AttributeType.Date
 
