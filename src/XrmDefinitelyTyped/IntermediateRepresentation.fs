@@ -63,7 +63,7 @@ type ControlType =
   | Default
   | Number
   | Date
-  | Lookup
+  | Lookup of string
   | OptionSet
   | SubGrid of string
   | WebResource

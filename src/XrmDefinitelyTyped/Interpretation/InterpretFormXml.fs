@@ -42,14 +42,21 @@ let classIds =
     ("E7A81278-8635-4D9E-8D4D-59480B391C5B", Subgrid)
     ("9C5CA0A1-AB4D-4781-BE7E-8DFBE867B87E", Timer)
   ] |> List.map (fun (id,t) -> id.ToUpper(), t) |> Map.ofList
-    
-let getTargetEntities (tes: string option) = function
-  | None -> if tes.IsSome then tes.Value else "string"
-  | Some (a: XrmAttribute) ->
-    match a.targetEntitySets with
-    | None -> "string"
-    | Some tes -> let el = tes |> Array.unzip |> fst |> Array.toList
-                  List.fold(fun acc e -> sprintf "%s | \"%s\"" acc e) (sprintf "\"%s\"" el.Head) el.Tail
+ 
+let getTargetEntities (tes: string option) (a: XrmAttribute option) =
+  match tes with
+  | Some _ -> tes.Value
+  | None ->
+    match a with
+    | None -> "NoAttribute"
+    | Some a' ->
+      match a'.targetEntitySets with
+      | None -> if a.Value.specialType = Guid then "string" else "NoAttributeTargets"
+      | Some tes' ->
+        let el = tes' |> Array.unzip |> fst |> Array.toList
+        match el.IsEmpty with
+        | true -> "NoTargets"
+        | false -> List.fold(fun acc e -> sprintf "%s | \"%s\"" acc e) (sprintf "\"%s\"" el.Head) el.Tail
 
 let getAttributeType = function
   | None -> TsType.Undefined
@@ -97,13 +104,16 @@ let getAttribute (enums:Map<string,TsType>) (entity: XrmEntity) (_, attrName, co
 
 
 let getControl  (enums:Map<string,TsType>) entity (controlField:ControlField): XrmFormControl option =
-  let controlId, _, controlClass, tes = controlField
+  let controlId, attrName, controlClass, tes = controlField
   if controlClass = QuickView then None else
 
   let aType = 
     getAttribute enums entity controlField
     |> Option.map snd
 
+  let attribute =
+    entity.attributes
+    |> List.tryFind (fun a -> a.logicalName = attrName)
     
   let cType = 
     match controlClass with
@@ -123,11 +133,11 @@ let getControl  (enums:Map<string,TsType>) entity (controlField:ControlField): X
     | WebResource -> ControlType.WebResource
     | IFrame -> ControlType.IFrame 
         
-    | Subgrid -> ControlType.SubGrid tes.Value
+    | Subgrid -> ControlType.SubGrid (getTargetEntities tes attribute)
 
     | PartyListLookup 
     | RegardingLookup 
-    | Lookup -> ControlType.Lookup
+    | Lookup -> ControlType.Lookup (getTargetEntities tes attribute)
         
     // TODO: Figure out if the following should be special control types
     | Language
@@ -234,10 +244,16 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
       let datafieldname = getValue c "datafieldname"
       
       let targetEntities = 
-        c.Descendants(XName.Get("parameters")) 
-        |> Seq.collect (fun p -> p.Elements(XName.Get("TargetEntityType")))
-        |> Seq.map (fun e -> e.Value)
-        |> Seq.toList
+        let parms = c.Descendants(XName.Get("parameters")) 
+        if Seq.isEmpty parms then 
+          let rel = getValue c "relationship"
+          entity.allRelationships
+          |> List.choose (fun r -> if r.schemaName = rel then Some r.relatedSetName else None)
+        else
+          parms
+          |> Seq.collect (fun p -> p.Elements(XName.Get("TargetEntityType")))
+          |> Seq.map (fun e -> e.Value)
+          |> Seq.toList
 
       if(targetEntities.Length > 0) then
         let tes =
@@ -277,14 +293,16 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
 /// Main function to interpret a grouping of FormXmls
 let interpretFormXmls (entityMetadata: XrmEntity[]) (formData:Map<string,Entity[]>) (bpfControls:Map<string, ControlField list>) =
   entityMetadata
-  |> Array.map (fun em ->
+  |> Array.choose (fun em ->
       let enums = 
         em.attributes
         |> List.filter (fun attr -> attr.specialType = SpecialType.OptionSet)
         |> List.map (fun attr -> attr.logicalName, attr.varType)
         |> Map.ofList
         
-      formData.[em.logicalName]
-      |> Array.Parallel.map (interpretFormXml enums (bpfControls.TryFind em.logicalName) em))
+      match formData.TryFind em.logicalName with
+      | Some es -> Some (Array.Parallel.map (interpretFormXml enums (bpfControls.TryFind em.logicalName) em) es)
+      | None -> None
+  )
     |> Array.concat
   |> dict

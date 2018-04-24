@@ -31,8 +31,8 @@ let getControlInterface cType aType =
                                     -> TsType.Custom "Xrm.StringControl"
   | Some at, ControlType.Default    -> TsType.SpecificGeneric ("Xrm.Control", [ getAttributeInterface at ]) 
   | aType, ControlType.OptionSet    -> TsType.SpecificGeneric ("Xrm.OptionSetControl", [ getOptionSetType aType ])
-  | Some (AttributeType.Lookup ty), ControlType.Lookup 
-                                    -> TsType.Custom (sprintf "Xrm.LookupControl<%s>" ty)
+  | Some (AttributeType.Lookup _), ControlType.Lookup tes
+  | _, ControlType.Lookup tes       -> TsType.Custom (sprintf "Xrm.LookupControl<%s>" tes)
   | _, ControlType.SubGrid tes      -> TsType.Custom (sprintf "Xrm.SubGridControl<%s>" tes)
   | _, x                            -> TsType.Custom (sprintf "Xrm.%AControl" x)
 
