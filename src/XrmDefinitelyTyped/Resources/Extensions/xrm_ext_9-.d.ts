@@ -329,7 +329,7 @@ declare namespace Xrm {
 		/**
 		* Indicates whether to display form in a new window.
 		*/
-		openInNewwindow?: boolean;
+		openInNewWindow?: boolean;
 
 		/**
 		* Window Position
