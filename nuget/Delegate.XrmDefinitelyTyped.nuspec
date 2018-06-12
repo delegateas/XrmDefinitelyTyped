@@ -22,7 +22,6 @@
     <file src="..\files\XrmDefinitelyTyped.exe.config" target="content\XrmDefinitelyTyped" />
     <file src="..\src\XrmDefinitelyTyped\bin\Release\FSharp.Core.dll" target="content\XrmDefinitelyTyped" />
     <file src="..\src\XrmDefinitelyTyped\bin\Release\Microsoft.Xrm.Sdk.dll" target="content\XrmDefinitelyTyped" />
-    <file src="..\src\XrmDefinitelyTyped\bin\Release\Microsoft.IdentityModel.dll" target="content\XrmDefinitelyTyped" />
     <file src="..\src\XrmDefinitelyTyped\bin\Release\Microsoft.Crm.Sdk.Proxy.dll" target="content\XrmDefinitelyTyped" />
     <file src="..\src\XrmDefinitelyTyped\bin\Release\XrmDefinitelyTyped.exe" target="content\XrmDefinitelyTyped" />
     <file src="..\src\XrmDefinitelyTyped\bin\Release\XrmDefinitelyTyped.xml" target="content\XrmDefinitelyTyped" />

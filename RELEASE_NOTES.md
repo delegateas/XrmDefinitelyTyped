@@ -1,4 +1,10 @@
 # Release Notes
+
+### 2.6.2 - June 12th 2018
+* Increased dependencies to recent versions (including using D365 v9 assemblies)
+* Removed dependency to Microsoft.IdentityModel
+* Fixed casing with openInNewWindow in EntityFormOptions
+
 ### 2.6.1 - March 02 2018
 * Made #44 optional
 
