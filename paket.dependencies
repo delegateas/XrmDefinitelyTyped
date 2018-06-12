@@ -1,8 +1,8 @@
 source https://nuget.org/api/v2
 
 nuget SourceLink.Fake
-nuget FAKE
-nuget FSharp.Formatting 2.13.6
+nuget FAKE ~> 4.64.13
+nuget FSharp.Formatting
 
 nuget FSharp.Core
 nuget Microsoft.CrmSdk.CoreAssemblies >= 8
