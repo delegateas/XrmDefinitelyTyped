@@ -29,7 +29,7 @@ let getRetrieveSettings parsedArgs =
   }
 
 let getGenerationSettings parsedArgs =
-  let intersects typ = getListArg parsedArgs (sprintf "%s%s" typ "intersect") (fun definition -> 
+  let intersects typ = getListArg parsedArgs typ (fun definition -> 
     let nameSplit = definition.IndexOf(":")
     if nameSplit < 0 then failwithf "Missing name specification in %s-intersect list at: '%s'" typ definition
 
@@ -60,8 +60,8 @@ let getGenerationSettings parsedArgs =
     restNs = getArg parsedArgs "rest" nsSanitizer
     webNs = getArg parsedArgs "web" nsSanitizer
     viewNs = getArg parsedArgs "views" nsSanitizer
-    formIntersects = intersects "form" 
-    viewIntersects = intersects "view"
+    formIntersects = intersects "formintersect" 
+    viewIntersects = intersects "viewintersect"
   }
 
 
