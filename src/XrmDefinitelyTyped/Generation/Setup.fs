@@ -21,28 +21,49 @@ let intersectFormQuads =
   Seq.reduce (fun (d1, a1, c1, t1) (d2, a2, c2, t2) ->
     Set.union d1 d2, Set.intersect a1 a2, Set.intersect c1 c2, intersectMappedSets t1 t2)
 
-// Makes intersection of forms by guid
-let intersectFormContentByGuid (formDict: IDictionary<Guid, XrmForm>) ((name, guids): FormIntersect) =
+let intersectContentByGuid typ (dict: IDictionary<Guid, 'a>) ((name, guids): Intersect) contentMap reduce =
   guids 
   |> Seq.choose (fun g ->
-    match formDict.ContainsKey g with
-    | true  -> Some formDict.[g]
-    | false -> printfn "Form with GUID %A was not found" g; None)
+    match dict.ContainsKey g with
+    | true  -> Some dict.[g]
+    | false -> printfn "%s with GUID %A was not found" typ g; None)
 
-  |> Seq.map (fun f -> 
-    f.entityDependencies |> Set.ofSeq,  
-    f.attributes |> Set.ofList, 
-    f.controls |> Set.ofList, 
-    f.tabs |> Seq.map (fun (name, iname, sections) -> (name, iname), sections |> Set.ofList) |> Map.ofSeq)
-
-  |> intersectFormQuads
+  |> Seq.map contentMap
+  |> reduce
   |> fun q -> name, q
 
-// Intersect forms based on argument
-let intersectForms formDict =
+// Makes intersection of forms by guid
+let intersectFormContentByGuid (formDict: IDictionary<Guid, XrmForm>) intersect =
+  let contentMap =
+    (fun (f: XrmForm) -> 
+      f.entityDependencies |> Set.ofSeq,  
+      f.attributes |> Set.ofList, 
+      f.controls |> Set.ofList, 
+      f.tabs |> Seq.map (fun (name, iname, sections) -> (name, iname), sections |> Set.ofList) |> Map.ofSeq)
+
+  intersectContentByGuid "Form" formDict intersect contentMap intersectFormQuads
+
+// Makes intersection of views by guid
+let intersectViewContentByGuids (viewDict: IDictionary<Guid, XrmView>) intersect =
+  let contentMap =
+    (fun (v: XrmView) ->
+      v.attributes |> Set.ofList,
+      v.linkedAttributes |> Set.ofList
+      )
+  
+  let reduce = Seq.reduce(fun (a1, la1) (a2, la2) -> Set.intersect a1 a2, Set.intersect la1 la2)
+  
+  intersectContentByGuid "View" viewDict intersect contentMap reduce
+
+let intersect (dict: IDictionary<Guid, 'a>) instersectContentByGuids mapContent =
   Array.distinctBy fst
-  >> Array.Parallel.map (intersectFormContentByGuid formDict)
-  >> Seq.map (fun (name, (deps, a, c, t)) -> 
+  >> Array.Parallel.map (instersectContentByGuids dict)
+  >> Seq.map mapContent
+
+// Intersect forms based on argument
+let intersectForms formDict formsToIntersect =
+  let contentMap =
+    (fun (name, (deps, a, c, t)) -> 
     { XrmForm.name = name
       entityName = "_special"
       guid = None
@@ -52,11 +73,28 @@ let intersectForms formDict =
       controls = c |> Set.toList
       tabs = t |> Map.toList |> List.map (fun ((k1, k2), v) -> k1, k2, v |> Set.toList)
     })
-  >> Seq.append formDict.Values
-  >> Array.ofSeq
+
+  intersect formDict intersectFormContentByGuid contentMap formsToIntersect
+  |> Seq.append formDict.Values
+  |> Seq.toArray
+
+// Intersect views based on argument
+let intersectViews (viewDict: IDictionary<Guid, XrmView>) viewsToIntersect =
+  if viewDict.Count > 0 then
+    let contentMap =
+      (fun (name, (attributes, linkedAttributes)) -> 
+      { XrmView.name = name
+        entityName = "_special"
+        attributes = attributes |> Set.toList
+        linkedAttributes = linkedAttributes |> Set.toList
+      })
+
+    intersect viewDict intersectViewContentByGuids contentMap viewsToIntersect
+
+  else Seq.empty
 
 /// Interprets the raw CRM data into an intermediate state used for further generation
-let interpretCrmData out toIntersect (rawState: RawState) =
+let interpretCrmData out formsToIntersect viewsToIntersect (rawState: RawState) =
   printf "Interpreting data..."
 
   let schemaNames = 
@@ -67,13 +105,20 @@ let interpretCrmData out toIntersect (rawState: RawState) =
   let entityMetadata =
     rawState.metadata |> Array.Parallel.map (interpretEntity schemaNames rawState.nameMap)
 
-  let viewData =
-    rawState.viewData |> Array.map(interpretView entityMetadata)
+  let viewDict =
+    rawState.viewData 
+    |> Array.map(interpretView entityMetadata)
+    |> dict
+
+  let viewData = 
+    intersectViews viewDict viewsToIntersect
+    |> Seq.append viewDict.Values
+    |> Seq.toArray
 
   let bpfControls = interpretBpfs rawState.bpfData
 
   let formDict = interpretFormXmls entityMetadata rawState.formData bpfControls
-  let forms = intersectForms formDict toIntersect
+  let forms = intersectForms formDict formsToIntersect
   printfn "Done!"
 
   { InterpretedState.entities = entityMetadata

@@ -53,7 +53,7 @@ let getEntityMetadataNameIfMissing entityName (rawEntityMetadata: EntityMetadata
 let retrieveMissingViewDependingEntityMetadata parsedFetchXmlViews mainProxy rawEntityMetadata =
   let allLinkedAttributes = 
     parsedFetchXmlViews
-    |> Array.map (fun (_, (_, _, (linkedAttributes))) -> linkedAttributes)
+    |> Array.map (fun (_, _, (_, _, (linkedAttributes))) -> linkedAttributes)
     |> List.concat
     |> Array.ofList
 
@@ -69,12 +69,12 @@ let retrieveMissingViewDependingEntityMetadata parsedFetchXmlViews mainProxy raw
   getEntityMetadataBulk mainProxy missingEntityMetadataNames
   
 // Retrieve CRM views
-let retrieveViews entitiesToFetch rawEntityMetadata mainProxy :ViewData[] * EntityMetadata[] =
+let retrieveViews entitiesToFetch rawEntityMetadata mainProxy : ViewData[] * EntityMetadata[] =
   printf "Fetching specific views from CRM..."
 
   let _,rawViews =
     getViews entitiesToFetch mainProxy
-    |> Seq.fold (fun previous (entityName, viewName, fetchXml) ->
+    |> Seq.fold (fun previous (entityName, guid, viewName, fetchXml) ->
     let (previousNames, previousViews) = previous
     let regex = new Regex(@"[^a-zA-Z0-9_]")
     let trimmedName = 
@@ -88,11 +88,11 @@ let retrieveViews entitiesToFetch rawEntityMetadata mainProxy :ViewData[] * Enti
       | None -> 0, Map.add fullName 1 previousNames
     
     let safeName = if duplicates > 0 then trimmedName + duplicates.ToString() else trimmedName
-    nextMap, (safeName, fetchXml)::previousViews) (Map.empty, [])
+    nextMap, (guid, safeName, fetchXml)::previousViews) (Map.empty, [])
 
   let fetchXmlParsedViews =
     rawViews
-    |> List.map (fun (name, fetchxml) -> (name, intepretFetchXml fetchxml))
+    |> List.map (fun (guid, name, fetchxml) -> (guid, name, intepretFetchXml fetchxml))
     |> Array.ofList
     
   let missingEntityMetadata = 

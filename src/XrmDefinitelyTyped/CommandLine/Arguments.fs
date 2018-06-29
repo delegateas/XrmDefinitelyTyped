@@ -85,6 +85,11 @@ type Args private () =
       altCommands=["gm"]
       description="Set to true if attribute and control mappings should be generated"
       required=false }
+  
+    { command="viewintersect"
+      altCommands=["vi"]
+      description="Comma-separated list of named semicolon-separated lists of view GUIDs that should be intersected. "
+      required=false }
   ]
 
   static member connectionArgs = [
