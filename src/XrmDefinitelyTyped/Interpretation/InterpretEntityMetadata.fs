@@ -46,7 +46,12 @@ let interpretAttribute nameMap entityNames (a: AttributeMetadata) =
     match a with
     | :? LookupAttributeMetadata as lam -> 
       lam.Targets
-      |> Array.choose (fun k -> Map.tryFind k nameMap ?|> snd)
+      |> Array.choose 
+        (fun k -> 
+          match Map.tryFind k nameMap with
+          | None -> None
+          | Some tes -> Some (k, snd tes)
+        )
       |> Some
     | _ -> None
 

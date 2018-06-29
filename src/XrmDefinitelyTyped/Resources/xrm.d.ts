@@ -50,9 +50,9 @@
     /**
      * Interface for an entity reference for the Xrm.Page context.
      */
-    interface EntityReference {
+    interface EntityReference<T extends string> {
         id: string;
-        entityType: string;
+        entityType: T;
         name?: string | null;
     }
 
@@ -318,11 +318,11 @@
     /**
      * Interface for a lookup attribute.
      */
-    interface LookupAttribute extends Attribute<EntityReference[]> {
+    interface LookupAttribute<T extends string> extends Attribute<EntityReference<T>[]> {
         /**
          * Collection of controls associated with the attribute.
          */
-        controls: Collection<LookupControl>;
+        controls: Collection<LookupControl<T>>;
     }
 
 
@@ -538,7 +538,7 @@
     /**
      * Interface for a Lookup form control.
      */
-    interface LookupControl extends Control<LookupAttribute> {
+    interface LookupControl<T extends string> extends Control<LookupAttribute<T>> {
         /**
          * Adds a new view for the lookup dialog box.
          *
@@ -566,7 +566,7 @@
     /**
      * Interface for a SubGrid form control.
      */
-    interface SubGridControl extends BaseControl {
+	interface SubGridControl<T extends string> extends BaseControl {
         /**
          * Refreshes the data displayed in a subgrid.
          */
@@ -576,7 +576,7 @@
     /**
      * Type to be be used for iterating over a list of controls and being able to interact with all of them with precursory checks for undefined
      */
-    type AnyControl = BaseControl & Partial<Control<any> & WebResourceControl & IFrameControl & LookupControl & SubGridControl & DateControl & OptionSetControl<any>>
+    type AnyControl = BaseControl & Partial<Control<any> & WebResourceControl & IFrameControl & LookupControl<string> & SubGridControl<string> & DateControl & OptionSetControl<any>>
 
 
     /**
@@ -587,7 +587,7 @@
         /**
          * Use this method to get a reference to the current view.
          */
-        getCurrentView(): Xrm.EntityReference;
+        getCurrentView(): Xrm.EntityReference<string>;
 
         /**
          * Use this method to determine whether the view selector is visible.
@@ -597,7 +597,7 @@
         /**
          * Use this method to set the current view.
          */
-        setCurrentView(reference: Xrm.EntityReference): void;
+        setCurrentView(reference: Xrm.EntityReference<string>): void;
     }
 
     /**

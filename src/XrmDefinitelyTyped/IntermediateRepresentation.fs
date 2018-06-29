@@ -23,7 +23,7 @@ type XrmAttribute = {
   logicalName: string
   varType: TsType
   specialType: SpecialType
-  targetEntitySets: string[] option
+  targetEntitySets: (string * string)[] option
   readable: bool
   createable: bool
   updateable: bool
@@ -63,16 +63,16 @@ type ControlType =
   | Default
   | Number
   | Date
-  | Lookup
+  | Lookup of string
   | OptionSet
-  | SubGrid
+  | SubGrid of string
   | WebResource
   | IFrame
 
 type AttributeType = 
   | Default of TsType
   | Number
-  | Lookup
+  | Lookup of string
   | Date
   | OptionSet of TsType
 
@@ -107,7 +107,7 @@ type ControlClassId =
   | Other
   with override x.ToString() = x.GetType().Name
 
-type ControlField = string * string * ControlClassId
+type ControlField = string * string * ControlClassId * string option
 
 
 type XrmForm = {

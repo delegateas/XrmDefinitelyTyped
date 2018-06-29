@@ -9,11 +9,11 @@ declare namespace Xrm {
         addTabStateChange(reference: Function): void;
     }
 
-    interface GridEntity {
+	interface GridEntity<T extends string> {
         /**
          * Returns a collection of the attributes on this record.
          */
-        getAttributes(): GridCollection<GridEntityAttribute>;
+        getAttributes(): GridCollection<GridEntityAttribute<T>>;
     }
 
     interface GridCollection<T> {
@@ -47,7 +47,7 @@ declare namespace Xrm {
         forEach(delegate: ForEach<T>): void;
     }
 
-    interface GridEntityAttribute {
+    interface GridEntityAttribute<T extends string> {
         /**
          * Returns the logical name of the attribute.
          */
@@ -63,7 +63,7 @@ declare namespace Xrm {
         /**
          * Returns the parent entity of this attribute.
          */
-        getParent(): GridEntity;
+        getParent(): GridEntity<T>;
     }
 
     /**

@@ -7,6 +7,7 @@ open IntermediateRepresentation
 open Microsoft.Xrm.Sdk
 open System.Runtime.Serialization
 open System.Collections.Generic
+open System
 
 // Part of the JSON data model for the "clientdata" attribute on BPF workflows.
 // Used to retrieve which fields on which entities are in the BPF forms
@@ -39,6 +40,22 @@ and [<DataContract>]InnerData =
     dataFieldName: string
     [<field: DataMember(Name = "classId")>]
     classId: string
+    [<field: DataMember(Name = "entity")>]
+    entity: RelatedEntity
+  }
+
+and [<DataContract>]RelatedEntity =
+  {
+    [<field: DataMember(Name = "__class")>]
+    __class: string
+    [<field: DataMember(Name = "parameterName")>]
+    parameterName: string
+    [<field: DataMember(Name = "entityName")>]
+    entityName: string
+    [<field: DataMember(Name = "relatedAttributeName")>]
+    relatedAttributeName: string
+    [<field: DataMember(Name = "relationshipName")>]
+    relationshipName: string
   }
 
 /// Recursive helper function to analyze a BPF json file
@@ -46,12 +63,21 @@ let rec analyzeEntity (data:List<InnerData>) (fields:ControlField list) : Contro
   data.ToArray()
   |> Array.map(fun d ->
     match d.__class with
+    | StartsWith "PageStep" ()
     | StartsWith "StageStep" () 
     | StartsWith "StepStep" ()  -> analyzeEntity d.steps.list fields
     | StartsWith "ControlStep" () -> 
-      ( d.controlId, 
-        d.dataFieldName, 
-        getControlClass d.controlId d.classId) :: fields
+      match box d.controlId with
+      | null -> fields
+      | _ ->
+        let controlClass = getControlClass d.controlId d.classId
+        ( d.controlId, 
+          d.dataFieldName, 
+          controlClass,
+          match box d.entity, controlClass with
+          | e, Lookup when e <> null -> Some (sprintf "\"%s\"" d.entity.entityName)
+          | _, _ -> None
+        ) :: fields
     | _ -> fields
   ) |> List.concat
 
@@ -79,7 +105,7 @@ let interpretBpfs (workflows:Entity[]): Map<string,ControlField list> =
     lname, 
     x |> Array.map snd 
     |> List.concat 
-    |> List.distinctBy (fun (id,_,_) -> id)
-    |> List.map (fun (id, datafieldname, controlClass) -> 
-      sprintf "header_process_%s" id, datafieldname, controlClass))
+    |> List.distinctBy (fun (id,_,_,_) -> id)
+    |> List.map (fun (id, datafieldname, controlClass, tes) -> 
+      sprintf "header_process_%s" id, datafieldname, controlClass, tes))
   |> Map.ofArray

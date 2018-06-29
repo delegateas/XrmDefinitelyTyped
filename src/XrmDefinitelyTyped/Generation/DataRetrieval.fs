@@ -152,6 +152,7 @@ let retrieveCrmData crmVersion entities solutions mainProxy proxyGetter =
   printf "Fetching FormXmls from CRM..."
   let formData =
     rawEntityMetadata
+    |> Array.filter (fun (em: EntityMetadata) -> em.CanCreateForms.Value && em.CanCreateAttributes.Value)
     |> Array.Parallel.map (fun em -> 
       let proxy = proxyGetter()
       em.LogicalName, 
