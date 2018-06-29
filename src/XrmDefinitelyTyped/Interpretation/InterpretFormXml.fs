@@ -44,19 +44,17 @@ let classIds =
   ] |> List.map (fun (id,t) -> id.ToUpper(), t) |> Map.ofList
  
 let getTargetEntities (tes: string option) (a: XrmAttribute option) =
-  match tes with
-  | Some _ -> tes.Value
-  | None ->
-    match a with
-    | None -> "NoAttribute"
-    | Some a' ->
-      match a'.targetEntitySets with
-      | None -> if a.Value.specialType = Guid then "string" else "NoAttributeTargets"
-      | Some tes' ->
-        let el = tes' |> Array.unzip |> fst |> Array.toList
-        match el.IsEmpty with
-        | true -> "NoTargets"
-        | false -> List.fold(fun acc e -> sprintf "%s | \"%s\"" acc e) (sprintf "\"%s\"" el.Head) el.Tail
+  match tes, a with
+  | Some _, _ -> tes.Value
+  | None, None -> "NoAttribute"
+  | None, Some a' ->
+    match a'.targetEntitySets with
+    | None -> if a.Value.specialType = Guid then "string" else "NoAttributeTargets"
+    | Some tes' ->
+      let el = tes' |> Array.unzip |> fst |> Array.toList
+      match el.IsEmpty with
+      | true -> "NoTargets"
+      | false -> List.fold(fun acc e -> sprintf "%s | \"%s\"" acc e) (sprintf "\"%s\"" el.Head) el.Tail
 
 let getAttributeType = function
   | None -> TsType.Undefined
@@ -299,10 +297,8 @@ let interpretFormXmls (entityMetadata: XrmEntity[]) (formData:Map<string,Entity[
         |> List.filter (fun attr -> attr.specialType = SpecialType.OptionSet)
         |> List.map (fun attr -> attr.logicalName, attr.varType)
         |> Map.ofList
-        
-      match formData.TryFind em.logicalName with
-      | Some es -> Some (Array.Parallel.map (interpretFormXml enums (bpfControls.TryFind em.logicalName) em) es)
-      | None -> None
-  )
-    |> Array.concat
+
+      formData.TryFind em.logicalName
+      ?|> Array.Parallel.map (interpretFormXml enums (bpfControls.TryFind em.logicalName) em))
+  |> Array.concat
   |> dict
