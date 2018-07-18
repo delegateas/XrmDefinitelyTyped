@@ -1,4 +1,7 @@
 # Release Notes
+### 3.0.1 - July 18th 2018
+* FormIntersects are now once again generated properly.
+
 ### 3.0.0 - July 13th 2018
 * ViewIntersects added, functions just like form intersects, but for views. #55
 * Typings are now generated for the logicalnames in entityreferences, as suggested in #38 
