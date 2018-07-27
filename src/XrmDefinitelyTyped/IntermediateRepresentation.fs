@@ -58,6 +58,13 @@ type XrmView = {
   linkedAttributes: XrmAttribute list
 }
 
+type XrmActionParameter = {
+  varType: TsType;
+  specialType: SpecialType;
+  name: string;
+  orientation: string;
+}
+
 // Forms
 type ControlType = 
   | Default

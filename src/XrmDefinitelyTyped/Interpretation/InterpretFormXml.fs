@@ -56,7 +56,8 @@ let getTargetEntities (tes: string option) (a: XrmAttribute option) =
       | true -> "NoTargets"
       | false -> List.fold(fun acc e -> sprintf "%s | \"%s\"" acc e) (sprintf "\"%s\"" el.Head) el.Tail
 
-let getAttributeType = function
+let getAttributeType (a:XrmAttribute option) =
+  match a with
   | None -> TsType.Undefined
   | Some a -> a.varType
 

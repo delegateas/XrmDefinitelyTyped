@@ -119,6 +119,7 @@
     <Compile Include="Interpretation/InterpretFormXml.fs" />
     <Compile Include="Interpretation/InterpretBpfJson.fs" />
     <Compile Include="Interpretation\InterpretView.fs" />
+    <Compile Include="Interpretation\InterpretAction.fs" />
     <Compile Include="CreateTypeScript\CreateCommon.fs" />
     <Compile Include="CreateTypeScript/CreateOptionSetDts.fs" />
     <Compile Include="CreateTypeScript\CreateRestEntities.fs" />

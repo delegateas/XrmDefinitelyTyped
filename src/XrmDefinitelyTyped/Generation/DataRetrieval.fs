@@ -8,6 +8,7 @@ open CrmDataHelper
 open DG.XrmDefinitelyTyped.InterpretView
 open Microsoft.Xrm.Sdk.Metadata
 open System.Text.RegularExpressions
+open InterpretAction
 
 
 /// Connect to CRM with the given authentication
@@ -102,6 +103,12 @@ let retrieveViews entitiesToFetch rawEntityMetadata mainProxy : ViewData[] * Ent
   printfn "Done!"
   fetchXmlParsedViews, missingEntityMetadata
 
+let retrieveActions mainProxy =
+  getActionData mainProxy
+  |> Seq.rev
+  |> Seq.map (fun (name, xaml) -> (name, interpretXaml xaml))
+  |> Array.ofSeq
+
 /// Retrieve version from CRM
 let retrieveCrmVersion mainProxy =
   printf "Retrieving CRM version..."
@@ -138,6 +145,9 @@ let retrieveCrmData crmVersion entities solutions mainProxy proxyGetter =
 
   let rawEntityMetadata =
     Array.append originalRawEntityMetadata additionalEntityMetadata
+  
+  let actionData =
+    retrieveActions mainProxy
 
   let bpfData = 
     match crmVersion .>= (6,0,0,0) with

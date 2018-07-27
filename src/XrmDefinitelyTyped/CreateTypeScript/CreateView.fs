@@ -2,7 +2,7 @@
 
 open DG.XrmDefinitelyTyped.IntermediateRepresentation
 
-let varSpecialTypeConv list =
+let varSpecialTypeConv (list: XrmAttribute list) =
   list 
   |> List.collect (fun v -> 
     let vType = 
@@ -16,7 +16,7 @@ let varSpecialTypeConv list =
     [Variable.Create(v.logicalName, TsType.String); Variable.Create(valueName, vType)]
   )
 
-let getVars ownedAttributes linkedAttributes =
+let getVars (ownedAttributes: XrmAttribute list) linkedAttributes =
   ownedAttributes @ linkedAttributes
   |> varSpecialTypeConv
 

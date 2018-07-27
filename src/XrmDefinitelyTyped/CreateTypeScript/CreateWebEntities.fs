@@ -69,7 +69,7 @@ let assignUniqueNames =
 let concatDistinctSort = 
   List.concat >> List.distinctBy (fun (x: Variable) -> x.name) >> sortByName
 
-let hasFormattedValue a = 
+let hasFormattedValue (a: XrmAttribute) = 
   match a.specialType, a.varType with
   | SpecialType.EntityReference, _
   | SpecialType.Money, _
@@ -108,7 +108,7 @@ let defToFormattedVars (a, _, _) =
 let getEntityRefDef nameFormat (a: XrmAttribute) =
   nameFormat a, [ a, a.varType, Some guidName ]
 
-let getResultDef a = 
+let getResultDef (a: XrmAttribute) = 
   let vType = a.varType
   let name = a.logicalName
 
