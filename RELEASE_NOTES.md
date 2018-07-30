@@ -1,4 +1,7 @@
 # Release Notes
+### 3.0.2 - July 30th 2018
+* Multiselect Optionsets are now supported.
+
 ### 3.0.1 - July 18th 2018
 * FormIntersects are now once again generated properly.
 

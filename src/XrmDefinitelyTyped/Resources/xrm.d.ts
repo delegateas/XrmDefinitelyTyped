@@ -179,7 +179,7 @@
 
     type AttributeType =
         "boolean" | "datetime" | "decimal" | "double" | "integer" | "lookup"
-        | "memo" | "money" | "optionset" | "string";
+        | "memo" | "money" | "optionset" | "string" | "multiselectoptionset";
 
     type AttributeFormat =
         "date" | "datetime" | "duration" | "email" | "language" | "none"
@@ -193,12 +193,90 @@
     /**
      * Interface for an standard entity attribute.
      */
-    interface Attribute<T> {
-        /**
+	interface BaseAttribute<T> {
+		/**
          * Collection of controls associated with the attribute.
          */
-        controls: Collection<Control<Attribute<T>>>;
+		controls: Collection<Control<Attribute<T>>>;
 
+		/**
+         * Get the type of attribute.
+         */
+		getAttributeType(): AttributeType;
+
+        /**
+         * Get the attribute format. 
+         */
+		getFormat(): AttributeFormat;
+
+        /**
+         * Determine whether the value of an attribute has changed since it was last saved.
+         */
+		getIsDirty(): boolean;
+
+        /**
+         * Get the maximum length of string which an attribute that stores string data can have.
+         */
+		getMaxLength(): number;
+
+        /**
+         * Get the name of the attribute.
+         */
+		getName(): string;
+
+        /**
+         * Get a reference to the Xrm.Page.data.entity object that is the parent to all attributes.
+         */
+		getParent(): PageEntity<Collection<Attribute<any>>>;
+
+        /**
+         * Returns an object with three Boolean properties corresponding to privileges indicating if the user can create, 
+         * read or update data values for an attribute. This function is intended for use when Field Level Security 
+         * modifies a user's privileges for a particular attribute.
+         */
+		getUserPrivilege(): UserPrivilege;
+
+        /**
+         * Sets a function to be called when the attribute value is changed.
+         *
+         * @param functionRef The event handler for the on change event.
+         */
+		addOnChange(functionRef: (context?: ExecutionContext<this>) => any): void;
+
+        /**
+         * Removes a function from the OnChange event hander for an attribute.
+         *
+         * @param functionRef The event handler for the on change event.
+         */
+		removeOnChange(functionRef: Function): void;
+
+        /**
+         * Causes the OnChange event to occur on the attribute so that any script associated to that event can execute.
+         */
+		fireOnChange(): void;
+
+        /**
+         * Returns a string value indicating whether a value for the attribute is required or recommended.
+         */
+		getRequiredLevel(): AttributeRequiredLevel;
+
+        /**
+         * Sets whether data is required, recommended or optional for the attribute before the record can be saved.
+         */
+		setRequiredLevel(level: AttributeRequiredLevel): void;
+
+        /**
+         * Returns a string indicating when data from the attribute will be submitted when the record is saved.
+         */
+		getSubmitMode(): AttributeSubmitMode;
+
+        /**
+         * Sets when data from the attribute will be submitted when the record is saved.
+         */
+		setSubmitMode(mode: AttributeSubmitMode): void;
+	}
+
+	interface Attribute<T> extends BaseAttribute<T> {
         /**
          * Retrieves the data value for an attribute.
          */
@@ -210,83 +288,24 @@
          * @param val The new value for the attribute.
          */
         setValue(val?: T | null): void;
+	}
+
+	/**
+     * Interface for an standard entity multivalue attribute.
+     */
+	interface MultiValueAttribute<T> extends BaseAttribute<T> {
+		/**
+		 * Retrieves the data value for an attribute.
+		 */
+		getValue(): T[] | null;
 
         /**
-         * Get the type of attribute.
-         */
-        getAttributeType(): AttributeType;
-
-        /**
-         * Get the attribute format. 
-         */
-        getFormat(): AttributeFormat;
-
-        /**
-         * Determine whether the value of an attribute has changed since it was last saved.
-         */
-        getIsDirty(): boolean;
-
-        /**
-         * Get the maximum length of string which an attribute that stores string data can have.
-         */
-        getMaxLength(): number;
-
-        /**
-         * Get the name of the attribute.
-         */
-        getName(): string;
-
-        /**
-         * Get a reference to the Xrm.Page.data.entity object that is the parent to all attributes.
-         */
-        getParent(): PageEntity<Collection<Attribute<any>>>;
-
-        /**
-         * Returns an object with three Boolean properties corresponding to privileges indicating if the user can create, 
-         * read or update data values for an attribute. This function is intended for use when Field Level Security 
-         * modifies a user's privileges for a particular attribute.
-         */
-        getUserPrivilege(): UserPrivilege;
-
-        /**
-         * Sets a function to be called when the attribute value is changed.
+         * Sets the data value for an attribute.
          *
-         * @param functionRef The event handler for the on change event.
+         * @param val The new value for the attribute.
          */
-        addOnChange(functionRef: (context?: ExecutionContext<this>) => any): void;
-
-        /**
-         * Removes a function from the OnChange event hander for an attribute.
-         *
-         * @param functionRef The event handler for the on change event.
-         */
-        removeOnChange(functionRef: Function): void;
-
-        /**
-         * Causes the OnChange event to occur on the attribute so that any script associated to that event can execute.
-         */
-        fireOnChange(): void;
-
-        /**
-         * Returns a string value indicating whether a value for the attribute is required or recommended.
-         */
-        getRequiredLevel(): AttributeRequiredLevel;
-
-        /**
-         * Sets whether data is required, recommended or optional for the attribute before the record can be saved.
-         */
-        setRequiredLevel(level: AttributeRequiredLevel): void;
-
-        /**
-         * Returns a string indicating when data from the attribute will be submitted when the record is saved.
-         */
-        getSubmitMode(): AttributeSubmitMode;
-
-        /**
-         * Sets when data from the attribute will be submitted when the record is saved.
-         */
-        setSubmitMode(mode: AttributeSubmitMode): void;
-    }
+		setValue(val?: T[] | null): void;
+	}
 
 
     /**
@@ -379,7 +398,7 @@
 
 	type ControlType =
 		"standard" | "iframe" | "lookup" | "optionset" | "subgrid"
-		| "webresource" | "notes" | "timercontrol" | "kbsearch";
+		| "webresource" | "notes" | "timercontrol" | "kbsearch" | "multiselectoptionset";
 
     /**
      * Interface for a standard form control.

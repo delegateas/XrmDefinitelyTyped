@@ -74,6 +74,7 @@ let hasFormattedValue a =
   | SpecialType.EntityReference, _
   | SpecialType.Money, _
   | SpecialType.OptionSet, _
+  | SpecialType.MultiSelectOptionSet, _
   | _, TsType.Date -> true
   | _ -> false
 

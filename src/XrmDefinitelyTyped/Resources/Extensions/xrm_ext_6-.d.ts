@@ -67,7 +67,7 @@ declare namespace Xrm {
 		save(saveOptions?: SaveOptions): Then<undefined>;
     }
 
-    interface Attribute<T> {
+    interface BaseAttribute<T> {
         /**
          * Determine whether a lookup attribute represents a partylist lookup.
          */

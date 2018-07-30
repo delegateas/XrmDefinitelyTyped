@@ -33,7 +33,7 @@ let typeConv = function
 let interpretAttribute nameMap entityNames (a: AttributeMetadata) =
   let aType = a.AttributeType.GetValueOrDefault()
   if a.AttributeOf <> null ||
-      aType = AttributeTypeCode.Virtual ||
+      (aType = AttributeTypeCode.Virtual && a.AttributeTypeName <> AttributeTypeDisplayName.MultiSelectPicklistType)||
       a.LogicalName.StartsWith("yomi") then None, None
   else
 
@@ -56,23 +56,25 @@ let interpretAttribute nameMap entityNames (a: AttributeMetadata) =
     | _ -> None
 
   let vType, sType = 
-    match aType with
-    | AttributeTypeCode.Money     -> TsType.Number, SpecialType.Money
+    if a.AttributeTypeName = AttributeTypeDisplayName.MultiSelectPicklistType then TsType.Custom options.Value.displayName, SpecialType.MultiSelectOptionSet
+    else
+      match aType with
+      | AttributeTypeCode.Money     -> TsType.Number, SpecialType.Money
     
-    | AttributeTypeCode.Picklist
-    | AttributeTypeCode.State
-    | AttributeTypeCode.Status    -> TsType.Custom options.Value.displayName, SpecialType.OptionSet
+      | AttributeTypeCode.Picklist
+      | AttributeTypeCode.State
+      | AttributeTypeCode.Status    -> TsType.Custom options.Value.displayName, SpecialType.OptionSet
 
-    | AttributeTypeCode.Lookup    
-    | AttributeTypeCode.PartyList  
-    | AttributeTypeCode.Customer  
-    | AttributeTypeCode.Owner     -> TsType.String, SpecialType.EntityReference
+      | AttributeTypeCode.Lookup    
+      | AttributeTypeCode.PartyList  
+      | AttributeTypeCode.Customer  
+      | AttributeTypeCode.Owner     -> TsType.String, SpecialType.EntityReference
         
-    | AttributeTypeCode.Uniqueidentifier 
-                                  -> TsType.String, SpecialType.Guid
+      | AttributeTypeCode.Uniqueidentifier 
+                                    -> TsType.String, SpecialType.Guid
 
-    | AttributeTypeCode.Decimal   -> toSome typeConv a.AttributeType, SpecialType.Decimal
-    | _                           -> toSome typeConv a.AttributeType, SpecialType.Default
+      | AttributeTypeCode.Decimal   -> toSome typeConv a.AttributeType, SpecialType.Decimal
+      | _                           -> toSome typeConv a.AttributeType, SpecialType.Default
 
 
   options, Some {
