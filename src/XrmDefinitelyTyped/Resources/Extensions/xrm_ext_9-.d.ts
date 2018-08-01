@@ -837,11 +837,11 @@ declare namespace Xrm {
 	/**
      * Interface for an MultiSelectOptionSet attribute.
      */
-	interface MultiSelectOptionSetAttribute<T> extends MultiValueAttribute<T> {
+	interface MultiSelectOptionSetAttribute<T> extends Attribute<T[]> {
         /**
          * Collection of controls associated with the attribute.
          */
-		controls: Collection<OptionSetControl<T>>;
+		controls: Collection<MultiSelectOptionSetControl<T>>;
 
         /**
          * Returns a value that represents the value set for a MultiSelectOptionSet when the form opened.

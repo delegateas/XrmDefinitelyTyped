@@ -193,7 +193,19 @@
     /**
      * Interface for an standard entity attribute.
      */
-	interface BaseAttribute<T> {
+	interface Attribute<T> {
+		/**
+         * Retrieves the data value for an attribute.
+         */
+		getValue(): T | null;
+
+        /**
+         * Sets the data value for an attribute.
+         *
+         * @param val The new value for the attribute.
+         */
+		setValue(val?: T | null): void;
+
 		/**
          * Collection of controls associated with the attribute.
          */
@@ -276,38 +288,6 @@
 		setSubmitMode(mode: AttributeSubmitMode): void;
 	}
 
-	interface Attribute<T> extends BaseAttribute<T> {
-        /**
-         * Retrieves the data value for an attribute.
-         */
-        getValue(): T | null;
-
-        /**
-         * Sets the data value for an attribute.
-         *
-         * @param val The new value for the attribute.
-         */
-        setValue(val?: T | null): void;
-	}
-
-	/**
-     * Interface for an standard entity multivalue attribute.
-     */
-	interface MultiValueAttribute<T> extends BaseAttribute<T> {
-		/**
-		 * Retrieves the data value for an attribute.
-		 */
-		getValue(): T[] | null;
-
-        /**
-         * Sets the data value for an attribute.
-         *
-         * @param val The new value for the attribute.
-         */
-		setValue(val?: T[] | null): void;
-	}
-
-
     /**
      * Interface for a numerical attribute.
      */
@@ -315,7 +295,7 @@
         /**
          * Collection of controls associated with the attribute.
          */
-        controls: Collection<NumberControl>;
+		controls: Collection<NumberControl>;
 
         /**
          * Returns a number indicating the maximum allowed value for an attribute.
