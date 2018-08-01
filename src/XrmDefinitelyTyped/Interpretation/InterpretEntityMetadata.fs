@@ -29,6 +29,31 @@ let typeConv = function
   | AttributeTypeCode.Status    -> TsType.Number
   | _                           -> TsType.Any
 
+let interpretVirtualAttribute (a:AttributeMetadata) (options:OptionSet option) =
+  match a with
+  | :? MultiSelectPicklistAttributeMetadata -> Some (TsType.Custom options.Value.displayName, SpecialType.MultiSelectOptionSet)
+  | _ -> None
+
+
+let interpretNormalAttribute aType (a:AttributeMetadata) (options:OptionSet option)  =
+  match aType with
+  | AttributeTypeCode.Money     -> TsType.Number, SpecialType.Money
+    
+  | AttributeTypeCode.Picklist
+  | AttributeTypeCode.State
+  | AttributeTypeCode.Status    -> TsType.Custom options.Value.displayName, SpecialType.OptionSet
+
+  | AttributeTypeCode.Lookup    
+  | AttributeTypeCode.PartyList  
+  | AttributeTypeCode.Customer  
+  | AttributeTypeCode.Owner     -> TsType.String, SpecialType.EntityReference
+        
+  | AttributeTypeCode.Uniqueidentifier 
+                                -> TsType.String, SpecialType.Guid
+
+  | AttributeTypeCode.Decimal   -> toSome typeConv a.AttributeType, SpecialType.Decimal
+  | _                           -> toSome typeConv a.AttributeType, SpecialType.Default
+
 
 let interpretAttribute nameMap entityNames (a: AttributeMetadata) =
   let aType = a.AttributeType.GetValueOrDefault()
@@ -55,27 +80,14 @@ let interpretAttribute nameMap entityNames (a: AttributeMetadata) =
       |> Some
     | _ -> None
 
-  let vType, sType = 
-    if a.AttributeTypeName = AttributeTypeDisplayName.MultiSelectPicklistType then TsType.Custom options.Value.displayName, SpecialType.MultiSelectOptionSet
-    else
-      match aType with
-      | AttributeTypeCode.Money     -> TsType.Number, SpecialType.Money
+  let vTypeOption = 
+    match aType with
+    | AttributeTypeCode.Virtual -> interpretVirtualAttribute a options
+    | _ -> Some (interpretNormalAttribute aType a options)
     
-      | AttributeTypeCode.Picklist
-      | AttributeTypeCode.State
-      | AttributeTypeCode.Status    -> TsType.Custom options.Value.displayName, SpecialType.OptionSet
-
-      | AttributeTypeCode.Lookup    
-      | AttributeTypeCode.PartyList  
-      | AttributeTypeCode.Customer  
-      | AttributeTypeCode.Owner     -> TsType.String, SpecialType.EntityReference
-        
-      | AttributeTypeCode.Uniqueidentifier 
-                                    -> TsType.String, SpecialType.Guid
-
-      | AttributeTypeCode.Decimal   -> toSome typeConv a.AttributeType, SpecialType.Decimal
-      | _                           -> toSome typeConv a.AttributeType, SpecialType.Default
-
+  match vTypeOption with
+  | None -> None, None
+  | Some (vType, sType) ->
 
   options, Some {
     XrmAttribute.schemaName = a.SchemaName
