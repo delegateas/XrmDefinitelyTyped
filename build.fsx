@@ -153,7 +153,7 @@ Target "Build" (fun _ ->
 )
 
 
-Target "Test" (fun _ ->
+Target "RunXDT" (fun _ ->
   // Run XrmDefinitelyTyped
   let result = 
     ExecProcess 
@@ -177,8 +177,9 @@ Target "Test" (fun _ ->
 
   if result <> 0 then 
     failwithf "XrmDefinitelyTyped.exe returned with a non-zero exit code"
+)
 
-
+Target "Test" (fun _ ->
   // Install necessary npm packages in test folder
   Npm 
     (fun p ->
@@ -261,6 +262,7 @@ Target "All" DoNothing
   ==> "AssemblyInfo"
   ==> "Build"
   ==> "CopyBinaries"
+  ==> "RunXDT"
   ==> "Test"
   ==> "NuGet"
   ==> "BuildPackage"
@@ -270,4 +272,4 @@ Target "All" DoNothing
   ==> "PublishNuget"
 
 
-RunTargetOrDefault "All"
+RunTargetOrDefault "Build"
