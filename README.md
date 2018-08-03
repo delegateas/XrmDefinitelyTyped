@@ -1,4 +1,4 @@
-# XrmDefinitelyTyped ![Appveyor build status](https://ci.appveyor.com/api/projects/status/github/delegateAS/XrmDefinitelyTyped?svg=true&branch=gh_master) [![NuGet version](https://badge.fury.io/nu/Delegate.XrmDefinitelyTyped.svg)](https://badge.fury.io/nu/Delegate.XrmDefinitelyTyped)
+# XrmDefinitelyTyped [![Appveyor build status](https://ci.appveyor.com/api/projects/status/github/delegateAS/XrmDefinitelyTyped?svg=true&branch=gh_master)](https://ci.appveyor.com/project/DelegateAS/XrmDefinitelyTyped) [![NuGet version](https://badge.fury.io/nu/Delegate.XrmDefinitelyTyped.svg)](https://badge.fury.io/nu/Delegate.XrmDefinitelyTyped)
 
 XrmDefinitelyTyped generates [TypeScript](http://www.typescriptlang.org/) 
 declaration files based on *your* Dynamics 365/CRM/xRM solution.
