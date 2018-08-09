@@ -11,11 +11,13 @@ open System
 
 
 // Retrieve entity form xml
-let getEntityForms proxy (lname:string) =
+let getEntityForms proxy skipInactiveForms (lname:string) =
   let query = new QueryExpression("systemform")
   query.ColumnSet <- new ColumnSet([| "name"; "type"; "objecttypecode"; "formxml" |])
 
   query.Criteria.AddCondition(new ConditionExpression("objecttypecode", ConditionOperator.Equal, lname))
+
+  if skipInactiveForms then query.Criteria.AddCondition(new ConditionExpression("formactivationstate", ConditionOperator.Equal, 1))
     
   let request = RetrieveMultipleRequest()
   request.Query <- query
@@ -26,9 +28,11 @@ let getEntityForms proxy (lname:string) =
 
 
 // Retrieve all entity form xmls
-let getAllEntityForms proxy =
+let getAllEntityForms proxy skipInactiveForms =
   let query = new QueryExpression("systemform")
   query.ColumnSet <- new ColumnSet([| "name"; "type"; "objecttypecode"; "formxml" |])
+
+  if skipInactiveForms then query.Criteria.AddCondition(new ConditionExpression("formactivationstate", ConditionOperator.Equal, 1))
     
   let request = RetrieveMultipleRequest()
   request.Query <- query

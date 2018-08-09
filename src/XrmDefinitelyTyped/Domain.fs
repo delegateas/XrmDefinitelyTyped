@@ -33,13 +33,14 @@ type XdtGenerationSettings = {
   formIntersects: Intersect [] option
   viewIntersects: Intersect [] option
   generateMappings: bool
+  skipInactiveForms: bool
 }
 
 type EntityName = string
 
 type XdtRetrievalSettings = {
   entities: EntityName[] option
-  solutions: string[] option
+  solutions: string[] option  
 }
 
 type ViewName = string

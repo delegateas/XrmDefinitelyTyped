@@ -9,7 +9,7 @@ open GenerationMain
 
 type XrmDefinitelyTyped private () = 
 
-  static member GenerateFromCrm(url, username, password, ?domain, ?ap, ?outDir, ?jsLib, ?tsLib, ?entities, ?solutions, ?crmVersion, ?useDeprecated, ?skipForms, ?oneFile, ?restNs, ?webNs, ?viewNs, ?formIntersects, ?viewintersects, ?generateMappings) = 
+  static member GenerateFromCrm(url, username, password, ?domain, ?ap, ?outDir, ?jsLib, ?tsLib, ?entities, ?solutions, ?crmVersion, ?useDeprecated, ?skipForms, ?oneFile, ?restNs, ?webNs, ?viewNs, ?formIntersects, ?viewintersects, ?generateMappings, ?skipInactiveForms) = 
     let xrmAuth = 
       { XrmAuthentication.url = Uri(url)
         username = username
@@ -36,6 +36,7 @@ type XrmDefinitelyTyped private () =
         formIntersects = formIntersects
         viewIntersects = viewintersects
         generateMappings = generateMappings ?| false
+        skipInactiveForms = skipInactiveForms ?| true
        }
     
     XrmDefinitelyTyped.GenerateFromCrm(xrmAuth, rSettings, gSettings)
@@ -47,7 +48,7 @@ type XrmDefinitelyTyped private () =
     try
     #endif 
       
-      retrieveRawState xrmAuth rSettings
+      retrieveRawState xrmAuth rSettings gSettings
       |> generateFromRaw gSettings
       printfn "\nSuccessfully generated all TypeScript declaration files."
 

@@ -63,6 +63,7 @@ let getGenerationSettings parsedArgs =
     formIntersects = intersects "formintersect" 
     viewIntersects = intersects "viewintersect"
     generateMappings = getArg parsedArgs "generateMappings" parseBoolish ?| false
+    skipInactiveForms = getArg parsedArgs "skipInactiveForms" parseBoolish ?| true
   }
 
 
