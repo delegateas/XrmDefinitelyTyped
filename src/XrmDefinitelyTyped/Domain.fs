@@ -40,7 +40,7 @@ type EntityName = string
 
 type XdtRetrievalSettings = {
   entities: EntityName[] option
-  solutions: string[] option  
+  solutions: string[] option
 }
 
 type ViewName = string
