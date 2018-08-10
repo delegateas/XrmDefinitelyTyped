@@ -1,4 +1,7 @@
 # Release Notes
+### 3.0.2 - August 10 2018
+* Added associate and disassociate support to XrmQuery
+
 ### 3.0.1 - July 18th 2018
 * FormIntersects are now once again generated properly.
 
