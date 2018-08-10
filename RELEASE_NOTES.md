@@ -1,4 +1,7 @@
 # Release Notes
+### 4.0.0 - August 10 2018
+* Only generates typings for active forms by default, added option sif to allow generation of inactive forms. Credit to PR #70
+
 ### 3.0.2 - August 10 2018
 * Added associate and disassociate support to XrmQuery
 
