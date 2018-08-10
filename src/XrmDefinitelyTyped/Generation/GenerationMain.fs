@@ -10,14 +10,14 @@ open FileGeneration
 
 
 /// Retrieve data from CRM and setup raw state
-let retrieveRawState xrmAuth rSettings gSettings =
+let retrieveRawState xrmAuth rSettings =
   let mainProxy = connectToCrm xrmAuth
 
   let proxyGetter = proxyHelper xrmAuth
   let crmVersion = retrieveCrmVersion mainProxy
   let entities = 
     getFullEntityList rSettings.entities rSettings.solutions mainProxy
-  let skipInactiveForms = gSettings.skipInactiveForms
+  let skipInactiveForms = rSettings.skipInactiveForms
       
   // Retrieve data from CRM
   retrieveCrmData crmVersion entities rSettings.solutions mainProxy proxyGetter skipInactiveForms

@@ -20,6 +20,7 @@ type XrmDefinitelyTyped private () =
     let rSettings = 
       { XdtRetrievalSettings.entities = entities
         solutions = solutions
+        skipInactiveForms = skipInactiveForms ?| true
       }
 
     let gSettings = 
@@ -36,7 +37,6 @@ type XrmDefinitelyTyped private () =
         formIntersects = formIntersects
         viewIntersects = viewintersects
         generateMappings = generateMappings ?| false
-        skipInactiveForms = skipInactiveForms ?| true
        }
     
     XrmDefinitelyTyped.GenerateFromCrm(xrmAuth, rSettings, gSettings)
@@ -48,7 +48,7 @@ type XrmDefinitelyTyped private () =
     try
     #endif 
       
-      retrieveRawState xrmAuth rSettings gSettings
+      retrieveRawState xrmAuth rSettings
       |> generateFromRaw gSettings
       printfn "\nSuccessfully generated all TypeScript declaration files."
 
