@@ -113,7 +113,7 @@ let retrieveCrmVersion mainProxy =
   version
 
 /// Retrieve all the necessary CRM data
-let retrieveCrmData crmVersion entities solutions mainProxy proxyGetter =
+let retrieveCrmData crmVersion entities solutions mainProxy proxyGetter skipInactiveForms =
   let nameMap = 
     retrieveEntityNameMap mainProxy
 
@@ -156,7 +156,7 @@ let retrieveCrmData crmVersion entities solutions mainProxy proxyGetter =
     |> Array.Parallel.map (fun em -> 
       let proxy = proxyGetter()
       em.LogicalName, 
-      getEntityForms proxy em.LogicalName)
+      getEntityForms proxy skipInactiveForms em.LogicalName)
     |> Map.ofArray
   printfn "Done!"
 

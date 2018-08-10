@@ -54,6 +54,11 @@ type Args private () =
       description="Set to true if form interfaces should not be generated"
       required=false }
 
+    { command="skipInactiveForms"
+      altCommands=["sif"]
+      description="Set to true to avoid generating types for inactive forms."
+      required=false }
+
     { command="oneFile"
       altCommands=["of"]
       description="Set to true if all the dynamic parts of the generated declarations should be put into a single file."

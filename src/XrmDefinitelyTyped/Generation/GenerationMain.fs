@@ -17,9 +17,10 @@ let retrieveRawState xrmAuth rSettings =
   let crmVersion = retrieveCrmVersion mainProxy
   let entities = 
     getFullEntityList rSettings.entities rSettings.solutions mainProxy
+  let skipInactiveForms = rSettings.skipInactiveForms
       
   // Retrieve data from CRM
-  retrieveCrmData crmVersion entities rSettings.solutions mainProxy proxyGetter
+  retrieveCrmData crmVersion entities rSettings.solutions mainProxy proxyGetter skipInactiveForms
 
 
 /// Main generator function

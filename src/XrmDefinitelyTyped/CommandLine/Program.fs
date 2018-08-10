@@ -26,6 +26,7 @@ let getRetrieveSettings parsedArgs =
 
   { XdtRetrievalSettings.entities = entities
     solutions = solutions
+    skipInactiveForms = getArg parsedArgs "skipInactiveForms" parseBoolish ?| true
   }
 
 let getGenerationSettings parsedArgs =
