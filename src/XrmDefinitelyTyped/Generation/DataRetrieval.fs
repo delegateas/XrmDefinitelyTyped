@@ -114,7 +114,7 @@ let retrieveCrmVersion mainProxy =
   version
 
 /// Retrieve all the necessary CRM data
-let retrieveCrmData crmVersion entities solutions (mainProxy: OrganizationServiceProxy) skipInactiveForms =
+let retrieveCrmData crmVersion entities solutions mainProxy skipInactiveForms =
   let nameMap = 
     retrieveEntityNameMap mainProxy
 
