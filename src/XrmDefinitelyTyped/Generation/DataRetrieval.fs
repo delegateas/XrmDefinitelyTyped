@@ -8,6 +8,7 @@ open CrmDataHelper
 open DG.XrmDefinitelyTyped.InterpretView
 open Microsoft.Xrm.Sdk.Metadata
 open System.Text.RegularExpressions
+open Microsoft.Xrm.Sdk.Client
 
 
 /// Connect to CRM with the given authentication
@@ -30,14 +31,14 @@ let retrieveEntityNameMap mainProxy =
   map
 
 // Retrieve CRM entity metadata
-let retrieveEntityMetadata entities mainProxy proxyGetter =
+let retrieveEntityMetadata entities mainProxy =
   printf "Fetching specific entity metadata from CRM..."
 
   let rawEntityMetadata = 
     match entities with
     | None -> getAllEntityMetadata mainProxy
     | Some logicalNames -> 
-      getSpecificEntitiesAndDependentMetadata proxyGetter logicalNames
+      getSpecificEntitiesAndDependentMetadata mainProxy logicalNames
 
   printfn "Done!"
   rawEntityMetadata
@@ -113,12 +114,12 @@ let retrieveCrmVersion mainProxy =
   version
 
 /// Retrieve all the necessary CRM data
-let retrieveCrmData crmVersion entities solutions mainProxy proxyGetter skipInactiveForms =
+let retrieveCrmData crmVersion entities solutions (mainProxy: OrganizationServiceProxy) skipInactiveForms =
   let nameMap = 
     retrieveEntityNameMap mainProxy
 
   let originalRawEntityMetadata = 
-    retrieveEntityMetadata entities mainProxy proxyGetter
+    retrieveEntityMetadata entities mainProxy
     |> Array.sortBy(fun md -> md.LogicalName)
     
   let rawViewData, additionalEntityMetadata = 
@@ -153,10 +154,8 @@ let retrieveCrmData crmVersion entities solutions mainProxy proxyGetter skipInac
   let formData =
     rawEntityMetadata
     |> Array.filter (fun (em: EntityMetadata) -> em.IsCustomizable.Value)
-    |> Array.Parallel.map (fun em -> 
-      let proxy = proxyGetter()
-      em.LogicalName, 
-      getEntityForms proxy skipInactiveForms em.LogicalName)
+    |> Array.map (fun (em: EntityMetadata) -> em.LogicalName)
+    |> getEntityFormsBulk mainProxy skipInactiveForms 
     |> Map.ofArray
   printfn "Done!"
 
