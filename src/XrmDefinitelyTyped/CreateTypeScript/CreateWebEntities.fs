@@ -11,7 +11,6 @@ let superEntityName = "WebEntity"
 let retrieveMapping = "WebMappingRetrieve"
 let cudaMapping = "WebMappingCUDA"
 let relatedMapping = "WebMappingRelated"
-let relationsMapping = "WebMappingRelations"
 
 let baseName = withEnding "_Base"
 let fixedName = withEnding "_Fixed"
@@ -21,7 +20,6 @@ let oneRelName = withEnding "_RelatedOne"
 let manyRelName = withEnding "_RelatedMany"
 
 let updateName = withEnding "_Update"
-let associateName = withEnding "_Associate"
 let resultName = withEnding "_Result"
 let fResultName = withEnding "_FormattedResult"
 let selectName = withEnding "_Select"
@@ -89,16 +87,12 @@ let retrieveMappingType eName ns =
   |> getMapping eName ns retrieveMapping
 
 let cudaMappingType eName ns =
-  [ createName; updateName; associateName ]
+  [ createName; updateName; selectName ]
   |> getMapping eName ns cudaMapping
   
 let relatedMappingType eName ns =
   [ oneRelName; manyRelName ]
   |> getMapping eName ns relatedMapping
-
-let relationMappingType relName ns =
-  [ associateName]
-  |> getMapping relName ns relationsMapping
 
 (** Definition functions *)
 let defToBaseVars (a, ty, nameTransform) =
@@ -230,7 +224,7 @@ let getExpandVariable parent (r: XrmRelationship) =
 
 let getRelatedVariable ns referencing (r: XrmRelationship) = 
   if r.referencing <> referencing then None
-  else Some <| Variable.Create(r.navProp, relationMappingType r.relatedSchemaName ns)
+  else Some <| Variable.Create(r.navProp, retrieveMappingType r.relatedSchemaName ns)
 
 
 (** Code creation methods *)
@@ -243,7 +237,6 @@ type EntityInterfaces = {
   manyRelated: Interface
   create: Interface
   update: Interface
-  associate: Interface
   result: Interface
   select: Interface
   expand: Interface
@@ -263,7 +256,6 @@ let getBlankEntityInterfaces e =
     createAndUpdate = Interface.Create(cu, extends = [bn; rn])
     create = Interface.Create(createName e.schemaName, extends = [cu]) 
     update = Interface.Create(updateName e.schemaName, extends = [cu])
-    associate = Interface.Create(associateName e.schemaName)
     result = Interface.Create(resultName e.schemaName, extends = [bn; rn]) 
     select = Interface.Create(selectName e.schemaName)
     expand = Interface.Create(expName e.schemaName)
@@ -286,7 +278,6 @@ let getEntityInterfaceLines ns e =
       { entityInterfaces.createAndUpdate with vars = e.allRelationships |> List.choose (getBindVariables true true attrMap) |> assignUniqueNames |> sortByName }
       { entityInterfaces.create with vars = e.allRelationships |> List.choose (getBindVariables true false attrMap) |> assignUniqueNames |> sortByName }
       { entityInterfaces.update with vars = e.allRelationships |> List.choose (getBindVariables false true attrMap) |> assignUniqueNames |> sortByName }
-      { entityInterfaces.associate with vars = e.allRelationships |> List.choose (getBindVariables false true attrMap) |> assignUniqueNames |> sortByName }
 
       { entityInterfaces.select with vars = e.attributes |> List.map (getSelectVariable entityInterfaces.select) |> assignUniqueNames |> sortByName } 
       { entityInterfaces.filter with vars = e.attributes |> List.map getFilterVariable |> assignUniqueNames |> sortByName }
@@ -327,11 +318,9 @@ let getBlankInterfacesLines ns es =
   let iRetrieveMapping = 
     Interface.Create(sprintf "%s<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>" retrieveMapping)
   let iCudaMapping = 
-    Interface.Create(sprintf "%s<ICreate, IUpdate, IAssociate>" cudaMapping)
+    Interface.Create(sprintf "%s<ICreate, IUpdate, ISelect>" cudaMapping)
   let iRelatedMapping = 
     Interface.Create(sprintf "%s<ISingle, IMultiple>" relatedMapping)
-  let iRelationsMapping =
-    Interface.Create(sprintf "%s<IAssociate>" relationsMapping)
     
 
   let interfaces =
@@ -349,7 +338,6 @@ let getBlankInterfacesLines ns es =
       [ iRetrieveMapping  
         iCudaMapping
         iRelatedMapping
-        iRelationsMapping
       ] |> List.map interfaceToString |> List.concat
 
   let ns = Namespace.Create(ns, declare = true, interfaces = interfaces)

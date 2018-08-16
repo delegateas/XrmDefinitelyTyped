@@ -40,6 +40,22 @@ let internal retrieveMultiple proxy logicalName (query:QueryExpression) =
     }
   retrieveMultiple' proxy query 1 null
 
+// Perform requests as bulk
+let performAsBulk proxy requests handleResponse =
+  let request = ExecuteMultipleRequest()
+  request.Requests <- OrganizationRequestCollection()
+  request.Requests.AddRange(requests)
+  request.Settings <- ExecuteMultipleSettings()
+  request.Settings.ContinueOnError <- false
+  request.Settings.ReturnResponses <- true
+
+  let bulkResp = getResponse<ExecuteMultipleResponse> proxy request
+  bulkResp.Responses
+  |> Seq.map (fun resp -> 
+    if isNull resp.Fault then handleResponse resp
+    else failwithf "Error while retrieving entity metadata: %s" resp.Fault.Message)
+  |> Seq.toArray
+
 // Get all entities
 let internal getEntities 
   proxy (logicalName:string) (cols:string list) =
@@ -97,40 +113,18 @@ let getEntityMetadata proxy lname =
 
 // Retrieve entity metadata with a bulk request
 let getEntityMetadataBulk proxy lnames =
-  let request = ExecuteMultipleRequest()
-  request.Requests <- OrganizationRequestCollection()
-  lnames 
-  |> Array.map (getEntityMetadataRequest >> fun x -> x :> OrganizationRequest)
-  |> request.Requests.AddRange
+  let requests = 
+    lnames 
+    |> Array.map (getEntityMetadataRequest >> fun x -> x :> OrganizationRequest)
 
-  request.Settings <- ExecuteMultipleSettings()
-  request.Settings.ContinueOnError <- false
-  request.Settings.ReturnResponses <- true
-
-  let bulkResp = getResponse<ExecuteMultipleResponse> proxy request
-  bulkResp.Responses
-  |> Seq.map (fun resp -> 
-    if isNull resp.Fault then (resp.Response :?> RetrieveEntityResponse).EntityMetadata
-    else failwithf "Error while retrieving entity metadata: %s" resp.Fault.Message)
-  |> Seq.toArray
+  let handleRespnose (resp: ExecuteMultipleResponseItem) = (resp.Response :?> RetrieveEntityResponse).EntityMetadata
+  
+  performAsBulk proxy requests handleRespnose
 
 
 // Make a task of a function
 let makeAsyncTask  (f : unit->'a) = 
   async { return! Task<'a>.Factory.StartNew( new Func<'a>(f) ) |> Async.AwaitTask }
-
-
-// Retrieve entity metadata with parallelism and bulk requests
-let getSpecificEntityMetadataHybrid proxyGetter parallelism lnames =
-  lnames
-  |> Array.splitInto parallelism
-  |> Array.Parallel.map (fun lname -> 
-    makeAsyncTask (fun () -> 
-      let proxy = proxyGetter()
-      getEntityMetadataBulk proxy lname))
-  |> Async.Parallel
-  |> Async.RunSynchronously
-  |> Array.concat
 
 
 // Retrieve all optionset metadata
@@ -157,9 +151,9 @@ let findRelationEntities allLogicalNames (metadata:EntityMetadata[]) =
 
 
 // Retrieve specific entity metadata along with any intersect
-let getSpecificEntitiesAndDependentMetadata proxyGetter logicalNames =
+let getSpecificEntitiesAndDependentMetadata proxy logicalNames =
   // TODO: either figure out the best degree of parallelism through code, or add it as a setting
-  let getMetadata = getSpecificEntityMetadataHybrid proxyGetter 4
+  let getMetadata = getEntityMetadataBulk proxy
   let entities = getMetadata logicalNames
 
   let set = logicalNames |> Set.ofArray

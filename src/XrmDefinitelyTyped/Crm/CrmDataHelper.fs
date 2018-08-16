@@ -11,7 +11,7 @@ open System
 
 
 // Retrieve entity form xml
-let getEntityForms proxy skipInactiveForms (lname:string) =
+let getEntityForms skipInactiveForms (lname:string) =
   let query = new QueryExpression("systemform")
   query.ColumnSet <- new ColumnSet([| "name"; "type"; "objecttypecode"; "formxml" |])
 
@@ -22,10 +22,19 @@ let getEntityForms proxy skipInactiveForms (lname:string) =
   let request = RetrieveMultipleRequest()
   request.Query <- query
 
-  let resp = getResponse<RetrieveMultipleResponse> proxy request
-  resp.EntityCollection.Entities 
-  |> Array.ofSeq
+  request
 
+let getEntityFormsBulk proxy skipInactiveForms lnames =
+  let requests =
+    lnames 
+    |> Array.map (fun lname -> getEntityForms skipInactiveForms lname :> OrganizationRequest)
+
+  let handleResponse (resp:ExecuteMultipleResponseItem) = 
+    let ec = (resp.Response :?> RetrieveMultipleResponse).EntityCollection
+    ec.Entities |> Array.ofSeq
+
+  performAsBulk proxy requests handleResponse
+  |> Array.zip lnames
 
 // Retrieve all entity form xmls
 let getAllEntityForms proxy skipInactiveForms =

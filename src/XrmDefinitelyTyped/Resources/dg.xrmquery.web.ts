@@ -77,13 +77,13 @@ namespace XrmQuery {
    * @param targetId GUID of the target entity.
    * @param relationPicker Function to select which N:1 relation (lookup-field) should be used to associate.
    */
-  export function associateSingle<ISingle, IAssociate>(
+  export function associateSingle<ISingle, ISelect>(
     entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>,
     id: string,
-    entityTargetPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, IAssociate>,
+    entityTargetPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, ISelect>,
     targetId: string,
-    relationPicker: (x: ISingle) => WebMappingRelations<IAssociate>) {
-    return new XQW.AssociateRecordSingle<ISingle, IAssociate>(entityPicker, id, entityTargetPicker, targetId, relationPicker);
+    relationPicker: (x: ISingle) => WebMappingRetrieve<ISelect, any, any, any, any, any>) {
+    return new XQW.AssociateRecordSingle<ISingle, ISelect>(entityPicker, id, entityTargetPicker, targetId, relationPicker);
   }
 
   /**
@@ -94,13 +94,13 @@ namespace XrmQuery {
    * @param targetId GUID of the target entity.
    * @param relationPicker Function to select which N:N or 1:N relation should be used to associate.
    */
-  export function associateCollection<IMultiple, IAssociate>(
+  export function associateCollection<IMultiple, ISelect>(
     entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>,
     id: string,
-    entityTargetPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, IAssociate>,
+    entityTargetPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, ISelect>,
     targetId: string,
-    relationPicker: (x: IMultiple) => WebMappingRelations<IAssociate>) {
-    return new XQW.AssociateRecordCollection<IMultiple, IAssociate>(entityPicker, id, entityTargetPicker, targetId, relationPicker);
+    relationPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, any, any, any, any, any>) {
+    return new XQW.AssociateRecordCollection<IMultiple, ISelect>(entityPicker, id, entityTargetPicker, targetId, relationPicker);
   }
 
   /**
@@ -110,11 +110,11 @@ namespace XrmQuery {
    * @param relationPicker Function to select which N:1 relation (lookup-field) should be used to disassociate.
    */
 
-  export function disassociateSingle<ISingle, IAssociate>(
+  export function disassociateSingle<ISingle, ISelect>(
     entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>,
     id: string,
-    relationPicker: (x: ISingle) => WebMappingRelations<IAssociate>) {
-    return XQW.DisassociateRecord.Single<ISingle, IAssociate>(entityPicker, id, relationPicker);
+    relationPicker: (x: ISingle) => WebMappingRetrieve<ISelect, any, any, any, any, any>) {
+    return XQW.DisassociateRecord.Single<ISingle, ISelect>(entityPicker, id, relationPicker);
   }
 
   /**
@@ -125,12 +125,12 @@ namespace XrmQuery {
    * @param targetId GUID of the target entity.
    */
 
-  export function disassociateCollection<IMultiple, IAssociate>(
+  export function disassociateCollection<IMultiple, ISelect>(
     entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>,
     id: string,
-    relationPicker: (x: IMultiple) => WebMappingRelations<IAssociate>,
+    relationPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, any, any, any, any, any>,
     targetId: string) {
-    return XQW.DisassociateRecord.Collection<IMultiple, IAssociate>(entityPicker, id, relationPicker, targetId);
+    return XQW.DisassociateRecord.Collection<IMultiple, ISelect>(entityPicker, id, relationPicker, targetId);
   }
 
 	/**
@@ -1043,7 +1043,7 @@ namespace XQW {
   /**
  * Contains information about an AssociateRecord query for single-valued properties
  */
-  export class AssociateRecordSingle<ISingle, IAssociate> extends Query<undefined> {
+  export class AssociateRecordSingle<ISingle, ISelect> extends Query<undefined> {
     /** 
      * @internal 
      */
@@ -1056,9 +1056,9 @@ namespace XQW {
     constructor(
       entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>,
       private id: string,
-      entityTargetPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, IAssociate>,
+      entityTargetPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, ISelect>,
       targetid: string,
-      relationPicker: (x: ISingle) => WebMappingRelations<IAssociate>) {
+      relationPicker: (x: ISingle) => WebMappingRetrieve<ISelect, any, any, any, any, any>) {
       super("PUT")
       this.entitySetName = taggedExec(entityPicker).toString();
       this.id = id !== undefined ? stripGUID(id) : id;
@@ -1088,7 +1088,7 @@ namespace XQW {
   /**
  * Contains information about an AssociateRecord query for collection-valued properties
  */
-  export class AssociateRecordCollection<IMultiple, IAssociate> extends Query<undefined> {
+  export class AssociateRecordCollection<IMultiple, ISelect> extends Query<undefined> {
     /** 
      * @internal 
      */
@@ -1101,9 +1101,9 @@ namespace XQW {
     constructor(
       entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>,
       private id: string,
-      entityTargetPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, IAssociate>,
+      entityTargetPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, ISelect>,
       targetid: string,
-      relationPicker: (x: IMultiple) => WebMappingRelations<IAssociate>) {
+      relationPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, any, any, any, any, any>) {
       super("POST");
       this.entitySetName = taggedExec(entityPicker).toString();
       this.id = id !== undefined ? stripGUID(id) : id;
@@ -1143,19 +1143,19 @@ namespace XQW {
     private targetId: string | undefined;
 
 
-    static Single<ISingle, IAssociate>(
+    static Single<ISingle, ISelect>(
       entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>,
       id: string,
-      relationPicker: (x: ISingle) => WebMappingRelations<IAssociate>) {
-      return new DisassociateRecord<IAssociate>(taggedExec(entityPicker).toString(), id, taggedExec(relationPicker).toString())
+      relationPicker: (x: ISingle) => WebMappingRetrieve<ISelect, any, any, any, any, any>) {
+      return new DisassociateRecord<ISelect>(taggedExec(entityPicker).toString(), id, taggedExec(relationPicker).toString())
     }
 
-    static Collection<IMultiple, IAssociate>(
+    static Collection<IMultiple, ISelect>(
       entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>,
       id: string,
-      relationPicker: (x: IMultiple) => WebMappingRelations<IAssociate>,
+      relationPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, any, any, any, any, any>,
       targetId: string) {
-      return new DisassociateRecord<IAssociate>(taggedExec(entityPicker).toString(), id, taggedExec(relationPicker).toString(), targetId)
+      return new DisassociateRecord<ISelect>(taggedExec(entityPicker).toString(), id, taggedExec(relationPicker).toString(), targetId)
     }
 
     constructor(entityName: string, private id: string, rel: string, private targetid?: string) {
@@ -1311,17 +1311,17 @@ namespace XQW {
     } else if (typeof (obj) === 'string' && startsWith("{", obj) && obj.endsWith("}")) {
       return obj.substring(1, obj.length - 1);
 
-    } else if (obj instanceof Object) {
-      var newObj = {};
-      Object.keys(obj).forEach(key => parseAttribute(key, transformObject(obj[key]), newObj));
-      return newObj;
-
     } else if (obj instanceof Array) {
       var arr: any[] = [];
       obj.forEach((v, idx) => arr[idx] = transformObject(v));
       return arr;
 
-    } else {
+    } else if (obj instanceof Object) {
+      var newObj = {};
+      Object.keys(obj).forEach(key => parseAttribute(key, transformObject(obj[key]), newObj));
+      return newObj;
+    }
+    else {
       return obj;
     }
   }
