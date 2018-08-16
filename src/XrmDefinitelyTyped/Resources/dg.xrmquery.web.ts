@@ -1311,17 +1311,17 @@ namespace XQW {
     } else if (typeof (obj) === 'string' && startsWith("{", obj) && obj.endsWith("}")) {
       return obj.substring(1, obj.length - 1);
 
-    } else if (obj instanceof Object) {
-      var newObj = {};
-      Object.keys(obj).forEach(key => parseAttribute(key, transformObject(obj[key]), newObj));
-      return newObj;
-
     } else if (obj instanceof Array) {
       var arr: any[] = [];
       obj.forEach((v, idx) => arr[idx] = transformObject(v));
       return arr;
 
-    } else {
+    } else if (obj instanceof Object) {
+      var newObj = {};
+      Object.keys(obj).forEach(key => parseAttribute(key, transformObject(obj[key]), newObj));
+      return newObj;
+    }
+    else {
       return obj;
     }
   }
