@@ -303,12 +303,8 @@ interface WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, Formatte
   __WebMappingRetrieve: ISelect;
 }
 
-interface WebMappingCUDA<ICreate, IUpdate, IAssociate> {
-  __WebMappingCUDA: ICreate & IUpdate & IAssociate;
-}
-
-interface WebMappingRelations<IAssociate> {
-  __WebMappingRelations: IAssociate;
+interface WebMappingCUDA<ICreate, IUpdate, ISelect> {
+  __WebMappingCUDA: ICreate & IUpdate & ISelect;
 }
 
 interface WebMappingRelated<ISingle, IMultiple> {
