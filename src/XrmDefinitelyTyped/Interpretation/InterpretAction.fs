@@ -16,28 +16,35 @@ let parseActionType name typ optional =
   let m = regex.Match(typ)
   match m.Success with
   | false -> None
-  | true -> if m.Groups.[1].Success && m.Groups.[2].Success then Some (name, (m.Groups.[2].Value), optional, (m.Groups.[1].Value = "Out")) else None
+  | true -> 
+    if m.Groups.[1].Success && m.Groups.[2].Success 
+    then Some (name, (m.Groups.[2].Value), optional, (m.Groups.[1].Value = "Out")) 
+    else None
 
 let isRealParameter (_, _, (xaml:XElement)) =
-  let targetAttribute =
-    xaml.Element(name (mxPrefix + "ArgumentTargetAttribute")).Attribute(name "Value").Value
-  
-  targetAttribute.Equals "False"
+  xaml
+    .Element(name (mxPrefix + "ArgumentTargetAttribute"))
+    .Attribute(name "Value").Value = "False"
 
-let interpretXaml xaml =
-  let xml = XDocument.Parse(xaml)
-
-  let parsedParameters = 
-    xml.Element(name "{http://schemas.microsoft.com/netfx/2009/xaml/activities}Activity").Element(name (xPrefix + "Members")).Elements(name (xPrefix + "Property"))
-    |> Seq.filter (fun (prop:XElement) -> prop.HasElements)
-    |> Seq.map (fun (prop:XElement) -> prop.Attribute(name "Name").Value, prop.Attribute(name "Type").Value, prop.Element(name (xPrefix + "Property.Attributes")))
-    |> Seq.filter isRealParameter
-    |> List.ofSeq
-
-  parsedParameters
+let interpretXaml xaml =  
+  XDocument.Parse(xaml)
+    .Element(name "{http://schemas.microsoft.com/netfx/2009/xaml/activities}Activity")
+    .Element(name (xPrefix + "Members"))
+    .Elements(name (xPrefix + "Property"))
+  |> List.ofSeq  
+  |> List.filter (fun (prop:XElement) -> prop.HasElements)
+  |> List.map (fun (prop:XElement) -> 
+    prop.Attribute(name "Name").Value, 
+    prop.Attribute(name "Type").Value, 
+    prop.Element(name (xPrefix + "Property.Attributes")))
+  |> List.filter isRealParameter
   |> List.choose (
     fun (n, typ, attributes) -> 
-      let optional = attributes.Element(name (mxPrefix + "ArgumentRequiredAttribute")).Attribute(name "Value").Value = "False"
+      let optional = 
+        attributes
+          .Element(name (mxPrefix + "ArgumentRequiredAttribute"))
+          .Attribute(name "Value").Value = "False"
+
       parseActionType n typ optional
   )
 
@@ -47,6 +54,7 @@ let (|Prefix|_|) (p:string) (s:string) =
         Some(s.Substring(p.Length))
     else
         None
+
 let getParameterSubType = function
   | "Guid"
   | "String" -> TsType.String
@@ -69,7 +77,10 @@ let rec getParameterType = function
   | typ -> getParameterSubType typ
 
 let parseParameter isInput (parameter:XElement) : ActionParameter =
-  parameter.Attribute(name "Name").Value, parameter.Attribute(name "Type").Value, parameter.Attribute(name "Nullable") = null, isInput
+  parameter.Attribute(name "Name").Value, 
+  parameter.Attribute(name "Type").Value, 
+  parameter.Attribute(name "Nullable") = null, 
+  isInput
 
 let parseReturnType (typ:XElement) (returnTypes: Map<string, ActionParameter list>) =
   if typ = null then [] else
@@ -78,7 +89,10 @@ let parseReturnType (typ:XElement) (returnTypes: Map<string, ActionParameter lis
   | Some parameters -> parameters
 
 let parseComplexType (typ:XElement) =
-  sprintf "%s.%s" "mscrm" (typ.Attribute(name "Name").Value), typ.Elements(name "Property") |> Seq.map (parseParameter true) |> Seq.toList
+  sprintf "%s.%s" "mscrm" (typ.Attribute(name "Name").Value), 
+  typ.Elements(name "Property") 
+  |> Seq.toList
+  |> List.map (parseParameter true) 
 
 let interpretActionXml: ActionData[] =
   let assembly = Assembly.GetExecutingAssembly()
@@ -91,30 +105,29 @@ let interpretActionXml: ActionData[] =
     xml.Elements(name "ComplexType")
     |> Seq.map parseComplexType
     |> Map.ofSeq
-
-  let actions =
-    xml.Elements(name "Action")
-    |> Seq.map(
-      fun (e:XElement) -> 
-        let actionName = e.Attribute(name "Name").Value
-        let isBound = e.Attribute(name "IsBound") <> null
-        let inputParameters, boundEntities =
-          (e.Elements(name "Parameter"))
-          |> Seq.map (parseParameter false)
-          |> Seq.toList
-          |> List.partition (fun (name, _, _, _) -> name <> "entity" && name <> "entityset")
-        let outputParameters = parseReturnType (e.Element(name "ReturnType")) returnTypes
-        let primaryEntity =
-          match isBound with
-          | false -> ""
-          | true -> 
-            let (_, typ, _, _) 
-              = (boundEntities |> List.head)
-            typ
+    
+  xml.Elements(name "Action")
+  |> Seq.toArray
+  |> Array.map(
+    fun (e:XElement) -> 
+      let actionName = e.Attribute(name "Name").Value
+      let isBound = e.Attribute(name "IsBound") <> null
+      let inputParameters, boundEntities =
+        (e.Elements(name "Parameter"))
+        |> Seq.map (parseParameter false)
+        |> Seq.toList
+        |> List.partition (fun (name, _, _, _) -> name <> "entity" && name <> "entityset")
+      let outputParameters = parseReturnType (e.Element(name "ReturnType")) returnTypes
+      let primaryEntity =
+        match isBound with
+        | false -> ""
+        | true -> 
+          let (_, typ, _, _) 
+            = (boundEntities |> List.head)
+          typ
         
-        actionName, primaryEntity, inputParameters @ outputParameters
-    )
-  actions |> Seq.toArray
+      actionName, primaryEntity, inputParameters @ outputParameters
+  )
 
 let interpretAction nameMap (name, primaryEntity, parameters) =
   let parsedParameters = 

@@ -61,7 +61,7 @@ type ActionParameter = ParameterName * ParameterType * IsOptional * ParameterDir
 type ActionData = ActionName * EntityName * ActionParameter list 
 
 /// Serializable record containing necessary (meta)data
-[<DataContract(Namespace="")>]
+[<DataContract>]
 type RawState = {
 
   [<field : DataMember>]

@@ -56,11 +56,11 @@ let getActionData (proxy:OrganizationServiceProxy) =
 
   let actions = 
     resp.EntityCollection.Entities 
-    |> Seq.filter (fun action -> not (action.GetAttributeValue<EntityReference>("ownerid").Name.Equals("SYSTEM")))
+    |> Seq.filter (fun action -> action.GetAttributeValue<EntityReference>("ownerid").Name.Equals("SYSTEM") |> not)
   
   actions
   |> Seq.map (
-    fun action -> ((downcast action.GetAttributeValue<AliasedValue>("sdkMsg.name").Value : string)
+    fun action -> ((action.GetAttributeValue<AliasedValue>("sdkMsg.name").Value :?> string)
                     ,action.GetAttributeValue<string>("primaryentity")
                     ,action.GetAttributeValue<string>("xaml"))
   )
