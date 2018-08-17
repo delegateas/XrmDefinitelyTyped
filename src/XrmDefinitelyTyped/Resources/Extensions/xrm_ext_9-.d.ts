@@ -756,7 +756,7 @@ declare namespace Xrm {
     /**
      * Interface for an standard entity attribute.
      */
-	interface BaseAttribute<T> {
+	interface Attribute<T> {
 		isValid(): boolean;
 	}
 

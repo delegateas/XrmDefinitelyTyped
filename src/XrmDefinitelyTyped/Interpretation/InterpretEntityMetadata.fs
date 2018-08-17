@@ -88,17 +88,16 @@ let interpretAttribute nameMap entityNames (a: AttributeMetadata) =
   match vTypeOption with
   | None -> None, None
   | Some (vType, sType) ->
-
-  options, Some {
-    XrmAttribute.schemaName = a.SchemaName
-    logicalName = a.LogicalName
-    varType = vType
-    specialType = sType
-    targetEntitySets = targetEntitySets
-    readable = a.IsValidForRead.GetValueOrDefault(false)
-    createable = a.IsValidForCreate.GetValueOrDefault(false)
-    updateable = a.IsValidForUpdate.GetValueOrDefault(false)
-  }
+    options, Some {
+      XrmAttribute.schemaName = a.SchemaName
+      logicalName = a.LogicalName
+      varType = vType
+      specialType = sType
+      targetEntitySets = targetEntitySets
+      readable = a.IsValidForRead.GetValueOrDefault(false)
+      createable = a.IsValidForCreate.GetValueOrDefault(false)
+      updateable = a.IsValidForUpdate.GetValueOrDefault(false)
+    }
 
 let sanitizeNavigationProptertyName string =
     if string = null then "navigationPropertyNameNotDefined"
