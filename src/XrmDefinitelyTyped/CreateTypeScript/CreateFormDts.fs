@@ -7,12 +7,15 @@ open Utility
 /// Translate internal attribute type to corresponding TypeScript interface.
 let getAttributeInterface = function
   | AttributeType.OptionSet ty  -> TsType.SpecificGeneric ("Xrm.OptionSetAttribute", [ ty ])
+  | AttributeType.MultiSelectOptionSet ty
+                                -> TsType.SpecificGeneric ("Xrm.MultiSelectOptionSetAttribute", [ ty ])
   | AttributeType.Default ty    -> TsType.SpecificGeneric ("Xrm.Attribute", [ ty ])
   | AttributeType.Lookup ty     -> TsType.Custom (sprintf "Xrm.LookupAttribute<%s>" ty)
   | x                           -> TsType.Custom (sprintf "Xrm.%AAttribute" x)
 
 let getAttributeMap = function
   | AttributeType.OptionSet ty
+  | AttributeType.MultiSelectOptionSet ty
   | AttributeType.Default ty    -> ty
   | AttributeType.Number        -> TsType.Number
   | AttributeType.Date          -> TsType.Date
@@ -20,7 +23,8 @@ let getAttributeMap = function
  
 /// Gets the corresponding enum of the option set if possible
 let getOptionSetType = function
-  | Some (AttributeType.OptionSet ty) -> ty
+  | Some (AttributeType.OptionSet ty) 
+  | Some (AttributeType.MultiSelectOptionSet ty) -> ty
   | _ -> TsType.Number
 
 /// Translate internal control type to corresponding TypeScript interface.
@@ -31,6 +35,8 @@ let getControlInterface cType aType =
                                     -> TsType.Custom "Xrm.StringControl"
   | Some at, ControlType.Default    -> TsType.SpecificGeneric ("Xrm.Control", [ getAttributeInterface at ]) 
   | aType, ControlType.OptionSet    -> TsType.SpecificGeneric ("Xrm.OptionSetControl", [ getOptionSetType aType ])
+  | aType, ControlType.MultiSelectOptionSet
+                                    -> TsType.SpecificGeneric ("Xrm.MultiSelectOptionSetControl", [ getOptionSetType aType ])
   | Some (AttributeType.Lookup _), ControlType.Lookup tes
   | _, ControlType.Lookup tes       -> TsType.Custom (sprintf "Xrm.LookupControl<%s>" tes)
   | _, ControlType.SubGrid tes      -> TsType.Custom (sprintf "Xrm.SubGridControl<%s>" tes)

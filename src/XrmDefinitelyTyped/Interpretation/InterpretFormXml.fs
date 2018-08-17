@@ -41,6 +41,7 @@ let classIds =
     ("62B0DF79-0464-470F-8AF7-4483CFEA0C7D", Map)
     ("E7A81278-8635-4D9E-8D4D-59480B391C5B", Subgrid)
     ("9C5CA0A1-AB4D-4781-BE7E-8DFBE867B87E", Timer)
+    ("4AA28AB7-9C13-4F57-A73D-AD894D048B5F", MultiPicklist)
   ] |> List.map (fun (id,t) -> id.ToUpper(), t) |> Map.ofList
  
 let getTargetEntities (tes: string option) (a: XrmAttribute option) =
@@ -76,6 +77,7 @@ let getAttribute (enums:Map<string,TsType>) (entity: XrmEntity) (_, attrName, co
     | StatusReason  -> AttributeType.OptionSet (enums.TryFind(attrName) ?| TsType.Number)
     | RadioButtons 
     | CheckBox      -> AttributeType.OptionSet TsType.Boolean
+    | MultiPicklist -> AttributeType.MultiSelectOptionSet (enums.TryFind(attrName) ?| TsType.Number)
         
     | Decimal 
     | Duration
@@ -121,6 +123,8 @@ let getControl  (enums:Map<string,TsType>) entity (controlField:ControlField): X
     | StatusReason
     | RadioButtons
     | CheckBox  -> ControlType.OptionSet
+
+    | MultiPicklist -> ControlType.MultiSelectOptionSet
         
     | Decimal 
     | Duration
@@ -294,7 +298,7 @@ let interpretFormXmls (entityMetadata: XrmEntity[]) (formData:Map<string,Entity[
   |> Array.choose (fun em ->
       let enums = 
         em.attributes
-        |> List.filter (fun attr -> attr.specialType = SpecialType.OptionSet)
+        |> List.filter (fun attr -> attr.specialType = SpecialType.OptionSet || attr.specialType = SpecialType.MultiSelectOptionSet)
         |> List.map (fun attr -> attr.logicalName, attr.varType)
         |> Map.ofList
 

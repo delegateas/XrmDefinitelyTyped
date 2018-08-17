@@ -1,4 +1,5 @@
 # Release Notes
+* Multiselect Optionsets are now supported.
 ### 4.0.2 - August 17 2018
 * Bug fix
 
