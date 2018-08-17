@@ -1,4 +1,7 @@
 # Release Notes
+### 4.0.2 - August 17 2018
+* Bug fix
+
 ### 4.0.1 - August 17 2018
 * Reduced the amount of proxies connected to an environment
 * Bug fixes
