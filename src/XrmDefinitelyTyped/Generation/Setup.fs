@@ -8,6 +8,7 @@ open InterpretEntityMetadata
 open InterpretBpfJson
 open InterpretFormXml
 open InterpretView
+open InterpretAction
 
 
 let intersectMappedSets a b = Map.ofSeq (seq {
@@ -115,6 +116,10 @@ let interpretCrmData out formsToIntersect viewsToIntersect (rawState: RawState) 
     |> Seq.append viewDict.Values
     |> Seq.toArray
 
+  let actionData =
+    rawState.actionData
+    |> Array.map (interpretAction rawState.nameMap)
+
   let bpfControls = interpretBpfs rawState.bpfData
 
   let formDict = interpretFormXmls entityMetadata rawState.formData bpfControls
@@ -128,4 +133,5 @@ let interpretCrmData out formsToIntersect viewsToIntersect (rawState: RawState) 
     lcidData = rawState.lcidData
     viewData = viewData
     outputDir = out 
+    actionData = actionData
   }

@@ -52,8 +52,16 @@ type LinkedAttributes = LinkedEntity list
 type ParsedFetchXml = (EntityName * OwnedAttributes * LinkedAttributes)
 type ViewData = (Guid * ViewName * ParsedFetchXml)
 
+type ActionName = string
+type ParameterName = string
+type ParameterType = string
+type ParameterDirection = bool
+type IsOptional = bool
+type ActionParameter = ParameterName * ParameterType * IsOptional * ParameterDirection
+type ActionData = ActionName * EntityName * ActionParameter list 
+
 /// Serializable record containing necessary (meta)data
-[<DataContract>]
+[<DataContract(Namespace="")>]
 type RawState = {
 
   [<field : DataMember>]
@@ -79,4 +87,7 @@ type RawState = {
 
   [<field : DataMember>]
   viewData : ViewData []
+
+  [<field : DataMember>]
+  actionData : ActionData []
 }

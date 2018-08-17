@@ -81,6 +81,26 @@ namespace XrmQuery {
   }
 
 	/**
+	 * Instantiates specification of a query that can execute an unbound action.
+	 * @param entityPicker Function to select which action should be targeted.
+	 */
+  export function unboundAction<IInput, IOutput>(
+	  entityPicker: (x: WebUnboundActions) => WebMappingAction<IInput, any, IOutput>) {
+	  return new XQW.UnboundAction(entityPicker);
+  }
+
+	/**
+	* Instantiates specification of a query that can execute a bound action.
+	* @param entityPicker Function to select which action should be targeted.
+	*/
+  export function boundAction<IInput, IBound, IOutput>(
+	  entityPicker: (x: WebBoundActions) => WebMappingAction<IInput, IBound, IOutput>, 
+    boundEntityPicker: (x: IBound) => string,
+    id: string) {
+	  return new XQW.BoundAction(entityPicker, boundEntityPicker, id);
+  }
+
+	/**
 	 * Makes XrmQuery use the given custom url to access the Web API.
 	 * @param url The url targeting the API. For example: '/api/data/v8.2/'
 	 */
@@ -233,6 +253,8 @@ namespace Filter {
 interface WebEntitiesRetrieve { }
 interface WebEntitiesRelated { }
 interface WebEntitiesCUD { }
+interface WebUnboundActions { }
+interface WebBoundActions { }
 declare var GetGlobalContext: any;
 
 interface WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult> {
@@ -245,6 +267,10 @@ interface WebMappingCUD<ICreate, IUpdate> {
 
 interface WebMappingRelated<ISingle, IMultiple> {
   _WebMappingRelated: ISingle & IMultiple;
+}
+
+interface WebMappingAction<IInput, IBound, IOutput> {
+  _WebMappingAction: IInput & IBound & IOutput;
 }
 
 interface WebAttribute<ISelect, Result, Formatted> {
@@ -278,6 +304,7 @@ namespace XQW {
   const FORMATTED_VALUE_SUFFIX = "@" + FORMATTED_VALUE_ID;
   const FORMATTED_VALUES_HEADER = { type: "Prefer", value: `odata.include-annotations="${FORMATTED_VALUE_ID}"` };
   const BIND_ID = "_bind$";
+  const TYPE_ID = "$type";
   const GUID_ENDING = "_guid";
   const FORMATTED_ENDING = "_formatted";
   const NEXT_LINK_ID = "@odata.nextLink";
@@ -495,8 +522,6 @@ namespace XQW {
     }
   }
 
-
-
   export abstract class Query<T> {
     protected additionalHeaders: RequestHeader[] = [];
 
@@ -526,7 +551,6 @@ namespace XQW {
       return XrmQuery.sendRequest(this.requestType, this.getQueryString(), this.getObjectToSend(), successHandler, errorCallback, config);
     }
   }
-
 
   export class RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result> extends Query<Result[]> {
 		/**
@@ -972,6 +996,76 @@ namespace XQW {
     }
   }
 
+	/**
+	 * Contains information about an UnboundAction query
+	 */
+  export class UnboundAction<IInput, IOutput> extends Query<IOutput> {
+	  /** 
+	   * @internal 
+	   */
+    private actionName: string;
+    private parameters: IInput;
+
+	  constructor(entityPicker: (x: WebUnboundActions) => WebMappingAction<IInput, any, IOutput>) {
+		  super("POST");
+		  this.actionName = taggedExec(entityPicker).toString();
+    }
+
+    withParameters(x: IInput) {
+      this.parameters = x;
+      return this;
+    };
+
+	  protected handleResponse(req: XMLHttpRequest, successCallback: (r: IOutput) => any, errorCallback: (e: Error) => any) {
+		  successCallback(parseRetrievedData<IOutput>(req));
+	  }
+
+	  protected getObjectToSend = () => JSON.stringify(transformObject(this.parameters));
+
+	  getQueryString(): string {
+		  return `${this.actionName}`;
+	  }
+  }
+
+	  /**
+	   * Contains information about an BoundAction query
+	   */
+  export class BoundAction<IInput, IBound, IOutput> extends Query<IOutput>{
+	  /** 
+	   * @internal 
+	   */
+	  private actionName: string;
+    private boundEntity: string;
+    private id: string;
+    private parameters: IInput;
+
+	  constructor(
+      entityPicker: (x: WebBoundActions) => WebMappingAction<IInput, IBound, IOutput>, 
+      boundEntityPicker: (x: IBound) => string,
+      id: string) {
+
+		  super("POST");
+		  this.actionName = taggedExec(entityPicker).toString();
+      this.boundEntity = taggedExec(boundEntityPicker).toString();
+      this.id = stripGUID(id);
+    }
+
+    withParameters(x: IInput) {
+      this.parameters = x;
+      return this;
+    };
+
+	  protected handleResponse(req: XMLHttpRequest, successCallback: (r: IOutput) => any, errorCallback: (e: Error) => any) {
+		  successCallback(parseRetrievedData<IOutput>(req));
+	  }
+
+	  protected getObjectToSend = () => JSON.stringify(transformObject(this.parameters));
+
+	  getQueryString(): string {
+		  return `${this.boundEntity}(${this.id})/Microsoft.Dynamics.CRM.${this.actionName}`;
+	  }
+  }
+
 
   /**
    * @internal
@@ -1124,7 +1218,8 @@ namespace XQW {
     if (lookupIdx >= 0) {
       const setName = key.substr(lookupIdx + BIND_ID.length);
       newObj[`${key.substr(0, lookupIdx)}@odata.bind`] = `/${setName}(${val})`;
-
+    } else if (key.indexOf(TYPE_ID) == 0) {
+      newObj["@odata.type"] = `Microsoft.Dynamics.CRM.${val}`;
     } else {
       newObj[key] = val;
     }

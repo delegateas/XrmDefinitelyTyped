@@ -103,10 +103,10 @@ let retrieveViews entitiesToFetch rawEntityMetadata mainProxy : ViewData[] * Ent
   printfn "Done!"
   fetchXmlParsedViews, missingEntityMetadata
 
-let retrieveActions mainProxy =
+let retrieveActions mainProxy: ActionData[] =
   getActionData mainProxy
   |> Seq.rev
-  |> Seq.map (fun (name, xaml) -> (name, interpretXaml xaml))
+  |> Seq.map (fun (name, boundEntity, xaml) -> (name, boundEntity, interpretXaml xaml))
   |> Array.ofSeq
 
 /// Retrieve version from CRM
@@ -146,8 +146,14 @@ let retrieveCrmData crmVersion entities solutions mainProxy proxyGetter =
   let rawEntityMetadata =
     Array.append originalRawEntityMetadata additionalEntityMetadata
   
-  let actionData =
+  let defaultActionData =
+    interpretActionXml
+
+  let customActionData =
     retrieveActions mainProxy
+
+  let actionData =
+    Array.append defaultActionData customActionData
 
   let bpfData = 
     match crmVersion .>= (6,0,0,0) with
@@ -178,6 +184,7 @@ let retrieveCrmData crmVersion entities solutions mainProxy proxyGetter =
     viewData = rawViewData
     bpfData = bpfData
     formData = formData 
+    actionData = actionData
     crmVersion = crmVersion
   }
 

@@ -59,10 +59,16 @@ type XrmView = {
 }
 
 type XrmActionParameter = {
-  varType: TsType;
-  specialType: SpecialType;
   name: string;
-  orientation: string;
+  varType: TsType;
+  optional: bool;
+  isOutputParameter: bool;
+}
+
+type XrmAction = {
+  name: string;
+  boundEntity: string option;
+  parameters : XrmActionParameter list;
 }
 
 // Forms
@@ -138,4 +144,5 @@ type InterpretedState = {
   imageWebResourceNames: string[]
   lcidData: int[]
   viewData: XrmView[]
+  actionData: XrmAction[]
 }

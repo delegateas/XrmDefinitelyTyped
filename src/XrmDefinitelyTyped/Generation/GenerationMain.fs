@@ -55,6 +55,7 @@ let generateFromRaw gSettings rawState =
       | Some ns -> 
         yield generateBaseWebEntityDef ns data
         yield! generateWebEntityDefs ns data
+        yield! generateActionDefs ns data
       | None -> ()
 
       match gSettings.restNs with

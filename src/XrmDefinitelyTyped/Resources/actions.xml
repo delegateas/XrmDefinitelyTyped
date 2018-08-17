@@ -1,0 +1,1053 @@
+﻿<Actions>
+  <Action Name="AddChannelAccessProfilePrivileges">
+    <Parameter Name="ChannelAccessProfileId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="Privileges" Type="Collection(mscrm.ChannelAccessProfilePrivilege)"/>
+  </Action>
+  <Action Name="AddMembersTeam" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.team" Nullable="false"/>
+    <Parameter Name="Members" Type="Collection(mscrm.systemuser)" Nullable="false"/>
+  </Action>
+  <Action Name="AddPrincipalToQueue" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.queue" Nullable="false"/>
+    <Parameter Name="Principal" Type="mscrm.crmbaseentity" Nullable="false"/>
+  </Action>
+  <Action Name="AddPrivilegesRole" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.role" Nullable="false"/>
+    <Parameter Name="Privileges" Type="Collection(mscrm.RolePrivilege)"/>
+  </Action>
+  <Action Name="AddRecurrence" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.appointment" Nullable="false"/>
+    <Parameter Name="Target" Type="mscrm.recurringappointmentmaster" Nullable="false"/>
+    <ReturnType Type="mscrm.recurringappointmentmaster" Nullable="false"/>
+  </Action>
+  <ComplexType Name="AddSolutionComponentResponse">
+    <Property Name="id" Type="Edm.Guid"/>
+  </ComplexType>
+  <Action Name="AddSolutionComponent">
+    <Parameter Name="ComponentId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="ComponentType" Type="Edm.Int32" Nullable="false"/>
+    <Parameter Name="SolutionUniqueName" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="AddRequiredComponents" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="DoNotIncludeSubcomponents" Type="Edm.Boolean"/>
+    <Parameter Name="IncludedComponentSettingsValues" Type="Collection(Edm.String)" Unicode="false"/>
+    <ReturnType Type="mscrm.AddSolutionComponentResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="AddToQueueResponse">
+    <Property Name="QueueItemId" Type="Edm.Guid"/>
+  </ComplexType>
+  <Action Name="AddToQueue" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.queue" Nullable="false"/>
+    <Parameter Name="Target" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="SourceQueue" Type="mscrm.queue"/>
+    <Parameter Name="QueueItemProperties" Type="mscrm.queueitem"/>
+    <ReturnType Type="mscrm.AddToQueueResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="AddUserToRecordTeamResponse">
+    <Property Name="AccessTeamId" Type="Edm.Guid"/>
+  </ComplexType>
+  <Action Name="AddUserToRecordTeam" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.systemuser" Nullable="false"/>
+    <Parameter Name="Record" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="TeamTemplate" Type="mscrm.teamtemplate" Nullable="false"/>
+    <ReturnType Type="mscrm.AddUserToRecordTeamResponse" Nullable="false"/>
+  </Action>
+  <Action Name="ApplyRecordCreationAndUpdateRule">
+    <Parameter Name="Target" Type="mscrm.crmbaseentity" Nullable="false"/>
+  </Action>
+  <Action Name="AutoMapEntity">
+    <Parameter Name="EntityMapId" Type="Edm.Guid" Nullable="false"/>
+  </Action>
+  <ComplexType Name="BulkDeleteResponse">
+    <Property Name="JobId" Type="Edm.Guid"/>
+  </ComplexType>
+  <Action Name="BulkDelete">
+    <Parameter Name="QuerySet" Type="Collection(mscrm.QueryExpression)"/>
+    <Parameter Name="JobName" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="SendEmailNotification" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="ToRecipients" Type="Collection(mscrm.activityparty)" Nullable="false"/>
+    <Parameter Name="CCRecipients" Type="Collection(mscrm.activityparty)" Nullable="false"/>
+    <Parameter Name="RecurrencePattern" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="StartDateTime" Type="Edm.DateTimeOffset" Nullable="false"/>
+    <Parameter Name="SourceImportId" Type="Edm.Guid"/>
+    <Parameter Name="RunNow" Type="Edm.Boolean"/>
+    <ReturnType Type="mscrm.BulkDeleteResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="BulkDetectDuplicatesResponse">
+    <Property Name="JobId" Type="Edm.Guid"/>
+  </ComplexType>
+  <Action Name="BulkDetectDuplicates">
+    <Parameter Name="Query" Type="mscrm.QueryBase"/>
+    <Parameter Name="JobName" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="SendEmailNotification" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="TemplateId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="ToRecipients" Type="Collection(mscrm.activityparty)" Nullable="false"/>
+    <Parameter Name="CCRecipients" Type="Collection(mscrm.activityparty)" Nullable="false"/>
+    <Parameter Name="RecurrencePattern" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="RecurrenceStartTime" Type="Edm.DateTimeOffset" Nullable="false"/>
+    <ReturnType Type="mscrm.BulkDetectDuplicatesResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="CanBeReferencedResponse">
+    <Property Name="CanBeReferenced" Type="Edm.Boolean"/>
+  </ComplexType>
+  <Action Name="CanBeReferenced">
+    <Parameter Name="EntityName" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <ReturnType Type="mscrm.CanBeReferencedResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="CanBeReferencingResponse">
+    <Property Name="CanBeReferencing" Type="Edm.Boolean"/>
+  </ComplexType>
+  <Action Name="CanBeReferencing">
+    <Parameter Name="EntityName" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <ReturnType Type="mscrm.CanBeReferencingResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="CanManyToManyResponse">
+    <Property Name="CanManyToMany" Type="Edm.Boolean"/>
+  </ComplexType>
+  <Action Name="CanManyToMany">
+    <Parameter Name="EntityName" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <ReturnType Type="mscrm.CanManyToManyResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="CloneAsPatchResponse">
+    <Property Name="SolutionId" Type="Edm.Guid"/>
+  </ComplexType>
+  <Action Name="CloneAsPatch">
+    <Parameter Name="ParentSolutionUniqueName" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="DisplayName" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="VersionNumber" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <ReturnType Type="mscrm.CloneAsPatchResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="CloneAsSolutionResponse">
+    <Property Name="SolutionId" Type="Edm.Guid"/>
+  </ComplexType>
+  <Action Name="CloneAsSolution">
+    <Parameter Name="ParentSolutionUniqueName" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="DisplayName" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="VersionNumber" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <ReturnType Type="mscrm.CloneAsSolutionResponse" Nullable="false"/>
+  </Action>
+  <Action Name="CloneMobileOfflineProfile" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.mobileofflineprofile" Nullable="false"/>
+    <ReturnType Type="mscrm.mobileofflineprofile" Nullable="false"/>
+  </Action>
+  <Action Name="CompoundUpdateDuplicateDetectionRule">
+    <Parameter Name="Entity" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="ChildEntities" Type="Collection(mscrm.crmbaseentity)" Nullable="false"/>
+  </Action>
+  <Action Name="ConvertOwnerTeamToAccessTeam" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.team" Nullable="false"/>
+  </Action>
+  <Action Name="CopySystemForm" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.systemform" Nullable="false"/>
+    <Parameter Name="Target" Type="mscrm.systemform"/>
+    <ReturnType Type="mscrm.systemform" Nullable="false"/>
+  </Action>
+  <ComplexType Name="CreateCustomerRelationshipsResponse">
+    <Property Name="RelationshipIds" Type="Collection(Edm.Guid)"/>
+    <Property Name="AttributeId" Type="Edm.Guid"/>
+  </ComplexType>
+  <Action Name="CreateCustomerRelationships">
+    <Parameter Name="Lookup" Type="mscrm.ComplexLookupAttributeMetadata"/>
+    <Parameter Name="OneToManyRelationships" Type="Collection(mscrm.ComplexOneToManyRelationshipMetadata)"/>
+    <Parameter Name="SolutionUniqueName" Type="Edm.String" Unicode="false"/>
+    <ReturnType Type="mscrm.CreateCustomerRelationshipsResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="CreateExceptionResponse">
+    <Property Name="id" Type="Edm.Guid"/>
+  </ComplexType>
+  <Action Name="CreateException" IsBound="true">
+    <Parameter Name="entityset" Type="Collection(mscrm.recurringappointmentmaster)" Nullable="false"/>
+    <Parameter Name="Target" Type="mscrm.appointment" Nullable="false"/>
+    <Parameter Name="OriginalStartDate" Type="Edm.DateTimeOffset" Nullable="false"/>
+    <Parameter Name="IsDeleted" Type="Edm.Boolean" Nullable="false"/>
+    <ReturnType Type="mscrm.CreateExceptionResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="CreateInstanceResponse">
+    <Property Name="SeriesCanBeExpanded" Type="Edm.Boolean"/>
+  </ComplexType>
+  <Action Name="CreateInstance">
+    <Parameter Name="Target" Type="mscrm.recurringappointmentmaster" Nullable="false"/>
+    <Parameter Name="Count" Type="Edm.Int32" Nullable="false"/>
+    <ReturnType Type="mscrm.CreateInstanceResponse" Nullable="false"/>
+  </Action>
+  <Action Name="CreateKnowledgeArticleTranslation">
+    <Parameter Name="Source" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="Language" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="IsMajor" Type="Edm.Boolean"/>
+    <ReturnType Type="mscrm.crmbaseentity" Nullable="false"/>
+  </Action>
+  <Action Name="CreateKnowledgeArticleVersion">
+    <Parameter Name="Source" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="IsMajor" Type="Edm.Boolean" Nullable="false"/>
+    <ReturnType Type="mscrm.crmbaseentity" Nullable="false"/>
+  </Action>
+  <Action Name="CreateWorkflowFromTemplate" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.workflow" Nullable="false"/>
+    <Parameter Name="WorkflowName" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <ReturnType Type="mscrm.workflow" Nullable="false"/>
+  </Action>
+  <ComplexType Name="DeleteAndPromoteResponse">
+    <Property Name="SolutionId" Type="Edm.Guid"/>
+  </ComplexType>
+  <Action Name="DeleteAndPromote">
+    <Parameter Name="UniqueName" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <ReturnType Type="mscrm.DeleteAndPromoteResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="DeleteAuditDataResponse">
+    <Property Name="PartitionsDeleted" Type="Edm.Int32"/>
+  </ComplexType>
+  <Action Name="DeleteAuditData">
+    <Parameter Name="EndDate" Type="Edm.DateTimeOffset" Nullable="false"/>
+    <ReturnType Type="mscrm.DeleteAuditDataResponse" Nullable="false"/>
+  </Action>
+  <Action Name="DeleteOpenInstances">
+    <Parameter Name="Target" Type="mscrm.recurringappointmentmaster" Nullable="false"/>
+    <Parameter Name="SeriesEndDate" Type="Edm.DateTimeOffset" Nullable="false"/>
+    <Parameter Name="StateOfPastInstances" Type="Edm.Int32" Nullable="false"/>
+  </Action>
+  <Action Name="DeleteOptionValue">
+    <Parameter Name="OptionSetName" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="AttributeLogicalName" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="EntityLogicalName" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="Value" Type="Edm.Int32" Nullable="false"/>
+    <Parameter Name="SolutionUniqueName" Type="Edm.String" Unicode="false"/>
+  </Action>
+  <ComplexType Name="DeleteRecordChangeHistoryResponse">
+    <Property Name="DeletedEntriesCount" Type="Edm.Int32"/>
+  </ComplexType>
+  <Action Name="DeleteRecordChangeHistory">
+    <Parameter Name="Target" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <ReturnType Type="mscrm.DeleteRecordChangeHistoryResponse" Nullable="false"/>
+  </Action>
+  <Action Name="DeliverIncomingEmail" IsBound="true">
+    <Parameter Name="entityset" Type="Collection(mscrm.email)" Nullable="false"/>
+    <Parameter Name="MessageId" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="Subject" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="From" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="To" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="Cc" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="Bcc" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="ReceivedOn" Type="Edm.DateTimeOffset" Nullable="false"/>
+    <Parameter Name="SubmittedBy" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="Importance" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="Body" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="Attachments" Type="Collection(mscrm.attachment)" Nullable="false"/>
+    <Parameter Name="ExtraProperties" Type="mscrm.email"/>
+    <Parameter Name="ValidateBeforeCreate" Type="Edm.Boolean"/>
+    <ReturnType Type="mscrm.email" Nullable="false"/>
+  </Action>
+  <Action Name="DeliverPromoteEmail" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.email" Nullable="false"/>
+    <Parameter Name="MessageId" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="Subject" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="From" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="To" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="Cc" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="Bcc" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="ReceivedOn" Type="Edm.DateTimeOffset" Nullable="false"/>
+    <Parameter Name="SubmittedBy" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="Importance" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="Body" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="Attachments" Type="Collection(mscrm.attachment)" Nullable="false"/>
+    <Parameter Name="ExtraProperties" Type="mscrm.email"/>
+    <ReturnType Type="mscrm.email" Nullable="false"/>
+  </Action>
+  <Action Name="DeprovisionLanguage">
+    <Parameter Name="Language" Type="Edm.Int32" Nullable="false"/>
+  </Action>
+  <Action Name="ExecuteWorkflow" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.workflow" Nullable="false"/>
+    <Parameter Name="EntityId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="InputArguments" Type="mscrm.InputArgumentCollection"/>
+    <ReturnType Type="mscrm.asyncoperation" Nullable="false"/>
+  </Action>
+  <ComplexType Name="ExportMappingsImportMapResponse">
+    <Property Name="MappingsXml" Type="Edm.String" Unicode="false"/>
+  </ComplexType>
+  <Action Name="ExportMappingsImportMap" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.importmap" Nullable="false"/>
+    <Parameter Name="ExportIds" Type="Edm.Boolean"/>
+    <ReturnType Type="mscrm.ExportMappingsImportMapResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="ExportSolutionResponse">
+    <Property Name="ExportSolutionFile" Type="Edm.Binary"/>
+  </ComplexType>
+  <Action Name="ExportSolution">
+    <Parameter Name="SolutionName" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="Managed" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="TargetVersion" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="ExportAutoNumberingSettings" Type="Edm.Boolean"/>
+    <Parameter Name="ExportCalendarSettings" Type="Edm.Boolean"/>
+    <Parameter Name="ExportCustomizationSettings" Type="Edm.Boolean"/>
+    <Parameter Name="ExportEmailTrackingSettings" Type="Edm.Boolean"/>
+    <Parameter Name="ExportGeneralSettings" Type="Edm.Boolean"/>
+    <Parameter Name="ExportMarketingSettings" Type="Edm.Boolean"/>
+    <Parameter Name="ExportOutlookSynchronizationSettings" Type="Edm.Boolean"/>
+    <Parameter Name="ExportRelationshipRoles" Type="Edm.Boolean"/>
+    <Parameter Name="ExportIsvConfig" Type="Edm.Boolean"/>
+    <Parameter Name="ExportSales" Type="Edm.Boolean"/>
+    <Parameter Name="ExportExternalApplications" Type="Edm.Boolean"/>
+    <ReturnType Type="mscrm.ExportSolutionResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="ExportTranslationResponse">
+    <Property Name="ExportTranslationFile" Type="Edm.Binary"/>
+  </ComplexType>
+  <Action Name="ExportTranslation" IsBound="true">
+    <Parameter Name="entityset" Type="Collection(mscrm.solution)" Nullable="false"/>
+    <Parameter Name="SolutionName" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <ReturnType Type="mscrm.ExportTranslationResponse" Nullable="false"/>
+  </Action>
+  <Action Name="FullTextSearchKnowledgeArticle">
+    <Parameter Name="SearchText" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="UseInflection" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="RemoveDuplicates" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="StateCode" Type="Edm.Int32" Nullable="false"/>
+    <Parameter Name="QueryExpression" Type="mscrm.QueryBase"/>
+    <ReturnType Type="Collection(mscrm.crmbaseentity)" Nullable="false"/>
+  </Action>
+  <Action Name="GenerateSocialProfile" IsBound="true">
+    <Parameter Name="entityset" Type="Collection(mscrm.socialprofile)" Nullable="false"/>
+    <Parameter Name="Entity" Type="mscrm.socialprofile" Nullable="false"/>
+    <ReturnType Type="mscrm.socialprofile" Nullable="false"/>
+  </Action>
+  <ComplexType Name="GetTrackingTokenEmailResponse">
+    <Property Name="TrackingToken" Type="Edm.String" Unicode="false"/>
+  </ComplexType>
+  <Action Name="GetTrackingTokenEmail">
+    <Parameter Name="Subject" Type="Edm.String" Unicode="false"/>
+    <ReturnType Type="mscrm.GetTrackingTokenEmailResponse" Nullable="false"/>
+  </Action>
+  <Action Name="ImportFieldTranslation">
+    <Parameter Name="TranslationFile" Type="Edm.Binary" Nullable="false"/>
+    <ReturnType Type="mscrm.importjob" Nullable="false"/>
+  </Action>
+  <Action Name="ImportMappingsImportMap">
+    <Parameter Name="MappingsXml" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="ReplaceIds" Type="Edm.Boolean" Nullable="false"/>
+    <ReturnType Type="mscrm.importmap" Nullable="false"/>
+  </Action>
+  <Action Name="ImportRecordsImport" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.import" Nullable="false"/>
+    <ReturnType Type="mscrm.asyncoperation" Nullable="false"/>
+  </Action>
+  <Action Name="ImportSolution">
+    <Parameter Name="OverwriteUnmanagedCustomizations" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="PublishWorkflows" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="CustomizationFile" Type="Edm.Binary" Nullable="false"/>
+    <Parameter Name="ImportJobId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="ConvertToManaged" Type="Edm.Boolean"/>
+    <Parameter Name="SkipProductUpdateDependencies" Type="Edm.Boolean"/>
+    <Parameter Name="HoldingSolution" Type="Edm.Boolean"/>
+  </Action>
+  <Action Name="ImportTranslation">
+    <Parameter Name="TranslationFile" Type="Edm.Binary" Nullable="false"/>
+    <Parameter Name="ImportJobId" Type="Edm.Guid" Nullable="false"/>
+  </Action>
+  <ComplexType Name="InsertOptionValueResponse">
+    <Property Name="NewOptionValue" Type="Edm.Int32"/>
+  </ComplexType>
+  <Action Name="InsertOptionValue">
+    <Parameter Name="OptionSetName" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="AttributeLogicalName" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="EntityLogicalName" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="Value" Type="Edm.Int32"/>
+    <Parameter Name="Label" Type="mscrm.Label"/>
+    <Parameter Name="Description" Type="mscrm.Label"/>
+    <Parameter Name="ParentValues" Type="Collection(Edm.Int32)"/>
+    <Parameter Name="SolutionUniqueName" Type="Edm.String" Unicode="false"/>
+    <ReturnType Type="mscrm.InsertOptionValueResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="InsertStatusValueResponse">
+    <Property Name="NewOptionValue" Type="Edm.Int32"/>
+  </ComplexType>
+  <Action Name="InsertStatusValue">
+    <Parameter Name="OptionSetName" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="AttributeLogicalName" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="EntityLogicalName" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="Value" Type="Edm.Int32"/>
+    <Parameter Name="Label" Type="mscrm.Label"/>
+    <Parameter Name="Description" Type="mscrm.Label"/>
+    <Parameter Name="StateCode" Type="Edm.Int32" Nullable="false"/>
+    <Parameter Name="SolutionUniqueName" Type="Edm.String" Unicode="false"/>
+    <ReturnType Type="mscrm.InsertStatusValueResponse" Nullable="false"/>
+  </Action>
+  <Action Name="InstallSampleData"/>
+  <Action Name="InstantiateFilters" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.systemuser" Nullable="false"/>
+    <Parameter Name="TemplateCollection" Type="Collection(mscrm.savedquery)" Nullable="false"/>
+  </Action>
+  <Action Name="InstantiateTemplate">
+    <Parameter Name="TemplateId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="ObjectType" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="ObjectId" Type="Edm.Guid" Nullable="false"/>
+    <ReturnType Type="Collection(mscrm.crmbaseentity)" Nullable="false"/>
+  </Action>
+  <Action Name="OrderOption">
+    <Parameter Name="OptionSetName" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="AttributeLogicalName" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="EntityLogicalName" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="Values" Type="Collection(Edm.Int32)" Nullable="false"/>
+    <Parameter Name="SolutionUniqueName" Type="Edm.String" Unicode="false"/>
+  </Action>
+  <Action Name="ParseImport" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.import" Nullable="false"/>
+    <ReturnType Type="mscrm.asyncoperation" Nullable="false"/>
+  </Action>
+  <Action Name="PickFromQueue" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.queueitem" Nullable="false"/>
+    <Parameter Name="SystemUser" Type="mscrm.systemuser" Nullable="false"/>
+    <Parameter Name="RemoveQueueItem" Type="Edm.Boolean" Nullable="false"/>
+  </Action>
+  <Action Name="ProvisionLanguage">
+    <Parameter Name="Language" Type="Edm.Int32" Nullable="false"/>
+  </Action>
+  <Action Name="PublishAllXml"/>
+  <Action Name="PublishDuplicateRule" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.duplicaterule" Nullable="false"/>
+    <ReturnType Type="mscrm.asyncoperation" Nullable="false"/>
+  </Action>
+  <Action Name="PublishTheme" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.theme" Nullable="false"/>
+  </Action>
+  <Action Name="PublishXml">
+    <Parameter Name="ParameterXml" Type="Edm.String" Nullable="false" Unicode="false"/>
+  </Action>
+  <ComplexType Name="QueryExpressionToFetchXmlResponse">
+    <Property Name="FetchXml" Type="Edm.String" Unicode="false"/>
+  </ComplexType>
+  <Action Name="QueryExpressionToFetchXml">
+    <Parameter Name="Query" Type="mscrm.QueryBase"/>
+    <ReturnType Type="mscrm.QueryExpressionToFetchXmlResponse" Nullable="false"/>
+  </Action>
+  <Action Name="ReactivateEntityKey">
+    <Parameter Name="EntityKeyLogicalName" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="EntityLogicalName" Type="Edm.String" Nullable="false" Unicode="false"/>
+  </Action>
+  <Action Name="ReassignObjectsOwner">
+    <Parameter Name="FromPrincipal" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="ToPrincipal" Type="mscrm.crmbaseentity" Nullable="false"/>
+  </Action>
+  <Action Name="ReassignObjectsSystemUser" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.systemuser" Nullable="false"/>
+    <Parameter Name="ReassignPrincipal" Type="mscrm.crmbaseentity" Nullable="false"/>
+  </Action>
+  <Action Name="Recalculate" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.goal" Nullable="false"/>
+  </Action>
+  <Action Name="ReleaseToQueue" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.queueitem" Nullable="false"/>
+  </Action>
+  <Action Name="RemoveFromQueue" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.queueitem" Nullable="false"/>
+  </Action>
+  <Action Name="RemoveMembersTeam" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.team" Nullable="false"/>
+    <Parameter Name="Members" Type="Collection(mscrm.systemuser)" Nullable="false"/>
+  </Action>
+  <Action Name="RemoveParent">
+    <Parameter Name="Target" Type="mscrm.crmbaseentity" Nullable="false"/>
+  </Action>
+  <Action Name="RemovePrivilegeRole" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.role" Nullable="false"/>
+    <Parameter Name="Privilege" Type="mscrm.privilege" Nullable="false"/>
+  </Action>
+  <ComplexType Name="RemoveSolutionComponentResponse">
+    <Property Name="id" Type="Edm.Guid"/>
+  </ComplexType>
+  <Action Name="RemoveSolutionComponent">
+    <Parameter Name="SolutionComponent" Type="mscrm.solutioncomponent" Nullable="false"/>
+    <Parameter Name="ComponentType" Type="Edm.Int32" Nullable="false"/>
+    <Parameter Name="SolutionUniqueName" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <ReturnType Type="mscrm.RemoveSolutionComponentResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="RemoveUserFromRecordTeamResponse">
+    <Property Name="AccessTeamId" Type="Edm.Guid"/>
+  </ComplexType>
+  <Action Name="RemoveUserFromRecordTeam" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.systemuser" Nullable="false"/>
+    <Parameter Name="Record" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="TeamTemplate" Type="mscrm.teamtemplate" Nullable="false"/>
+    <ReturnType Type="mscrm.RemoveUserFromRecordTeamResponse" Nullable="false"/>
+  </Action>
+  <Action Name="ReplacePrivilegesRole" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.role" Nullable="false"/>
+    <Parameter Name="Privileges" Type="Collection(mscrm.RolePrivilege)"/>
+  </Action>
+  <Action Name="ResetUserFilters">
+    <Parameter Name="QueryType" Type="Edm.Int32" Nullable="false"/>
+  </Action>
+  <Action Name="RouteTo">
+    <Parameter Name="Target" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="QueueItem" Type="mscrm.queueitem"/>
+  </Action>
+  <Action Name="SendBulkMail">
+    <Parameter Name="Sender" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="TemplateId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="RegardingType" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="RegardingId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="Query" Type="mscrm.QueryBase"/>
+  </Action>
+  <ComplexType Name="SendEmailResponse">
+    <Property Name="Subject" Type="Edm.String" Unicode="false"/>
+  </ComplexType>
+  <Action Name="SendEmail" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.email" Nullable="false"/>
+    <Parameter Name="IssueSend" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="TrackingToken" Type="Edm.String" Unicode="false"/>
+    <ReturnType Type="mscrm.SendEmailResponse" Nullable="false"/>
+  </Action>
+  <Action Name="SendEmailFromTemplate">
+    <Parameter Name="TemplateId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="Regarding" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="Target" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <ReturnType Type="mscrm.email" Nullable="false"/>
+  </Action>
+  <Action Name="SendFax">
+    <Parameter Name="FaxId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="IssueSend" Type="Edm.Boolean" Nullable="false"/>
+  </Action>
+  <Action Name="SendTemplate">
+    <Parameter Name="TemplateId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="Sender" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="Recipients" Type="Collection(mscrm.crmbaseentity)" Nullable="false"/>
+    <Parameter Name="Regarding" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="DeliveryPriorityCode" Type="Edm.Int32"/>
+  </Action>
+  <Action Name="SetDataEncryptionKey">
+    <Parameter Name="EncryptionKey" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="ChangeEncryptionKey" Type="Edm.Boolean" Nullable="false"/>
+  </Action>
+  <Action Name="SetFeatureStatus">
+    <Parameter Name="FeatureType" Type="Edm.Int32" Nullable="false"/>
+    <Parameter Name="Status" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="ConfigData" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="IsSolutionUninstall" Type="Edm.Boolean"/>
+  </Action>
+  <Action Name="SetLocLabels">
+    <Parameter Name="EntityMoniker" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="AttributeName" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="Labels" Type="Collection(mscrm.LocalizedLabel)"/>
+  </Action>
+  <Action Name="SetParentSystemUser" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.systemuser" Nullable="false"/>
+    <Parameter Name="Parent" Type="mscrm.systemuser" Nullable="false"/>
+    <Parameter Name="KeepChildUsers" Type="Edm.Boolean" Nullable="false"/>
+  </Action>
+  <Action Name="SetProcess">
+    <Parameter Name="Target" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="NewProcess" Type="mscrm.crmbaseentity"/>
+    <Parameter Name="NewProcessInstance" Type="mscrm.crmbaseentity"/>
+  </Action>
+  <Action Name="SetReportRelated">
+    <Parameter Name="ReportId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="Entities" Type="Collection(Edm.Int32)" Nullable="false"/>
+    <Parameter Name="Categories" Type="Collection(Edm.Int32)" Nullable="false"/>
+    <Parameter Name="Visibility" Type="Collection(Edm.Int32)" Nullable="false"/>
+  </Action>
+  <Action Name="TransformImport">
+    <Parameter Name="ImportId" Type="Edm.Guid" Nullable="false"/>
+    <ReturnType Type="mscrm.asyncoperation" Nullable="false"/>
+  </Action>
+  <Action Name="TriggerServiceEndpointCheck" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.serviceendpoint" Nullable="false"/>
+  </Action>
+  <Action Name="UninstallSampleData"/>
+  <Action Name="UnpublishDuplicateRule">
+    <Parameter Name="DuplicateRuleId" Type="Edm.Guid" Nullable="false"/>
+  </Action>
+  <Action Name="UpdateFeatureConfig">
+    <Parameter Name="FeatureType" Type="Edm.Int32" Nullable="false"/>
+    <Parameter Name="ConfigData" Type="Edm.String" Nullable="false" Unicode="false"/>
+  </Action>
+  <Action Name="UpdateOptionValue">
+    <Parameter Name="OptionSetName" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="AttributeLogicalName" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="EntityLogicalName" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="Value" Type="Edm.Int32" Nullable="false"/>
+    <Parameter Name="Label" Type="mscrm.Label"/>
+    <Parameter Name="Description" Type="mscrm.Label"/>
+    <Parameter Name="MergeLabels" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="ParentValues" Type="Collection(Edm.Int32)"/>
+    <Parameter Name="SolutionUniqueName" Type="Edm.String" Unicode="false"/>
+  </Action>
+  <Action Name="UpdateSolutionComponent">
+    <Parameter Name="ComponentId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="ComponentType" Type="Edm.Int32" Nullable="false"/>
+    <Parameter Name="SolutionUniqueName" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="IncludedComponentSettingsValues" Type="Collection(Edm.String)" Unicode="false"/>
+  </Action>
+  <Action Name="UpdateStateValue">
+    <Parameter Name="OptionSetName" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="AttributeLogicalName" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="EntityLogicalName" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="Value" Type="Edm.Int32" Nullable="false"/>
+    <Parameter Name="Label" Type="mscrm.Label"/>
+    <Parameter Name="Description" Type="mscrm.Label"/>
+    <Parameter Name="MergeLabels" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="DefaultStatusCode" Type="Edm.Int32"/>
+  </Action>
+  <Action Name="AddItemCampaign" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.campaign" Nullable="false"/>
+    <Parameter Name="Campaign" Type="mscrm.campaign" Nullable="false"/>
+    <ReturnType Type="mscrm.campaignitem" Nullable="false"/>
+  </Action>
+  <Action Name="AddItemCampaign" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.list" Nullable="false"/>
+    <Parameter Name="Campaign" Type="mscrm.campaign" Nullable="false"/>
+    <ReturnType Type="mscrm.campaignitem" Nullable="false"/>
+  </Action>
+  <Action Name="AddItemCampaign" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.product" Nullable="false"/>
+    <Parameter Name="Campaign" Type="mscrm.campaign" Nullable="false"/>
+    <ReturnType Type="mscrm.campaignitem" Nullable="false"/>
+  </Action>
+  <Action Name="AddItemCampaign" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.salesliterature" Nullable="false"/>
+    <Parameter Name="Campaign" Type="mscrm.campaign" Nullable="false"/>
+    <ReturnType Type="mscrm.campaignitem" Nullable="false"/>
+  </Action>
+  <ComplexType Name="AddItemCampaignActivityResponse">
+    <Property Name="CampaignActivityItemId" Type="Edm.Guid"/>
+  </ComplexType>
+  <Action Name="AddItemCampaignActivity">
+    <Parameter Name="CampaignActivity" Type="mscrm.campaignactivity" Nullable="false"/>
+    <Parameter Name="Item" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <ReturnType Type="mscrm.AddItemCampaignActivityResponse" Nullable="false"/>
+  </Action>
+  <Action Name="AddListMembersList">
+    <Parameter Name="List" Type="mscrm.list" Nullable="false"/>
+    <Parameter Name="Members" Type="Collection(mscrm.crmbaseentity)" Nullable="false"/>
+  </Action>
+  <ComplexType Name="AddMemberListResponse">
+    <Property Name="Id" Type="Edm.Guid"/>
+  </ComplexType>
+  <Action Name="AddMemberList" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.list" Nullable="false"/>
+    <Parameter Name="EntityId" Type="Edm.Guid" Nullable="false"/>
+    <ReturnType Type="mscrm.AddMemberListResponse" Nullable="false"/>
+  </Action>
+  <Action Name="ApplyRoutingRule">
+    <Parameter Name="Target" Type="mscrm.crmbaseentity" Nullable="false"/>
+  </Action>
+  <ComplexType Name="BookResponse">
+    <Property Name="Notifications" Type="Collection(mscrm.BusinessNotification)"/>
+    <Property Name="ValidationResult" Type="mscrm.ValidationResult"/>
+  </ComplexType>
+  <Action Name="Book">
+    <Parameter Name="Target" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="ReturnNotifications" Type="Edm.Boolean"/>
+    <ReturnType Type="mscrm.BookResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="CalculateActualValueOpportunityResponse">
+    <Property Name="Value" Type="Edm.Decimal" Scale="Variable"/>
+  </ComplexType>
+  <Action Name="CalculateActualValueOpportunity" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.opportunity" Nullable="false"/>
+    <ReturnType Type="mscrm.CalculateActualValueOpportunityResponse" Nullable="false"/>
+  </Action>
+  <Action Name="CalculatePrice">
+    <Parameter Name="Target" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="ParentId" Type="Edm.Guid"/>
+  </Action>
+  <Action Name="CancelContract" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.contract" Nullable="false"/>
+    <Parameter Name="CancelDate" Type="Edm.DateTimeOffset" Nullable="false"/>
+    <Parameter Name="Status" Type="Edm.Int32" Nullable="false"/>
+  </Action>
+  <Action Name="CancelSalesOrder">
+    <Parameter Name="OrderClose" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="Status" Type="Edm.Int32" Nullable="false"/>
+  </Action>
+  <Action Name="CloneContract" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.contract" Nullable="false"/>
+    <Parameter Name="IncludeCanceledLines" Type="Edm.Boolean" Nullable="false"/>
+    <ReturnType Type="mscrm.contract" Nullable="false"/>
+  </Action>
+  <Action Name="CloneProduct" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.product" Nullable="false"/>
+    <ReturnType Type="mscrm.product" Nullable="false"/>
+  </Action>
+  <Action Name="CloseIncident">
+    <Parameter Name="IncidentResolution" Type="mscrm.incidentresolution" Nullable="false"/>
+    <Parameter Name="Status" Type="Edm.Int32" Nullable="false"/>
+  </Action>
+  <Action Name="CloseQuote">
+    <Parameter Name="QuoteClose" Type="mscrm.quoteclose" Nullable="false"/>
+    <Parameter Name="Status" Type="Edm.Int32" Nullable="false"/>
+  </Action>
+  <Action Name="ConvertQuoteToSalesOrder">
+    <Parameter Name="QuoteId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="ColumnSet" Type="mscrm.ColumnSet"/>
+    <Parameter Name="QuoteCloseDate" Type="Edm.DateTimeOffset"/>
+    <Parameter Name="QuoteCloseStatus" Type="Edm.Int32"/>
+    <Parameter Name="QuoteCloseSubject" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="QuoteCloseDescription" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="ProcessInstanceId" Type="mscrm.crmbaseentity"/>
+    <ReturnType Type="mscrm.salesorder" Nullable="false"/>
+  </Action>
+  <Action Name="ConvertSalesOrderToInvoice">
+    <Parameter Name="SalesOrderId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="ColumnSet" Type="mscrm.ColumnSet"/>
+    <Parameter Name="ProcessInstanceId" Type="mscrm.crmbaseentity"/>
+    <ReturnType Type="mscrm.invoice" Nullable="false"/>
+  </Action>
+  <Action Name="CopyCampaign" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.campaign" Nullable="false"/>
+    <Parameter Name="SaveAsTemplate" Type="Edm.Boolean" Nullable="false"/>
+    <ReturnType Type="mscrm.campaign" Nullable="false"/>
+  </Action>
+  <Action Name="CopyCampaignResponse" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.campaignresponse" Nullable="false"/>
+    <ReturnType Type="mscrm.campaignresponse" Nullable="false"/>
+  </Action>
+  <Action Name="CopyDynamicListToStatic" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.list" Nullable="false"/>
+    <ReturnType Type="mscrm.list" Nullable="false"/>
+  </Action>
+  <Action Name="CopyMembersList" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.list" Nullable="false"/>
+    <Parameter Name="TargetList" Type="mscrm.list" Nullable="false"/>
+  </Action>
+  <ComplexType Name="CreateActivitiesListResponse">
+    <Property Name="BulkOperationId" Type="Edm.Guid"/>
+  </ComplexType>
+  <Action Name="CreateActivitiesList">
+    <Parameter Name="ListId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="FriendlyName" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="Activity" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="TemplateId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="Propagate" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="OwnershipOptions" Type="mscrm.PropagationOwnershipOptions" Nullable="false"/>
+    <Parameter Name="Owner" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="sendEmail" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="PostWorkflowEvent" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="QueueId" Type="Edm.Guid"/>
+    <ReturnType Type="mscrm.CreateActivitiesListResponse" Nullable="false"/>
+  </Action>
+  <Action Name="DistributeCampaignActivity" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.campaignactivity" Nullable="false"/>
+    <Parameter Name="Propagate" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="Activity" Type="mscrm.crmbaseentity"/>
+    <Parameter Name="Template" Type="mscrm.template" Nullable="false"/>
+    <Parameter Name="OwnershipOptions" Type="mscrm.PropagationOwnershipOptions" Nullable="false"/>
+    <Parameter Name="Owner" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="SendEmail" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="Queue" Type="mscrm.queue"/>
+    <Parameter Name="PostWorkflowEvent" Type="Edm.Boolean" Nullable="false"/>
+    <ReturnType Type="mscrm.bulkoperation" Nullable="false"/>
+  </Action>
+  <Action Name="FulfillSalesOrder" IsBound="true">
+    <Parameter Name="entityset" Type="Collection(mscrm.salesorder)" Nullable="false"/>
+    <Parameter Name="OrderClose" Type="mscrm.orderclose" Nullable="false"/>
+    <Parameter Name="Status" Type="Edm.Int32" Nullable="false"/>
+  </Action>
+  <Action Name="GenerateInvoiceFromOpportunity">
+    <Parameter Name="OpportunityId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="ColumnSet" Type="mscrm.ColumnSet"/>
+    <ReturnType Type="mscrm.crmbaseentity" Nullable="false"/>
+  </Action>
+  <Action Name="GenerateQuoteFromOpportunity">
+    <Parameter Name="OpportunityId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="ColumnSet" Type="mscrm.ColumnSet"/>
+    <Parameter Name="ProcessInstanceId" Type="mscrm.crmbaseentity"/>
+    <ReturnType Type="mscrm.crmbaseentity" Nullable="false"/>
+  </Action>
+  <Action Name="GenerateSalesOrderFromOpportunity">
+    <Parameter Name="OpportunityId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="ColumnSet" Type="mscrm.ColumnSet"/>
+    <ReturnType Type="mscrm.crmbaseentity" Nullable="false"/>
+  </Action>
+  <Action Name="GetInvoiceProductsFromOpportunity" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.invoice" Nullable="false"/>
+    <Parameter Name="Opportunity" Type="mscrm.opportunity" Nullable="false"/>
+  </Action>
+  <Action Name="GetQuoteProductsFromOpportunity" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.quote" Nullable="false"/>
+    <Parameter Name="Opportunity" Type="mscrm.opportunity" Nullable="false"/>
+  </Action>
+  <Action Name="GetSalesOrderProductsFromOpportunity" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.salesorder" Nullable="false"/>
+    <Parameter Name="Opportunity" Type="mscrm.opportunity" Nullable="false"/>
+  </Action>
+  <Action Name="LockInvoicePricing" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.invoice" Nullable="false"/>
+  </Action>
+  <Action Name="LockSalesOrderPricing" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.salesorder" Nullable="false"/>
+  </Action>
+  <Action Name="LoseOpportunity">
+    <Parameter Name="OpportunityClose" Type="mscrm.opportunityclose" Nullable="false"/>
+    <Parameter Name="Status" Type="Edm.Int32" Nullable="false"/>
+  </Action>
+  <Action Name="Merge">
+    <Parameter Name="Target" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="Subordinate" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="UpdateContent" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="PerformParentingChecks" Type="Edm.Boolean" Nullable="false"/>
+  </Action>
+  <Action Name="msdyn_GDPROptoutContact" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.contact" Nullable="false"/>
+    <Parameter Name="optout" Type="Edm.Boolean" Nullable="false"/>
+  </Action>
+  <Action Name="msdyn_GDPROptoutLead" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.lead" Nullable="false"/>
+    <Parameter Name="optout" Type="Edm.Boolean" Nullable="false"/>
+  </Action>
+  <Action Name="msdyn_GDPROptoutUser" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.systemuser" Nullable="false"/>
+    <Parameter Name="optout" Type="Edm.Boolean" Nullable="false"/>
+  </Action>
+  <ComplexType Name="msdyn_GetACIMarsConnectorStatusResponse">
+    <Property Name="MarsStatus" Type="Edm.String" Unicode="false"/>
+  </ComplexType>
+  <Action Name="msdyn_GetACIMarsConnectorStatus">
+    <ReturnType Type="mscrm.msdyn_GetACIMarsConnectorStatusResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="msdyn_GetLegalAcceptanceStatusResponse">
+    <Property Name="Status" Type="Edm.Boolean"/>
+  </ComplexType>
+  <Action Name="msdyn_GetLegalAcceptanceStatus">
+    <ReturnType Type="mscrm.msdyn_GetLegalAcceptanceStatusResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="msdyn_GetNotesAnalysisResponse">
+    <Property Name="NotesAnalysisResult" Type="Edm.String" Unicode="false"/>
+    <Property Name="IsSuccess" Type="Edm.Boolean"/>
+  </ComplexType>
+  <Action Name="msdyn_GetNotesAnalysis">
+    <Parameter Name="NoteText" Type="Edm.String" Unicode="false"/>
+    <ReturnType Type="mscrm.msdyn_GetNotesAnalysisResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="msdyn_GetRIProvisioningStatusResponse">
+    <Property Name="DCIHubPlanType" Type="Edm.String" Unicode="false"/>
+    <Property Name="EEProvisioningStatus" Type="Edm.Int32"/>
+    <Property Name="RIProvisioningStatus" Type="Edm.Int32"/>
+    <Property Name="RIErrorStatusCode" Type="Edm.String" Unicode="false"/>
+    <Property Name="RIErrorStatusMessage" Type="Edm.String" Unicode="false"/>
+  </ComplexType>
+  <Action Name="msdyn_GetRIProvisioningStatus">
+    <ReturnType Type="mscrm.msdyn_GetRIProvisioningStatusResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="msdyn_GetRITenantEndpointResponse">
+    <Property Name="TenantInfo" Type="Edm.String" Unicode="false"/>
+  </ComplexType>
+  <Action Name="msdyn_GetRITenantEndpoint">
+    <ReturnType Type="mscrm.msdyn_GetRITenantEndpointResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="msdyn_GetSIPackageStatusResponse">
+    <Property Name="SIPackageStatus" Type="Edm.String" Unicode="false"/>
+  </ComplexType>
+  <Action Name="msdyn_GetSIPackageStatus">
+    <ReturnType Type="mscrm.msdyn_GetSIPackageStatusResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="msdyn_GetTalkingPointsResponse">
+    <Property Name="response" Type="Edm.String" Unicode="false"/>
+  </ComplexType>
+  <Action Name="msdyn_GetTalkingPoints">
+    <Parameter Name="entityId" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="entityType" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <ReturnType Type="mscrm.msdyn_GetTalkingPointsResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="msdyn_PerformNotesAnalysisActionResponse">
+    <Property Name="Result" Type="Edm.String" Unicode="false"/>
+  </ComplexType>
+  <Action Name="msdyn_PerformNotesAnalysisAction">
+    <Parameter Name="EntityName" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="SerializedAction" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="ParentEntityName" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="ParentEntityId" Type="Edm.String" Unicode="false"/>
+    <ReturnType Type="mscrm.msdyn_PerformNotesAnalysisActionResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="msdyn_QueryExchangeResponse">
+    <Property Name="ExchangeData" Type="Edm.String" Unicode="false"/>
+  </ComplexType>
+  <Action Name="msdyn_QueryExchange">
+    <Parameter Name="method" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="body" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="requesturl" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <ReturnType Type="mscrm.msdyn_QueryExchangeResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="msdyn_ResetPrimaryNameFieldForOQOIDetailEntitiesResponse">
+    <Property Name="resultCode" Type="Edm.Int32"/>
+  </ComplexType>
+  <Action Name="msdyn_ResetPrimaryNameFieldForOQOIDetailEntities">
+    <ReturnType Type="mscrm.msdyn_ResetPrimaryNameFieldForOQOIDetailEntitiesResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="msdyn_RetrieveKPIvaluesfromDCIResponse">
+    <Property Name="KPIValues" Type="Edm.String" Unicode="false"/>
+    <Property Name="Errors" Type="Edm.String" Unicode="false"/>
+  </ComplexType>
+  <Action Name="msdyn_RetrieveKPIvaluesfromDCI">
+    <Parameter Name="CrmRecord" Type="mscrm.crmbaseentity"/>
+    <Parameter Name="KPINameFilterMap" Type="Edm.String" Unicode="false"/>
+    <ReturnType Type="mscrm.msdyn_RetrieveKPIvaluesfromDCIResponse" Nullable="false"/>
+  </Action>
+  <ComplexType Name="msdyn_RetrieveTypeValuesFromDCIResponse">
+    <Property Name="ResponseValues" Type="Edm.String" Unicode="false"/>
+  </ComplexType>
+  <Action Name="msdyn_RetrieveTypeValuesFromDCI">
+    <Parameter Name="CrmRecord" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="ResourceType" Type="Edm.Int32" Nullable="false"/>
+    <Parameter Name="ResourceTypeName" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="StartDate" Type="Edm.DateTimeOffset"/>
+    <Parameter Name="EndDate" Type="Edm.DateTimeOffset"/>
+    <ReturnType Type="mscrm.msdyn_RetrieveTypeValuesFromDCIResponse" Nullable="false"/>
+  </Action>
+  <Action Name="msdyn_SetFeatureStatus">
+    <Parameter Name="FeatureType" Type="Edm.Int32"/>
+    <Parameter Name="Status" Type="Edm.Boolean"/>
+    <Parameter Name="ConfigurationData" Type="Edm.String" Unicode="false"/>
+  </Action>
+  <Action Name="msdyn_SetLegalAcceptanceStatus">
+    <Parameter Name="Status" Type="Edm.Boolean" Nullable="false"/>
+  </Action>
+  <ComplexType Name="msdyn_SetTalkingPointLikedStatusResponse">
+    <Property Name="IsSuccessfull" Type="Edm.Boolean"/>
+  </ComplexType>
+  <Action Name="msdyn_SetTalkingPointLikedStatus">
+    <Parameter Name="MessageId" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="InferredMessageId" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="IsLiked" Type="Edm.Boolean"/>
+    <ReturnType Type="mscrm.msdyn_SetTalkingPointLikedStatusResponse" Nullable="false"/>
+  </Action>
+  <Action Name="msdyn_StartRIProvisioning">
+    <Parameter Name="HubName" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="PrimaryKey" Type="Edm.String" Unicode="false"/>
+  </Action>
+  <ComplexType Name="msdyn_TrackExchangeActivityResponse">
+    <Property Name="ExchangeResponse" Type="Edm.String" Unicode="false"/>
+  </ComplexType>
+  <Action Name="msdyn_TrackExchangeActivity">
+    <Parameter Name="ExchangeItemId" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="Regarding" Type="mscrm.crmbaseentity"/>
+    <Parameter Name="EntitySetName" Type="Edm.String" Unicode="false"/>
+    <ReturnType Type="mscrm.msdyn_TrackExchangeActivityResponse" Nullable="false"/>
+  </Action>
+  <Action Name="msdyn_Updatefeatureconfig">
+    <Parameter Name="featureType" Type="Edm.Int32"/>
+    <Parameter Name="configuration" Type="Edm.String" Unicode="false"/>
+  </Action>
+  <Action Name="msdyn_UpdateRITenantInfo">
+    <Parameter Name="HubName" Type="Edm.String" Unicode="false"/>
+    <Parameter Name="PrimaryKey" Type="Edm.String" Unicode="false"/>
+  </Action>
+  <Action Name="ProcessInboundEmail" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.email" Nullable="false"/>
+  </Action>
+  <ComplexType Name="PropagateByExpressionResponse">
+    <Property Name="BulkOperationId" Type="Edm.Guid"/>
+  </ComplexType>
+  <Action Name="PropagateByExpression">
+    <Parameter Name="QueryExpression" Type="mscrm.QueryBase"/>
+    <Parameter Name="FriendlyName" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="ExecuteImmediately" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="Activity" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="TemplateId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="OwnershipOptions" Type="mscrm.PropagationOwnershipOptions" Nullable="false"/>
+    <Parameter Name="PostWorkflowEvent" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="Owner" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="SendEmail" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="QueueId" Type="Edm.Guid"/>
+    <ReturnType Type="mscrm.PropagateByExpressionResponse" Nullable="false"/>
+  </Action>
+  <Action Name="PublishProductHierarchy" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.product" Nullable="false"/>
+  </Action>
+  <Action Name="QualifyLead" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.lead" Nullable="false"/>
+    <Parameter Name="CreateAccount" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="CreateContact" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="CreateOpportunity" Type="Edm.Boolean" Nullable="false"/>
+    <Parameter Name="OpportunityCurrencyId" Type="mscrm.transactioncurrency"/>
+    <Parameter Name="OpportunityCustomerId" Type="mscrm.crmbaseentity"/>
+    <Parameter Name="SourceCampaignId" Type="mscrm.campaign"/>
+    <Parameter Name="Status" Type="Edm.Int32" Nullable="false"/>
+    <Parameter Name="ProcessInstanceId" Type="mscrm.crmbaseentity"/>
+    <ReturnType Type="Collection(mscrm.crmbaseentity)" Nullable="false"/>
+  </Action>
+  <Action Name="QualifyMemberList" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.list" Nullable="false"/>
+    <Parameter Name="ListMember" Type="Collection(mscrm.crmbaseentity)" Nullable="false"/>
+    <Parameter Name="OverrideorRemove" Type="Edm.Boolean" Nullable="false"/>
+  </Action>
+  <Action Name="RemoveItemCampaign" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.campaign" Nullable="false"/>
+    <Parameter Name="CampaignItem" Type="mscrm.campaignitem" Nullable="false"/>
+  </Action>
+  <Action Name="RemoveItemCampaignActivity" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.campaignactivity" Nullable="false"/>
+    <Parameter Name="CampaignActivityItem" Type="mscrm.campaignactivityitem" Nullable="false"/>
+  </Action>
+  <Action Name="RemoveMemberList" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.list" Nullable="false"/>
+    <Parameter Name="ListMember" Type="mscrm.listmember" Nullable="false"/>
+  </Action>
+  <Action Name="RenewContract" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.contract" Nullable="false"/>
+    <Parameter Name="Status" Type="Edm.Int32" Nullable="false"/>
+    <Parameter Name="IncludeCanceledLines" Type="Edm.Boolean" Nullable="false"/>
+    <ReturnType Type="mscrm.contract" Nullable="false"/>
+  </Action>
+  <Action Name="RenewEntitlement" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.entitlement" Nullable="false"/>
+    <Parameter Name="Status" Type="Edm.Int32" Nullable="false"/>
+    <ReturnType Type="mscrm.entitlement" Nullable="false"/>
+  </Action>
+  <ComplexType Name="RescheduleResponse">
+    <Property Name="ValidationResult" Type="mscrm.ValidationResult"/>
+    <Property Name="Notifications" Type="Collection(mscrm.BusinessNotification)"/>
+  </ComplexType>
+  <Action Name="Reschedule">
+    <Parameter Name="Target" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="ReturnNotifications" Type="Edm.Boolean"/>
+    <ReturnType Type="mscrm.RescheduleResponse" Nullable="false"/>
+  </Action>
+  <Action Name="RevertProduct">
+    <Parameter Name="Target" Type="mscrm.crmbaseentity" Nullable="false"/>
+  </Action>
+  <Action Name="ReviseQuote">
+    <Parameter Name="QuoteId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="ColumnSet" Type="mscrm.ColumnSet"/>
+    <ReturnType Type="mscrm.quote" Nullable="false"/>
+  </Action>
+  <Action Name="RevokeAccess">
+    <Parameter Name="Target" Type="mscrm.crmbaseentity" Nullable="false"/>
+    <Parameter Name="Revokee" Type="mscrm.crmbaseentity" Nullable="false"/>
+  </Action>
+  <Action Name="SetBusinessEquipment">
+    <Parameter Name="EquipmentId" Type="Edm.Guid" Nullable="false"/>
+    <Parameter Name="BusinessUnitId" Type="Edm.Guid" Nullable="false"/>
+  </Action>
+  <Action Name="SetBusinessSystemUser" IsBound="true">
+    <Parameter Name="entity" Type="mscrm.systemuser" Nullable="false"/>
+    <Parameter Name="BusinessUnit" Type="mscrm.businessunit" Nullable="false"/>
+    <Parameter Name="ReassignPrincipal" Type="mscrm.crmbaseentity" Nullable="false"/>
+  </Action>
+  <Action Name="UnlockInvoicePricing">
+    <Parameter Name="InvoiceId" Type="Edm.Guid" Nullable="false"/>
+  </Action>
+  <Action Name="UnlockSalesOrderPricing">
+    <Parameter Name="SalesOrderId" Type="Edm.Guid" Nullable="false"/>
+  </Action>
+  <Action Name="UpdateProductProperties">
+    <Parameter Name="PropertyInstanceList" Type="Collection(mscrm.crmbaseentity)" Nullable="false"/>
+  </Action>
+  <ComplexType Name="ValidateResponse">
+    <Property Name="Result" Type="Collection(mscrm.ValidationResult)"/>
+  </ComplexType>
+  <Action Name="Validate">
+    <Parameter Name="Activities" Type="Collection(mscrm.activitypointer)" Nullable="false"/>
+    <ReturnType Type="mscrm.ValidateResponse" Nullable="false"/>
+  </Action>
+  <Action Name="ValidateSavedQuery" IsBound="true">
+    <Parameter Name="entityset" Type="Collection(mscrm.savedquery)" Nullable="false"/>
+    <Parameter Name="FetchXml" Type="Edm.String" Nullable="false" Unicode="false"/>
+    <Parameter Name="QueryType" Type="Edm.Int32" Nullable="false"/>
+  </Action>
+  <Action Name="WinOpportunity">
+    <Parameter Name="OpportunityClose" Type="mscrm.opportunityclose" Nullable="false"/>
+    <Parameter Name="Status" Type="Edm.Int32" Nullable="false"/>
+  </Action>
+  <Action Name="WinQuote">
+    <Parameter Name="QuoteClose" Type="mscrm.quoteclose" Nullable="false"/>
+    <Parameter Name="Status" Type="Edm.Int32" Nullable="false"/>
+  </Action>
+</Actions>

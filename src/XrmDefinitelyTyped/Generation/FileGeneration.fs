@@ -246,6 +246,20 @@ let generateWebEntityDefs ns state =
   printfn "Done!"
   defs
 
+/// Generate action definitions
+let generateActionDefs ns state =
+  printf "Generating Action definitons..."
+  let defs =
+    state.actionData
+    |> Array.Parallel.map (fun (a) ->
+      let lines = CreateActions.getActionInterfaceLines ns a
+
+      sprintf "%s/Web/Actions/%s.d.ts" state.outputDir a.name,
+      lines)
+  printfn "Done!"
+  defs
+
+
 /// Generate the Form definitions
 let generateFormDefs state crmVersion generateMappings = 
   printf "Generation Form definitions..."

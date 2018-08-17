@@ -41,7 +41,7 @@ let getAllEntityForms proxy =
 // Retrieve fields for actions
 let getActionData (proxy:OrganizationServiceProxy) =
   let query = new QueryExpression("workflow")
-  query.ColumnSet <- new ColumnSet([|"xaml"|])
+  query.ColumnSet <- new ColumnSet(true)
   query.Criteria.AddCondition(new ConditionExpression("category", ConditionOperator.Equal, 3)) // Action
   query.Criteria.AddCondition(new ConditionExpression("statuscode", ConditionOperator.Equal, 2)) // Activated
   query.Criteria.AddCondition(new ConditionExpression("type", ConditionOperator.Equal, 2)) // Activation
@@ -53,8 +53,18 @@ let getActionData (proxy:OrganizationServiceProxy) =
   request.Query <- query
     
   let resp = getResponse<RetrieveMultipleResponse> proxy request
-  resp.EntityCollection.Entities 
-  |> Seq.map (fun action -> ((downcast action.GetAttributeValue<AliasedValue>("sdkMsg.name").Value : string), action.GetAttributeValue<string>("xaml")))
+
+  let actions = 
+    resp.EntityCollection.Entities 
+    |> Seq.filter (fun action -> not (action.GetAttributeValue<EntityReference>("ownerid").Name.Equals("SYSTEM")))
+  
+  actions
+  |> Seq.map (
+    fun action -> ((downcast action.GetAttributeValue<AliasedValue>("sdkMsg.name").Value : string)
+                    ,action.GetAttributeValue<string>("primaryentity")
+                    ,action.GetAttributeValue<string>("xaml"))
+  )
+
 
 // Retrieve fields for bpf
 let getBpfData (proxy:OrganizationServiceProxy) =

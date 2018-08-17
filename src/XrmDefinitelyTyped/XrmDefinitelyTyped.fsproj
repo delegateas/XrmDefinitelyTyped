@@ -108,6 +108,7 @@
     <EmbeddedResource Include="Resources\dg.xrmquery.web.ts" />
     <EmbeddedResource Include="Resources\dg.xrmquery.rest.ts" />
     <Content Include="Resources\es6-promise.auto.min.js" />
+    <EmbeddedResource Include="Resources\actions.xml" />
     <Compile Include="TypeScript/TypeScript.fs" />
     <Compile Include="TypeScript/TsStringUtil.fs" />
     <Compile Include="Crm/CrmAuth.fs" />
@@ -129,6 +130,7 @@
     <Compile Include="CreateTypeScript\CreateUnionType.fs" />
     <Compile Include="CreateTypeScript\CreateLCID.fs" />
     <Compile Include="CreateTypeScript\CreateView.fs" />
+    <Compile Include="CreateTypeScript\CreateActions.fs" />
     <Compile Include="Generation/DataRetrieval.fs" />
     <Compile Include="Generation\Setup.fs" />
     <Compile Include="Generation\FileGeneration.fs" />
