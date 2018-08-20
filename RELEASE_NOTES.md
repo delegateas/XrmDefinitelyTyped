@@ -1,5 +1,4 @@
 # Release Notes
-* Multiselect Optionsets are now supported.
 ### 4.0.2 - August 17 2018
 * Bug fix
 
@@ -11,6 +10,7 @@
 * Only generates typings for active forms by default, added option sif to allow generation of inactive forms. Credit to PR #70
 
 ### 3.0.2 - August 10 2018
+* Multiselect Optionsets are now supported.
 * Added associate and disassociate support to XrmQuery
 
 ### 3.0.1 - July 18th 2018
