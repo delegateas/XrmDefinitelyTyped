@@ -388,9 +388,9 @@ namespace XQW {
     const lookupLogicalName = endsWith(newName, LOOKUP_LOGICALNAME_SUFFIX);
     const lookupNavProperty = endsWith(newName, LOOKUP_NAVIGATIONPROPERTY_SUFFIX);
 
-    if (formatted) newName = newName.substr(0, newName.length - 42);
-    else if (lookupLogicalName) newName = newName.substr(0, newName.length - 41);
-    else if (lookupNavProperty) newName = newName.substr(0, newName.length - 52);
+    if (formatted) newName = newName.substr(0, newName.length - FORMATTED_VALUE_SUFFIX.length);
+    else if (lookupLogicalName) newName = newName.substr(0, newName.length - LOOKUP_LOGICALNAME_SUFFIX.length);
+    else if (lookupNavProperty) newName = newName.substr(0, newName.length - LOOKUP_NAVIGATIONPROPERTY_SUFFIX.length);
 
     if (beginsWith(newName, '_') && endsWith(newName, '_value')) {
       newName = newName.substr(1, newName.length - 7);
