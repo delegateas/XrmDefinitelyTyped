@@ -341,10 +341,17 @@ namespace XQW {
   const FORMATTED_VALUE_ID = "OData.Community.Display.V1.FormattedValue";
   const FORMATTED_VALUE_SUFFIX = "@" + FORMATTED_VALUE_ID;
   const FORMATTED_VALUES_HEADER = { type: "Prefer", value: `odata.include-annotations="${FORMATTED_VALUE_ID}"` };
+  const LOOKUP_LOGICALNAME_ID = "Microsoft.Dynamics.CRM.lookuplogicalname";
+  const LOOKUP_LOGICALNAME_SUFFIX = "@" + LOOKUP_LOGICALNAME_ID;
+  const LOOKUP_NAVIGATIONPROPERTY_ID = "Microsoft.Dynamics.CRM.associatednavigationproperty";
+  const LOOKUP_NAVIGATIONPROPERTY_SUFFIX = "@" + LOOKUP_NAVIGATIONPROPERTY_ID;
+  const INCLUDE_ANNOTATIONS_HEADER = { type: "Prefer", value: `odata.include-annotations="*"` };
   const BIND_ID = "_bind$";
   const ID_ID = "_id$";
   const GUID_ENDING = "_guid";
   const FORMATTED_ENDING = "_formatted";
+  const LOOKUP_LOGICALNAME_ENDING = "_lookuplogicalname";
+  const LOOKUP_NAVIGATIONPROPERTY_ENDING = "_navigationproperty";
   const NEXT_LINK_ID = "@odata.nextLink";
 
   const MaxPageSizeHeader = (size: number) => ({ type: "Prefer", value: `odata.maxpagesize=${size}` });
@@ -378,13 +385,21 @@ namespace XQW {
     if (datePattern.test(value)) return new Date(value);
     let newName = name;
     const formatted = endsWith(newName, FORMATTED_VALUE_SUFFIX);
+    const lookupLogicalName = endsWith(newName, LOOKUP_LOGICALNAME_SUFFIX);
+    const lookupNavProperty = endsWith(newName, LOOKUP_NAVIGATIONPROPERTY_SUFFIX);
 
     if (formatted) newName = newName.substr(0, newName.length - 42);
+    else if (lookupLogicalName) newName = newName.substr(0, newName.length - 41);
+    else if (lookupNavProperty) newName = newName.substr(0, newName.length - 52);
+
     if (beginsWith(newName, '_') && endsWith(newName, '_value')) {
       newName = newName.substr(1, newName.length - 7);
-      if (!formatted) newName += GUID_ENDING;
+      if (formatted) newName += FORMATTED_ENDING;
+      else if (lookupLogicalName) newName += LOOKUP_LOGICALNAME_ENDING;
+      else if (lookupNavProperty) newName += LOOKUP_NAVIGATIONPROPERTY_ENDING;
+      else newName += GUID_ENDING;
     }
-    if (formatted) newName += FORMATTED_ENDING;
+    
     if (newName != name) {
       this[newName] = value;
     } else {
@@ -803,6 +818,14 @@ namespace XQW {
       return <any>this;
     }
 
+        /**
+         * Sets a header that lets you retrieve formatted values and lookup properties as well. Should be used after using select and expand of attributes.
+         */
+    includeFormattedValuesAndLookupProperties(): Query<(FormattedResult & Result)[]> {
+      this.additionalHeaders.push(INCLUDE_ANNOTATIONS_HEADER);
+      return <any>this;
+    }
+
 		/**
 		 * Sets up the query to filter the entity using the provided FetchXML
 		 * @param xml The query in FetchXML format
@@ -936,8 +959,19 @@ namespace XQW {
       return prefix + (options.length > 0 ? "?" + options.join("&") : "");
     }
 
+      /**
+       * Sets a header that lets you retrieve formatted values as well. Should be used after using select and expand of attributes.
+       */
     includeFormattedValues(): Query<FormattedResult & Result> {
       this.additionalHeaders.push(FORMATTED_VALUES_HEADER);
+      return <any>this;
+    }
+
+      /**
+       * Sets a header that lets you retrieve formatted values and lookup properties as well. Should be used after using select and expand of attributes.
+       */
+    includeFormattedValuesAndLookupProperties(): Query<(FormattedResult & Result)[]> {
+      this.additionalHeaders.push(INCLUDE_ANNOTATIONS_HEADER);
       return <any>this;
     }
   }
