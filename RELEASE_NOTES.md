@@ -1,4 +1,7 @@
 # Release Notes
+### 4.0.3 - September 14 2018
+* Fixed LCID enums (problem with spaces and special characters)
+
 ### 4.0.2 - August 17 2018
 * Bug fix
 
