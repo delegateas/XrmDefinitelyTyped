@@ -46,10 +46,7 @@ let filterVersionedStrings crmVersion (useDeprecated: bool) (prefix: string) (su
     ?| false
   )
 
-let getBaseExtensions crmVersion (useDeprecated: bool) = 
-  let prefix = "xrm_ext_"
-  let suffix = ".d.ts"
-
+let getBaseExtensions crmVersion (useDeprecated: bool) prefix suffix = 
   allResourceNames
   |> filterVersionedStrings crmVersion useDeprecated prefix suffix
 
@@ -87,21 +84,27 @@ let generateFolderStructure out (gSettings: XdtGenerationSettings) =
     if gSettings.viewNs.IsSome then Directory.CreateDirectory (sprintf "%s/View" out) |> ignore
   printfn "Done!"
 
-
-/// Generate the declaration files stored as resources
-let generateDtsResourceFiles crmVersion gSettings state =
-  // Extend xrm.d.ts with version specific additions
-  getBaseExtensions crmVersion gSettings.useDeprecated
+// Extend .ts files with version specific additions
+let versionExtendFile crmVersion gSettings state fileName preffix suffix =
+  getBaseExtensions crmVersion gSettings.useDeprecated preffix suffix
   |> Seq.map (getResourceLines >> stripReferenceLines)
-  |> (getResourceLines "xrm.d.ts" |> Seq.singleton |> Seq.append)
+  |> (getResourceLines fileName |> Seq.singleton |> Seq.append)
   |> List.concat
   |> fun lines -> 
     File.WriteAllLines(
-      sprintf "%s/xrm.d.ts" state.outputDir, lines)
+      sprintf "%s/%s" state.outputDir fileName, lines)
+
+/// Generate the declaration files stored as resources
+let generateDtsResourceFiles crmVersion gSettings state =
+
+  // Generate extendable files
+  [ Some ("xrm.d.ts", "xrm_ext_", ".d.ts")
+    gSettings.webNs ?|> fun _ -> ("dg.xrmquery.web.ts", "dg.xrmquery.web_ext_", ".ts")
+  ] |> List.choose id |> List.iter(fun param -> param |||> versionExtendFile crmVersion gSettings state)
  
   // Copy stable declaration files directly
   [ Some "metadata.d.ts"
-    gSettings.webNs ?|> fun _ -> "dg.xrmquery.web.d.ts"
+    //gSettings.webNs ?|> fun _ -> "dg.xrmquery.web.d.ts"
     gSettings.restNs ?|> fun _ -> "dg.xrmquery.rest.d.ts"
   ] |> List.choose id |> List.iter (copyResourceDirectly state.outputDir)
 

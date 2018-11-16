@@ -458,7 +458,7 @@ declare namespace Xrm {
 		* @param data A JSON object defining the attributes and values for the new entity record.
 		* See examples at: https://docs.microsoft.com/en-us/dynamics365/customer-engagement/developer/clientapi/reference/xrm-webapi/createrecord
 		*/
-		createRecord(entityLogicalName: string, data: string): Then<Lookup>;
+		createRecord(entityLogicalName: string, data: object): Then<Lookup>;
 
 		/**
 		* Deletes an entity record.
