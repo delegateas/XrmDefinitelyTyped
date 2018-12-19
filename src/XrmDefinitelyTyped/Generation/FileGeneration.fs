@@ -247,7 +247,7 @@ let generateWebEntityDefs ns state =
   defs
 
 /// Generate the Form definitions
-let generateFormDefs state crmVersion = 
+let generateFormDefs state crmVersion generateMappings = 
   printf "Generation Form definitions..."
   let getFormType xrmForm = xrmForm.formType ?|> sprintf "/%s" ?| ""
   
@@ -261,9 +261,10 @@ let generateFormDefs state crmVersion =
                     if i = 0 then form
                     else { form with name = sprintf "%s%i" form.name i }))
     |> Array.concat
+    |> Array.filter (fun (form: XrmForm) -> form.formType.IsNone || (form.formType.IsSome && form.formType.Value <> "Card"))
     |> Array.Parallel.map (fun xrmForm -> 
          let path = sprintf "%s/Form/%s%s" state.outputDir xrmForm.entityName (getFormType xrmForm)
-         let lines = getFormDts xrmForm crmVersion
+         let lines = getFormDts xrmForm crmVersion generateMappings
          sprintf "%s/%s.d.ts" path xrmForm.name, lines)
 
   printfn "Done!"

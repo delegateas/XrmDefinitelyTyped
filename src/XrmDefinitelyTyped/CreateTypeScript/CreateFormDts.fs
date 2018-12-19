@@ -7,12 +7,24 @@ open Utility
 /// Translate internal attribute type to corresponding TypeScript interface.
 let getAttributeInterface = function
   | AttributeType.OptionSet ty  -> TsType.SpecificGeneric ("Xrm.OptionSetAttribute", [ ty ])
+  | AttributeType.MultiSelectOptionSet ty
+                                -> TsType.SpecificGeneric ("Xrm.MultiSelectOptionSetAttribute", [ ty ])
   | AttributeType.Default ty    -> TsType.SpecificGeneric ("Xrm.Attribute", [ ty ])
+  | AttributeType.Lookup ty     -> TsType.Custom (sprintf "Xrm.LookupAttribute<%s>" ty)
   | x                           -> TsType.Custom (sprintf "Xrm.%AAttribute" x)
+
+let getAttributeMap = function
+  | AttributeType.OptionSet ty
+  | AttributeType.MultiSelectOptionSet ty
+  | AttributeType.Default ty    -> ty
+  | AttributeType.Number        -> TsType.Number
+  | AttributeType.Date          -> TsType.Date
+  | AttributeType.Lookup ty     -> TsType.Custom (sprintf "Xrm.EntityReference<%s>" ty)
  
 /// Gets the corresponding enum of the option set if possible
 let getOptionSetType = function
-  | Some (AttributeType.OptionSet ty) -> ty
+  | Some (AttributeType.OptionSet ty) 
+  | Some (AttributeType.MultiSelectOptionSet ty) -> ty
   | _ -> TsType.Number
 
 /// Translate internal control type to corresponding TypeScript interface.
@@ -23,6 +35,11 @@ let getControlInterface cType aType =
                                     -> TsType.Custom "Xrm.StringControl"
   | Some at, ControlType.Default    -> TsType.SpecificGeneric ("Xrm.Control", [ getAttributeInterface at ]) 
   | aType, ControlType.OptionSet    -> TsType.SpecificGeneric ("Xrm.OptionSetControl", [ getOptionSetType aType ])
+  | aType, ControlType.MultiSelectOptionSet
+                                    -> TsType.SpecificGeneric ("Xrm.MultiSelectOptionSetControl", [ getOptionSetType aType ])
+  | Some (AttributeType.Lookup _), ControlType.Lookup tes
+  | _, ControlType.Lookup tes       -> TsType.Custom (sprintf "Xrm.LookupControl<%s>" tes)
+  | _, ControlType.SubGrid tes      -> TsType.Custom (sprintf "Xrm.SubGridControl<%s>" tes)
   | _, x                            -> TsType.Custom (sprintf "Xrm.%AControl" x)
 
 /// Default collection functions which also use the "get" function name.
@@ -55,6 +72,15 @@ let getAttributeCollection (attributes: XrmFormAttribute list) =
   Interface.Create("Attributes", extends = ["Xrm.AttributeCollectionBase"],
     funcs = getFuncs @ defaultFuncs)
 
+/// Generate Xrm.Page.data.entity.attributes Map.
+let getAttributeCollectionMap (attributes: XrmFormAttribute list) =
+  let getVars = 
+    attributes
+    |> List.map (fun (name,ty) ->
+      let returnType = getAttributeMap ty
+      Variable.Create(name, returnType))
+      
+  Interface.Create("AttributeValueMap", vars = getVars)
 
 /// Auxiliary function that determines if a control is to be included based on it's name and the crmVersion
 let includeControl (name: string) crmVersion =
@@ -78,6 +104,19 @@ let getControlCollection (controls: XrmFormControl list) (crmVersion: Version)=
   Interface.Create("Controls", extends = ["Xrm.ControlCollectionBase"],
     funcs = getFuncs @ defaultFuncs)
 
+/// Generate Xrm.Page.ui.controls map.
+let getControlCollectionMap (controls: XrmFormControl list) (crmVersion: Version)=
+  let getVars = 
+    controls
+    |> List.map (fun (name, aType, cType) ->
+      let returnType = getControlInterface cType aType          
+      match includeControl name crmVersion with
+      | false -> None
+      | true -> Some (Variable.Create(name, returnType))
+      )
+    |> List.choose id
+    
+  Interface.Create("ControlMap", vars = getVars)
 
 /// Generate Xrm.Page.ui.tabs.get(<string>) functions.
 let getTabCollection (tabs: XrmFormTab list) =
@@ -154,12 +193,18 @@ let getControlFuncs (controls: XrmFormControl list) (crmVersion: Version)=
 
 
 /// Generate internal namespace for keeping track all the collections.
-let getFormNamespace (form: XrmForm) crmVersion =
+let getFormNamespace (form: XrmForm) crmVersion generateMappings =
+  let baseInterfaces =
+    [ getAttributeCollection form.attributes
+      getControlCollection form.controls crmVersion
+      getTabCollection form.tabs ]
   Namespace.Create(form.name,
     interfaces = 
-      [ getAttributeCollection form.attributes 
-        getControlCollection form.controls crmVersion
-        getTabCollection form.tabs ],
+      (if generateMappings then 
+        baseInterfaces @ 
+        [getAttributeCollectionMap form.attributes
+         getControlCollectionMap form.controls crmVersion] 
+      else baseInterfaces),
     namespaces = 
       [ Namespace.Create("Tabs", interfaces = getSectionCollections form.tabs) ])
 
@@ -178,7 +223,7 @@ let getFormInterface (form: XrmForm) crmVersion =
 
 /// Generate the namespace containing all the form interface and internal 
 /// namespaces for collections.
-let getFormDts (form: XrmForm) crmVersion = 
+let getFormDts (form: XrmForm) crmVersion generateMappings = 
   let nsName = 
     sprintf "Form.%s%s" 
       (form.entityName |> Utility.sanitizeString)
@@ -189,7 +234,7 @@ let getFormDts (form: XrmForm) crmVersion =
   Namespace.Create(
     nsName,
     declare = true,
-    namespaces = [ getFormNamespace form crmVersion],
+    namespaces = [ getFormNamespace form crmVersion generateMappings],
     interfaces = [ getFormInterface form crmVersion]) 
   |> nsToString
 

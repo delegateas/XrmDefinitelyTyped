@@ -11,6 +11,10 @@ class Web_Retrieve_Attributes extends FakeRequests {
     currencyId: string;
     contactName: string;
     currencyName: string;
+    contactLogicalName: string;
+    currencyLogicalName: string;
+    contactNavProperty: string;
+    currenyNavProperty: string;
 
     before() {
         super.before();
@@ -20,6 +24,12 @@ class Web_Retrieve_Attributes extends FakeRequests {
         
         this.contactName = "John Doe";
         this.currencyName = "US Dollars";
+
+        this.contactLogicalName = "contact";
+        this.currencyLogicalName = "transactioncurrency";
+
+        this.contactNavProperty = "account_primary_contact";
+        this.currenyNavProperty = "transactioncurrency_account";
     }
 
     @test
@@ -98,8 +108,8 @@ class Web_Retrieve_Attributes extends FakeRequests {
         req.respond(200, {}, JSON.stringify({
             _primarycontactid_value: this.contactId,
             _transactioncurrencyid_value: this.currencyId,
-            "primarycontactid@OData.Community.Display.V1.FormattedValue": this.contactName,
-            "transactioncurrencyid@OData.Community.Display.V1.FormattedValue": this.currencyName
+            "_primarycontactid_value@OData.Community.Display.V1.FormattedValue": this.contactName,
+            "_transactioncurrencyid_value@OData.Community.Display.V1.FormattedValue": this.currencyName
         }));
 
         // Check that body is parsed and renamed accordingly
@@ -108,6 +118,48 @@ class Web_Retrieve_Attributes extends FakeRequests {
             primarycontactid_formatted: this.contactName,
             transactioncurrencyid_guid: this.currencyId,
             transactioncurrencyid_formatted: this.currencyName
+        });
+    }
+
+
+    @test
+    "rename of formatted/lookupproperty value keys"() {
+
+        var callback = sinon.spy();
+        XrmQuery.retrieve(x => x.accounts, this.accountId)
+            .select(x => [x.primarycontactid_guid, x.transactioncurrencyid_guid])
+            .includeFormattedValuesAndLookupProperties()
+            .execute(callback);
+
+        // Check requests
+        expect(this.requests.length).to.equal(1);
+        var req = this.requests[0];
+        expect(req.method).to.equal("GET");
+        expect(req.url).to.equal(`accounts(${this.accountId})?$select=_primarycontactid_value,_transactioncurrencyid_value`);
+        expect(req.requestHeaders["Prefer"]).to.equal('odata.include-annotations="*"');
+
+        // Respond
+        req.respond(200, {}, JSON.stringify({
+            _primarycontactid_value: this.contactId,
+            _transactioncurrencyid_value: this.currencyId,
+            "_primarycontactid_value@OData.Community.Display.V1.FormattedValue": this.contactName,
+            "_primarycontactid_value@Microsoft.Dynamics.CRM.lookuplogicalname": this.contactLogicalName,
+            "_primarycontactid_value@Microsoft.Dynamics.CRM.associatednavigationproperty": this.contactNavProperty,
+            "_transactioncurrencyid_value@OData.Community.Display.V1.FormattedValue": this.currencyName,
+            "_transactioncurrencyid_value@Microsoft.Dynamics.CRM.lookuplogicalname": this.currencyLogicalName,
+            "_transactioncurrencyid_value@Microsoft.Dynamics.CRM.associatednavigationproperty": this.currenyNavProperty
+        }));
+
+        // Check that body is parsed and renamed accordingly
+        sinon.assert.calledWith(callback, {
+            primarycontactid_guid: this.contactId,
+            primarycontactid_formatted: this.contactName,
+            primarycontactid_lookuplogicalname: this.contactLogicalName,
+            primarycontactid_navigationproperty: this.contactNavProperty,
+            transactioncurrencyid_guid: this.currencyId,
+            transactioncurrencyid_formatted: this.currencyName,
+            transactioncurrencyid_lookuplogicalname: this.currencyLogicalName,
+            transactioncurrencyid_navigationproperty: this.currenyNavProperty
         });
     }
 }

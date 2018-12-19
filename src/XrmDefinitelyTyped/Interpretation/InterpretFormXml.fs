@@ -41,21 +41,34 @@ let classIds =
     ("62B0DF79-0464-470F-8AF7-4483CFEA0C7D", Map)
     ("E7A81278-8635-4D9E-8D4D-59480B391C5B", Subgrid)
     ("9C5CA0A1-AB4D-4781-BE7E-8DFBE867B87E", Timer)
+    ("4AA28AB7-9C13-4F57-A73D-AD894D048B5F", MultiPicklist)
   ] |> List.map (fun (id,t) -> id.ToUpper(), t) |> Map.ofList
-    
-let getAttributeType (entity: XrmEntity) name =
-  let attribute =
-    entity.attributes
-    |> List.tryFind (fun a -> a.logicalName = name)
+ 
+let getTargetEntities (tes: string option) (a: XrmAttribute option) =
+  match tes, a with
+  | Some _, _ -> tes.Value
+  | None, None -> "NoAttribute"
+  | None, Some a' ->
+    match a'.targetEntitySets with
+    | None -> if a.Value.specialType = Guid then "string" else "NoAttributeTargets"
+    | Some tes' ->
+      let el = tes' |> Array.unzip |> fst |> Array.toList
+      match el.IsEmpty with
+      | true -> "NoTargets"
+      | false -> List.fold(fun acc e -> sprintf "%s | \"%s\"" acc e) (sprintf "\"%s\"" el.Head) el.Tail
 
-  match attribute with
+let getAttributeType = function
   | None -> TsType.Undefined
   | Some a -> a.varType
 
-let getAttribute (enums:Map<string,TsType>) entity (_, attrName, controlClass) =
+let getAttribute (enums:Map<string,TsType>) (entity: XrmEntity) (_, attrName, controlClass, tes) =
   if String.IsNullOrEmpty attrName then None else 
   
-  let attrType = getAttributeType entity attrName
+  let attribute =
+    entity.attributes
+    |> List.tryFind (fun a -> a.logicalName = attrName)
+
+  let attrType = getAttributeType attribute
 
   let aType = 
     if attrType = TsType.Boolean && controlClass = ControlClassId.Picklist then AttributeType.OptionSet TsType.Boolean else
@@ -64,6 +77,7 @@ let getAttribute (enums:Map<string,TsType>) entity (_, attrName, controlClass) =
     | StatusReason  -> AttributeType.OptionSet (enums.TryFind(attrName) ?| TsType.Number)
     | RadioButtons 
     | CheckBox      -> AttributeType.OptionSet TsType.Boolean
+    | MultiPicklist -> AttributeType.MultiSelectOptionSet (enums.TryFind(attrName) ?| TsType.Number)
         
     | Decimal 
     | Duration
@@ -73,7 +87,7 @@ let getAttribute (enums:Map<string,TsType>) entity (_, attrName, controlClass) =
 
     | PartyListLookup 
     | RegardingLookup 
-    | Lookup        -> AttributeType.Lookup
+    | Lookup        -> AttributeType.Lookup (getTargetEntities tes attribute)
 
     | DateTime      -> AttributeType.Date
 
@@ -90,13 +104,16 @@ let getAttribute (enums:Map<string,TsType>) entity (_, attrName, controlClass) =
 
 
 let getControl  (enums:Map<string,TsType>) entity (controlField:ControlField): XrmFormControl option =
-  let controlId, _, controlClass = controlField
+  let controlId, attrName, controlClass, tes = controlField
   if controlClass = QuickView then None else
 
   let aType = 
     getAttribute enums entity controlField
     |> Option.map snd
 
+  let attribute =
+    entity.attributes
+    |> List.tryFind (fun a -> a.logicalName = attrName)
     
   let cType = 
     match controlClass with
@@ -106,6 +123,8 @@ let getControl  (enums:Map<string,TsType>) entity (controlField:ControlField): X
     | StatusReason
     | RadioButtons
     | CheckBox  -> ControlType.OptionSet
+
+    | MultiPicklist -> ControlType.MultiSelectOptionSet
         
     | Decimal 
     | Duration
@@ -116,11 +135,11 @@ let getControl  (enums:Map<string,TsType>) entity (controlField:ControlField): X
     | WebResource -> ControlType.WebResource
     | IFrame -> ControlType.IFrame 
         
-    | Subgrid -> ControlType.SubGrid
+    | Subgrid -> ControlType.SubGrid (getTargetEntities tes attribute)
 
     | PartyListLookup 
     | RegardingLookup 
-    | Lookup -> ControlType.Lookup
+    | Lookup -> ControlType.Lookup (getTargetEntities tes attribute)
         
     // TODO: Figure out if the following should be special control types
     | Language
@@ -159,10 +178,11 @@ let renameControls (controls:XrmFormControl list) =
   |> List.concat
 
 
-let getCompositeField (id, datafieldname, _) subFieldName ty : ControlField =
+let getCompositeField (id, datafieldname, _, _) subFieldName ty : ControlField =
   sprintf "%s_compositionLinkControl_%s" id subFieldName,
   subFieldName,
-  ty
+  ty,
+  None
 
 let (|IsCompositeAddress|_|) (str:string) = 
   let regex = Regex.Match(str, "^address(\d)_composite$")
@@ -173,7 +193,7 @@ let (|IsCompositeAddress|_|) (str:string) =
 /// Finds all composite fields and adds the sub-fields that they bring along
 let getCompositeFields : ControlField list -> ControlField list =
   List.choose (fun field  ->
-    let (id, datafieldname, _) = field
+    let (id, datafieldname, _, _) = field
 
     match datafieldname with
     | null -> None
@@ -224,8 +244,25 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
       let controlClass = getControlClass id classId
           
       let datafieldname = getValue c "datafieldname"
+      
+      let targetEntities = 
+        let parms = c.Descendants(XName.Get("parameters")) 
+        if Seq.isEmpty parms then 
+          let rel = getValue c "relationship"
+          entity.allRelationships
+          |> List.choose (fun r -> if r.schemaName = rel then Some r.relatedSetName else None)
+        else
+          parms
+          |> Seq.collect (fun p -> p.Elements(XName.Get("TargetEntityType")))
+          |> Seq.map (fun e -> e.Value)
+          |> Seq.toList
 
-      id, datafieldname, controlClass)
+      if(targetEntities.Length > 0) then
+        let tes =
+          Seq.fold(fun acc e -> sprintf "%s | \"%s\"" acc e) (sprintf "\"%s\"" targetEntities.Head) targetEntities.Tail
+        id, datafieldname, controlClass, Some tes
+      else
+        id, datafieldname, controlClass, None)
     |> List.ofSeq
 
   let compositeFields = getCompositeFields controlFields
@@ -258,14 +295,14 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
 /// Main function to interpret a grouping of FormXmls
 let interpretFormXmls (entityMetadata: XrmEntity[]) (formData:Map<string,Entity[]>) (bpfControls:Map<string, ControlField list>) =
   entityMetadata
-  |> Array.map (fun em ->
+  |> Array.choose (fun em ->
       let enums = 
         em.attributes
-        |> List.filter (fun attr -> attr.specialType = SpecialType.OptionSet)
+        |> List.filter (fun attr -> attr.specialType = SpecialType.OptionSet || attr.specialType = SpecialType.MultiSelectOptionSet)
         |> List.map (fun attr -> attr.logicalName, attr.varType)
         |> Map.ofList
-        
-      formData.[em.logicalName]
-      |> Array.Parallel.map (interpretFormXml enums (bpfControls.TryFind em.logicalName) em))
-    |> Array.concat
+
+      formData.TryFind em.logicalName
+      ?|> Array.Parallel.map (interpretFormXml enums (bpfControls.TryFind em.logicalName) em))
+  |> Array.concat
   |> dict

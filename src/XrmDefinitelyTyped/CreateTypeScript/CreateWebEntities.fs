@@ -9,7 +9,7 @@ open IntermediateRepresentation
 let withEnding ending str = sprintf "%s%s" str ending
 let superEntityName = "WebEntity"
 let retrieveMapping = "WebMappingRetrieve"
-let cudMapping = "WebMappingCUD"
+let cudaMapping = "WebMappingCUDA"
 let relatedMapping = "WebMappingRelated"
 
 let baseName = withEnding "_Base"
@@ -33,7 +33,7 @@ let currencyId = {
   schemaName = "TransactionCurrencyId"
   specialType = SpecialType.EntityReference
   varType = TsType.String
-  targetEntitySets = Some [| "transactioncurrencies" |]
+  targetEntitySets = Some [| "transactioncurrency", "transactioncurrencies" |]
   readable = true
   createable = true
   updateable = true
@@ -47,7 +47,7 @@ let guidName (a: XrmAttribute) = sprintf "%s_guid" a.logicalName
 let formattedName (a: XrmAttribute) = sprintf "%s_formatted" a.logicalName
 
 let bindNames (a: XrmAttribute) = 
-  a.targetEntitySets ?|> Array.map (sprintf "%s_bind$%s" a.logicalName)
+  a.targetEntitySets ?|> Array.map (fun tes -> (sprintf "%s_bind$%s" a.logicalName (snd tes)))
 
 (** Various type helper functions *)
 let arrayOf = TsType.Custom >> TsType.Array
@@ -74,6 +74,7 @@ let hasFormattedValue a =
   | SpecialType.EntityReference, _
   | SpecialType.Money, _
   | SpecialType.OptionSet, _
+  | SpecialType.MultiSelectOptionSet, _
   | _, TsType.Date -> true
   | _ -> false
 
@@ -86,10 +87,10 @@ let retrieveMappingType eName ns =
   [ selectName; expName; filterName; fixedName; resultName; fResultName ]
   |> getMapping eName ns retrieveMapping
 
-let cudMappingType eName ns =
-  [ createName; updateName ]
-  |> getMapping eName ns cudMapping
-
+let cudaMappingType eName ns =
+  [ createName; updateName; selectName ]
+  |> getMapping eName ns cudaMapping
+  
 let relatedMappingType eName ns =
   [ oneRelName; manyRelName ]
   |> getMapping eName ns relatedMapping
@@ -220,11 +221,11 @@ let getExpandVariable parent (r: XrmRelationship) =
     ]
     
   Variable.Create(r.navProp, TsType.SpecificGeneric("WebExpand", tys))
+  
 
-
-let getRelatedVariable referencing (r: XrmRelationship) = 
+let getRelatedVariable ns referencing (r: XrmRelationship) = 
   if r.referencing <> referencing then None
-  else Some <| Variable.Create(r.navProp, retrieveMappingType r.relatedSchemaName "")
+  else Some <| Variable.Create(r.navProp, retrieveMappingType r.relatedSchemaName ns)
 
 
 (** Code creation methods *)
@@ -253,9 +254,9 @@ let getBlankEntityInterfaces e =
     relationships = Interface.Create(rn) 
     oneRelated = Interface.Create(oneRelName e.schemaName) 
     manyRelated = Interface.Create(manyRelName e.schemaName) 
-    createAndUpdate = Interface.Create(cu, extends = [bn; rn]) 
+    createAndUpdate = Interface.Create(cu, extends = [bn; rn])
     create = Interface.Create(createName e.schemaName, extends = [cu]) 
-    update = Interface.Create(updateName e.schemaName, extends = [cu]) 
+    update = Interface.Create(updateName e.schemaName, extends = [cu])
     result = Interface.Create(resultName e.schemaName, extends = [bn; rn]) 
     select = Interface.Create(selectName e.schemaName)
     expand = Interface.Create(expName e.schemaName)
@@ -278,7 +279,7 @@ let getEntityInterfaceLines ns e =
       { entityInterfaces.createAndUpdate with vars = e.allRelationships |> List.choose (getBindVariables true true attrMap) |> assignUniqueNames |> sortByName }
       { entityInterfaces.create with vars = e.allRelationships |> List.choose (getBindVariables true false attrMap) |> assignUniqueNames |> sortByName }
       { entityInterfaces.update with vars = e.allRelationships |> List.choose (getBindVariables false true attrMap) |> assignUniqueNames |> sortByName }
-      
+
       { entityInterfaces.select with vars = e.attributes |> List.map (getSelectVariable entityInterfaces.select) |> assignUniqueNames |> sortByName } 
       { entityInterfaces.filter with vars = e.attributes |> List.map getFilterVariable |> assignUniqueNames |> sortByName }
       { entityInterfaces.expand with vars = e.availableRelationships |> List.map (getExpandVariable entityInterfaces.expand) |> assignUniqueNames |> sortByName }
@@ -286,8 +287,8 @@ let getEntityInterfaceLines ns e =
       { entityInterfaces.formattedResult with vars = e.attributes |> List.map getFormattedResultVariable |> concatDistinctSort }
       { entityInterfaces.result with vars = entityTag :: (List.map getResultVariable e.attributes |> concatDistinctSort) }
 
-      { entityInterfaces.oneRelated with vars = e.availableRelationships |> List.choose (getRelatedVariable true) |> assignUniqueNames |> sortByName }
-      { entityInterfaces.manyRelated with vars = e.availableRelationships |> List.choose (getRelatedVariable false) |> assignUniqueNames |> sortByName }
+      { entityInterfaces.oneRelated with vars = e.availableRelationships |> List.choose (getRelatedVariable ns true) |> assignUniqueNames |> sortByName }
+      { entityInterfaces.manyRelated with vars = e.availableRelationships |> List.choose (getRelatedVariable ns false) |> assignUniqueNames |> sortByName }
     ]
     
   let namespacedLines = 
@@ -305,11 +306,11 @@ let getEntityInterfaceLines ns e =
         Interface.Create("WebEntitiesRelated", vars = [Variable.Create(setName, relatedMappingType e.schemaName ns)])
         |> interfaceToString
       
-      let cud =
-        Interface.Create("WebEntitiesCUD", vars = [Variable.Create(setName, cudMappingType e.schemaName ns)])
+      let cuda =
+        Interface.Create("WebEntitiesCUDA", vars = [Variable.Create(setName, cudaMappingType e.schemaName ns)])
         |> interfaceToString
-        
-      retrieve @ related @ cud
+      
+      retrieve @ related @ cuda
 
   namespacedLines @ entityBindingLines
 
@@ -317,8 +318,8 @@ let getEntityInterfaceLines ns e =
 let getBlankInterfacesLines ns es = 
   let iRetrieveMapping = 
     Interface.Create(sprintf "%s<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>" retrieveMapping)
-  let iCudMapping = 
-    Interface.Create(sprintf "%s<ICreate, IUpdate>" cudMapping)
+  let iCudaMapping = 
+    Interface.Create(sprintf "%s<ICreate, IUpdate, ISelect>" cudaMapping)
   let iRelatedMapping = 
     Interface.Create(sprintf "%s<ISingle, IMultiple>" relatedMapping)
     
@@ -336,7 +337,7 @@ let getBlankInterfacesLines ns es =
     
   let mappingLines =
       [ iRetrieveMapping  
-        iCudMapping
+        iCudaMapping
         iRelatedMapping
       ] |> List.map interfaceToString |> List.concat
 

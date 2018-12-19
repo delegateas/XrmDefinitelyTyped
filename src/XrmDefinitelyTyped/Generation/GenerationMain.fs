@@ -13,19 +13,20 @@ open FileGeneration
 let retrieveRawState xrmAuth rSettings =
   let mainProxy = connectToCrm xrmAuth
 
-  let proxyGetter = proxyHelper xrmAuth
   let crmVersion = retrieveCrmVersion mainProxy
   let entities = 
     getFullEntityList rSettings.entities rSettings.solutions mainProxy
+  let skipInactiveForms = rSettings.skipInactiveForms
       
   // Retrieve data from CRM
-  retrieveCrmData crmVersion entities rSettings.solutions mainProxy proxyGetter
+  retrieveCrmData crmVersion entities rSettings.solutions mainProxy skipInactiveForms
 
 
 /// Main generator function
 let generateFromRaw gSettings rawState =
   let out = gSettings.out ?| "."
   let formIntersects = gSettings.formIntersects ?| [||]
+  let viewIntersects = gSettings.viewIntersects ?| [||]
   let crmVersion = gSettings.crmVersion ?| rawState.crmVersion
 
   // Pre-generation tasks 
@@ -34,12 +35,12 @@ let generateFromRaw gSettings rawState =
 
   // Interpret data and generate resource files
   let data =
-    interpretCrmData out formIntersects rawState 
+    interpretCrmData out formIntersects viewIntersects rawState 
 
   let defs = 
     seq {
       yield! generateEnumDefs data
-      if not gSettings.skipForms then yield! generateFormDefs data crmVersion
+      if not gSettings.skipForms then yield! generateFormDefs data crmVersion gSettings.generateMappings
 
       match crmVersion .>= (8,2,0,0) with
       | true -> 

@@ -54,6 +54,11 @@ type Args private () =
       description="Set to true if form interfaces should not be generated"
       required=false }
 
+    { command="skipInactiveForms"
+      altCommands=["sif"]
+      description="Set to true to avoid generating types for inactive forms."
+      required=false }
+
     { command="oneFile"
       altCommands=["of"]
       description="Set to true if all the dynamic parts of the generated declarations should be put into a single file."
@@ -79,6 +84,16 @@ type Args private () =
       altCommands=["fi"]
       description="Comma-separated list of named semicolon-separated lists of form GUIDs that should be intersected. "
        + "Example: 'MyAccountIntersect: 284FF02B-BDD1-4BB0-9BCF-6CFDBDA130D4;16068A3B-D428-4430-AEF6-397CE2AEFE07, MyContactIntersect: F4B3397C-C1A5-40BE-89DD-CEA5F7064D1D;824CFA3C-3EB4-4746-BA3C-7F1DFCA114C0'"
+      required=false }
+    
+    { command="generateMappings"
+      altCommands=["gm"]
+      description="Set to true if attribute and control mappings should be generated"
+      required=false }
+  
+    { command="viewintersect"
+      altCommands=["vi"]
+      description="Comma-separated list of named semicolon-separated lists of view GUIDs that should be intersected. "
       required=false }
   ]
 

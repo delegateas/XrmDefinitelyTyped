@@ -13,6 +13,7 @@ type OptionSet = {
 type SpecialType = 
   | Default 
   | OptionSet 
+  | MultiSelectOptionSet
   | Money 
   | Guid 
   | EntityReference
@@ -23,7 +24,7 @@ type XrmAttribute = {
   logicalName: string
   varType: TsType
   specialType: SpecialType
-  targetEntitySets: string[] option
+  targetEntitySets: (string * string)[] option
   readable: bool
   createable: bool
   updateable: bool
@@ -63,18 +64,20 @@ type ControlType =
   | Default
   | Number
   | Date
-  | Lookup
+  | Lookup of string
   | OptionSet
-  | SubGrid
+  | MultiSelectOptionSet
+  | SubGrid of string
   | WebResource
   | IFrame
 
 type AttributeType = 
   | Default of TsType
   | Number
-  | Lookup
+  | Lookup of string
   | Date
   | OptionSet of TsType
+  | MultiSelectOptionSet of TsType
 
 type FormType =
   | Dashboard = 0
@@ -101,13 +104,13 @@ type XrmFormTab = string * string * string list
 type ControlClassId =
   | CheckBox | DateTime | Decimal | Duration | EmailAddress | EmailBody 
   | Float | IFrame | Integer | Language | Lookup | MoneyValue | Notes
-  | PartyListLookup | Picklist | RadioButtons | RegardingLookup 
+  | PartyListLookup | Picklist | RadioButtons | RegardingLookup | MultiPicklist
   | StatusReason | TextArea | TextBox | TickerSymbol | TimeZonePicklist | Url
   | WebResource | Map | Subgrid | QuickView | Timer
   | Other
   with override x.ToString() = x.GetType().Name
 
-type ControlField = string * string * ControlClassId
+type ControlField = string * string * ControlClassId * string option
 
 
 type XrmForm = {

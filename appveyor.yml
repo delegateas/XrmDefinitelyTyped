@@ -1,0 +1,20 @@
+image: Visual Studio 2017
+build_script:
+- cmd: build.cmd RunXDT
+# Install scripts. (runs after repo cloning)
+install:
+  # Get the latest stable version of Node.js or io.js
+  - ps: cd test
+  - ps: Install-Product node 8
+  # install modules
+  - npm install
+  - ps: cd ..
+  
+test_script:
+  # Output useful info for debugging.
+  - node --version
+  - npm --version
+  - ps: cd test
+  # run tests
+  - npm test
+

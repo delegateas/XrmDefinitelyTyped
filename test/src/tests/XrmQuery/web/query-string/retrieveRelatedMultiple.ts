@@ -56,7 +56,7 @@ class Web_RetrieveRelated_QueryString {
             .useFetchXml(`<fetch mapping='logical'><entity name='account'><attribute name='accountid'/><attribute name='name'/></entity></fetch>`)
             .getQueryString();
 
-        expect(qs).to.equal(`accounts(${this.accountId})/account_master_account?fetchXml=%3Cfetch%20mapping='logical'%3E%3Centity%20name='account'%3E%3Cattribute%20name='accountid'/%3E%3Cattribute%20name='name'/%3E%3C/entity%3E%3C/fetch%3E`);
+        expect(qs).to.equal(`accounts(${this.accountId})/account_master_account?fetchXml=%3Cfetch%20mapping%3D'logical'%3E%3Centity%20name%3D'account'%3E%3Cattribute%20name%3D'accountid'%2F%3E%3Cattribute%20name%3D'name'%2F%3E%3C%2Fentity%3E%3C%2Ffetch%3E`);
     }
 
     @test 

@@ -9,7 +9,6 @@
 .vs/*
 .nuget/*
 node_modules
-EnvInfo.config
 
 
 #Fake build

@@ -26,12 +26,13 @@ let getRetrieveSettings parsedArgs =
 
   { XdtRetrievalSettings.entities = entities
     solutions = solutions
+    skipInactiveForms = getArg parsedArgs "skipInactiveForms" parseBoolish ?| true
   }
 
 let getGenerationSettings parsedArgs =
-  let formIntersects = getListArg parsedArgs "formintersect" (fun definition -> 
+  let intersects typ = getListArg parsedArgs typ (fun definition -> 
     let nameSplit = definition.IndexOf(":")
-    if nameSplit < 0 then failwithf "Missing name specification in form-intersect list at: '%s'" definition
+    if nameSplit < 0 then failwithf "Missing name specification in %s-intersect list at: '%s'" typ definition
 
     let name = definition.Substring(0, nameSplit) |> Utility.sanitizeString
     let list = definition.Substring(nameSplit + 1)
@@ -42,7 +43,7 @@ let getGenerationSettings parsedArgs =
       |> Array.map Guid.TryParse
       |> Array.mapi (fun idx (r,g) ->
         if r then Some g
-        else printfn "Unable to parse given form GUID: %s. Skipping it" guidInput.[idx]; None)
+        else printfn "Unable to parse given %s GUID: %s. Skipping it" typ guidInput.[idx]; None)
       |> Array.choose id
     name, guids)
 
@@ -60,7 +61,9 @@ let getGenerationSettings parsedArgs =
     restNs = getArg parsedArgs "rest" nsSanitizer
     webNs = getArg parsedArgs "web" nsSanitizer
     viewNs = getArg parsedArgs "views" nsSanitizer
-    formIntersects = formIntersects 
+    formIntersects = intersects "formintersect" 
+    viewIntersects = intersects "viewintersect"
+    generateMappings = getArg parsedArgs "generateMappings" parseBoolish ?| false
   }
 
 

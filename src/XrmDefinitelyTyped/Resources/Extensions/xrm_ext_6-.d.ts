@@ -17,7 +17,7 @@ declare namespace Xrm {
         clearNotification(uniqueId?: string | null): boolean;
     }
 
-    interface LookupControl extends Control<LookupAttribute> {
+	interface LookupControl<T extends string> extends Control<LookupAttribute<T>> {
         /**
          * Use to add filters to the results displayed in the lookup. Each filter will be combined with any previously added filters as an 'AND' condition.
          * 
@@ -67,7 +67,7 @@ declare namespace Xrm {
 		save(saveOptions?: SaveOptions): Then<undefined>;
     }
 
-    interface Attribute<T> {
+    interface BaseAttribute<T> {
         /**
          * Determine whether a lookup attribute represents a partylist lookup.
          */

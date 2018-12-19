@@ -1,4 +1,41 @@
 # Release Notes
+### 4.0.4 - September 14 2018
+* Added option to include lookup properties (@pederwagner)
+
+### 4.0.3 - September 14 2018
+* Fixed LCID enums (problem with spaces and special characters)
+
+### 4.0.2 - August 17 2018
+* Bug fix
+
+### 4.0.1 - August 17 2018
+* Reduced the amount of proxies connected to an environment
+* Bug fixes
+
+### 4.0.0 - August 10 2018
+* Only generates typings for active forms by default, added option sif to allow generation of inactive forms. Credit to PR #70
+
+### 3.0.2 - August 10 2018
+* Multiselect Optionsets are now supported.
+* Added associate and disassociate support to XrmQuery
+
+### 3.0.1 - July 18th 2018
+* FormIntersects are now once again generated properly.
+
+### 3.0.0 - July 13th 2018
+* ViewIntersects added, functions just like form intersects, but for views. #55
+* Typings are now generated for the logicalnames in entityreferences, as suggested in #38 
+
+### 2.6.2 - June 12th 2018
+* Increased dependencies to recent versions (including using D365 v9 assemblies)
+* Removed dependency to Microsoft.IdentityModel
+* Fixed casing with openInNewWindow in EntityFormOptions
+
+### 2.6.1 - March 02 2018
+* Made #44 optional
+
+### 2.6.0 - February 28 2018
+* Fixed issue 44: Be Able To Define Custom Interface Definition Creation, https://github.com/delegateas/XrmDefinitelyTyped/issues/44
 
 ### 2.5.2 - January 15 2018
 * Fixed an issue where in the case of the NavigationPropteryName attributes being null in the relationship metadata, the generated definition file was not valid typescript code. 
@@ -8,6 +45,13 @@
 
 ### 2.5.0 - December 15 2017
 * REST API interfaces are now sorted
+
+### 2.4.0 - November 24 2017
+* Reverted the name change after a more elegant fix was proposed, in which the user uses the namespace feature of XDT.
+
+### 2.3.12 - November 23 2017
+* The WebEntities interface has been split up, as to comply with standards made in Typescript 2.4
+* As a fix for clashing names with the standard Typescript library in 2.4-2.6, all entity interfaces have been postfixed with "XDT" - this is a breaking change.
 
 ### 2.4.0 - November 24 2017
 * Reverted the name change after a more elegant fix was proposed, in which the user uses the namespace feature of XDT.

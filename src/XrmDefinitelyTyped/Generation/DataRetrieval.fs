@@ -8,6 +8,7 @@ open CrmDataHelper
 open DG.XrmDefinitelyTyped.InterpretView
 open Microsoft.Xrm.Sdk.Metadata
 open System.Text.RegularExpressions
+open Microsoft.Xrm.Sdk.Client
 
 
 /// Connect to CRM with the given authentication
@@ -30,14 +31,14 @@ let retrieveEntityNameMap mainProxy =
   map
 
 // Retrieve CRM entity metadata
-let retrieveEntityMetadata entities mainProxy proxyGetter =
+let retrieveEntityMetadata entities mainProxy =
   printf "Fetching specific entity metadata from CRM..."
 
   let rawEntityMetadata = 
     match entities with
     | None -> getAllEntityMetadata mainProxy
     | Some logicalNames -> 
-      getSpecificEntitiesAndDependentMetadata proxyGetter logicalNames
+      getSpecificEntitiesAndDependentMetadata mainProxy logicalNames
 
   printfn "Done!"
   rawEntityMetadata
@@ -53,7 +54,7 @@ let getEntityMetadataNameIfMissing entityName (rawEntityMetadata: EntityMetadata
 let retrieveMissingViewDependingEntityMetadata parsedFetchXmlViews mainProxy rawEntityMetadata =
   let allLinkedAttributes = 
     parsedFetchXmlViews
-    |> Array.map (fun (_, (_, _, (linkedAttributes))) -> linkedAttributes)
+    |> Array.map (fun (_, _, (_, _, (linkedAttributes))) -> linkedAttributes)
     |> List.concat
     |> Array.ofList
 
@@ -69,12 +70,12 @@ let retrieveMissingViewDependingEntityMetadata parsedFetchXmlViews mainProxy raw
   getEntityMetadataBulk mainProxy missingEntityMetadataNames
   
 // Retrieve CRM views
-let retrieveViews entitiesToFetch rawEntityMetadata mainProxy :ViewData[] * EntityMetadata[] =
+let retrieveViews entitiesToFetch rawEntityMetadata mainProxy : ViewData[] * EntityMetadata[] =
   printf "Fetching specific views from CRM..."
 
   let _,rawViews =
     getViews entitiesToFetch mainProxy
-    |> Seq.fold (fun previous (entityName, viewName, fetchXml) ->
+    |> Seq.fold (fun previous (entityName, guid, viewName, fetchXml) ->
     let (previousNames, previousViews) = previous
     let regex = new Regex(@"[^a-zA-Z0-9_]")
     let trimmedName = 
@@ -88,11 +89,11 @@ let retrieveViews entitiesToFetch rawEntityMetadata mainProxy :ViewData[] * Enti
       | None -> 0, Map.add fullName 1 previousNames
     
     let safeName = if duplicates > 0 then trimmedName + duplicates.ToString() else trimmedName
-    nextMap, (safeName, fetchXml)::previousViews) (Map.empty, [])
+    nextMap, (guid, safeName, fetchXml)::previousViews) (Map.empty, [])
 
   let fetchXmlParsedViews =
     rawViews
-    |> List.map (fun (name, fetchxml) -> (name, intepretFetchXml fetchxml))
+    |> List.map (fun (guid, name, fetchxml) -> (guid, name, intepretFetchXml fetchxml))
     |> Array.ofList
     
   let missingEntityMetadata = 
@@ -113,12 +114,12 @@ let retrieveCrmVersion mainProxy =
   version
 
 /// Retrieve all the necessary CRM data
-let retrieveCrmData crmVersion entities solutions mainProxy proxyGetter =
+let retrieveCrmData crmVersion entities solutions mainProxy skipInactiveForms =
   let nameMap = 
     retrieveEntityNameMap mainProxy
 
   let originalRawEntityMetadata = 
-    retrieveEntityMetadata entities mainProxy proxyGetter
+    retrieveEntityMetadata entities mainProxy
     |> Array.sortBy(fun md -> md.LogicalName)
     
   let rawViewData, additionalEntityMetadata = 
@@ -152,10 +153,9 @@ let retrieveCrmData crmVersion entities solutions mainProxy proxyGetter =
   printf "Fetching FormXmls from CRM..."
   let formData =
     rawEntityMetadata
-    |> Array.Parallel.map (fun em -> 
-      let proxy = proxyGetter()
-      em.LogicalName, 
-      getEntityForms proxy em.LogicalName)
+    |> Array.filter (fun (em: EntityMetadata) -> em.IsCustomizable.Value)
+    |> Array.map (fun (em: EntityMetadata) -> em.LogicalName)
+    |> getEntityFormsBulk mainProxy skipInactiveForms 
     |> Map.ofArray
   printfn "Done!"
 

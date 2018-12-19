@@ -7,27 +7,41 @@ open Microsoft.Xrm.Sdk.Query
 open CrmBaseHelper
 open Microsoft.Crm.Sdk.Messages
 open Microsoft.Xrm.Sdk
+open System
 
 
 // Retrieve entity form xml
-let getEntityForms proxy (lname:string) =
+let getEntityForms skipInactiveForms (lname:string) =
   let query = new QueryExpression("systemform")
   query.ColumnSet <- new ColumnSet([| "name"; "type"; "objecttypecode"; "formxml" |])
 
   query.Criteria.AddCondition(new ConditionExpression("objecttypecode", ConditionOperator.Equal, lname))
+
+  if skipInactiveForms then query.Criteria.AddCondition(new ConditionExpression("formactivationstate", ConditionOperator.Equal, 1))
     
   let request = RetrieveMultipleRequest()
   request.Query <- query
 
-  let resp = getResponse<RetrieveMultipleResponse> proxy request
-  resp.EntityCollection.Entities 
-  |> Array.ofSeq
+  request
 
+let getEntityFormsBulk proxy skipInactiveForms lnames =
+  let requests =
+    lnames 
+    |> Array.map (fun lname -> getEntityForms skipInactiveForms lname :> OrganizationRequest)
+
+  let handleResponse (resp:ExecuteMultipleResponseItem) = 
+    let ec = (resp.Response :?> RetrieveMultipleResponse).EntityCollection
+    ec.Entities |> Array.ofSeq
+
+  performAsBulk proxy requests handleResponse
+  |> Array.zip lnames
 
 // Retrieve all entity form xmls
-let getAllEntityForms proxy =
+let getAllEntityForms proxy skipInactiveForms =
   let query = new QueryExpression("systemform")
   query.ColumnSet <- new ColumnSet([| "name"; "type"; "objecttypecode"; "formxml" |])
+
+  if skipInactiveForms then query.Criteria.AddCondition(new ConditionExpression("formactivationstate", ConditionOperator.Equal, 1))
     
   let request = RetrieveMultipleRequest()
   request.Query <- query
@@ -52,7 +66,7 @@ let getBpfData (proxy:OrganizationServiceProxy) =
   |> Array.ofSeq
 
 // Retrieve views
-let getViews (entities: string[] option) proxy =
+let getViews (entities: string[] option) proxy : (EntityName * Guid * ViewName * string) [] =
   let query = new QueryExpression("savedquery")
   query.ColumnSet <- new ColumnSet([| "name"; "querytype"; "returnedtypecode"; "fetchxml" |])
 
@@ -68,7 +82,10 @@ let getViews (entities: string[] option) proxy =
   resp.EntityCollection.Entities 
   |> Array.ofSeq
   |> Array.map (fun viewEntity -> 
-      (viewEntity.GetAttributeValue<string>("returnedtypecode"), viewEntity.GetAttributeValue<string>("name"), viewEntity.GetAttributeValue<string>("fetchxml"))
+      (viewEntity.GetAttributeValue<string>("returnedtypecode"), 
+        viewEntity.GetAttributeValue<Guid>("savedqueryid"),
+        viewEntity.GetAttributeValue<string>("name"), 
+        viewEntity.GetAttributeValue<string>("fetchxml"))
   )
 
 // Retrieve webresources of given type from given solution

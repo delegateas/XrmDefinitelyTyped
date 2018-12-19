@@ -29,11 +29,36 @@ let typeConv = function
   | AttributeTypeCode.Status    -> TsType.Number
   | _                           -> TsType.Any
 
+let interpretVirtualAttribute (a:AttributeMetadata) (options:OptionSet option) =
+  match a with
+  | :? MultiSelectPicklistAttributeMetadata -> Some (TsType.Custom options.Value.displayName, SpecialType.MultiSelectOptionSet)
+  | _ -> None
+
+
+let interpretNormalAttribute aType (a:AttributeMetadata) (options:OptionSet option)  =
+  match aType with
+  | AttributeTypeCode.Money     -> TsType.Number, SpecialType.Money
+    
+  | AttributeTypeCode.Picklist
+  | AttributeTypeCode.State
+  | AttributeTypeCode.Status    -> TsType.Custom options.Value.displayName, SpecialType.OptionSet
+
+  | AttributeTypeCode.Lookup    
+  | AttributeTypeCode.PartyList  
+  | AttributeTypeCode.Customer  
+  | AttributeTypeCode.Owner     -> TsType.String, SpecialType.EntityReference
+        
+  | AttributeTypeCode.Uniqueidentifier 
+                                -> TsType.String, SpecialType.Guid
+
+  | AttributeTypeCode.Decimal   -> toSome typeConv a.AttributeType, SpecialType.Decimal
+  | _                           -> toSome typeConv a.AttributeType, SpecialType.Default
+
 
 let interpretAttribute nameMap entityNames (a: AttributeMetadata) =
   let aType = a.AttributeType.GetValueOrDefault()
   if a.AttributeOf <> null ||
-      aType = AttributeTypeCode.Virtual ||
+      (aType = AttributeTypeCode.Virtual && a.AttributeTypeName <> AttributeTypeDisplayName.MultiSelectPicklistType)||
       a.LogicalName.StartsWith("yomi") then None, None
   else
 
@@ -46,40 +71,33 @@ let interpretAttribute nameMap entityNames (a: AttributeMetadata) =
     match a with
     | :? LookupAttributeMetadata as lam -> 
       lam.Targets
-      |> Array.choose (fun k -> Map.tryFind k nameMap ?|> snd)
+      |> Array.choose 
+        (fun k -> 
+          match Map.tryFind k nameMap with
+          | None -> None
+          | Some tes -> Some (k, snd tes)
+        )
       |> Some
     | _ -> None
 
-  let vType, sType = 
+  let vTypeOption = 
     match aType with
-    | AttributeTypeCode.Money     -> TsType.Number, SpecialType.Money
+    | AttributeTypeCode.Virtual -> interpretVirtualAttribute a options
+    | _ -> Some (interpretNormalAttribute aType a options)
     
-    | AttributeTypeCode.Picklist
-    | AttributeTypeCode.State
-    | AttributeTypeCode.Status    -> TsType.Custom options.Value.displayName, SpecialType.OptionSet
-
-    | AttributeTypeCode.Lookup    
-    | AttributeTypeCode.PartyList  
-    | AttributeTypeCode.Customer  
-    | AttributeTypeCode.Owner     -> TsType.String, SpecialType.EntityReference
-        
-    | AttributeTypeCode.Uniqueidentifier 
-                                  -> TsType.String, SpecialType.Guid
-
-    | AttributeTypeCode.Decimal   -> toSome typeConv a.AttributeType, SpecialType.Decimal
-    | _                           -> toSome typeConv a.AttributeType, SpecialType.Default
-
-
-  options, Some {
-    XrmAttribute.schemaName = a.SchemaName
-    logicalName = a.LogicalName
-    varType = vType
-    specialType = sType
-    targetEntitySets = targetEntitySets
-    readable = a.IsValidForRead.GetValueOrDefault(false)
-    createable = a.IsValidForCreate.GetValueOrDefault(false)
-    updateable = a.IsValidForUpdate.GetValueOrDefault(false)
-  }
+  match vTypeOption with
+  | None -> None, None
+  | Some (vType, sType) ->
+    options, Some {
+      XrmAttribute.schemaName = a.SchemaName
+      logicalName = a.LogicalName
+      varType = vType
+      specialType = sType
+      targetEntitySets = targetEntitySets
+      readable = a.IsValidForRead.GetValueOrDefault(false)
+      createable = a.IsValidForCreate.GetValueOrDefault(false)
+      updateable = a.IsValidForUpdate.GetValueOrDefault(false)
+    }
 
 let sanitizeNavigationProptertyName string =
     if string = null then "navigationPropertyNameNotDefined"

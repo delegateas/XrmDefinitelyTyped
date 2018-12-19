@@ -7,7 +7,7 @@ open Microsoft.Xrm.Sdk.Client
 open System.Runtime.Serialization
 
 type Version = int * int * int * int
-type FormIntersect = string * Guid[]
+type Intersect = string * Guid[]
 
 type XrmAuthentication = {
   url: Uri
@@ -30,7 +30,9 @@ type XdtGenerationSettings = {
   restNs: OptionalNamespace
   webNs: OptionalNamespace
   viewNs: OptionalNamespace
-  formIntersects: FormIntersect [] option
+  formIntersects: Intersect [] option
+  viewIntersects: Intersect [] option
+  generateMappings: bool
 }
 
 type EntityName = string
@@ -38,6 +40,7 @@ type EntityName = string
 type XdtRetrievalSettings = {
   entities: EntityName[] option
   solutions: string[] option
+  skipInactiveForms: bool
 }
 
 type ViewName = string
@@ -48,7 +51,7 @@ type LinkedEntityName = string * Alias
 type LinkedEntity = LinkedEntityName * AttributeName list
 type LinkedAttributes = LinkedEntity list
 type ParsedFetchXml = (EntityName * OwnedAttributes * LinkedAttributes)
-type ViewData = (ViewName * ParsedFetchXml)
+type ViewData = (Guid * ViewName * ParsedFetchXml)
 
 /// Serializable record containing necessary (meta)data
 [<DataContract>]

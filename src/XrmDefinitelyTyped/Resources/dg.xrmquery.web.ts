@@ -51,7 +51,7 @@ namespace XrmQuery {
 	 * @param record Object of the record to be created.
 	 */
   export function create<ICreate>(
-    entityPicker: (x: WebEntitiesCUD) => WebMappingCUD<ICreate, any>,
+    entityPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<ICreate, any, any>,
     record?: ICreate) {
     return new XQW.CreateRecord<ICreate>(entityPicker, record);
   }
@@ -63,10 +63,74 @@ namespace XrmQuery {
 	 * @param record Object containing the attributes to be updated.
 	 */
   export function update<IUpdate>(
-    entityPicker: (x: WebEntitiesCUD) => WebMappingCUD<any, IUpdate>,
+    entityPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, IUpdate, any>,
     id?: string,
     record?: IUpdate) {
     return new XQW.UpdateRecord<IUpdate>(entityPicker, id, record);
+  }
+
+  /**
+   * Instantiates a query that can associate two specific records with a N:1 relation.
+   * @param entityPicker Function to select the entity-type of the source entity.
+   * @param id GUID of the source entity.
+   * @param entityTargetPicker Function to select the entity-type of the target entity.
+   * @param targetId GUID of the target entity.
+   * @param relationPicker Function to select which N:1 relation (lookup-field) should be used to associate.
+   */
+  export function associateSingle<ISingle, ISelect>(
+    entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>,
+    id: string,
+    entityTargetPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, ISelect>,
+    targetId: string,
+    relationPicker: (x: ISingle) => WebMappingRetrieve<ISelect, any, any, any, any, any>) {
+    return new XQW.AssociateRecordSingle<ISingle, ISelect>(entityPicker, id, entityTargetPicker, targetId, relationPicker);
+  }
+
+  /**
+   * Instantiates a query that can associate two specific records with a N:N or 1:N relation.
+   * @param entityPicker Function to select the entity-type of the source entity.
+   * @param id GUID of the source entity.
+   * @param entityTargetPicker Function to select the entity-type of the target entity.
+   * @param targetId GUID of the target entity.
+   * @param relationPicker Function to select which N:N or 1:N relation should be used to associate.
+   */
+  export function associateCollection<IMultiple, ISelect>(
+    entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>,
+    id: string,
+    entityTargetPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, ISelect>,
+    targetId: string,
+    relationPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, any, any, any, any, any>) {
+    return new XQW.AssociateRecordCollection<IMultiple, ISelect>(entityPicker, id, entityTargetPicker, targetId, relationPicker);
+  }
+
+  /**
+   * Instantiates a query that can disassociate two specific records with a N:1 relation.
+   * @param entityPicker Function to select the entity-type of the source entity.
+   * @param id GUID of the source entity.
+   * @param relationPicker Function to select which N:1 relation (lookup-field) should be used to disassociate.
+   */
+
+  export function disassociateSingle<ISingle, ISelect>(
+    entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>,
+    id: string,
+    relationPicker: (x: ISingle) => WebMappingRetrieve<ISelect, any, any, any, any, any>) {
+    return XQW.DisassociateRecord.Single<ISingle, ISelect>(entityPicker, id, relationPicker);
+  }
+
+  /**
+   * Instantiates a query that can disassociate two specific records with a N:N or 1:N relation.
+   * @param entityPicker Function to select the entity-type of the source entity.
+   * @param id GUID of the source entity.
+   * @param relationPicker Function to select which N:N or 1:N relation should be used to disassociate.
+   * @param targetId GUID of the target entity.
+   */
+
+  export function disassociateCollection<IMultiple, ISelect>(
+    entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>,
+    id: string,
+    relationPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, any, any, any, any, any>,
+    targetId: string) {
+    return XQW.DisassociateRecord.Collection<IMultiple, ISelect>(entityPicker, id, relationPicker, targetId);
   }
 
 	/**
@@ -75,7 +139,7 @@ namespace XrmQuery {
 	 * @param id GUID of the record to be updated.
 	 */
   export function deleteRecord(
-    entityPicker: (x: WebEntitiesCUD) => WebMappingCUD<any, any>,
+    entityPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, any>,
     id?: string) {
     return new XQW.DeleteRecord(entityPicker, id);
   }
@@ -128,7 +192,7 @@ namespace XrmQuery {
 	 * @param configure Modify the request before it it sent to the endpoint - like adding headers.
 	 */
   export function sendRequest(type: XQW.HttpRequestType, queryString: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb?: (err: Error) => any, configure?: (req: XMLHttpRequest) => void): void {
-    request(type, encodeURI(XQW.getApiUrl() + queryString), data, successCb, errorCb, configure);
+    request(type, encodeSpaces(XQW.getApiUrl() + queryString), data, successCb, errorCb, configure);
   }
 
 	/**
@@ -140,6 +204,10 @@ namespace XrmQuery {
 	 */
   export function promiseRequest(type: XQW.HttpRequestType, queryString: string, data: any, configure?: (req: XMLHttpRequest) => void): Promise<XMLHttpRequest> {
     return XQW.promisifyCallback((success, error?) => sendRequest(type, queryString, data, success, error, configure));
+  }
+
+  function encodeSpaces(str: string): string {
+    return str.replace(/ /g, "%20");
   }
 }
 
@@ -174,9 +242,9 @@ namespace Filter {
 	 */
   function getVal(v: any) {
     if (v == null) return "null"
-    if (typeof v === "string") return `'${v}'`;
-    if (v instanceof Date) return v.toISOString();
-    return v.toString();
+    if (typeof v === "string") return `'${encodeSpecialCharacters(v)}'`;
+    if (v instanceof Date) return encodeSpecialCharacters(v.toISOString());
+    return encodeSpecialCharacters(v.toString());
   }
 
 	/**
@@ -210,24 +278,37 @@ namespace Filter {
     }
     return fs.reduceRight((acc, c) => biFilter(c, conj, acc), last);
   }
-}
 
+  /**
+   * @internal
+   */
+  function encodeSpecialCharacters(queryString: string) {
+    return encodeURI(queryString)
+      .replace(/'/g, "''")
+      .replace(/\+/g, "%2B")
+      .replace(/\//g, "%2F")
+      .replace(/\?/g, "%3F")
+      .replace(/#/g, "%23")
+      .replace(/&/g, "%26");
+  }
+}
 
 interface WebEntitiesRetrieve { }
 interface WebEntitiesRelated { }
-interface WebEntitiesCUD { }
+interface WebEntitiesCUDA { }
+
 declare var GetGlobalContext: any;
 
 interface WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult> {
   __WebMappingRetrieve: ISelect;
 }
 
-interface WebMappingCUD<ICreate, IUpdate> {
-  __WebMappingCUD: ICreate & IUpdate;
+interface WebMappingCUDA<ICreate, IUpdate, ISelect> {
+  __WebMappingCUDA: ICreate & IUpdate & ISelect;
 }
 
 interface WebMappingRelated<ISingle, IMultiple> {
-  _WebMappingRelated: ISingle & IMultiple;
+  __WebMappingRelated: ISingle & IMultiple;
 }
 
 interface WebAttribute<ISelect, Result, Formatted> {
@@ -260,9 +341,17 @@ namespace XQW {
   const FORMATTED_VALUE_ID = "OData.Community.Display.V1.FormattedValue";
   const FORMATTED_VALUE_SUFFIX = "@" + FORMATTED_VALUE_ID;
   const FORMATTED_VALUES_HEADER = { type: "Prefer", value: `odata.include-annotations="${FORMATTED_VALUE_ID}"` };
+  const LOOKUP_LOGICALNAME_ID = "Microsoft.Dynamics.CRM.lookuplogicalname";
+  const LOOKUP_LOGICALNAME_SUFFIX = "@" + LOOKUP_LOGICALNAME_ID;
+  const LOOKUP_NAVIGATIONPROPERTY_ID = "Microsoft.Dynamics.CRM.associatednavigationproperty";
+  const LOOKUP_NAVIGATIONPROPERTY_SUFFIX = "@" + LOOKUP_NAVIGATIONPROPERTY_ID;
+  const INCLUDE_ANNOTATIONS_HEADER = { type: "Prefer", value: `odata.include-annotations="*"` };
   const BIND_ID = "_bind$";
+  const ID_ID = "_id$";
   const GUID_ENDING = "_guid";
   const FORMATTED_ENDING = "_formatted";
+  const LOOKUP_LOGICALNAME_ENDING = "_lookuplogicalname";
+  const LOOKUP_NAVIGATIONPROPERTY_ENDING = "_navigationproperty";
   const NEXT_LINK_ID = "@odata.nextLink";
 
   const MaxPageSizeHeader = (size: number) => ({ type: "Prefer", value: `odata.maxpagesize=${size}` });
@@ -296,13 +385,21 @@ namespace XQW {
     if (datePattern.test(value)) return new Date(value);
     let newName = name;
     const formatted = endsWith(newName, FORMATTED_VALUE_SUFFIX);
+    const lookupLogicalName = endsWith(newName, LOOKUP_LOGICALNAME_SUFFIX);
+    const lookupNavProperty = endsWith(newName, LOOKUP_NAVIGATIONPROPERTY_SUFFIX);
 
-    if (formatted) newName = newName.substr(0, newName.length - 42);
+    if (formatted) newName = newName.substr(0, newName.length - FORMATTED_VALUE_SUFFIX.length);
+    else if (lookupLogicalName) newName = newName.substr(0, newName.length - LOOKUP_LOGICALNAME_SUFFIX.length);
+    else if (lookupNavProperty) newName = newName.substr(0, newName.length - LOOKUP_NAVIGATIONPROPERTY_SUFFIX.length);
+
     if (beginsWith(newName, '_') && endsWith(newName, '_value')) {
       newName = newName.substr(1, newName.length - 7);
-      if (!formatted) newName += GUID_ENDING;
+      if (formatted) newName += FORMATTED_ENDING;
+      else if (lookupLogicalName) newName += LOOKUP_LOGICALNAME_ENDING;
+      else if (lookupNavProperty) newName += LOOKUP_NAVIGATIONPROPERTY_ENDING;
+      else newName += GUID_ENDING;
     }
-    if (formatted) newName += FORMATTED_ENDING;
+    
     if (newName != name) {
       this[newName] = value;
     } else {
@@ -721,12 +818,20 @@ namespace XQW {
       return <any>this;
     }
 
+        /**
+         * Sets a header that lets you retrieve formatted values and lookup properties as well. Should be used after using select and expand of attributes.
+         */
+    includeFormattedValuesAndLookupProperties(): Query<(FormattedResult & Result)[]> {
+      this.additionalHeaders.push(INCLUDE_ANNOTATIONS_HEADER);
+      return <any>this;
+    }
+
 		/**
 		 * Sets up the query to filter the entity using the provided FetchXML
 		 * @param xml The query in FetchXML format
 		 */
     useFetchXml(xml: string): Query<Result[]> {
-      this.specialQuery = `?fetchXml=${encodeURI(xml)}`;
+      this.specialQuery = `?fetchXml=${encodeURIComponent(xml)}`;
       return this;
     }
 
@@ -854,8 +959,19 @@ namespace XQW {
       return prefix + (options.length > 0 ? "?" + options.join("&") : "");
     }
 
+      /**
+       * Sets a header that lets you retrieve formatted values as well. Should be used after using select and expand of attributes.
+       */
     includeFormattedValues(): Query<FormattedResult & Result> {
       this.additionalHeaders.push(FORMATTED_VALUES_HEADER);
+      return <any>this;
+    }
+
+      /**
+       * Sets a header that lets you retrieve formatted values and lookup properties as well. Should be used after using select and expand of attributes.
+       */
+    includeFormattedValuesAndLookupProperties(): Query<(FormattedResult & Result)[]> {
+      this.additionalHeaders.push(INCLUDE_ANNOTATIONS_HEADER);
       return <any>this;
     }
   }
@@ -870,7 +986,7 @@ namespace XQW {
 		 */
     private entitySetName: string;
 
-    constructor(entityPicker: (x: WebEntitiesCUD) => WebMappingCUD<ICreate, any>, private record?: ICreate) {
+    constructor(entityPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<ICreate, any, any>, private record?: ICreate) {
       super("POST");
       this.entitySetName = taggedExec(entityPicker).toString();
     }
@@ -902,7 +1018,7 @@ namespace XQW {
 		 */
     private entitySetName: string;
 
-    constructor(entityPicker: (x: WebEntitiesCUD) => WebMappingCUD<any, any>, private id?: string) {
+    constructor(entityPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, any>, private id?: string) {
       super("DELETE");
       this.id = id !== undefined ? stripGUID(id) : id;
       this.entitySetName = taggedExec(entityPicker).toString();
@@ -932,7 +1048,7 @@ namespace XQW {
 		 */
     private entitySetName: string;
 
-    constructor(entityPicker: (x: WebEntitiesCUD) => WebMappingCUD<any, IUpdate>, private id?: string, private record?: IUpdate) {
+    constructor(entityPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, IUpdate, any>, private id?: string, private record?: IUpdate) {
       super("PATCH");
       this.id = id !== undefined ? stripGUID(id) : id;
       this.entitySetName = taggedExec(entityPicker).toString();
@@ -954,7 +1070,150 @@ namespace XQW {
       return `${this.entitySetName}(${this.id})`;
     }
   }
+  /**
+ * Contains information about an AssociateRecord query for single-valued properties
+ */
+  export class AssociateRecordSingle<ISingle, ISelect> extends Query<undefined> {
+    /** 
+     * @internal 
+     */
+    private entitySetName: string;
+    private entitySetNameTarget: string;
+    private targetId: string;
+    private relation: string;
+    private record: any;
 
+    constructor(
+      entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>,
+      private id: string,
+      entityTargetPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, ISelect>,
+      targetid: string,
+      relationPicker: (x: ISingle) => WebMappingRetrieve<ISelect, any, any, any, any, any>) {
+      super("PUT")
+      this.entitySetName = taggedExec(entityPicker).toString();
+      this.id = id !== undefined ? stripGUID(id) : id;
+      this.entitySetNameTarget = taggedExec(entityTargetPicker).toString();
+      this.targetId = targetid !== undefined ? stripGUID(targetid) : targetid;
+      this.relation = taggedExec(relationPicker).toString();
+      this.record = {};
+      this.record["_id$" + this.entitySetNameTarget] = this.targetId;
+    }
+
+    protected handleResponse(req: XMLHttpRequest, successCallback: (x?: undefined) => any) {
+      successCallback();
+    }
+
+    setData(id: string, record: any) {
+      this.id = stripGUID(id);
+      this.record = record;
+      return this;
+    }
+
+    protected getObjectToSend = () => JSON.stringify(transformObject(this.record));
+
+    getQueryString(): string {
+      return `${this.entitySetName}(${this.id})/${this.relation}/$ref`;
+    }
+  }
+  /**
+ * Contains information about an AssociateRecord query for collection-valued properties
+ */
+  export class AssociateRecordCollection<IMultiple, ISelect> extends Query<undefined> {
+    /** 
+     * @internal 
+     */
+    private entitySetName: string;
+    private entitySetNameTarget: string;
+    private targetId: string;
+    private relation: string;
+    private record: any;
+
+    constructor(
+      entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>,
+      private id: string,
+      entityTargetPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, ISelect>,
+      targetid: string,
+      relationPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, any, any, any, any, any>) {
+      super("POST");
+      this.entitySetName = taggedExec(entityPicker).toString();
+      this.id = id !== undefined ? stripGUID(id) : id;
+      this.entitySetNameTarget = taggedExec(entityTargetPicker).toString();
+      this.targetId = targetid !== undefined ? stripGUID(targetid) : targetid;
+      this.relation = taggedExec(relationPicker).toString();
+      this.record = {};
+      this.record["_id$" + this.entitySetNameTarget] = this.targetId;
+    }
+
+    protected handleResponse(req: XMLHttpRequest, successCallback: (x?: undefined) => any) {
+      successCallback();
+    }
+
+    setData(id: string, record: any) {
+      this.id = stripGUID(id);
+      this.record = record;
+      return this;
+    }
+
+    protected getObjectToSend = () => JSON.stringify(transformObject(this.record));
+
+    getQueryString(): string {
+      return `${this.entitySetName}(${this.id})/${this.relation}/$ref`;
+    }
+  }
+
+  /**
+   * Contains information about a Disassociate query
+   */
+  export class DisassociateRecord<ISelect> extends Query<undefined> {
+    /** 
+     * @internal 
+     */
+    private entitySetName: string;
+    private relation: string;
+    private targetId: string | undefined;
+
+
+    static Single<ISingle, ISelect>(
+      entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>,
+      id: string,
+      relationPicker: (x: ISingle) => WebMappingRetrieve<ISelect, any, any, any, any, any>) {
+      return new DisassociateRecord<ISelect>(taggedExec(entityPicker).toString(), id, taggedExec(relationPicker).toString())
+    }
+
+    static Collection<IMultiple, ISelect>(
+      entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>,
+      id: string,
+      relationPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, any, any, any, any, any>,
+      targetId: string) {
+      return new DisassociateRecord<ISelect>(taggedExec(entityPicker).toString(), id, taggedExec(relationPicker).toString(), targetId)
+    }
+
+    constructor(entityName: string, private id: string, rel: string, private targetid?: string) {
+      super("DELETE");
+      this.entitySetName = entityName;
+      this.id = id !== undefined ? stripGUID(id) : id;
+      this.relation = rel;
+      this.targetId = targetid !== undefined ? stripGUID(targetid) : targetid;
+    }
+
+    protected handleResponse(req: XMLHttpRequest, successCallback: (x?: undefined) => any) {
+      successCallback();
+    }
+
+    setId(id: string) {
+      this.id = stripGUID(id);
+      return this;
+    }
+
+    getQueryString(): string {
+      if (this.targetId == undefined)
+        // single-valued
+        return `${this.entitySetName}(${this.id})/${this.relation}/$ref`;
+      else
+        // collection-valued
+        return `${this.entitySetName}(${this.id})/${this.relation}(${this.targetId})/$ref`;;
+    }
+  }
 
   /**
    * @internal
@@ -1082,17 +1341,17 @@ namespace XQW {
     } else if (typeof (obj) === 'string' && startsWith("{", obj) && obj.endsWith("}")) {
       return obj.substring(1, obj.length - 1);
 
-    } else if (obj instanceof Object) {
-      var newObj = {};
-      Object.keys(obj).forEach(key => parseAttribute(key, transformObject(obj[key]), newObj));
-      return newObj;
-
     } else if (obj instanceof Array) {
       var arr: any[] = [];
       obj.forEach((v, idx) => arr[idx] = transformObject(v));
       return arr;
 
-    } else {
+    } else if (obj instanceof Object) {
+      var newObj = {};
+      Object.keys(obj).forEach(key => parseAttribute(key, transformObject(obj[key]), newObj));
+      return newObj;
+    }
+    else {
       return obj;
     }
   }
@@ -1103,12 +1362,22 @@ namespace XQW {
 	 * @param value
 	 */
   function parseAttribute(key: string, val: any, newObj: any) {
-    const lookupIdx = key.indexOf(BIND_ID);
-    if (lookupIdx >= 0) {
-      const setName = key.substr(lookupIdx + BIND_ID.length);
-      newObj[`${key.substr(0, lookupIdx)}@odata.bind`] = `/${setName}(${val})`;
-
-    } else {
+    if (key.indexOf(BIND_ID) >= 0) {
+      const lookupIdx = key.indexOf(BIND_ID);
+      if (lookupIdx >= 0) {
+        const setName = key.substr(lookupIdx + BIND_ID.length);
+        newObj[`${key.substr(0, lookupIdx)}@odata.bind`] = `/${setName}(${val})`;
+      }
+    }
+    else if (key.indexOf(ID_ID) >= 0) {
+      const lookupIdx = key.indexOf(ID_ID);
+      if (lookupIdx >= 0) {
+        const setName = key.substr(lookupIdx + ID_ID.length);
+        const url = getDefaultUrl(DefaultApiVersion);
+        newObj[`${key.substr(0, lookupIdx)}@odata.id`] = `${url}${setName}(${val})`;
+      }
+    }
+    else {
       newObj[key] = val;
     }
   }

@@ -71,7 +71,7 @@ declare namespace Xrm {
         fireOnKeyPress(): void;
     }
 
-    interface GridEntity {
+    interface GridEntity<T extends string> {
         /**
          * Returns the GUID of the record.
          */ 

@@ -329,7 +329,7 @@ declare namespace Xrm {
 		/**
 		* Indicates whether to display form in a new window.
 		*/
-		openInNewwindow?: boolean;
+		openInNewWindow?: boolean;
 
 		/**
 		* Window Position
@@ -834,6 +834,70 @@ declare namespace Xrm {
 		organizationSettings: organizationSettings;
 	}
 
+	/**
+     * Interface for an MultiSelectOptionSet attribute.
+     */
+	interface MultiSelectOptionSetAttribute<T> extends Attribute<T[]> {
+        /**
+         * Collection of controls associated with the attribute.
+         */
+		controls: Collection<MultiSelectOptionSetControl<T>>;
+
+        /**
+         * Returns a value that represents the value set for a MultiSelectOptionSet when the form opened.
+         */
+		getInitialValue(): T | null;
+
+        /**
+         * Returns an array of string values of the text for the currently selected options for a multiselectoptionset attribute.
+         */
+		getText(): string[] | null;
+
+        /**
+         * Returns an option object with the value matching the argument passed to the method.
+         */
+		getOption(value: string): Option<T> | null;
+
+        /**
+         * Returns an option object with the value matching the argument passed to the method.
+         */
+		getOption(value: T): Option<T> | null;
+
+        /**
+         * Returns an array of option objects representing the valid options for an option-set attribute.
+         */
+		getOptions(): Option<T>[];
+
+        /**
+         * Returns the option object that is selected in an optionset attribute.
+         */
+		getSelectedOption(): Option<T>[] | null;
+	}
+
+	/**
+     * Interface for an MultiSelectOptionSet form control.
+     */
+	interface MultiSelectOptionSetControl<T> extends Control<MultiSelectOptionSetAttribute<T>> {
+        /**
+         * Adds an option to an option set control.
+         *
+         * @param option An option object to add to the OptionSet.
+         * @param index The index position to place the new option in. If not provided, the option will be added to the end.
+         */
+		addOption(option: Option<T>, index?: number): void;
+
+        /**
+         * Clears all options from an option set control.
+         */
+		clearOptions(): void;
+
+        /**
+         * Removes an option from an option set control.
+         *
+         * @param number The value of the option you want to remove.
+         */
+		removeOption(number: number): void;
+	}
 }
 
 interface Xrm<T extends Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>> extends BaseXrm {
