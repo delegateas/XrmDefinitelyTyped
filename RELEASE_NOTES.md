@@ -1,4 +1,7 @@
 # Release Notes
+### 4.0.4 - September 14 2018
+* Added option to include lookup properties (@pederwagner)
+
 ### 4.0.3 - September 14 2018
 * Fixed LCID enums (problem with spaces and special characters)
 
