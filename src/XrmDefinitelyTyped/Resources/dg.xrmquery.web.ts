@@ -591,16 +591,23 @@ namespace XQW {
     }
 
     execute(successCallback: (x: T) => any, errorCallback: (err: Error) => any = () => { }): void {
-      this.executeRaw(successCallback, errorCallback, true);
-    }
+      this.executeRaw(successCallback, errorCallback, true, false);
+      }
+
+    executeSync() : T {
+        let ret: T;
+        this.executeRaw((x) => { ret = x }, () => { }, true, true);
+        return ret;
+    };
+
 
 
 		/**
 		 * @internal
 		 */
-    executeRaw(successCallback: (x: T) => any, errorCallback: (err: Error) => any, parseResult: true): void;
+    executeRaw(successCallback: (x: T) => any, errorCallback: (err: Error) => any, parseResult: true, sync: boolean): void;
     executeRaw(successCallback: (x: XMLHttpRequest) => any, errorCallback: (err: Error) => any, parseResult: false): void;
-    executeRaw(successCallback: ((x: T) => any) & ((x: XMLHttpRequest) => any), errorCallback: (err: Error) => any = () => { }, parseResult: boolean = false): void {
+    executeRaw(successCallback: ((x: T) => any) & ((x: XMLHttpRequest) => any), errorCallback: (err: Error) => any = () => { }, parseResult: boolean = false, sync: boolean = false): void {
       let config = (req: XMLHttpRequest) => this.additionalHeaders.forEach(h => req.setRequestHeader(h.type, h.value));
       let successHandler = (req: XMLHttpRequest) => parseResult ? this.handleResponse(req, successCallback, errorCallback) : successCallback(req);
       return XrmQuery.sendRequest(this.requestType, this.getQueryString(), this.getObjectToSend(), successHandler, errorCallback, config);

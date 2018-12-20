@@ -4,6 +4,12 @@
 type TooltipFunc = (rowData: string, lcid: LCID) => [WebResourceImage, string]
 
 declare namespace Xrm {
+    const enum ProcessStatus {
+        Active = "active",
+        Aborted = "aborted",
+        Finished = "finished"
+    }
+
     /**
      * Interface for a single result in the auto-completion list.
      */
@@ -87,5 +93,33 @@ declare namespace Xrm {
 
         isInHierarchy(): boolean;
     }
-    
+
+    interface Process {
+        /**
+         * Use this method to get the current status of the process instance
+         * @returns The current status of the process
+         */
+        getStatus(): ProcessStatus;
+    }
+
+    interface ProcessModule {
+        /**
+         * Use this to add a function as an event handler for the OnProcessStatusChange event so that it will be called when the
+         * business process flow status changes.
+         * @param handler The function will be added to the bottom of the event
+         *                handler pipeline. The execution context is automatically
+         *                set to be the first parameter passed to the event handler.
+         *                Use a reference to a named function rather than an
+         *                anonymous function if you may later want to remove the
+         *                event handler.
+         */
+        addOnProcessStatusChange(handler: (context?: ExecutionContext<this>) => any): void;
+
+        /**
+         * Use this to remove a function as an event handler for the OnProcessStatusChange event.
+         * @param handler If an anonymous function is set using the addOnProcessStatusChange method it
+         *                cannot be removed using this method.
+         */
+        removeOnProcessStatusChange(handler: (context?: ExecutionContext<this>) => any): void;
+    }
 }
