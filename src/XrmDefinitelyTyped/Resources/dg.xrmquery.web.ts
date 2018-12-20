@@ -163,9 +163,9 @@ namespace XrmQuery {
 	/**
 	 * @internal
 	 */
-  export function request(type: XQW.HttpRequestType, url: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb: (err: Error) => any = () => { }, preSend?: (req: XMLHttpRequest) => void) {
+  export function request(type: XQW.HttpRequestType, url: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb: (err: Error) => any = () => { }, preSend?: (req: XMLHttpRequest) => void, sync: boolean = false) {
     let req = new XMLHttpRequest()
-    req.open(type, url, true);
+    req.open(type, url, !sync);
     req.setRequestHeader("Accept", "application/json");
     req.setRequestHeader("Content-Type", "application/json; charset=utf-8");
     req.setRequestHeader("OData-MaxVersion", "4.0");
@@ -191,8 +191,8 @@ namespace XrmQuery {
 	 * @param errorCb Error callback handler function
 	 * @param configure Modify the request before it it sent to the endpoint - like adding headers.
 	 */
-  export function sendRequest(type: XQW.HttpRequestType, queryString: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb?: (err: Error) => any, configure?: (req: XMLHttpRequest) => void): void {
-    request(type, encodeSpaces(XQW.getApiUrl() + queryString), data, successCb, errorCb, configure);
+  export function sendRequest(type: XQW.HttpRequestType, queryString: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb?: (err: Error) => any, configure?: (req: XMLHttpRequest) => void, sync?: boolean): void {
+    request(type, encodeSpaces(XQW.getApiUrl() + queryString), data, successCb, errorCb, configure, sync);
   }
 
 	/**
@@ -610,7 +610,7 @@ namespace XQW {
     executeRaw(successCallback: ((x: T) => any) & ((x: XMLHttpRequest) => any), errorCallback: (err: Error) => any = () => { }, parseResult: boolean = false, sync: boolean = false): void {
       let config = (req: XMLHttpRequest) => this.additionalHeaders.forEach(h => req.setRequestHeader(h.type, h.value));
       let successHandler = (req: XMLHttpRequest) => parseResult ? this.handleResponse(req, successCallback, errorCallback) : successCallback(req);
-      return XrmQuery.sendRequest(this.requestType, this.getQueryString(), this.getObjectToSend(), successHandler, errorCallback, config);
+      return XrmQuery.sendRequest(this.requestType, this.getQueryString(), this.getObjectToSend(), successHandler, errorCallback, config, sync);
     }
   }
 
