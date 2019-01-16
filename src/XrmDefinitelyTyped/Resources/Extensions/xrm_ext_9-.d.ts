@@ -128,17 +128,34 @@ declare namespace Xrm {
     * Contains methods related to applying attribute and XML encoding to strings.
     */
 	interface Encoding {
+        	/**
+        	* Encodes the specified string so that it can be used in an HTML attribute.
+        	* @param arg String to be encoded.
+        	*/
+        	htmlAttributeEncode(arg: string): string;
+
+        	/**
+		* Converts a string that has been HTML-encoded into a decoded string.
+		* @param arg HTML-encoded string to be decoded.
+		*/
+        	htmlDecode(arg: string): string;
+
+        	/**
+        	* Converts a string to an HTML-encoded string.
+        	* @param arg String to be encoded.
+        	*/
+        	htmlEncode(arg: string): string;
 		/**
 		* Applies attribute encoding to a string.
 		* @param arg String to be encoded.
 		*/
-		xmlAttributeEncode(arg: string): string;
+        	xmlAttributeEncode(arg: string): string;
 
 		/**
 		* Applies XML encoding to a string.
 		* @param arg String to be encoded.
 		*/
-		xmlEncode(arg: string): string;
+        	xmlEncode(arg: string): string;
 	}
 
 	/**
