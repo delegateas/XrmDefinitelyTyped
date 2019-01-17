@@ -686,7 +686,7 @@ declare namespace Xrm {
 		* Opens a lookup control to select one or more items.
 		* @param lookupOptions Defines the options for opening the lookup dialog.
 		*/
-		lookupObjects(lookupOptions: LookupOptions): Then<Lookup>;
+		lookupObjects(lookupOptions: LookupOptions): Then<Lookup[]>;
 
 		/**
 		* Refreshes the parent grid containing the specified record.
