@@ -1,4 +1,10 @@
 # Release Notes
+### 4.0.6 - January 17 2018
+* Xrm.Utility.lookupObjects now returns an array of lookups (@mathiasbl)
+
+### 4.0.5 - January 16 2018
+* Added missing methods under Xrm.Encoding (@mathiasbl)
+
 ### 4.0.4 - September 14 2018
 * Added option to include lookup properties (@pederwagner)
 
