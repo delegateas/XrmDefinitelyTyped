@@ -1,4 +1,9 @@
 # Release Notes
+### 4.0.7 - February 18 2019
+* Added Xrm.ProcessModule.addOnProcessStatusChange (@majakubowski)
+* Added Xrm.ProcessModule.removeOnProcessStatusChange (@majakubowski)
+* Added Xrm.Process.getStatus (@majakubowski)
+
 ### 4.0.6 - January 17 2018
 * Xrm.Utility.lookupObjects now returns an array of lookups (@mathiasbl)
 
