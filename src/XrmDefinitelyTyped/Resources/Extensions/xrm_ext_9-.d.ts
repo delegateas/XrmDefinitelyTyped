@@ -475,7 +475,7 @@ declare namespace Xrm {
 		* @param data A JSON object defining the attributes and values for the new entity record.
 		* See examples at: https://docs.microsoft.com/en-us/dynamics365/customer-engagement/developer/clientapi/reference/xrm-webapi/createrecord
 		*/
-    createRecord(entityLogicalName: string, data: string): Then<Lookup>;
+    createRecord(entityLogicalName: string, data: object): Then<Lookup>;
 
 		/**
 		* Deletes an entity record.
@@ -514,7 +514,7 @@ declare namespace Xrm {
 		* @param data A JSON object containing key, value pairs where key is the property of the entity and value is the value of the property you want to update.
 		* See examples at: https://docs.microsoft.com/en-us/dynamics365/customer-engagement/developer/clientapi/reference/xrm-webapi/updaterecord
 		*/
-    updateRecord(entityLogicalName: string, id: string, data: string): Then<Lookup>;
+    updateRecord(entityLogicalName: string, id: string, data: object): Then<Lookup>;
   }
 
   interface WebApiOffline extends WebApiBase {
