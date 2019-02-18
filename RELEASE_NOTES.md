@@ -1,4 +1,8 @@
 # Release Notes
+### 4.1.0 - February 18 2019
+* Added a more strict typing to Business Process Flow controls. This is a breaking change.
+* Fixed a bug where typings were missing for fields from business process flows.
+
 ### 4.0.9 - February 18 2019
 * Fixed errors with Xrm.WebAPI typings
 
