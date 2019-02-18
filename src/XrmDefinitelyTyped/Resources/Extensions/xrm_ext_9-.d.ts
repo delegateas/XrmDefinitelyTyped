@@ -121,7 +121,7 @@ declare namespace Xrm {
 		* Opens a dialog box to select files from your computer (web client) or mobile device (mobile clients).
 		* @param pickFileOptions Options for picking file(s)
 		*/
-    pickFile(pickFileOptions: PickFileOptions): Then<File>;
+    pickFile(pickFileOptions: PickFileOptions): Then<File[]>;
   }
 
   /**
