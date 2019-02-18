@@ -100,7 +100,7 @@ namespace Filter.REST {
 
 
 namespace XrmQuery.REST {
-   
+
   export function stripGUID(guid: string) {
     if (guid.startsWith("{") && guid.endsWith("}"))
       return guid.substring(1, guid.length - 1);
@@ -186,7 +186,7 @@ namespace XQR {
     var funcInfo = analyzeFunc(f);
     var regex = objRegex(funcInfo.arg);
 
-    var obj: { [k:string]: any } = {};
+    var obj: { [k: string]: any } = {};
     var match: any;
     while ((match = regex.exec(funcInfo.body)) != null) {
       if (!obj[match[1]]) {
