@@ -1,4 +1,7 @@
 # Release Notes
+### 4.0.8 - February 18 2019
+* Fixed error where Xrm.Device.pickFile returned a single value instead of an array
+
 ### 4.0.7 - February 18 2019
 * Added Xrm.ProcessModule.addOnProcessStatusChange (@majakubowski)
 * Added Xrm.ProcessModule.removeOnProcessStatusChange (@majakubowski)
