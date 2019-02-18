@@ -1,4 +1,7 @@
 # Release Notes
+### 4.0.9 - February 18 2019
+* Fixed errors with Xrm.WebAPI typings
+
 ### 4.0.8 - February 18 2019
 * Fixed error where Xrm.Device.pickFile returned a single value instead of an array
 
