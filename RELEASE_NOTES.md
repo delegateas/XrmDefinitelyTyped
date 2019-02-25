@@ -1,7 +1,7 @@
 # Release Notes
-
-### 4.2.0 - Febuar 25 2018
+### 4.2.0 - February 25 2019
 * Add the following query functions to XrmQuery; `In`, `NotIn`, `Above`, `Under`, `UnderOrEqual`, `NotUnder`, `EqualUserId`, `NotEqualUserId`, `EqualBusinessId`, `NotEqualBusinessId`.
+* Changed several Xrm functions to return promises instead of Then for version 9 and above.
 
 ### 4.1.0 - February 18 2019
 * Added a more strict typing to Business Process Flow controls. This is a breaking change.
