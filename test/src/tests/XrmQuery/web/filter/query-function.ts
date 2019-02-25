@@ -37,7 +37,7 @@ class Web_Query_Function_Filter {
     "UnderOrEqual filter"() {
         const accountId = "ACCOUNT_ID";
         const qs = XrmQuery.retrieveMultiple(x => x.accounts)
-            .filter(x => Filter.notUnder(x.parentaccountid_guid, accountId))
+            .filter(x => Filter.underOrEqual(x.parentaccountid_guid, accountId))
             .getQueryString();
 
         expect(qs).to.equal("accounts?$filter=Microsoft.Dynamics.CRM.UnderOrEqual(PropertyName='parentaccountid',PropertyValues='ACCOUNT_ID')");
