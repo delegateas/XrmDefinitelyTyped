@@ -1,4 +1,11 @@
 # Release Notes
+
+### 4.1.5 - Febuar 25 2018
+* Add the following query functions to XrmQuery; `In`, `NotIn`, `Above`, `Under`, `UnderOrEqual`, `NotUnder`, `EqualUserId`, `NotEqualUserId`, `EqualBusinessId`, `NotEqualBusinessId`.
+
+### 4.1.4 - November 16 2018
+* Fix incorrect typing for Xrm.WebAPI.createdRecord. Now expects data to be of type 'object' instead of 'string''
+
 ### 4.0.3 - September 14 2018
 * Fixed LCID enums (problem with spaces and special characters)
 
