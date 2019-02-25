@@ -419,7 +419,7 @@ namespace XQW {
   //}
 
   export function stripGUID(guid: string) {
-    if (guid.startsWith("{") && guid.endsWith("}"))
+      if (startsWith("{", guid) && endsWith("}", guid))
       return guid.substring(1, guid.length - 1);
     else
       return guid;
@@ -1338,7 +1338,7 @@ namespace XQW {
     if (obj instanceof Date) {
       return obj;
 
-    } else if (typeof (obj) === 'string' && startsWith("{", obj) && obj.endsWith("}")) {
+    } else if (typeof (obj) === 'string' && startsWith("{", obj) && endsWith("}", obj)) {
       return obj.substring(1, obj.length - 1);
 
     } else if (obj instanceof Array) {
