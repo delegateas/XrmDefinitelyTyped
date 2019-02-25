@@ -1,10 +1,31 @@
 # Release Notes
 
-### 4.1.5 - Febuar 25 2018
+### 4.2.0 - Febuar 25 2018
 * Add the following query functions to XrmQuery; `In`, `NotIn`, `Above`, `Under`, `UnderOrEqual`, `NotUnder`, `EqualUserId`, `NotEqualUserId`, `EqualBusinessId`, `NotEqualBusinessId`.
 
-### 4.1.4 - November 16 2018
-* Fix incorrect typing for Xrm.WebAPI.createdRecord. Now expects data to be of type 'object' instead of 'string''
+### 4.1.0 - February 18 2019
+* Added a more strict typing to Business Process Flow controls. This is a breaking change.
+* Fixed a bug where typings were missing for fields from business process flows.
+
+### 4.0.9 - February 18 2019
+* Fixed errors with Xrm.WebAPI typings
+
+### 4.0.8 - February 18 2019
+* Fixed error where Xrm.Device.pickFile returned a single value instead of an array
+
+### 4.0.7 - February 18 2019
+* Added Xrm.ProcessModule.addOnProcessStatusChange (@majakubowski)
+* Added Xrm.ProcessModule.removeOnProcessStatusChange (@majakubowski)
+* Added Xrm.Process.getStatus (@majakubowski)
+
+### 4.0.6 - January 17 2018
+* Xrm.Utility.lookupObjects now returns an array of lookups (@mathiasbl)
+
+### 4.0.5 - January 16 2018
+* Added missing methods under Xrm.Encoding (@mathiasbl)
+
+### 4.0.4 - September 14 2018
+* Added option to include lookup properties (@pederwagner)
 
 ### 4.0.3 - September 14 2018
 * Fixed LCID enums (problem with spaces and special characters)

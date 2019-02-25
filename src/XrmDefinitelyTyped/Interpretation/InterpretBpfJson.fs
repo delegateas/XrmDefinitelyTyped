@@ -74,6 +74,7 @@ let rec analyzeEntity (data:List<InnerData>) (fields:ControlField list) : Contro
         ( d.controlId, 
           d.dataFieldName, 
           controlClass,
+          true,
           match box d.entity, controlClass with
           | e, Lookup when e <> null -> Some (sprintf "\"%s\"" d.entity.entityName)
           | _, _ -> None
@@ -105,7 +106,6 @@ let interpretBpfs (workflows:Entity[]): Map<string,ControlField list> =
     lname, 
     x |> Array.map snd 
     |> List.concat 
-    |> List.distinctBy (fun (id,_,_,_) -> id)
-    |> List.map (fun (id, datafieldname, controlClass, tes) -> 
-      sprintf "header_process_%s" id, datafieldname, controlClass, tes))
+    |> List.map (fun (id, datafieldname, controlClass, isBPF, tes) -> 
+      sprintf "header_process_%s" id, datafieldname, controlClass, isBPF, tes))
   |> Map.ofArray

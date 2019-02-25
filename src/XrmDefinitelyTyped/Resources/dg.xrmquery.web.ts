@@ -399,7 +399,7 @@ namespace XQW {
       else if (lookupNavProperty) newName += LOOKUP_NAVIGATIONPROPERTY_ENDING;
       else newName += GUID_ENDING;
     }
-    
+
     if (newName != name) {
       this[newName] = value;
     } else {
@@ -818,9 +818,9 @@ namespace XQW {
       return <any>this;
     }
 
-        /**
-         * Sets a header that lets you retrieve formatted values and lookup properties as well. Should be used after using select and expand of attributes.
-         */
+    /**
+     * Sets a header that lets you retrieve formatted values and lookup properties as well. Should be used after using select and expand of attributes.
+     */
     includeFormattedValuesAndLookupProperties(): Query<(FormattedResult & Result)[]> {
       this.additionalHeaders.push(INCLUDE_ANNOTATIONS_HEADER);
       return <any>this;
@@ -959,17 +959,17 @@ namespace XQW {
       return prefix + (options.length > 0 ? "?" + options.join("&") : "");
     }
 
-      /**
-       * Sets a header that lets you retrieve formatted values as well. Should be used after using select and expand of attributes.
-       */
+    /**
+     * Sets a header that lets you retrieve formatted values as well. Should be used after using select and expand of attributes.
+     */
     includeFormattedValues(): Query<FormattedResult & Result> {
       this.additionalHeaders.push(FORMATTED_VALUES_HEADER);
       return <any>this;
     }
 
-      /**
-       * Sets a header that lets you retrieve formatted values and lookup properties as well. Should be used after using select and expand of attributes.
-       */
+    /**
+     * Sets a header that lets you retrieve formatted values and lookup properties as well. Should be used after using select and expand of attributes.
+     */
     includeFormattedValuesAndLookupProperties(): Query<(FormattedResult & Result)[]> {
       this.additionalHeaders.push(INCLUDE_ANNOTATIONS_HEADER);
       return <any>this;
