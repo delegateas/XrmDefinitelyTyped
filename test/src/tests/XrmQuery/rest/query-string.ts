@@ -1,3 +1,4 @@
+/// <reference path='../../../../typings/XRM/dg.xrmquery.rest.d.ts'/>
 import { expect } from 'chai';
 import { suite, test, slow, timeout, skip, only } from "mocha-typescript";
 

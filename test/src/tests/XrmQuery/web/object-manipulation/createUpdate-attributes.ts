@@ -1,3 +1,5 @@
+/// <reference path='../../../../../typings/XRM/dg.xrmquery.web.ts'/>
+
 import { expect } from 'chai';
 import { suite, test, slow, timeout, skip, only } from "mocha-typescript";
 import FakeRequests from '../../../common/fakeRequests';
