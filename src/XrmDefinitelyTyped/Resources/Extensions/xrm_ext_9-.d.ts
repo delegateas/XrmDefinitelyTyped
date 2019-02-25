@@ -409,21 +409,21 @@ declare namespace Xrm {
 		* @param alertStrings The string to be used in the alert dialog.
 		* @param alertOptions The height and width options for alert dialog.
 		*/
-    openAlertDialog(alertStrings: AlertStrings, alertOptions?: SizeOptions): Then<undefined>;
+    openAlertDialog(alertStrings: AlertStrings, alertOptions?: SizeOptions): Promise<undefined>;
 
 		/**
 		* Displays a confirmation dialog box containing a message and two buttons.
 		* @param confirmStrings The strings to be used in the confirmation dialog.
 		* @param confirmOptions The height and width options for confirmation dialog.
 		*/
-    openConfirmDialog(confirmStrings: ConfirmStrings, confirmOptions?: SizeOptions): Then<ConfirmDialogResult>;
+    openConfirmDialog(confirmStrings: ConfirmStrings, confirmOptions?: SizeOptions): Promise<ConfirmDialogResult>;
 
 		/**
 		* Displays an error dialog.
 		* @param errorOptions An object to specify the options for error dialog.
 		* Either errorCode or message must be sat.
 		*/
-    openErrorDialog(errorOptions: ErrorOptions): Then<undefined>;
+    openErrorDialog(errorOptions: ErrorOptions): Promise<undefined>;
 
 		/**
 		* Opens a file.
@@ -475,7 +475,7 @@ declare namespace Xrm {
 		* @param data A JSON object defining the attributes and values for the new entity record.
 		* See examples at: https://docs.microsoft.com/en-us/dynamics365/customer-engagement/developer/clientapi/reference/xrm-webapi/createrecord
 		*/
-    createRecord(entityLogicalName: string, data: object): Then<Lookup>;
+    createRecord(entityLogicalName: string, data: object): Promise<Lookup>;
 
 		/**
 		* Deletes an entity record.
@@ -483,7 +483,7 @@ declare namespace Xrm {
 		* @param entityLogicalName The entity logical name of the record you want to delete. For example "account".
 		* @param id GUID of the entity record you want to delete.
 		*/
-    deleteRecord(entityLogicalName: string, id: string): Then<Lookup>;
+    deleteRecord(entityLogicalName: string, id: string): Promise<Lookup>;
 
 		/**
 		* Retrieves an entity record.
@@ -493,7 +493,7 @@ declare namespace Xrm {
 		* @param options OData system query options, $select and $expand, to retrieve your data.
 		* See examples at: https://docs.microsoft.com/en-us/dynamics365/customer-engagement/developer/clientapi/reference/xrm-webapi/retrieverecord
 		*/
-    retrieveRecord(entityLogicalName: string, id: string, options?: string): Then<any>;
+    retrieveRecord(entityLogicalName: string, id: string, options?: string): Promise<any>;
 
 		/**
 		* Retrieves a collection of entity records.
@@ -504,7 +504,7 @@ declare namespace Xrm {
 		* @param maxPageSize Specify a positive number that indicates the number of entity records to be returned per page. If you do not specify this parameter, the default value is passed as 5000.
 		* If the number of records being retrieved is more than the specified maxPageSize value, nextLink attribute in the returned promise object will contain a link to retrieve the next set of entities.
 		*/
-    retrieveMultipleRecords(entityLogicalName: string, options?: string, maxPageSize?: number): Then<any>;
+    retrieveMultipleRecords(entityLogicalName: string, options?: string, maxPageSize?: number): Promise<any>;
 
 		/**
 		* Updates an entity record.
@@ -514,7 +514,7 @@ declare namespace Xrm {
 		* @param data A JSON object containing key, value pairs where key is the property of the entity and value is the value of the property you want to update.
 		* See examples at: https://docs.microsoft.com/en-us/dynamics365/customer-engagement/developer/clientapi/reference/xrm-webapi/updaterecord
 		*/
-    updateRecord(entityLogicalName: string, id: string, data: object): Then<Lookup>;
+    updateRecord(entityLogicalName: string, id: string, data: object): Promise<Lookup>;
   }
 
   interface WebApiOffline extends WebApiBase {
@@ -572,7 +572,7 @@ declare namespace Xrm {
 		* @param request Object that will be passed to the Web API endpoint to execute an action, function, or CRUD request.
 		* The object exposes a getMetadata method that lets you define the metadata for the action, function or CRUD request you want to execute.
 		*/
-    execute(request: any): Then<WebApiResponse>;
+    execute(request: any): Promise<WebApiResponse>;
 
 		/**
 		* Execute a collection of action, function, or CRUD operations.
@@ -582,7 +582,7 @@ declare namespace Xrm {
 		* We recommend using XrmQuery instead of this interface.
 		* @param requests An array of requests and changesets. Requests are the same as for execute. Changesets are arrays of requests that will be executed in transaction.
 		*/
-    executeMultiple(requests: any): Then<WebApiResponse[]>;
+    executeMultiple(requests: any): Promise<WebApiResponse[]>;
   }
 
 	/**
@@ -648,14 +648,14 @@ declare namespace Xrm {
 		* @param entityName The logical name of the entity.
 		* @param stateCode The state code to find out the allowed status transition values
 		*/
-    getAllowedStatusTransitions(entityName: string, stateCode: number): Then<undefined>;
+    getAllowedStatusTransitions(entityName: string, stateCode: number): Promise<number[] | null>;
 
 		/**
 		* Returns the entity metadata for the specified entity
 		* @param entityName The logical name of the entity.
 		* @param attributes The attributes to get metadata for.
 		*/
-    getEntityMetadata(entityName: string, attributes?: string[]): Then<any>;
+    getEntityMetadata(entityName: string, attributes?: string[]): Promise<any>;
 
 		/**
 		* Gets the global context.
@@ -680,13 +680,13 @@ declare namespace Xrm {
 		* @param name of the process action to invoke.
 		* @param parameters An object containing input parameters for the action. You define an object using key:value pairs of items, where key is of String type.
 		*/
-    invokeProcessAction(name: string, parameters?: any): Then<undefined>;
+    invokeProcessAction(name: string, parameters?: any): Promise<undefined>;
 
 		/**
 		* Opens a lookup control to select one or more items.
 		* @param lookupOptions Defines the options for opening the lookup dialog.
 		*/
-    lookupObjects(lookupOptions: LookupOptions): Then<Lookup[]>;
+    lookupObjects(lookupOptions: LookupOptions): Promise<Lookup[]>;
 
 		/**
 		* Refreshes the parent grid containing the specified record.
@@ -747,6 +747,20 @@ declare namespace Xrm {
 		* Removes a function to be called when form data is loaded.
 		*/
     removeOnLoad(myFunction: Function): void;
+
+    /**
+    * Asynchronously refreshes and optionally saves all the data of the form without reloading the page.
+    * 
+    * @param save true if the data should be saved after it is refreshed, otherwise false.
+    */
+    refresh(save?: boolean): Promise<undefined>;
+
+    /**
+     * Saves the record asynchronously with the option to set callback functions to be executed after the save operation is completed.
+     *
+     * @param saveOptions This option is only applicable when used with appointment, recurring appointment, or service activity records.
+     */
+    save(saveOptions?: SaveOptions): Promise<undefined>;
   }
 
   /**
