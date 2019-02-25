@@ -84,23 +84,34 @@ let generateFolderStructure out (gSettings: XdtGenerationSettings) =
     if gSettings.viewNs.IsSome then Directory.CreateDirectory (sprintf "%s/View" out) |> ignore
   printfn "Done!"
 
-// Extend .ts files with version specific additions
-let versionExtendFile crmVersion gSettings state fileName preffix suffix =
+// Extend files with version specific additions
+let versionExtendFile crmVersion gSettings outputDir fileName preffix suffix =
   getBaseExtensions crmVersion gSettings.useDeprecated preffix suffix
   |> Seq.map (getResourceLines >> stripReferenceLines)
   |> (getResourceLines fileName |> Seq.singleton |> Seq.append)
   |> List.concat
   |> fun lines -> 
+    if lines |> List.length = 0
+    then printfn "could not find file %s" fileName
+    else printfn "found file %s with extension %s%s and printed to %s" fileName preffix suffix outputDir
     File.WriteAllLines(
-      sprintf "%s/%s" state.outputDir fileName, lines)
+      sprintf "%s/%s" outputDir fileName, lines)
 
+let generateJSExtResourceFiles crmVersion gSettings =
+
+  let path = gSettings.jsLib ?| "."
+
+  // Generate extendable js files
+  [ gSettings.webNs ?|> fun _ -> ("dg.xrmquery.web.js", "dg.xrmquery.web_ext_", ".js")
+  ] |> List.choose id |> List.iter(fun param -> param |||> versionExtendFile crmVersion gSettings path)
+ 
 /// Generate the declaration files stored as resources
 let generateDtsResourceFiles crmVersion gSettings state =
 
   // Generate extendable files
   [ Some ("xrm.d.ts", "xrm_ext_", ".d.ts")
     gSettings.webNs ?|> fun _ -> ("dg.xrmquery.web.ts", "dg.xrmquery.web_ext_", ".ts")
-  ] |> List.choose id |> List.iter(fun param -> param |||> versionExtendFile crmVersion gSettings state)
+  ] |> List.choose id |> List.iter(fun param -> param |||> versionExtendFile crmVersion gSettings state.outputDir)
  
   // Copy stable declaration files directly
   [ Some "metadata.d.ts"

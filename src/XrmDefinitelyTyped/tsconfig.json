@@ -11,8 +11,9 @@
         ],
         "outDir": "Resources/Dist"
     },
-    "include": [
-        "Resources/dg.xrmquery.rest.ts",
-        "Resources/dg.xrmquery.web.ts"
-    ]
+  "include": [
+    "Resources/dg.xrmquery.rest.ts",
+    "Resources/dg.xrmquery.web.ts",
+    "Resources/Extensions/dg.xrmquery.web_ext_9-.ts"
+  ]
 }
