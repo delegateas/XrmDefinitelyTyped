@@ -1,4 +1,7 @@
 # Release Notes
+### 4.2.1 - March 04 2019
+* Fixed error in typings when generating for versions below 9.
+
 ### 4.2.0 - February 25 2019
 * Add the following query functions to XrmQuery; `In`, `NotIn`, `Above`, `Under`, `UnderOrEqual`, `NotUnder`, `EqualUserId`, `NotEqualUserId`, `EqualBusinessId`, `NotEqualBusinessId`.
 * Changed several Xrm functions to return promises instead of Then for version 9 and above.
