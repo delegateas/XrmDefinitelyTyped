@@ -88,6 +88,7 @@
     <EmbeddedResource Include="Resources\Extensions\xrm_ext_9-.d.ts" />
     <EmbeddedResource Include="Resources\Extensions\xrm_ext_-9.d.ts" />
     <EmbeddedResource Include="Resources\Extensions\dg.xrmquery.web_ext_9-.ts" />
+    <EmbeddedResource Include="Resources\Extensions\dg.xrmquery.web_ext_9-.d.ts" />
     <EmbeddedResource Include="Resources\_internal\sdk.d.ts" />
     <EmbeddedResource Include="Resources\Dist\dg.xrmquery.rest.d.ts" />
     <EmbeddedResource Include="Resources\Dist\dg.xrmquery.rest.js">
