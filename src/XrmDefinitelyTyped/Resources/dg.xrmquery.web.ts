@@ -594,9 +594,9 @@ namespace XQW {
       this.executeRaw(successCallback, errorCallback, true, false);
       }
 
-    executeSync() : T {
-        let ret: T;
-        this.executeRaw((x) => { ret = x }, () => { }, true, true);
+    executeSync() : T | Error {
+        let ret: T | Error;
+        this.executeRaw((x) => { ret = x }, (err) => { ret = err; }, true, true);
         return ret;
     };
 
@@ -988,8 +988,8 @@ namespace XQW {
 	 * Contains information about a Create query
 	 */
   export class CreateRecord<ICreate> extends Query<string> {
-		/** 
-		 * @internal 
+		/**
+		 * @internal
 		 */
     private entitySetName: string;
 
@@ -1020,8 +1020,8 @@ namespace XQW {
 	 * Contains information about a Delete query
 	 */
   export class DeleteRecord extends Query<undefined> {
-		/** 
-		 * @internal 
+		/**
+		 * @internal
 		 */
     private entitySetName: string;
 
@@ -1050,8 +1050,8 @@ namespace XQW {
 	 * Contains information about an UpdateRecord query
 	 */
   export class UpdateRecord<IUpdate> extends Query<undefined> {
-		/** 
-		 * @internal 
+		/**
+		 * @internal
 		 */
     private entitySetName: string;
 
@@ -1081,8 +1081,8 @@ namespace XQW {
  * Contains information about an AssociateRecord query for single-valued properties
  */
   export class AssociateRecordSingle<ISingle, ISelect> extends Query<undefined> {
-    /** 
-     * @internal 
+    /**
+     * @internal
      */
     private entitySetName: string;
     private entitySetNameTarget: string;
@@ -1126,8 +1126,8 @@ namespace XQW {
  * Contains information about an AssociateRecord query for collection-valued properties
  */
   export class AssociateRecordCollection<IMultiple, ISelect> extends Query<undefined> {
-    /** 
-     * @internal 
+    /**
+     * @internal
      */
     private entitySetName: string;
     private entitySetNameTarget: string;
@@ -1172,8 +1172,8 @@ namespace XQW {
    * Contains information about a Disassociate query
    */
   export class DisassociateRecord<ISelect> extends Query<undefined> {
-    /** 
-     * @internal 
+    /**
+     * @internal
      */
     private entitySetName: string;
     private relation: string;
