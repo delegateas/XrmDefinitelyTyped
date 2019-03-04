@@ -61,7 +61,7 @@ let getAttributeType = function
   | None -> TsType.Undefined
   | Some a -> a.varType
 
-let getAttribute (enums:Map<string,TsType>) (entity: XrmEntity) (_, attrName, controlClass, tes) =
+let getAttribute (enums:Map<string,TsType>) (entity: XrmEntity) (_, attrName, controlClass, _, tes) =
   if String.IsNullOrEmpty attrName then None else 
   
   let attribute =
@@ -104,7 +104,7 @@ let getAttribute (enums:Map<string,TsType>) (entity: XrmEntity) (_, attrName, co
 
 
 let getControl  (enums:Map<string,TsType>) entity (controlField:ControlField): XrmFormControl option =
-  let controlId, attrName, controlClass, tes = controlField
+  let controlId, attrName, controlClass, isBPF, tes = controlField
   if controlClass = QuickView then None else
 
   let aType = 
@@ -149,8 +149,8 @@ let getControl  (enums:Map<string,TsType>) entity (controlField:ControlField): X
     | Map
     | Timer
     | _ -> ControlType.Default
-
-  Some (controlId, aType, cType)
+  
+  Some (controlId, aType, cType, isBPF)
   
 let getValue (xEl:XElement) (str:string) =
   match xEl.Attribute(XName.Get(str)) with
@@ -169,19 +169,20 @@ let getControlClass id (classId:string) =
 /// Renames controls with number suffixes if some share the same id
 let renameControls (controls:XrmFormControl list) =
   controls
-  |> List.groupBy (fun (x,_,_) -> x)
+  |> List.groupBy (fun (x,_,_,_) -> x)
   |> List.map (fun (x,cs) -> 
-    List.mapi (fun i (_,a,c) -> 
-      if i > 0 then sprintf "%s%d" x i, a, c 
-      else x, a, c
+    List.mapi (fun i (_,a,c,isbpf) -> 
+      if i > 0 then sprintf "%s%d" x i, a, c, isbpf 
+      else x, a, c, isbpf
     ) cs)
   |> List.concat
 
 
-let getCompositeField (id, datafieldname, _, _) subFieldName ty : ControlField =
+let getCompositeField (id, datafieldname, _, isBPF, _) subFieldName ty : ControlField =
   sprintf "%s_compositionLinkControl_%s" id subFieldName,
   subFieldName,
   ty,
+  isBPF,
   None
 
 let (|IsCompositeAddress|_|) (str:string) = 
@@ -193,7 +194,7 @@ let (|IsCompositeAddress|_|) (str:string) =
 /// Finds all composite fields and adds the sub-fields that they bring along
 let getCompositeFields : ControlField list -> ControlField list =
   List.choose (fun field  ->
-    let (id, datafieldname, _, _) = field
+    let (id, datafieldname, _, _, _) = field
 
     match datafieldname with
     | null -> None
@@ -260,9 +261,9 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
       if(targetEntities.Length > 0) then
         let tes =
           Seq.fold(fun acc e -> sprintf "%s | \"%s\"" acc e) (sprintf "\"%s\"" targetEntities.Head) targetEntities.Tail
-        id, datafieldname, controlClass, Some tes
+        id, datafieldname, controlClass, false, Some tes
       else
-        id, datafieldname, controlClass, None)
+        id, datafieldname, controlClass, false, None)
     |> List.ofSeq
 
   let compositeFields = getCompositeFields controlFields
@@ -271,7 +272,7 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
   let typeInt = systemForm.GetAttributeValue<OptionSetValue>("type").Value
   let logicalName = systemForm.GetAttributeValue<string>("objecttypecode")
 
-  systemForm.Id, 
+  systemForm.Id,
   { XrmForm.name =  name |> Utility.sanitizeString
     entityName = logicalName
     guid = Some systemForm.Id 
@@ -287,7 +288,7 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
       controlFields @ compositeFields @ bpfFields
       |> List.choose (getControl enums entity)
       |> renameControls
-      |> List.sortBy (fun (name, _, _) -> name)
+      |> List.sortBy (fun (name, _, _, _) -> name)
 
     tabs = tabs
   }

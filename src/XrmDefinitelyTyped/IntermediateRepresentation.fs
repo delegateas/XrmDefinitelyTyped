@@ -97,8 +97,9 @@ type FormType =
   | MainBackup = 101
   | AppointmentBookBackup = 102
 
+type IsBPF = bool
 type XrmFormAttribute = string * AttributeType
-type XrmFormControl = string * AttributeType option * ControlType
+type XrmFormControl = string * AttributeType option * ControlType * IsBPF
 type XrmFormTab = string * string * string list
   
 type ControlClassId =
@@ -110,7 +111,7 @@ type ControlClassId =
   | Other
   with override x.ToString() = x.GetType().Name
 
-type ControlField = string * string * ControlClassId * string option
+type ControlField = string * string * ControlClassId * IsBPF * string option
 
 
 type XrmForm = {

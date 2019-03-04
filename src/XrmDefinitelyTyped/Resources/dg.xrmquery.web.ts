@@ -399,7 +399,7 @@ namespace XQW {
       else if (lookupNavProperty) newName += LOOKUP_NAVIGATIONPROPERTY_ENDING;
       else newName += GUID_ENDING;
     }
-    
+
     if (newName != name) {
       this[newName] = value;
     } else {
@@ -419,7 +419,7 @@ namespace XQW {
   //}
 
   export function stripGUID(guid: string) {
-    if (guid.startsWith("{") && guid.endsWith("}"))
+      if (startsWith("{", guid) && endsWith("}", guid))
       return guid.substring(1, guid.length - 1);
     else
       return guid;
@@ -825,9 +825,9 @@ namespace XQW {
       return <any>this;
     }
 
-        /**
-         * Sets a header that lets you retrieve formatted values and lookup properties as well. Should be used after using select and expand of attributes.
-         */
+    /**
+     * Sets a header that lets you retrieve formatted values and lookup properties as well. Should be used after using select and expand of attributes.
+     */
     includeFormattedValuesAndLookupProperties(): Query<(FormattedResult & Result)[]> {
       this.additionalHeaders.push(INCLUDE_ANNOTATIONS_HEADER);
       return <any>this;
@@ -966,17 +966,17 @@ namespace XQW {
       return prefix + (options.length > 0 ? "?" + options.join("&") : "");
     }
 
-      /**
-       * Sets a header that lets you retrieve formatted values as well. Should be used after using select and expand of attributes.
-       */
+    /**
+     * Sets a header that lets you retrieve formatted values as well. Should be used after using select and expand of attributes.
+     */
     includeFormattedValues(): Query<FormattedResult & Result> {
       this.additionalHeaders.push(FORMATTED_VALUES_HEADER);
       return <any>this;
     }
 
-      /**
-       * Sets a header that lets you retrieve formatted values and lookup properties as well. Should be used after using select and expand of attributes.
-       */
+    /**
+     * Sets a header that lets you retrieve formatted values and lookup properties as well. Should be used after using select and expand of attributes.
+     */
     includeFormattedValuesAndLookupProperties(): Query<(FormattedResult & Result)[]> {
       this.additionalHeaders.push(INCLUDE_ANNOTATIONS_HEADER);
       return <any>this;
@@ -1345,7 +1345,7 @@ namespace XQW {
     if (obj instanceof Date) {
       return obj;
 
-    } else if (typeof (obj) === 'string' && startsWith("{", obj) && obj.endsWith("}")) {
+    } else if (typeof (obj) === 'string' && startsWith("{", obj) && endsWith("}", obj)) {
       return obj.substring(1, obj.length - 1);
 
     } else if (obj instanceof Array) {

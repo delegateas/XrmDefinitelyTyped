@@ -69,6 +69,7 @@ let generateFromRaw gSettings rawState =
   printf "Writing to files..."
   copyJsLibResourceFiles gSettings
   copyTsLibResourceFiles gSettings
+  generateJSExtResourceFiles crmVersion gSettings
   generateDtsResourceFiles crmVersion gSettings data
 
   match gSettings.oneFile with

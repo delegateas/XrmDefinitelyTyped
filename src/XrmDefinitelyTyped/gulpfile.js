@@ -10,7 +10,7 @@ var uglify = require("gulp-uglify");
 var ts = require("gulp-typescript");
 var tsProject = ts.createProject("tsconfig.json");
 
-var outDir = tsProject.options.outDir
+var outDir = tsProject.options.outDir;
 
 
 gulp.task("clean", function () {

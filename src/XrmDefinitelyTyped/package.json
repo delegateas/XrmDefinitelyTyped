@@ -20,6 +20,6 @@
     "typescript": "2.9.1"
   },
   "dependencies": {
-    "natives": "1.1.4"
+    "natives": "1.1.6"
   }
 }

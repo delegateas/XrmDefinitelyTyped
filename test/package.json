@@ -4,8 +4,9 @@
   "repository": "N/A",
   "version": "1.0.0",
   "scripts": {
-    "test": "mocha --compilers ts:ts-node/register,tsx:ts-node/register \"./src/tests/**/*.ts\"",
-    "test-watch": "mocha --watch --compilers ts:ts-node/register,tsx:ts-node/register --require \"./src/tests/utils/init.ts\" \"./src/tests/**/*.ts\""
+    "test": "mocha -r ts-node/register \"./src/tests/**/*.ts\"",
+    "testDebug": "mocha -r ts-node/register \"./src/tests/**/*.ts\" --inspect-brk",
+    "test-watch": "mocha --watch -r ts-node/register -r \"./src/tests/utils/init.ts\" \"./src/tests/**/*.ts\""
   },
   "author": "Delegate A/S, Martin Kasban Tange",
   "license": "MIT",
