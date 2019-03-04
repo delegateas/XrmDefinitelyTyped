@@ -1,4 +1,7 @@
 # Release Notes
+### 4.2.2 - March 04 2019
+* Fixed error where .d.ts file was missing for XrmQuery
+
 ### 4.2.1 - March 04 2019
 * Fixed error in typings when generating for versions below 9.
 
