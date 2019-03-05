@@ -91,9 +91,6 @@ let versionExtendFile crmVersion gSettings outputDir fileName preffix suffix =
   |> (getResourceLines fileName |> Seq.singleton |> Seq.append)
   |> List.concat
   |> fun lines -> 
-    if lines |> List.length = 0
-    then printfn "could not find file %s" fileName
-    else printfn "found file %s with extension %s%s and printed to %s" fileName preffix suffix outputDir
     File.WriteAllLines(
       sprintf "%s/%s" outputDir fileName, lines)
 
@@ -111,7 +108,6 @@ let generateDtsResourceFiles crmVersion gSettings state =
   // Generate extendable files
   [ Some ("xrm.d.ts", "xrm_ext_", ".d.ts")
     gSettings.webNs ?|> fun _ -> ("dg.xrmquery.web.d.ts", "dg.xrmquery.web_ext_", ".d.ts")
-    gSettings.webNs ?|> fun _ -> ("dg.xrmquery.web.ts", "dg.xrmquery.web_ext_", ".ts")
   ] |> List.choose id |> List.iter(fun param -> param |||> versionExtendFile crmVersion gSettings state.outputDir)
  
   // Copy stable declaration files directly
