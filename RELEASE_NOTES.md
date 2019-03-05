@@ -1,4 +1,7 @@
 # Release Notes
+### 4.2.3 - March 05 2019
+* Fixed error where .ts file was included for XrmQuery
+
 ### 4.2.2 - March 04 2019
 * Fixed error where .d.ts file was missing for XrmQuery
 
