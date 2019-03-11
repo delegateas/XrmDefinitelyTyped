@@ -1,4 +1,7 @@
 # Release Notes
+### 4.3.0 - March 11 2019
+* Added support for synchronous execution of XrmQuery. Should be used sparingly. (@majakubowski)
+
 ### 4.2.3 - March 05 2019
 * Fixed error where .ts file was included for XrmQuery
 
