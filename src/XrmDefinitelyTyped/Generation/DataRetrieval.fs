@@ -9,6 +9,7 @@ open DG.XrmDefinitelyTyped.InterpretView
 open Microsoft.Xrm.Sdk.Metadata
 open System.Text.RegularExpressions
 open Microsoft.Xrm.Sdk.Client
+open Microsoft.Xrm.Sdk
 
 
 /// Connect to CRM with the given authentication
@@ -31,7 +32,7 @@ let retrieveEntityNameMap mainProxy =
   map
 
 // Retrieve CRM entity metadata
-let retrieveEntityMetadata entities mainProxy =
+let retrieveEntityMetadata entities (mainProxy:IOrganizationService) =
   printf "Fetching specific entity metadata from CRM..."
 
   let rawEntityMetadata = 
@@ -114,7 +115,7 @@ let retrieveCrmVersion mainProxy =
   version
 
 /// Retrieve all the necessary CRM data
-let retrieveCrmData crmVersion entities solutions mainProxy skipInactiveForms =
+let retrieveCrmData crmVersion entities solutions (mainProxy:IOrganizationService) skipInactiveForms =
   let nameMap = 
     retrieveEntityNameMap mainProxy
 
@@ -172,7 +173,7 @@ let retrieveCrmData crmVersion entities solutions mainProxy skipInactiveForms =
 
 
 /// Gets all the entities related to the given solutions and merges with the given entities
-let getFullEntityList entities solutions proxy =
+let getFullEntityList entities solutions (proxy:IOrganizationService) =
   printf "Figuring out which entities should be included in the context.."
   let solutionEntities = 
     match solutions with

@@ -1,4 +1,7 @@
 # Release Notes
+### 4.4.0 - March 19 2019
+* Added support for MFA
+
 ### 4.3.0 - March 11 2019
 * Added support for synchronous execution of XrmQuery. Should be used sparingly. (@majakubowski)
 

@@ -18,6 +18,8 @@ let getXrmAuth parsedArgs =
     username = Map.find "username" parsedArgs
     password = Map.find "password" parsedArgs
     domain = Map.tryFind "domain" parsedArgs
+    mfaAppId = Map.tryFind "mfaAppId" parsedArgs
+    mfaReturnUrl = Map.tryFind "mfaReturnUrl" parsedArgs
     ap = ap; }
 
 let getRetrieveSettings parsedArgs =

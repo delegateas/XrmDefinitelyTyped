@@ -1,2 +1,4 @@
 ﻿Microsoft.CrmSdk.CoreAssemblies
+Microsoft.CrmSdk.Deployment
+Microsoft.CrmSdk.XrmTooling.CoreAssembly
 FSharp.Core
