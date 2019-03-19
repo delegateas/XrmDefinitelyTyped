@@ -2,6 +2,7 @@
 
 open System
 open System.Net
+open Microsoft.IdentityModel.Clients.ActiveDirectory
 open Microsoft.Xrm.Sdk
 open Microsoft.Xrm.Sdk.Client
 open Microsoft.Xrm.Tooling.Connector
