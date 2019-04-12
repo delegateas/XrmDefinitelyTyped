@@ -758,7 +758,6 @@ namespace XQW {
       : RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, IExpResult & Result> {
 
       const expand = taggedExec(exps).toString();
-      this.selects.push(expand);
       this.expandKeys.push(expand);
 
       let options: string[] = [];
@@ -940,7 +939,6 @@ namespace XQW {
       : RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, IExpResult & Result> {
 
       const expand = taggedExec(exps).toString();
-      this.selects.push(expand);
       this.expandKeys.push(expand);
 
       let options: string[] = [];

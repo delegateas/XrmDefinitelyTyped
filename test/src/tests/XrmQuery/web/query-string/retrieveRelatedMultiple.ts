@@ -39,7 +39,7 @@ class Web_RetrieveRelated_QueryString {
             .expand(x => x.dg_TestAccount)
             .getQueryString();
 
-        expect(qs).to.equal(`accounts(${this.accountId})/contact_customer_accounts?$select=dg_TestAccount&$expand=dg_TestAccount`);
+        expect(qs).to.equal(`accounts(${this.accountId})/contact_customer_accounts?$expand=dg_TestAccount`);
     }
 
     @test 
@@ -48,7 +48,7 @@ class Web_RetrieveRelated_QueryString {
             .expand(x => x.dg_TestAccount, x => [x.accountnumber])
             .getQueryString();
 
-        expect(qs).to.equal(`accounts(${this.accountId})/contact_customer_accounts?$select=dg_TestAccount&$expand=dg_TestAccount($select=accountnumber)`);
+        expect(qs).to.equal(`accounts(${this.accountId})/contact_customer_accounts?$expand=dg_TestAccount($select=accountnumber)`);
     }
 
     @test 

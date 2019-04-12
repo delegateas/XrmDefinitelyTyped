@@ -90,7 +90,7 @@ class Web_RetrieveMultiple_QueryString {
             .expand(x => x.contact_customer_accounts)
             .getQueryString();
 
-        expect(qs).to.equal("accounts?$select=contact_customer_accounts&$expand=contact_customer_accounts");
+        expect(qs).to.equal("accounts?$expand=contact_customer_accounts");
     }
 
     @test 
@@ -99,7 +99,7 @@ class Web_RetrieveMultiple_QueryString {
             .expand(x => x.contact_customer_accounts, x => [x.fullname, x.emailaddress1])
             .getQueryString();
 
-        expect(qs).to.equal("accounts?$select=contact_customer_accounts&$expand=contact_customer_accounts($select=fullname,emailaddress1)");
+        expect(qs).to.equal("accounts?$expand=contact_customer_accounts($select=fullname,emailaddress1)");
     }
 
     @test

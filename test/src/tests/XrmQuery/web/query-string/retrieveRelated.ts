@@ -37,7 +37,7 @@ class Web_RetrieveRelated_QueryString {
             .expand(x => x.dg_TestAccount)
             .getQueryString();
 
-        expect(qs).to.equal(`accounts(${this.accountId})/primarycontactid?$select=dg_TestAccount&$expand=dg_TestAccount`);
+        expect(qs).to.equal(`accounts(${this.accountId})/primarycontactid?$expand=dg_TestAccount`);
     }
 
     @test
@@ -46,7 +46,7 @@ class Web_RetrieveRelated_QueryString {
             .expand(x => x.dg_TestAccount, x => [x.accountnumber])
             .getQueryString();
 
-        expect(qs).to.equal(`accounts(${this.accountId})/primarycontactid?$select=dg_TestAccount&$expand=dg_TestAccount($select=accountnumber)`);
+        expect(qs).to.equal(`accounts(${this.accountId})/primarycontactid?$expand=dg_TestAccount($select=accountnumber)`);
     }
 
     @test
@@ -55,7 +55,7 @@ class Web_RetrieveRelated_QueryString {
             .expand(x => x.contact_customer_contacts, x => [x.fullname], { top: 2, sortOrder: SortOrder.Descending, orderBy: x => x.firstname })
             .getQueryString();
 
-        expect(qs).to.equal(`accounts(${this.accountId})/primarycontactid?$select=contact_customer_contacts&$expand=contact_customer_contacts($select=fullname;$top=2;$orderby=firstname desc)`);
+        expect(qs).to.equal(`accounts(${this.accountId})/primarycontactid?$expand=contact_customer_contacts($select=fullname;$top=2;$orderby=firstname desc)`);
     }
 
     @test
@@ -73,6 +73,6 @@ class Web_RetrieveRelated_QueryString {
                     )
             }).getQueryString();
 
-        expect(qs).to.equal(`accounts(${this.accountId})/primarycontactid?$select=contact_customer_contacts&$expand=contact_customer_contacts($select=fullname;$filter=(firstname eq '${contactFirstName}' and contactid eq ${contactId}))`);
+        expect(qs).to.equal(`accounts(${this.accountId})/primarycontactid?$expand=contact_customer_contacts($select=fullname;$filter=(firstname eq '${contactFirstName}' and contactid eq ${contactId}))`);
     }
 }

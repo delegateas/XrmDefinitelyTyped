@@ -37,7 +37,7 @@ class Web_Retrieve_QueryString {
             .expand(x => x.contact_customer_accounts)
             .getQueryString();
 
-        expect(qs).to.equal(`accounts(${this.accountId})?$select=contact_customer_accounts&$expand=contact_customer_accounts`);
+        expect(qs).to.equal(`accounts(${this.accountId})?$expand=contact_customer_accounts`);
     }
 
     @test
@@ -46,7 +46,7 @@ class Web_Retrieve_QueryString {
             .expand(x => x.contact_customer_accounts, x => [x.fullname, x.emailaddress1])
             .getQueryString();
 
-        expect(qs).to.equal(`accounts(${this.accountId})?$select=contact_customer_accounts&$expand=contact_customer_accounts($select=fullname,emailaddress1)`);
+        expect(qs).to.equal(`accounts(${this.accountId})?$expand=contact_customer_accounts($select=fullname,emailaddress1)`);
     }
 
     @test
@@ -55,7 +55,7 @@ class Web_Retrieve_QueryString {
             .expand(x => x.contact_customer_accounts, x => [x.fullname], { top: 2, sortOrder: SortOrder.Descending, orderBy: x => x.firstname })
             .getQueryString();
 
-        expect(qs).to.equal(`accounts(${this.accountId})?$select=contact_customer_accounts&$expand=contact_customer_accounts($select=fullname;$top=2;$orderby=firstname desc)`);
+        expect(qs).to.equal(`accounts(${this.accountId})?$expand=contact_customer_accounts($select=fullname;$top=2;$orderby=firstname desc)`);
     }
 
     @test
@@ -75,7 +75,7 @@ class Web_Retrieve_QueryString {
             )
             .getQueryString();
 
-        expect(qs).to.equal(`accounts(${this.accountId})?$select=contact_customer_accounts&$expand=contact_customer_accounts($select=fullname;$filter=(firstname eq '${contactFirstName}' and contactid eq ${contactId}))`);
+        expect(qs).to.equal(`accounts(${this.accountId})?$expand=contact_customer_accounts($select=fullname;$filter=(firstname eq '${contactFirstName}' and contactid eq ${contactId}))`);
     }
 
     @test
@@ -88,6 +88,6 @@ class Web_Retrieve_QueryString {
             )
             .getQueryString();
 
-        expect(qs).to.equal(`accounts(${this.accountId})?$select=contact_customer_accounts&$expand=contact_customer_accounts($select=fullname;$filter=firstname eq '*._-~''!()%2F%2B@%3F=:%23;,$%26%20%25%5E%5B%5D%7B%7D%3C%3E%22%5C%7C%60')`);
+        expect(qs).to.equal(`accounts(${this.accountId})?$expand=contact_customer_accounts($select=fullname;$filter=firstname eq '*._-~''!()%2F%2B@%3F=:%23;,$%26%20%25%5E%5B%5D%7B%7D%3C%3E%22%5C%7C%60')`);
     }
 }

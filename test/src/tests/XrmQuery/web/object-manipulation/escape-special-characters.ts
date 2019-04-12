@@ -46,7 +46,7 @@ class Web_Retrieve_EscapeSpecialCharacters extends FakeRequests {
         expect(this.requests.length).to.equal(1);
         var req = this.requests[0];
         expect(req.method).to.equal("GET");
-        expect(req.url).to.equal(`accounts(${accountId})?$select=contact_customer_accounts&$expand=contact_customer_accounts($select=fullname;$filter=firstname%20eq%20'*._-~''!()%2F%2B@%3F=:%23;,$%26%20%25%5E%5B%5D%7B%7D%3C%3E%22%5C%7C%60')`);
+        expect(req.url).to.equal(`accounts(${accountId})?$expand=contact_customer_accounts($select=fullname;$filter=firstname%20eq%20'*._-~''!()%2F%2B@%3F=:%23;,$%26%20%25%5E%5B%5D%7B%7D%3C%3E%22%5C%7C%60')`);
 
         // Respond with empty result
         req.respond(200, {}, JSON.stringify({}));

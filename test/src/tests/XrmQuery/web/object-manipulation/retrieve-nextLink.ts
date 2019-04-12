@@ -78,7 +78,7 @@ class Web_Retrieve_NextLink extends FakeRequests {
         expect(this.requests.length).to.equal(1);
         var req = this.requests[0];
         expect(req.method).to.equal("GET");
-        expect(req.url).to.equal(`accounts(${this.accountId})?$select=contact_customer_accounts&$expand=contact_customer_accounts`);
+        expect(req.url).to.equal(`accounts(${this.accountId})?$expand=contact_customer_accounts`);
 
         // Respond with initial record and with expand-nextLink
         req.respond(200, {}, JSON.stringify({
