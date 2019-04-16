@@ -1,4 +1,7 @@
 # Release Notes
+### 4.3.1 - April 16 2019
+* Fixed bug when using expand
+
 ### 4.3.0 - March 11 2019
 * Added support for synchronous execution of XrmQuery. Should be used sparingly. (@majakubowski)
 
