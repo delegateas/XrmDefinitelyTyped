@@ -1,4 +1,7 @@
 # Release Notes
+### 4.3.3 - May 24 2019
+* Added support for emojis through labelMappings
+
 ### 4.3.2 - May 24 2019
 * Fixed bug with stripGUID (@altmank)
 
