@@ -20,8 +20,7 @@ namespace Filter {
   function queryFunc<T>(funcName: string, val1: T): WebFilter;
   function queryFunc<T, V>(funcName: string, val1: T, val2: V): WebFilter;
   function queryFunc<T, V>(funcName: string, val1: T, val2?: V): WebFilter {
-    if (val2 != undefined) {
-      debugger;
+    if (val2 !== undefined) {
       return <WebFilter><any>(`Microsoft.Dynamics.CRM.${funcName}(PropertyName='${parsePropertyName(getVal(val1))}',PropertyValues=${getVal(val2)})`);
     }
       else {
@@ -32,12 +31,12 @@ namespace Filter {
   function parsePropertyName(name: string) {
     const idxStart = name.indexOf(GUID_START);
     const idxEnd = name.indexOf(GUID_ENDING);
-    if (idxStart == -1 && idxEnd == -1) return name;
+    if (idxStart === -1 && idxEnd === -1) return name;
     return `${name.substr(idxStart+1, idxEnd-1)}`;
   }
 
   function getVal(v: any): string {
-    if (v == null) return "null"
+    if (v === null) return "null"
     if (typeof v === "string") return `'${encodeSpecialCharacters(v)}'`;
     if (v instanceof Date) return encodeSpecialCharacters(v.toISOString());
     if (v instanceof Array) return `[${v.map(getVal).join(",")}]`;
