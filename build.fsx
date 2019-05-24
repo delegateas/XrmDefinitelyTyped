@@ -193,7 +193,7 @@ Target "Test" (fun _ ->
   Npm 
     (fun p ->
       { p with
-            Command = (Run "test")
+            Command = (NpmCommand.Test)
             WorkingDirectory = @"test"
       }
     )

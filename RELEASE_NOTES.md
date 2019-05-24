@@ -1,4 +1,7 @@
 # Release Notes
+### 4.3.2 - May 24 2019
+* Fixed bug with stripGUID (@altmank)
+
 ### 4.3.1 - April 16 2019
 * Fixed bug when using expand
 
