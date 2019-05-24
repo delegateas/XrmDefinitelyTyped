@@ -32,6 +32,7 @@ type XdtGenerationSettings = {
   viewNs: OptionalNamespace
   formIntersects: Intersect [] option
   viewIntersects: Intersect [] option
+  labelMapping: (string * string)[] option
   generateMappings: bool
 }
 

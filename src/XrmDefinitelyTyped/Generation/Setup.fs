@@ -94,7 +94,7 @@ let intersectViews (viewDict: IDictionary<Guid, XrmView>) viewsToIntersect =
   else Seq.empty
 
 /// Interprets the raw CRM data into an intermediate state used for further generation
-let interpretCrmData out formsToIntersect viewsToIntersect (rawState: RawState) =
+let interpretCrmData out formsToIntersect viewsToIntersect (rawState: RawState) labelMapping =
   printf "Interpreting data..."
 
   let schemaNames = 
@@ -103,7 +103,7 @@ let interpretCrmData out formsToIntersect viewsToIntersect (rawState: RawState) 
       |> Set.ofArray
 
   let entityMetadata =
-    rawState.metadata |> Array.Parallel.map (interpretEntity schemaNames rawState.nameMap)
+    rawState.metadata |> Array.Parallel.map (interpretEntity schemaNames rawState.nameMap labelMapping)
 
   let viewDict =
     rawState.viewData 

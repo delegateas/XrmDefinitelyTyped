@@ -55,7 +55,7 @@ let interpretNormalAttribute aType (a:AttributeMetadata) (options:OptionSet opti
   | _                           -> toSome typeConv a.AttributeType, SpecialType.Default
 
 
-let interpretAttribute nameMap entityNames (a: AttributeMetadata) =
+let interpretAttribute nameMap entityNames labelMapping (a: AttributeMetadata) =
   let aType = a.AttributeType.GetValueOrDefault()
   if a.AttributeOf <> null ||
       (aType = AttributeTypeCode.Virtual && a.AttributeTypeName <> AttributeTypeDisplayName.MultiSelectPicklistType)||
@@ -64,7 +64,7 @@ let interpretAttribute nameMap entityNames (a: AttributeMetadata) =
 
   let options =
     match a with
-    | :? EnumAttributeMetadata as eam -> interpretOptionSet entityNames eam.OptionSet
+    | :? EnumAttributeMetadata as eam -> interpretOptionSet entityNames eam.OptionSet labelMapping
     | _ -> None
 
   let targetEntitySets =
@@ -159,12 +159,12 @@ let interpretM2MRelationship schemaNames nameMap logicalName (rel: ManyToManyRel
     rSchema, xRel
 
 
-let interpretEntity schemaNames nameMap (metadata:EntityMetadata) =
+let interpretEntity schemaNames nameMap labelMapping (metadata:EntityMetadata) =
   if isNull metadata.Attributes then failwith "No attributes found!"
 
   let optionSets, attributes = 
     metadata.Attributes 
-    |> Array.map (interpretAttribute nameMap schemaNames)
+    |> Array.map (interpretAttribute nameMap schemaNames labelMapping)
     |> Array.unzip
 
   let attributes = 

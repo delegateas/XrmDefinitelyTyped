@@ -47,6 +47,15 @@ let getGenerationSettings parsedArgs =
       |> Array.choose id
     name, guids)
 
+  let labelMapping = getListArg parsedArgs "labelMappings" (fun definition -> 
+    let nameSplit = definition.IndexOf(":")
+    if nameSplit < 0 then failwithf "Missing name specification in label Mapping list at: '%s'" definition
+
+    let label = definition.Substring(0, nameSplit)
+    let value = definition.Substring(nameSplit + 1)
+
+    label, value)
+
   let nsSanitizer ns =
     if String.IsNullOrWhiteSpace ns then String.Empty
     else sanitizeString ns
@@ -63,6 +72,7 @@ let getGenerationSettings parsedArgs =
     viewNs = getArg parsedArgs "views" nsSanitizer
     formIntersects = intersects "formintersect" 
     viewIntersects = intersects "viewintersect"
+    labelMapping = labelMapping
     generateMappings = getArg parsedArgs "generateMappings" parseBoolish ?| false
   }
 

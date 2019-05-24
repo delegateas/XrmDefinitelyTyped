@@ -7,28 +7,29 @@ open Utility
 open IntermediateRepresentation
 
 
-let getLabelString (label:Label) =
+let getLabelString (label:Label) labelMapping =
   try
-    label.UserLocalizedLabel.Label 
+    label.UserLocalizedLabel.Label
+    |> Utility.applyLabelMappings labelMapping
     |> Utility.sanitizeString
   with _ -> emptyLabel
 
-let getMetadataString (metadata:OptionSetMetadataBase) =
-  getLabelString metadata.DisplayName
+let getMetadataString (metadata:OptionSetMetadataBase) labelMapping =
+  getLabelString metadata.DisplayName labelMapping
   |> fun name -> 
     if name <> emptyLabel then name
     else metadata.Name
 
 
 /// Interprets CRM OptionSetMetadata into intermediate type
-let interpretOptionSet entityNames (metadata:OptionSetMetadataBase) =
+let interpretOptionSet entityNames (metadata:OptionSetMetadataBase) labelMapping =
   match metadata with
   | :? OptionSetMetadata as osm ->
 
     let options =
       osm.Options
       |> Seq.map (fun opt ->
-        { label = getLabelString opt.Label
+        { label = getLabelString opt.Label labelMapping
           value = opt.Value.GetValueOrDefault() }) 
 
     let displayName = 
@@ -56,9 +57,9 @@ let interpretOptionSet entityNames (metadata:OptionSetMetadataBase) =
 
   | :? BooleanOptionSetMetadata as bosm ->
     let options =
-      [|  { label = getLabelString bosm.TrueOption.Label
+      [|  { label = getLabelString bosm.TrueOption.Label labelMapping
             value = 1 }
-          { label = getLabelString bosm.FalseOption.Label
+          { label = getLabelString bosm.FalseOption.Label labelMapping
             value = 0 } |]
 
     { displayName = metadata.Name

@@ -59,6 +59,11 @@ type Args private () =
       description="Set to true to avoid generating types for inactive forms."
       required=false }
 
+    { command="labelMappings";
+      altCommands=["lm"]
+      description="Labels unicode characters that should not be displayed in code and instead be represented by a different string: Example ✔️ to Checkmark."
+      required=false }
+
     { command="oneFile"
       altCommands=["of"]
       description="Set to true if all the dynamic parts of the generated declarations should be put into a single file."
