@@ -4,22 +4,35 @@ open TsStringUtil
 open IntermediateRepresentation
 open Utility
 
-/// Translate internal attribute type to corresponding TypeScript interface.
-let getAttributeInterface = function
-  | AttributeType.OptionSet ty  -> TsType.SpecificGeneric ("Xrm.OptionSetAttribute", [ ty ])
-  | AttributeType.MultiSelectOptionSet ty
-                                -> TsType.SpecificGeneric ("Xrm.MultiSelectOptionSetAttribute", [ ty ])
-  | AttributeType.Default ty    -> TsType.SpecificGeneric ("Xrm.Attribute", [ ty ])
-  | AttributeType.Lookup ty     -> TsType.Custom (sprintf "Xrm.LookupAttribute<%s>" ty)
-  | x                           -> TsType.Custom (sprintf "Xrm.%AAttribute" x)
+let unionWithNull t canBeNull = 
+  if canBeNull
+  then 
+    TsType.Union [t;TsType.Null]
+  else
+    t
 
-let getAttributeMap = function
-  | AttributeType.OptionSet ty
-  | AttributeType.MultiSelectOptionSet ty
-  | AttributeType.Default ty    -> ty
-  | AttributeType.Number        -> TsType.Number
-  | AttributeType.Date          -> TsType.Date
-  | AttributeType.Lookup ty     -> TsType.Custom (sprintf "Xrm.EntityReference<%s>" ty)
+/// Translate internal attribute type to corresponding TypeScript interface.
+let getAttributeInterface ty canBeNull = 
+  let returnType = 
+    match ty with
+    | AttributeType.OptionSet ty  -> TsType.SpecificGeneric ("Xrm.OptionSetAttribute", [ ty ])
+    | AttributeType.MultiSelectOptionSet ty
+                                -> TsType.SpecificGeneric ("Xrm.MultiSelectOptionSetAttribute", [ ty ])
+    | AttributeType.Default ty    -> TsType.SpecificGeneric ("Xrm.Attribute", [ ty ])
+    | AttributeType.Lookup ty     -> TsType.Custom (sprintf "Xrm.LookupAttribute<%s>" ty)
+    | x                           -> TsType.Custom (sprintf "Xrm.%AAttribute" x)
+  unionWithNull returnType canBeNull
+
+let getAttributeMap ty canBeNull = 
+  let returnType = 
+    match ty with
+    | AttributeType.OptionSet ty
+    | AttributeType.MultiSelectOptionSet ty
+    | AttributeType.Default ty    -> ty
+    | AttributeType.Number        -> TsType.Number
+    | AttributeType.Date          -> TsType.Date
+    | AttributeType.Lookup ty     -> TsType.Custom (sprintf "Xrm.EntityReference<%s>" ty)
+  unionWithNull returnType canBeNull
  
 /// Gets the corresponding enum of the option set if possible
 let getOptionSetType = function
@@ -28,13 +41,13 @@ let getOptionSetType = function
   | _ -> TsType.Number
 
 /// Translate internal control type to corresponding TypeScript interface.
-let getControlInterface cType aType isBPF =
+let getControlInterface cType aType canBeNull =
   let returnType = 
     match aType, cType with
     | None, ControlType.Default       -> TsType.Custom "Xrm.BaseControl"
     | Some (AttributeType.Default TsType.String), ControlType.Default
                                       -> TsType.Custom "Xrm.StringControl"
-    | Some at, ControlType.Default    -> TsType.SpecificGeneric ("Xrm.Control", [ getAttributeInterface at ]) 
+    | Some at, ControlType.Default    -> TsType.SpecificGeneric ("Xrm.Control", [ getAttributeInterface at canBeNull ]) 
     | aType, ControlType.OptionSet    -> TsType.SpecificGeneric ("Xrm.OptionSetControl", [ getOptionSetType aType ])
     | aType, ControlType.MultiSelectOptionSet
                                       -> TsType.SpecificGeneric ("Xrm.MultiSelectOptionSetControl", [ getOptionSetType aType ])
@@ -42,11 +55,7 @@ let getControlInterface cType aType isBPF =
     | _, ControlType.Lookup tes       -> TsType.Custom (sprintf "Xrm.LookupControl<%s>" tes)
     | _, ControlType.SubGrid tes      -> TsType.Custom (sprintf "Xrm.SubGridControl<%s>" tes)
     | _, x                            -> TsType.Custom (sprintf "Xrm.%AControl" x)
-  if isBPF
-  then 
-    TsType.Union [returnType;TsType.Null]
-  else
-    returnType
+  unionWithNull returnType canBeNull
 
 /// Default collection functions which also use the "get" function name.
 let defaultCollectionFuncs defaultType = 
@@ -69,9 +78,9 @@ let defaultCollectionFuncs defaultType =
 let getAttributeCollection (attributes: XrmFormAttribute list) =
   let getFuncs = 
     attributes
-    |> List.map (fun (name,ty) ->
+    |> List.map (fun (name,ty,canBeNull) ->
       let paramType = getConstantType name
-      let returnType = getAttributeInterface ty
+      let returnType = getAttributeInterface ty canBeNull
       Function.Create("get", [Variable.Create("name", paramType)], returnType))
 
   let defaultFuncs = defaultCollectionFuncs "Xrm.Attribute<any>"
@@ -82,8 +91,8 @@ let getAttributeCollection (attributes: XrmFormAttribute list) =
 let getAttributeCollectionMap (attributes: XrmFormAttribute list) =
   let getVars = 
     attributes
-    |> List.map (fun (name,ty) ->
-      let returnType = getAttributeMap ty
+    |> List.map (fun (name,ty,canBeNull) ->
+      let returnType = getAttributeMap ty canBeNull
       Variable.Create(name, returnType))
       
   Interface.Create("AttributeValueMap", vars = getVars)
@@ -96,9 +105,9 @@ let includeControl (name: string) crmVersion =
 let getControlCollection (controls: XrmFormControl list) (crmVersion: Version)=
   let getFuncs = 
     controls
-    |> List.map (fun (name, aType, cType, isBPF) ->
+    |> List.map (fun (name, aType, cType, canBeNull) ->
       let paramType = getConstantType name
-      let returnType = getControlInterface cType aType  isBPF         
+      let returnType = getControlInterface cType aType  canBeNull         
       match includeControl name crmVersion with
       | false -> None
       | true ->
@@ -114,8 +123,8 @@ let getControlCollection (controls: XrmFormControl list) (crmVersion: Version)=
 let getControlCollectionMap (controls: XrmFormControl list) (crmVersion: Version)=
   let getVars = 
     controls
-    |> List.map (fun (name, aType, cType, isBPF) ->
-      let returnType = getControlInterface cType aType isBPF          
+    |> List.map (fun (name, aType, cType, canBeNull) ->
+      let returnType = getControlInterface cType aType canBeNull          
       match includeControl name crmVersion with
       | false -> None
       | true -> Some (Variable.Create(name, returnType))
@@ -161,9 +170,9 @@ let getSectionCollections (tabs: XrmFormTab list) =
 let getAttributeFuncs (attributes: XrmFormAttribute list) =
   let attrFuncs = 
     attributes
-    |> List.map (fun (name, ty) ->
+    |> List.map (fun (name, ty, canBeNull) ->
       let paramType = getConstantType name
-      let returnType = getAttributeInterface ty
+      let returnType = getAttributeInterface ty canBeNull
       Function.Create("getAttribute", 
         [ Variable.Create("attributeName", paramType) ], returnType))
 
@@ -179,9 +188,9 @@ let getAttributeFuncs (attributes: XrmFormAttribute list) =
 let getControlFuncs (controls: XrmFormControl list) (crmVersion: Version)=
   let ctrlFuncs = 
     controls
-    |> List.map (fun (name, aType, cType, isBPF) ->
+    |> List.map (fun (name, aType, cType, canBeNull) ->
       let paramType = getConstantType name
-      let returnType = getControlInterface cType aType isBPF
+      let returnType = getControlInterface cType aType canBeNull
       match includeControl name crmVersion with
       | false -> None
       | true ->

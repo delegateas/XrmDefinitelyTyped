@@ -106,6 +106,6 @@ let interpretBpfs (workflows:Entity[]): Map<string,ControlField list> =
     lname, 
     x |> Array.map snd 
     |> List.concat 
-    |> List.map (fun (id, datafieldname, controlClass, isBPF, tes) -> 
-      sprintf "header_process_%s" id, datafieldname, controlClass, isBPF, tes))
+    |> List.map (fun (id, datafieldname, controlClass, canBeNull, tes) -> 
+      sprintf "header_process_%s" id, datafieldname, controlClass, canBeNull, tes))
   |> Map.ofArray

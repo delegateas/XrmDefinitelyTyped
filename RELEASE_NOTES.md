@@ -1,4 +1,7 @@
 # Release Notes
+### 4.3.4 - May 28 2019
+* Handled composite controls (address1_composite, address2_composite, fullname) not being available in UCI by marking them as possibly null
+
 ### 4.3.3 - May 24 2019
 * Added support for emojis through labelMappings
 
