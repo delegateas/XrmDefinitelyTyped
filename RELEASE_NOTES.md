@@ -1,4 +1,7 @@
 # Release Notes
+### 4.3.5 - June 04 2019
+* XrmQuery now checks for _guid at the end of the attribute name instead of guid in the name (@mdocter)
+
 ### 4.3.4 - May 28 2019
 * Handled composite controls (address1_composite, address2_composite, fullname) not being available in UCI by marking them as possibly null
 
