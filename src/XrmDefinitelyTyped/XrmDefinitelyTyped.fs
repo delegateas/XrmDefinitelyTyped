@@ -69,7 +69,7 @@ type XrmDefinitelyTyped private () =
         ?>>? (String.IsNullOrWhiteSpace >> not)
         ?| "XdtData.json"
 
-      let serializer = DataContractJsonSerializer(typeof<RawState>)
+      let serializer = DataContractJsonSerializer(typeof<RawState>, null, System.Int32.MaxValue, true, null, false)
       use stream = new FileStream(filePath, FileMode.Create)
 
       retrieveRawState xrmAuth rSettings
