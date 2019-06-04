@@ -1313,11 +1313,13 @@ namespace XQW {
 	 * @param name
 	 */
   function xrmQueryToCrm(name: string) {
-    const idx = name.indexOf(GUID_ENDING);
-    if (idx == -1) return name;
-    return `_${name.substr(0, idx)}_value`;
+    // check if the attribute name ends with '_guid'
+    const endsWithUnderscoreGuid = name.match(/_guid$/);
+    if (!endsWithUnderscoreGuid) 
+      return name;
+    
+    return `_${name.substr(0, endsWithUnderscoreGuid.index)}_value`;
   }
-
 
 	/**
 	 * Helper function to perform tagged execution and mapping to array of selects

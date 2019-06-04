@@ -29,6 +29,19 @@ class Web_RetrieveMultiple_QueryString {
         expect(qs).to.equal("accounts?$select=name,accountnumber");
     }
 
+
+
+    @test 
+    "simple select with _guid in attribute name"() {
+        const qs = XrmQuery.retrieveMultiple(x => x.accounts)
+            .select(x => [x.name, x.dg_somestringwith_guids])
+            .getQueryString();
+
+        expect(qs).to.equal("accounts?$select=name,dg_somestringwith_guids");
+    }
+
+    
+
     @test 
     "multiple query settings"() {
         const qs = XrmQuery.retrieveMultiple(x => x.accounts)

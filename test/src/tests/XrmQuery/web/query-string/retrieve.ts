@@ -32,6 +32,17 @@ class Web_Retrieve_QueryString {
 
 
     @test
+    "simple select with _guid in attribute name"() {
+        const qs = XrmQuery.retrieve(x => x.accounts, this.accountId)
+            .select(x => [x.name, x.dg_somestringwith_guids])
+            .getQueryString();
+
+        expect(qs).to.equal(`accounts(${this.accountId})?$select=name,dg_somestringwith_guids`);
+    }
+
+
+
+    @test
     "simple expand"() {
         const qs = XrmQuery.retrieve(x => x.accounts, this.accountId)
             .expand(x => x.contact_customer_accounts)
