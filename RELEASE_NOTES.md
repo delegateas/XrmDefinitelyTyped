@@ -1,4 +1,8 @@
 # Release Notes
+
+### 4.3.7 - June 07 2019
+* Added support for function `setEntityTypes` on lookup control (@san-86)
+
 ### 4.3.6 - June 07 2019
 * It is now possible to set ownerId using XrmQuery. Using either .update or .associateSingle
 
