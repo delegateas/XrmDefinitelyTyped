@@ -595,7 +595,7 @@ namespace XQW {
       }
 
     executeSync() : T | Error {
-        let ret: T | Error;
+        let ret: T | Error = Error("Undefined behavior");
         this.executeRaw((x) => { ret = x }, (err) => { ret = err; }, true, true);
         return ret;
     };
