@@ -928,7 +928,17 @@ declare namespace Xrm {
      * @param number The value of the option you want to remove.
      */
     removeOption(number: number): void;
-  }
+    }
+
+
+    interface LookupControl<T extends string> extends Control<LookupAttribute<T>> {
+
+        /**
+        * Use this method to set which entity types the lookup control will show the user
+        */
+        setEntityTypes(entityTypes: Array<string>): void;
+
+    }
 }
 
 interface Xrm<T extends Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>> extends BaseXrm {
