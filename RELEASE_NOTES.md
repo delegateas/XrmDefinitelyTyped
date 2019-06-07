@@ -1,4 +1,7 @@
 # Release Notes
+### 4.3.6 - June 07 2019
+* It is now possible to set ownerId using XrmQuery. Using either .update or .associateSingle
+
 ### 4.3.5 - June 04 2019
 * XrmQuery now checks for _guid at the end of the attribute name instead of guid in the name (@mdocter)
 
