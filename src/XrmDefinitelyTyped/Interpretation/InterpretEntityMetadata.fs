@@ -110,6 +110,11 @@ let interpretRelationship schemaNames nameMap referencing (rel: OneToManyRelatio
     
   Map.tryFind rLogical nameMap
   ?|> fun (rSchema, rSetName) ->
+    let setNames =
+      match rSetName = "owners" with
+      | false -> [|rSchema,rSetName|]
+      | true -> [|"Team","teams";"SystemUser","systemusers"|]
+    
     let name =
       match rel.ReferencedEntity = rel.ReferencingEntity with
       | false -> rel.SchemaName
@@ -118,21 +123,23 @@ let interpretRelationship schemaNames nameMap referencing (rel: OneToManyRelatio
         | true  -> sprintf "Referencing%s" rel.SchemaName
         | false -> sprintf "Referenced%s" rel.SchemaName
 
-    let xRel = 
-      { XrmRelationship.schemaName = name
-        attributeName = 
-          if referencing then rel.ReferencingAttribute 
-          else rel.ReferencedAttribute
-        navProp = 
-          if referencing then rel.ReferencingEntityNavigationPropertyName
-          else rel.ReferencedEntityNavigationPropertyName
-          |> sanitizeNavigationProptertyName
-        referencing = referencing
-        relatedSetName = rSetName
-        relatedSchemaName = rSchema 
-      }
+    setNames
+    |> Array.map (fun (schema,setName) ->
+      let xRel = 
+        { XrmRelationship.schemaName = name
+          attributeName = 
+            if referencing then rel.ReferencingAttribute 
+            else rel.ReferencedAttribute
+          navProp = 
+            if referencing then rel.ReferencingEntityNavigationPropertyName
+            else rel.ReferencedEntityNavigationPropertyName
+            |> sanitizeNavigationProptertyName
+          referencing = referencing
+          relatedSetName = setName
+          relatedSchemaName = schema 
+        }
 
-    rSchema, xRel
+      rSchema, xRel)
 
 
 let interpretM2MRelationship schemaNames nameMap logicalName (rel: ManyToManyRelationshipMetadata) =
@@ -181,7 +188,10 @@ let interpretEntity schemaNames nameMap labelMapping (metadata:EntityMetadata) =
 
   let handleOneToMany referencing = function
     | null  -> Array.empty
-    | x     -> x |> Array.choose (interpretRelationship schemaNames nameMap referencing)
+    | x     -> 
+      x 
+      |> Array.choose (interpretRelationship schemaNames nameMap referencing)
+      |> Array.concat
     
   let handleManyToMany logicalName = function
     | null  -> Array.empty

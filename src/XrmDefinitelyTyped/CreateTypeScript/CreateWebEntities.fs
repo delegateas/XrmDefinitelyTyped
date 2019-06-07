@@ -69,6 +69,23 @@ let assignUniqueNames =
 let concatDistinctSort = 
   List.concat >> List.distinctBy (fun (x: Variable) -> x.name) >> sortByName
 
+let mergeOwnerId (vars: Variable list) =
+  let owner, notOwner =
+    vars
+    |> List.partition (fun var -> var.name = "ownerid")
+
+  let combinedOwner =
+    let varTypes =
+      owner
+      |> List.fold (fun (types: TsType list) var ->
+        match var.varType with
+        | None -> types
+        | Some t -> t :: types
+      ) []
+    Variable.Create("ownerid",TsType.Intersection varTypes)
+  combinedOwner :: notOwner
+
+
 let hasFormattedValue a = 
   match a.specialType, a.varType with
   | SpecialType.EntityReference, _
@@ -287,7 +304,7 @@ let getEntityInterfaceLines ns e =
       { entityInterfaces.formattedResult with vars = e.attributes |> List.map getFormattedResultVariable |> concatDistinctSort }
       { entityInterfaces.result with vars = entityTag :: (List.map getResultVariable e.attributes |> concatDistinctSort) }
 
-      { entityInterfaces.oneRelated with vars = e.availableRelationships |> List.choose (getRelatedVariable ns true) |> assignUniqueNames |> sortByName }
+      { entityInterfaces.oneRelated with vars = e.availableRelationships |> List.choose (getRelatedVariable ns true) |> mergeOwnerId |> assignUniqueNames |> sortByName }
       { entityInterfaces.manyRelated with vars = e.availableRelationships |> List.choose (getRelatedVariable ns false) |> assignUniqueNames |> sortByName }
     ]
     
