@@ -1,4 +1,6 @@
 # Release Notes
+### 4.3.8 - June 11 2019
+* Fixed error with organization owned entities
 
 ### 4.3.7 - June 07 2019
 * Added support for function `setEntityTypes` on lookup control (@san-86)
