@@ -73,17 +73,20 @@ let mergeOwnerId (vars: Variable list) =
   let owner, notOwner =
     vars
     |> List.partition (fun var -> var.name = "ownerid")
-
-  let combinedOwner =
-    let varTypes =
-      owner
-      |> List.fold (fun (types: TsType list) var ->
-        match var.varType with
-        | None -> types
-        | Some t -> t :: types
-      ) []
-    Variable.Create("ownerid",TsType.Intersection varTypes)
-  combinedOwner :: notOwner
+  
+  match owner.IsEmpty with
+  | true -> notOwner
+  | false ->
+    let combinedOwner =
+      let varTypes =
+        owner
+        |> List.fold (fun (types: TsType list) var ->
+          match var.varType with
+          | None -> types
+          | Some t -> t :: types
+        ) []
+      Variable.Create("ownerid",TsType.Intersection varTypes)
+    combinedOwner :: notOwner
 
 
 let hasFormattedValue a = 
