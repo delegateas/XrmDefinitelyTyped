@@ -1,4 +1,7 @@
 # Release Notes
+### 4.3.9 - June 11 2019
+* Fixed errors related to 4.3.6 with the REST API and expand for the Web API
+
 ### 4.3.8 - June 11 2019
 * Fixed error with organization owned entities
 
