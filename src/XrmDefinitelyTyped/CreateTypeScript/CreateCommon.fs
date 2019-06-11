@@ -21,3 +21,12 @@ let wrapNamesInNsIfAny ns =
   match System.String.IsNullOrWhiteSpace ns with
   | true -> id
   | false -> List.map (wrapNameInNsIfAny ns)
+
+let rec intersectExpand isFirst (types: TsType list list) =
+  if types |> List.forall (fun x -> x.IsEmpty) then [] else
+  let current = 
+    match isFirst with
+    | true -> types.Head.Head 
+    | false -> TsType.Intersection (types |> List.map (fun x -> x.Head)) 
+      
+  current :: intersectExpand false (types |> List.map (fun x -> x.Tail))

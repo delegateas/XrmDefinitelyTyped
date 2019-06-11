@@ -7,6 +7,7 @@ open IntermediateRepresentation
 let strConcat = sprintf "%s%s"
 let superEntityName = "RestEntity"
 let mappingName = "RestMapping"
+let restExpand = "RestExpand"
 let baseName x = strConcat x "Base"
 let resultName x = strConcat x "Result"
 let selectName x = strConcat x "_Select"
@@ -17,10 +18,64 @@ let expName x = strConcat x "_Expand"
 let arrayOf = TsType.Custom >> TsType.Array
 
 let attribute t = TsType.Generic("RestAttribute",t)
-let expandable t u = TsType.Generic("RestExpand", sprintf "%s,%s" (selectName t) (selectName u))
+let expandable t u = TsType.SpecificGeneric(restExpand, [TsType.Custom (selectName t); TsType.Custom (selectName u)])
 let valueContainer t = TsType.SpecificGeneric("XQR.ValueContainerFilter", [ t ])
 let results = sprintf "%sResult" >> fun x -> TsType.Generic("SDK.Results", x) 
 let sortByName = List.sortBy (fun (x: Variable) -> x.name)
+
+let unwrapUnionIntersect (t: TsType) = 
+  match t with
+  | TsType.Any
+  | TsType.Array _
+  | TsType.Boolean
+  | TsType.Custom _
+  | TsType.Date
+  | TsType.Function _
+  | TsType.Generic _
+  | TsType.Never
+  | TsType.Null
+  | TsType.SpecificGeneric _
+  | TsType.Number
+  | TsType.String
+  | TsType.Undefined
+  | TsType.Void -> [t]
+  | TsType.Intersection x
+  | TsType.Union x -> x
+
+  
+let mergeOwnerExpand (vars: Variable list) =
+  let owner, notOwner =
+    vars
+    |> List.partition (fun var -> var.name.StartsWith("owner"))
+  
+  match owner.IsEmpty with
+  | true -> notOwner
+  | false ->
+    let combinedOwner =
+      let varTypes =
+        owner
+        |> List.fold (fun (types: TsType list list) var ->
+          match var.varType with
+          | None -> types
+          | Some (TsType.SpecificGeneric(_,t)) -> t :: types
+          | Some _ -> types
+        ) []
+      Variable.Create("ownerid", TsType.SpecificGeneric(restExpand, CreateCommon.intersectExpand true varTypes))
+    combinedOwner :: notOwner
+
+
+let groupByName (l: Variable list) =
+  l
+  |> List.groupBy (fun x -> x.name)
+  |> List.map (fun (name,xs) -> 
+    if xs.Length = 1 then xs.Head else
+    let types =
+      xs 
+      |> List.choose (fun x -> x.varType)
+      |> List.collect (fun x -> unwrapUnionIntersect x)
+      |> List.distinct
+    
+    Variable.Create(name, types |> TsType.Union))
 
 (** TypeScript helper functions *)
 let getSelectVariables selectName (list: XrmAttribute list) = 
@@ -91,10 +146,10 @@ let getEntityInterfaces ns e =
         vars = (e.attributes |> getOrgVariables |> sortByName),
         extends = [superEntityName])
       Interface.Create(entityName, 
-        vars = (e.availableRelationships |> getRelationshipVariables false |> sortByName),
+        vars = (e.availableRelationships |> getRelationshipVariables false |> groupByName |> sortByName),
         extends = [baseName])
       Interface.Create(resultName, 
-        vars = (e.availableRelationships |> getRelationshipVariables true |> sortByName),
+        vars = (e.availableRelationships |> getRelationshipVariables true |> groupByName |> sortByName),
         extends = [baseName])
 
       // XrmQuery interfaces
@@ -104,7 +159,7 @@ let getEntityInterfaces ns e =
       Interface.Create(filterName, 
         vars = (e.attributes |> getFilterVariables |> sortByName))
       Interface.Create(expName, 
-        vars = (e.availableRelationships |> getExpandVariables e.schemaName |> sortByName))
+        vars = (e.availableRelationships |> getExpandVariables e.schemaName |> mergeOwnerExpand |> sortByName))
 
     ]
 

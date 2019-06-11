@@ -11,6 +11,7 @@ let superEntityName = "WebEntity"
 let retrieveMapping = "WebMappingRetrieve"
 let cudaMapping = "WebMappingCUDA"
 let relatedMapping = "WebMappingRelated"
+let webExpand = "WebExpand"
 
 let baseName = withEnding "_Base"
 let fixedName = withEnding "_Fixed"
@@ -86,6 +87,26 @@ let mergeOwnerId (vars: Variable list) =
           | Some t -> t :: types
         ) []
       Variable.Create("ownerid",TsType.Intersection varTypes)
+    combinedOwner :: notOwner
+
+let mergeOwnerExpand (vars: Variable list) =
+  let owner, notOwner =
+    vars
+    |> List.partition (fun var -> var.name = "ownerid")
+
+  match owner.IsEmpty with
+  | true -> notOwner
+  | false ->
+    let combinedOwner =
+      let varTypes =
+        owner
+        |> List.fold (fun (types: TsType list list) var ->
+          match var.varType with
+          | None -> types
+          | Some (TsType.SpecificGeneric(_,t)) -> t :: types
+          | Some _ -> types
+        ) []
+      Variable.Create("ownerid", TsType.SpecificGeneric(webExpand, CreateCommon.intersectExpand true varTypes))
     combinedOwner :: notOwner
 
 
@@ -240,7 +261,7 @@ let getExpandVariable parent (r: XrmRelationship) =
       resultInterface
     ]
     
-  Variable.Create(r.navProp, TsType.SpecificGeneric("WebExpand", tys))
+  Variable.Create(r.navProp, TsType.SpecificGeneric(webExpand, tys))
   
 
 let getRelatedVariable ns referencing (r: XrmRelationship) = 
@@ -302,7 +323,7 @@ let getEntityInterfaceLines ns e =
 
       { entityInterfaces.select with vars = e.attributes |> List.map (getSelectVariable entityInterfaces.select) |> assignUniqueNames |> sortByName } 
       { entityInterfaces.filter with vars = e.attributes |> List.map getFilterVariable |> assignUniqueNames |> sortByName }
-      { entityInterfaces.expand with vars = e.availableRelationships |> List.map (getExpandVariable entityInterfaces.expand) |> assignUniqueNames |> sortByName }
+      { entityInterfaces.expand with vars = e.availableRelationships |> List.map (getExpandVariable entityInterfaces.expand) |> mergeOwnerExpand |> assignUniqueNames |> sortByName }
 
       { entityInterfaces.formattedResult with vars = e.attributes |> List.map getFormattedResultVariable |> concatDistinctSort }
       { entityInterfaces.result with vars = entityTag :: (List.map getResultVariable e.attributes |> concatDistinctSort) }
