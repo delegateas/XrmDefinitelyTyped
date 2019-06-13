@@ -42,28 +42,6 @@ let unwrapUnionIntersect (t: TsType) =
   | TsType.Intersection x
   | TsType.Union x -> x
 
-  
-let mergeOwnerExpand (vars: Variable list) =
-  let owner, notOwner =
-    vars
-    |> List.partition (fun var -> var.name.StartsWith("owner"))
-  
-  match owner.IsEmpty with
-  | true -> notOwner
-  | false ->
-    let combinedOwner =
-      let varTypes =
-        owner
-        |> List.fold (fun (types: TsType list list) var ->
-          match var.varType with
-          | None -> types
-          | Some (TsType.SpecificGeneric(_,t)) -> t :: types
-          | Some _ -> types
-        ) []
-      Variable.Create("ownerid", TsType.SpecificGeneric(restExpand, CreateCommon.intersectExpand true varTypes))
-    combinedOwner :: notOwner
-
-
 let groupByName (l: Variable list) =
   l
   |> List.groupBy (fun x -> x.name)
@@ -85,7 +63,7 @@ let getSelectVariables selectName (list: XrmAttribute list) =
 
 let getExpandVariables entityName (list: XrmRelationship list) = 
   list |> List.map (fun r -> 
-    Variable.Create(r.schemaName, expandable entityName r.relatedSchemaName))
+    Variable.Create(r.schemaName, expandable entityName r.relatedSchemaName),r.attributeName)
 
 
 let getOrgVariables (list: XrmAttribute list) = 
@@ -159,7 +137,7 @@ let getEntityInterfaces ns e =
       Interface.Create(filterName, 
         vars = (e.attributes |> getFilterVariables |> sortByName))
       Interface.Create(expName, 
-        vars = (e.availableRelationships |> getExpandVariables e.schemaName |> mergeOwnerExpand |> sortByName))
+        vars = (e.availableRelationships |> getExpandVariables e.schemaName |> CreateCommon.mergeOwnerExpand restExpand |> sortByName))
 
     ]
 
