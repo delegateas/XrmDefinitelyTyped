@@ -1,4 +1,7 @@
 # Release Notes
+### 4.3.10 - June 13 2019
+* Fixed errors related to 4.3.6 with expand for the REST and Web API
+
 ### 4.3.9 - June 11 2019
 * Fixed errors related to 4.3.6 with the REST API and expand for the Web API
 
