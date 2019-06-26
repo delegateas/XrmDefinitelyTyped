@@ -12,7 +12,6 @@
     BulkEdit = 6,
   }
 
-
   /**
    * Interface for an option set value.
    */
@@ -26,7 +25,6 @@
      */
     value: T;
   }
-
 
   /**
    * Interface for an user privileges for an attribute.
@@ -46,7 +44,6 @@
     canCreate: boolean;
   }
 
-
   /**
    * Interface for an entity reference for the Xrm.Page context.
    */
@@ -55,7 +52,6 @@
     entityType: T;
     name?: string | null;
   }
-
 
   /**
    * Interface of the base functionality of a collection without the 'get' function.
@@ -74,7 +70,6 @@
     getLength(): number;
   }
 
-
   interface ForEach<T> {
     /**
      * Iterates over the collection.
@@ -82,9 +77,8 @@
      * @param item The current object.
      * @param index The index of the current object.
      */
-    (item: T, index: number): any
+    (item: T, index: number): any;
   }
-
 
   /**
    * A collection of a certain type.
@@ -102,7 +96,7 @@
      */
     get(index: number): T;
 
-    /** 
+    /**
      * Gets the object with the given name in the collection.
      *
      * @param name The name of the desired object.
@@ -117,11 +111,10 @@
     get(chooser: CollectionChooser<T>): T[];
   }
 
-
   interface CollectionChooser<T> {
     /**
      * Delegate function to choose which objects from the collections should be returned.
-     * 
+     *
      * @param item Current object
      * @parem index Index of the current object
      */
@@ -131,64 +124,51 @@
   /**
    * A collection of attributes.
    */
-  interface AttributeCollection extends Collection<Attribute<any>> {
-  }
+  interface AttributeCollection extends Collection<Attribute<any>> {}
 
   /**
    * A collection of controls.
    */
 
-  interface ControlCollection extends Collection<AnyControl> {
-  }
+  interface ControlCollection extends Collection<AnyControl> {}
 
   /**
    * A collection of sections.
    */
-  interface SectionCollection extends Collection<PageSection> {
-  }
+  interface SectionCollection extends Collection<PageSection> {}
 
   /**
    * A collection of tabs.
    */
-  interface TabCollection extends Collection<PageTab<SectionCollection>> {
-  }
+  interface TabCollection extends Collection<PageTab<SectionCollection>> {}
 
   /**
    * A collection of attributes.
    */
-  interface AttributeCollectionBase extends CollectionBase<Attribute<any>> {
-  }
+  interface AttributeCollectionBase extends CollectionBase<Attribute<any>> {}
 
   /**
    * A collection of controls.
    */
-  interface ControlCollectionBase extends CollectionBase<AnyControl> {
-  }
+  interface ControlCollectionBase extends CollectionBase<AnyControl> {}
 
   /**
    * A collection of sections.
    */
-  interface SectionCollectionBase extends CollectionBase<PageSection> {
-  }
+  interface SectionCollectionBase extends CollectionBase<PageSection> {}
 
   /**
    * A collection of tabs.
    */
-  interface TabCollectionBase extends CollectionBase<PageTab<SectionCollectionBase>> {
-  }
+  interface TabCollectionBase extends CollectionBase<PageTab<SectionCollectionBase>> {}
 
-  type AttributeType =
-    "boolean" | "datetime" | "decimal" | "double" | "integer" | "lookup"
-    | "memo" | "money" | "optionset" | "string" | "multiselectoptionset";
+  type AttributeType = "boolean" | "datetime" | "decimal" | "double" | "integer" | "lookup" | "memo" | "money" | "optionset" | "string" | "multiselectoptionset";
 
-  type AttributeFormat =
-    "date" | "datetime" | "duration" | "email" | "language" | "none"
-    | "phone" | "text" | "textarea" | "tickersymbol" | "timezone" | "url"
+  type AttributeFormat = "date" | "datetime" | "duration" | "email" | "language" | "none" | "phone" | "text" | "textarea" | "tickersymbol" | "timezone" | "url";
 
   type AttributeRequiredLevel = "none" | "required" | "recommended";
 
   type AttributeSubmitMode = "always" | "never" | "dirty";
-
 
   /**
    * Interface for an standard entity attribute.
@@ -199,7 +179,7 @@
      */
     controls: Collection<Control<Attribute<T>>>;
 
-		/**
+    /**
      * Retrieves the data value for an attribute.
      */
     getValue(): T | null;
@@ -211,13 +191,13 @@
      */
     setValue(val?: T | null): void;
 
-		/**
+    /**
      * Get the type of attribute.
      */
     getAttributeType(): AttributeType;
 
     /**
-     * Get the attribute format. 
+     * Get the attribute format.
      */
     getFormat(): AttributeFormat;
 
@@ -242,8 +222,8 @@
     getParent(): PageEntity<Collection<Attribute<any>>>;
 
     /**
-     * Returns an object with three Boolean properties corresponding to privileges indicating if the user can create, 
-     * read or update data values for an attribute. This function is intended for use when Field Level Security 
+     * Returns an object with three Boolean properties corresponding to privileges indicating if the user can create,
+     * read or update data values for an attribute. This function is intended for use when Field Level Security
      * modifies a user's privileges for a particular attribute.
      */
     getUserPrivilege(): UserPrivilege;
@@ -313,7 +293,6 @@
     getPrecision(): number;
   }
 
-
   /**
    * Interface for a lookup attribute.
    */
@@ -324,7 +303,6 @@
     controls: Collection<LookupControl<T>>;
   }
 
-
   /**
    * Interface for a date attribute.
    */
@@ -334,7 +312,6 @@
      */
     controls: Collection<DateControl>;
   }
-
 
   /**
    * Interface for an OptionSet attribute.
@@ -376,9 +353,7 @@
     getSelectedOption(): Option<T> | null;
   }
 
-  type ControlType =
-    "standard" | "iframe" | "lookup" | "optionset" | "subgrid"
-    | "webresource" | "notes" | "timercontrol" | "kbsearch" | "multiselectoptionset";
+  type ControlType = "standard" | "iframe" | "lookup" | "optionset" | "subgrid" | "webresource" | "notes" | "timercontrol" | "kbsearch" | "multiselectoptionset";
 
   /**
    * Interface for a standard form control.
@@ -423,7 +398,7 @@
 
     /**
      * Sets a value that indicates whether the control is visible.
-     * 
+     *
      * @param visible True if the control should be visible; otherwise, false.
      */
     setVisible(visible: boolean): void;
@@ -436,15 +411,15 @@
     getAttribute(): T;
 
     /**
-    * Returns whether the control is disabled.
-    */
+     * Returns whether the control is disabled.
+     */
     getDisabled(): boolean;
 
     /**
-    * Sets whether the control is disabled.
-    *
-    * @param disable True if the control should be disabled, otherwise false.
-    */
+     * Sets whether the control is disabled.
+     *
+     * @param disable True if the control should be disabled, otherwise false.
+     */
     setDisabled(disable: boolean): void;
   }
 
@@ -473,7 +448,6 @@
     removeOption(number: number): void;
   }
 
-
   /**
    * Interface for an external form control.
    */
@@ -496,7 +470,6 @@
     setSrc(url?: string): void;
   }
 
-
   /**
    * Interface for a WebResource form control.
    */
@@ -514,7 +487,6 @@
     setData(dataQuery?: string): void;
   }
 
-
   /**
    * Interface for an IFrame form control.
    */
@@ -525,14 +497,10 @@
     getInitialUrl(): string;
   }
 
-
   /**
    * Interface for a DateTime form control.
    */
-  interface DateControl extends Control<Attribute<Date>> {
-
-  }
-
+  interface DateControl extends Control<Attribute<Date>> {}
 
   /**
    * Interface for a Lookup form control.
@@ -561,7 +529,6 @@
     setDefaultView(guid: string): void;
   }
 
-
   /**
    * Interface for a SubGrid form control.
    */
@@ -575,8 +542,7 @@
   /**
    * Type to be be used for iterating over a list of controls and being able to interact with all of them with precursory checks for undefined
    */
-  type AnyControl = BaseControl & Partial<Control<any> & WebResourceControl & IFrameControl & LookupControl<string> & SubGridControl<string> & DateControl & OptionSetControl<any>>
-
+  type AnyControl = BaseControl & Partial<Control<any> & WebResourceControl & IFrameControl & LookupControl<string> & SubGridControl<string> & DateControl & OptionSetControl<any>>;
 
   /**
    * Remarks:
@@ -602,15 +568,12 @@
   /**
    * Interface for a string form control.
    */
-  interface StringControl extends Control<Attribute<string>> {
-  }
+  interface StringControl extends Control<Attribute<string>> {}
 
   /**
    * Interface for a number form control.
    */
-  interface NumberControl extends Control<NumberAttribute> {
-  }
-
+  interface NumberControl extends Control<NumberAttribute> {}
 
   /**
    * Interface for the entity on a form.
@@ -657,7 +620,6 @@
     getIsDirty(): boolean;
   }
 
-
   interface ExecutionContext<T> {
     /**
      * Method that returns the Client-side context object
@@ -669,7 +631,7 @@
      */
     getDepth(): number;
 
-    /** 
+    /**
      * Method that returns an object with methods to manage the Save event.
      */
     getEventArgs(): SaveEventArgs;
@@ -712,7 +674,6 @@
     preventDefault(): void;
   }
 
-
   /**
    * Supported values returned to detect different ways entity records may be saved by the user.
    */
@@ -727,9 +688,8 @@
     Assign = 47,
     Send = 7,
     Qualify = 16,
-    Disqualify = 15
+    Disqualify = 15,
   }
-
 
   /**
    * Interface for the data of a form.
@@ -744,7 +704,6 @@
   interface ProcessContainer {
     [id: string]: string;
   }
-
 
   interface Process {
     /**
@@ -768,7 +727,7 @@
     isRendered(): boolean;
   }
 
-  type StageStatus = "active" | "inactive"
+  type StageStatus = "active" | "inactive";
 
   interface Stage {
     /**
@@ -801,7 +760,6 @@
      */
     getSteps(): StageStep[];
   }
-
 
   const enum StageCategory {
     Qualify = 0,
@@ -875,7 +833,6 @@
     errorCode: number;
     message: string;
   }
-
 
   /**
    * Interface for a section on a form.
@@ -1000,7 +957,7 @@
     navigation: navigation;
 
     /**
-     * Method to get the form context for the record. 
+     * Method to get the form context for the record.
      * Matches the values found in the Xrm.FormType enum.
      */
     getFormType(): FormType;
@@ -1011,7 +968,7 @@
     close(): void;
 
     /**
-     * Use the formSelector.getCurrentItem method to retrieve information about the form currently in use and the formSelector.items 
+     * Use the formSelector.getCurrentItem method to retrieve information about the form currently in use and the formSelector.items
      * collection containing information about all the forms available for the user.
      */
     formSelector: FormSelector;
@@ -1146,7 +1103,7 @@
    */
   interface BasicPage extends PageBase<AttributeCollection, TabCollection, ControlCollection> {
     /**
-     * Generic getAttribute 
+     * Generic getAttribute
      */
     getAttribute(attrName: string): Xrm.Attribute<any> | undefined;
 
@@ -1156,7 +1113,6 @@
     getControl(ctrlName: string): Xrm.AnyControl | undefined;
   }
 }
-
 
 type BaseXrm = typeof Xrm;
 /**
@@ -1168,7 +1124,6 @@ interface Xrm<T extends Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollect
    */
   Utility: Xrm.Utility;
 }
-
 
 declare namespace Xrm {
   var Utility: Utility;

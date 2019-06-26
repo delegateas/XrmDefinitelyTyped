@@ -1,30 +1,30 @@
 namespace XrmQuery {
-	/**
-	 * Instantiates specification of a query that can retrieve a specific record.
-	 * @param entityPicker Function to select which entity-type should be targeted.
-	 * @param id GUID of the wanted record.
-	 */
+  /**
+   * Instantiates specification of a query that can retrieve a specific record.
+   * @param entityPicker Function to select which entity-type should be targeted.
+   * @param id GUID of the wanted record.
+   */
   export function retrieve<ISelect, IExpand, IFixed, FormattedResult, Result>(
     entityPicker: (x: WebEntitiesRetrieve) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>,
     id: string) {
     return XQW.RetrieveRecord.Get<ISelect, IExpand, IFixed, FormattedResult, Result>(entityPicker, id);
   }
 
-	/**
-	 * Instantiates specification of a query that can retrieve multiple records of a certain entity.
-	 * @param entityPicker Function to select which entity should be targeted.
-	 */
+  /**
+   * Instantiates specification of a query that can retrieve multiple records of a certain entity.
+   * @param entityPicker Function to select which entity should be targeted.
+   */
   export function retrieveMultiple<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(
     entityPicker: (x: WebEntitiesRetrieve) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>) {
     return XQW.RetrieveMultipleRecords.Get<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(entityPicker);
   }
 
-	/**
-	 * Instantiates specification of a query that can retrieve a related record of a given record.
-	 * @param entityPicker Function to select which entity-type the related record should be retrieved from.
-	 * @param id GUID of the record of which the related record should be retrieved.
-	 * @param relatedPicker Function to select which navigation property points to the related record.
-	 */
+  /**
+   * Instantiates specification of a query that can retrieve a related record of a given record.
+   * @param entityPicker Function to select which entity-type the related record should be retrieved from.
+   * @param id GUID of the record of which the related record should be retrieved.
+   * @param relatedPicker Function to select which navigation property points to the related record.
+   */
   export function retrieveRelated<ISingle, ISelect, IExpand, IFixed, FormattedResult, Result>(
     entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>,
     id: string,
@@ -32,12 +32,12 @@ namespace XrmQuery {
     return XQW.RetrieveRecord.Related<ISingle, ISelect, IExpand, IFixed, FormattedResult, Result>(entityPicker, id, relatedPicker);
   }
 
-	/**
-	 * Instantiates specification of a query that can retrieve multiple related records of a given record.
-	 * @param entityPicker  Function to select which entity-type the related records should be retrieved from.
-	 * @param id GUID of the record of which the related records should be retrieved.
-	 * @param relatedPicker Function to select which navigation property points to the related records.
-	 */
+  /**
+   * Instantiates specification of a query that can retrieve multiple related records of a given record.
+   * @param entityPicker  Function to select which entity-type the related records should be retrieved from.
+   * @param id GUID of the record of which the related records should be retrieved.
+   * @param relatedPicker Function to select which navigation property points to the related records.
+   */
   export function retrieveRelatedMultiple<IMultiple, ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(
     entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>,
     id: string,
@@ -45,23 +45,23 @@ namespace XrmQuery {
     return XQW.RetrieveMultipleRecords.Related<IMultiple, ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(entityPicker, id, relatedPicker);
   }
 
-	/**
-	 * Instantiates a query that can create a record.
-	 * @param entityPicker Function to select which entity-type should be created.
-	 * @param record Object of the record to be created.
-	 */
+  /**
+   * Instantiates a query that can create a record.
+   * @param entityPicker Function to select which entity-type should be created.
+   * @param record Object of the record to be created.
+   */
   export function create<ICreate>(
     entityPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<ICreate, any, any>,
     record?: ICreate) {
     return new XQW.CreateRecord<ICreate>(entityPicker, record);
   }
 
-	/**
-	 * Instantiates a query that can update a specific record.
-	 * @param entityPicker Function to select which entity-type should be updated.
-	 * @param id GUID of the record to be updated.
-	 * @param record Object containing the attributes to be updated.
-	 */
+  /**
+   * Instantiates a query that can update a specific record.
+   * @param entityPicker Function to select which entity-type should be updated.
+   * @param id GUID of the record to be updated.
+   * @param record Object containing the attributes to be updated.
+   */
   export function update<IUpdate>(
     entityPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, IUpdate, any>,
     id?: string,
@@ -133,38 +133,38 @@ namespace XrmQuery {
     return XQW.DisassociateRecord.Collection<IMultiple, ISelect>(entityPicker, id, relationPicker, targetId);
   }
 
-	/**
-	 * Instantiates a query that can delete a specific record.
-	 * @param entityPicker Function to select which entity-type should be deleted.
-	 * @param id GUID of the record to be updated.
-	 */
+  /**
+   * Instantiates a query that can delete a specific record.
+   * @param entityPicker Function to select which entity-type should be deleted.
+   * @param id GUID of the record to be updated.
+   */
   export function deleteRecord(
     entityPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, any>,
     id?: string) {
     return new XQW.DeleteRecord(entityPicker, id);
   }
 
-	/**
-	 * Makes XrmQuery use the given custom url to access the Web API.
-	 * @param url The url targeting the API. For example: '/api/data/v8.2/'
-	 */
+  /**
+   * Makes XrmQuery use the given custom url to access the Web API.
+   * @param url The url targeting the API. For example: '/api/data/v8.2/'
+   */
   export function setApiUrl(url: string | null) {
     XQW.ApiUrl = url;
   }
 
-	/**
-	 * Makes XrmQuery use the given version to access the Web API.
-	 * @param v Version to use for the API. For example: '8.2'
-	 */
+  /**
+   * Makes XrmQuery use the given version to access the Web API.
+   * @param v Version to use for the API. For example: '8.2'
+   */
   export function setApiVersion(v: string) {
     XQW.ApiUrl = XQW.getDefaultUrl(v);
   }
 
-	/**
-	 * @internal
-	 */
-  export function request(type: XQW.HttpRequestType, url: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb: (err: Error) => any = () => { }, preSend?: (req: XMLHttpRequest) => void, sync: boolean = false) {
-    let req = new XMLHttpRequest()
+  /**
+   * @internal
+   */
+  export function request(type: XQW.HttpRequestType, url: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb: (err: Error) => any = () => {}, preSend?: (req: XMLHttpRequest) => void, sync: boolean = false) {
+    let req = new XMLHttpRequest();
     req.open(type, url, !sync);
     req.setRequestHeader("Accept", "application/json");
     req.setRequestHeader("Content-Type", "application/json; charset=utf-8");
@@ -182,26 +182,26 @@ namespace XrmQuery {
     req.send(data);
   }
 
-	/**
-	 * Sends a request to the Web API with the given parameters.
-	 * @param type Type of request, i.e. "GET", "POST", etc
-	 * @param queryString Query-string to use for the API. For example: 'accounts?$count=true'
-	 * @param data Object to send with request
-	 * @param successCb Success callback handler function
-	 * @param errorCb Error callback handler function
-	 * @param configure Modify the request before it it sent to the endpoint - like adding headers.
-	 */
+  /**
+   * Sends a request to the Web API with the given parameters.
+   * @param type Type of request, i.e. "GET", "POST", etc
+   * @param queryString Query-string to use for the API. For example: 'accounts?$count=true'
+   * @param data Object to send with request
+   * @param successCb Success callback handler function
+   * @param errorCb Error callback handler function
+   * @param configure Modify the request before it it sent to the endpoint - like adding headers.
+   */
   export function sendRequest(type: XQW.HttpRequestType, queryString: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb?: (err: Error) => any, configure?: (req: XMLHttpRequest) => void, sync?: boolean): void {
     request(type, encodeSpaces(XQW.getApiUrl() + queryString), data, successCb, errorCb, configure, sync);
   }
 
-	/**
-	 * Sends a request to the Web API with the given parameters and returns a promise.
-	 * @param type Type of request, i.e. "GET", "POST", etc
-	 * @param queryString Query-string to use for the API. For example: 'accounts?$count=true'
-	 * @param data Object to send with request
-	 * @param configure Modify the request before it it sent to the endpoint - like adding headers.
-	 */
+  /**
+   * Sends a request to the Web API with the given parameters and returns a promise.
+   * @param type Type of request, i.e. "GET", "POST", etc
+   * @param queryString Query-string to use for the API. For example: 'accounts?$count=true'
+   * @param data Object to send with request
+   * @param configure Modify the request before it it sent to the endpoint - like adding headers.
+   */
   export function promiseRequest(type: XQW.HttpRequestType, queryString: string, data: any, configure?: (req: XMLHttpRequest) => void): Promise<XMLHttpRequest> {
     return XQW.promisifyCallback((success, error?) => sendRequest(type, queryString, data, success, error, configure));
   }
@@ -211,70 +211,99 @@ namespace XrmQuery {
   }
 }
 
-
 namespace Filter {
-  export function equals<T extends null | string | number | Date | XQW.Guid | boolean>(v1: T, v2: T): WebFilter { return comp(v1, "eq", v2) }
-  export function notEquals<T extends null | string | number | Date | XQW.Guid | boolean>(v1: T, v2: T): WebFilter { return comp(v1, "ne", v2) }
+  export function equals<T extends null | string | number | Date | XQW.Guid | boolean>(v1: T, v2: T): WebFilter {
+    return comp(v1, "eq", v2);
+  }
+  export function notEquals<T extends null | string | number | Date | XQW.Guid | boolean>(v1: T, v2: T): WebFilter {
+    return comp(v1, "ne", v2);
+  }
 
-  export function greaterThan<T extends number | Date>(v1: T, v2: T): WebFilter { return comp(v1, "gt", v2) }
-  export function greaterThanOrEqual<T extends number | Date>(v1: T, v2: T): WebFilter { return comp(v1, "ge", v2) }
-  export function lessThan<T extends number | Date>(v1: T, v2: T): WebFilter { return comp(v1, "lt", v2) }
-  export function lessThanOrEqual<T extends number | Date>(v1: T, v2: T): WebFilter { return comp(v1, "le", v2) }
+  export function greaterThan<T extends number | Date>(v1: T, v2: T): WebFilter {
+    return comp(v1, "gt", v2);
+  }
+  export function greaterThanOrEqual<T extends number | Date>(v1: T, v2: T): WebFilter {
+    return comp(v1, "ge", v2);
+  }
+  export function lessThan<T extends number | Date>(v1: T, v2: T): WebFilter {
+    return comp(v1, "lt", v2);
+  }
+  export function lessThanOrEqual<T extends number | Date>(v1: T, v2: T): WebFilter {
+    return comp(v1, "le", v2);
+  }
 
-  export function and(f1: WebFilter, f2: WebFilter): WebFilter { return biFilter(f1, "and", f2) }
-  export function or(f1: WebFilter, f2: WebFilter): WebFilter { return biFilter(f1, "or", f2) }
-  export function not(f1: WebFilter): WebFilter { return <WebFilter><any>("not " + f1) }
+  export function and(f1: WebFilter, f2: WebFilter): WebFilter {
+    return biFilter(f1, "and", f2);
+  }
+  export function or(f1: WebFilter, f2: WebFilter): WebFilter {
+    return biFilter(f1, "or", f2);
+  }
+  export function not(f1: WebFilter): WebFilter {
+    return <WebFilter><any>("not " + f1);
+  }
 
-  export function ands(fs: WebFilter[]): WebFilter { return nestedFilter(fs, "and") }
-  export function ors(fs: WebFilter[]): WebFilter { return nestedFilter(fs, "or") }
+  export function ands(fs: WebFilter[]): WebFilter {
+    return nestedFilter(fs, "and");
+  }
+  export function ors(fs: WebFilter[]): WebFilter {
+    return nestedFilter(fs, "or");
+  }
 
-  export function startsWith(val: string, prefix: string): WebFilter { return dataFunc("startswith", val, prefix) }
-  export function contains(val: string, needle: string): WebFilter { return dataFunc("contains", val, needle) }
-  export function endsWith(val: string, suffix: string): WebFilter { return dataFunc("endswith", val, suffix) }
+  export function startsWith(val: string, prefix: string): WebFilter {
+    return dataFunc("startswith", val, prefix);
+  }
+  export function contains(val: string, needle: string): WebFilter {
+    return dataFunc("contains", val, needle);
+  }
+  export function endsWith(val: string, suffix: string): WebFilter {
+    return dataFunc("endswith", val, suffix);
+  }
 
-	/**
-	 * Makes a string into a GUID that can be sent to the OData source
-	 */
-  export function makeGuid(id: string): XQW.Guid { return <XQW.Guid><any>XQW.makeTag(XQW.stripGUID(id)) }
+  /**
+   * Makes a string into a GUID that can be sent to the OData source
+   */
+  export function makeGuid(id: string): XQW.Guid {
+    return <XQW.Guid><any>XQW.makeTag(XQW.stripGUID(id));
+  }
 
-	/**
-	 * @internal
-	 */
+  /**
+   * @internal
+   */
   function getVal(v: any) {
-    if (v == null) return "null"
+    if (v == null) return "null";
     if (typeof v === "string") return `'${encodeSpecialCharacters(v)}'`;
     if (v instanceof Date) return encodeSpecialCharacters(v.toISOString());
     return encodeSpecialCharacters(v.toString());
   }
 
-	/**
-	 * @internal
-	 */
+  /**
+   * @internal
+   */
   function comp<T>(val1: T, op: string, val2: T): WebFilter {
     return <WebFilter><any>(`${getVal(val1)} ${op} ${getVal(val2)}`);
   }
 
-	/**
-	 * @internal
-	 */
+  /**
+   * @internal
+   */
   function dataFunc<T>(funcName: string, val1: T, val2: T): WebFilter {
     return <WebFilter><any>(`${funcName}(${getVal(val1)}, ${getVal(val2)})`);
   }
 
-	/**
-	 * @internal
-	 */
+  /**
+   * @internal
+   */
   function biFilter(f1: WebFilter, conj: string, f2: WebFilter): WebFilter {
     return <WebFilter><any>(`(${f1} ${conj} ${f2})`);
   }
 
-	/**
-	 * @internal
-	 */
+  /**
+   * @internal
+   */
   function nestedFilter(fs: WebFilter[], conj: string): WebFilter {
     const last = fs.pop();
     if (last === undefined) {
-      return <WebFilter><any>('');
+      return <WebFilter><any>("");
     }
     return fs.reduceRight((acc, c) => biFilter(c, conj, acc), last);
   }
@@ -293,9 +322,9 @@ namespace Filter {
   }
 }
 
-interface WebEntitiesRetrieve { }
-interface WebEntitiesRelated { }
-interface WebEntitiesCUDA { }
+interface WebEntitiesRetrieve {}
+interface WebEntitiesRelated {}
+interface WebEntitiesCUDA {}
 
 declare var GetGlobalContext: any;
 
@@ -335,9 +364,7 @@ interface ExpandOptions<ISelect, IFilter> {
   sortOrder?: SortOrder;
 }
 
-
 namespace XQW {
-
   const FORMATTED_VALUE_ID = "OData.Community.Display.V1.FormattedValue";
   const FORMATTED_VALUE_SUFFIX = "@" + FORMATTED_VALUE_ID;
   const FORMATTED_VALUES_HEADER = { type: "Prefer", value: `odata.include-annotations="${FORMATTED_VALUE_ID}"` };
@@ -368,9 +395,8 @@ namespace XQW {
   }
 
   export function makeTag(name: string) {
-    return { __str: name, toString: function () { return this.__str } }
+    return { __str: name, toString: function () { return this.__str; } };
   }
-
 
   function endsWith(str: string, suffix: string) {
     return str.substr(-suffix.length) == suffix;
@@ -392,7 +418,7 @@ namespace XQW {
     else if (lookupLogicalName) newName = newName.substr(0, newName.length - LOOKUP_LOGICALNAME_SUFFIX.length);
     else if (lookupNavProperty) newName = newName.substr(0, newName.length - LOOKUP_NAVIGATIONPROPERTY_SUFFIX.length);
 
-    if (beginsWith(newName, '_') && endsWith(newName, '_value')) {
+    if (beginsWith(newName, "_") && endsWith(newName, "_value")) {
       newName = newName.substr(1, newName.length - 7);
       if (formatted) newName += FORMATTED_ENDING;
       else if (lookupLogicalName) newName += LOOKUP_LOGICALNAME_ENDING;
@@ -419,27 +445,24 @@ namespace XQW {
   //}
 
   export function stripGUID(guid: string) {
-      if (startsWith("{", guid) && endsWith(guid, "}"))
-      return guid.substring(1, guid.length - 1);
-    else
-      return guid;
+    if (startsWith("{", guid) && endsWith(guid, "}")) return guid.substring(1, guid.length - 1);
+    else return guid;
   }
 
   function parseRetrievedData<T>(req: XMLHttpRequest): T {
-    return JSON.parse(req.response, reviver)
+    return JSON.parse(req.response, reviver);
   }
 
   function isStringArray(arr: any[] | string[]): arr is string[] {
-    return arr.length > 0 && typeof (arr[0]) === "string";
+    return arr.length > 0 && typeof arr[0] === "string";
   }
 
   export function promisifyCallback<T>(callbackFunc: (success: (t: T) => any, errorCb?: (e: Error) => any) => any): Promise<T> {
     if (!Promise) throw new Error("Promises are not natively supported in this browser. Add a polyfill to use it.");
     return new Promise<T>((resolve, reject) => {
-      callbackFunc(resolve, reject)
+      callbackFunc(resolve, reject);
     });
   }
-
 
   interface MultiResult {
     value: any[];
@@ -456,8 +479,7 @@ namespace XQW {
     private isDoneSending = false;
     private isDoingWork = false;
 
-    constructor(protected toReturn: any, private successCallback: Function, protected errorCallback: (e: Error) => any) {
-    }
+    constructor(protected toReturn: any, private successCallback: Function, protected errorCallback: (e: Error) => any) {}
 
     protected followLink(linkUrl: string, expandKeys: ExpandKey[], valPlacer: (vs: any[]) => void) {
       this.performingCallback();
@@ -479,7 +501,7 @@ namespace XQW {
 
     protected populateRecord(rec: any, expandKeys: ExpandKey[]) {
       this.performingCallback();
-      EntityLinkHelper.followLinks(rec, expandKeys, this.callbackReceived, this.errorCallback)
+      EntityLinkHelper.followLinks(rec, expandKeys, this.callbackReceived, this.errorCallback);
     }
 
     protected allSent() {
@@ -492,7 +514,6 @@ namespace XQW {
       this.isDoingWork = true;
     }
 
-
     protected callbackReceived = () => {
       this.missingCallbacks--;
       if (this.allSent && this.missingCallbacks == 0) {
@@ -502,7 +523,6 @@ namespace XQW {
   }
 
   class EntityLinkHelper extends LinkHelper {
-
     static followLinks(rec: any, expandKeys: ExpandKey[] | string[], successCallback: (t: any) => any, errorCallback: (e: Error) => any) {
       if (expandKeys.length == 0) return successCallback(rec);
 
@@ -531,11 +551,10 @@ namespace XQW {
     }
   }
 
-	/**
-	 * Helper class to expand on all @odata.nextLink, both pages and on entities retrieved
-	 */
+  /**
+   * Helper class to expand on all @odata.nextLink, both pages and on entities retrieved
+   */
   class PageLinkHelper extends LinkHelper {
-
     static followLinks(obj: MultiResult, expandKeys: ExpandKey[] | string[], successCallback: (t: any) => any, errorCallback: (e: Error) => any) {
       if (!obj["@odata.nextLink"] && (obj.value.length == 0 || expandKeys.length == 0)) return successCallback(obj.value);
 
@@ -549,8 +568,8 @@ namespace XQW {
 
       if (obj.value.length == 0) {
         return new PageLinkHelper(obj, expandKeys, successCallback, errorCallback);
-
-      } else { // Trim expand keys down to the ones that may have nextLinks
+      } else {
+        // Trim expand keys down to the ones that may have nextLinks
         let firstRec = obj.value[0];
         let toKeep = expandKeys.filter(exp => firstRec[exp.linkKey]);
         return new PageLinkHelper(obj, toKeep, successCallback, errorCallback);
@@ -575,12 +594,10 @@ namespace XQW {
     }
   }
 
-
-
   export abstract class Query<T> {
     protected additionalHeaders: RequestHeader[] = [];
 
-    constructor(protected requestType: HttpRequestType) { }
+    constructor(protected requestType: HttpRequestType) {}
 
     abstract getQueryString(): string;
     protected abstract handleResponse(req: XMLHttpRequest, successCallback: (t: T) => any, errorCallback: (e: Error) => any): void;
@@ -590,63 +607,60 @@ namespace XQW {
       return promisifyCallback<T>(this.execute.bind(this));
     }
 
-    execute(successCallback: (x: T) => any, errorCallback: (err: Error) => any = () => { }): void {
+    execute(successCallback: (x: T) => any, errorCallback: (err: Error) => any = () => {}): void {
       this.executeRaw(successCallback, errorCallback, true, false);
-      }
+    }
 
     executeSync() : T | Error {
-        let ret: T | Error = Error("Undefined behavior");
-        this.executeRaw((x) => { ret = x }, (err) => { ret = err; }, true, true);
-        return ret;
-    };
+      let ret: T | Error = Error("Undefined behavior");
+      this.executeRaw((x) => { ret = x; }, (err) => { ret = err; }, true, true);
+      return ret;
+    }
 
-
-
-		/**
-		 * @internal
-		 */
+    /**
+     * @internal
+     */
     executeRaw(successCallback: (x: T) => any, errorCallback: (err: Error) => any, parseResult: true, sync: boolean): void;
     executeRaw(successCallback: (x: XMLHttpRequest) => any, errorCallback: (err: Error) => any, parseResult: false): void;
-    executeRaw(successCallback: ((x: T) => any) & ((x: XMLHttpRequest) => any), errorCallback: (err: Error) => any = () => { }, parseResult: boolean = false, sync: boolean = false): void {
+    executeRaw(successCallback: ((x: T) => any) & ((x: XMLHttpRequest) => any), errorCallback: (err: Error) => any = () => {}, parseResult: boolean = false, sync: boolean = false): void {
       let config = (req: XMLHttpRequest) => this.additionalHeaders.forEach(h => req.setRequestHeader(h.type, h.value));
-      let successHandler = (req: XMLHttpRequest) => parseResult ? this.handleResponse(req, successCallback, errorCallback) : successCallback(req);
+      let successHandler = (req: XMLHttpRequest) => (parseResult ? this.handleResponse(req, successCallback, errorCallback) : successCallback(req));
       return XrmQuery.sendRequest(this.requestType, this.getQueryString(), this.getObjectToSend(), successHandler, errorCallback, config, sync);
     }
   }
 
-
   export class RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result> extends Query<Result[]> {
-		/**
-		 * @internal
-		 */
+    /**
+     * @internal
+     */
     private specialQuery: string | undefined = undefined;
-		/**
-		 * @internal
-		 */
+    /**
+     * @internal
+     */
     private selects: string[] = [];
-		/**
-		 * @internal
-		 */
+    /**
+     * @internal
+     */
     private expands: string[] = [];
-		/**
-		 * @internal
-		 */
+    /**
+     * @internal
+     */
     private expandKeys: string[] = [];
-		/**
-		 * @internal
-		 */
+    /**
+     * @internal
+     */
     private ordering: string[] = [];
-		/**
-		 * @internal
-		 */
+    /**
+     * @internal
+     */
     private filters: WebFilter;
-		/**
-		 * @internal
-		 */
+    /**
+     * @internal
+     */
     private skipAmount: number | null = null;
-		/**
-		 * @internal
-		 */
+    /**
+     * @internal
+     */
     private topAmount: number | null = null;
 
     static Get<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(
@@ -679,7 +693,6 @@ namespace XQW {
       return promisifyCallback<Result>(this.getFirst.bind(this));
     }
 
-
     getQueryString(): string {
       let prefix = this.entitySetName;
       if (this.id && this.relatedNav) {
@@ -708,8 +721,6 @@ namespace XQW {
       }
       return prefix + (options.length > 0 ? `?${options.join("&")}` : "");
     }
-
-
 
     select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13, R14, F14, R15, F15>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>, WebAttribute<ISelect, R14, F14>, WebAttribute<ISelect, R15, F15>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13 & F14 & F15, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13 & R14 & R15>;
     select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13, R14, F14>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>, WebAttribute<ISelect, R14, F14>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13 & F14, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13 & R14>;
@@ -784,9 +795,9 @@ namespace XQW {
       return this;
     }
 
-		/**
-		 * @internal
-		 */
+    /**
+     * @internal
+     */
     private order(varFunc: (x: ISelect) => WebAttribute<ISelect, any, any>, by: string) {
       this.ordering.push(parseWithTransform(varFunc) + " " + by);
       return this;
@@ -815,10 +826,9 @@ namespace XQW {
       return this;
     }
 
-
-		/**
-		 * Sets a header that lets you retrieve formatted values as well. Should be used after using select and expand of attributes.
-		 */
+    /**
+     * Sets a header that lets you retrieve formatted values as well. Should be used after using select and expand of attributes.
+     */
     includeFormattedValues(): Query<(FormattedResult & Result)[]> {
       this.additionalHeaders.push(FORMATTED_VALUES_HEADER);
       return <any>this;
@@ -832,20 +842,19 @@ namespace XQW {
       return <any>this;
     }
 
-		/**
-		 * Sets up the query to filter the entity using the provided FetchXML
-		 * @param xml The query in FetchXML format
-		 */
+    /**
+     * Sets up the query to filter the entity using the provided FetchXML
+     * @param xml The query in FetchXML format
+     */
     useFetchXml(xml: string): Query<Result[]> {
       this.specialQuery = `?fetchXml=${encodeURIComponent(xml)}`;
       return this;
     }
 
-
-		/**
-		 * Sets up the query to filter the entity using the predefined-query.
-		 * @param xml The query in FetchXML format
-		 */
+    /**
+     * Sets up the query to filter the entity using the predefined-query.
+     * @param xml The query in FetchXML format
+     */
     usePredefinedQuery(type: "savedQuery", guid: string): Query<Result[]>;
     usePredefinedQuery(type: "userQuery", guid: string): Query<Result[]>;
     usePredefinedQuery(type: string, guid: string): Query<Result[]> {
@@ -854,20 +863,18 @@ namespace XQW {
     }
   }
 
-
-
   export class RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result> extends Query<Result> {
-		/**
-		 * @internal
-		 */
+    /**
+     * @internal
+     */
     protected selects: string[] = [];
-		/**
-		 * @internal
-		 */
+    /**
+     * @internal
+     */
     protected expands: string[] = [];
-		/**
-		 * @internal
-		 */
+    /**
+     * @internal
+     */
     protected expandKeys: string[] = [];
 
     static Related<ISingle, ISelect, IExpand, IFixed, FormattedResult, Result>(
@@ -945,7 +952,7 @@ namespace XQW {
       if (selectVarFunc) options.push(`$select=${parseSelects(selectVarFunc)}`);
       if (optArgs) {
         if (optArgs.top) options.push(`$top=${optArgs.top}`);
-        if (optArgs.orderBy) options.push(`$orderby=${parseWithTransform(optArgs.orderBy)} ${optArgs.sortOrder != SortOrder.Descending ? "asc" : "desc"}`)
+        if (optArgs.orderBy) options.push(`$orderby=${parseWithTransform(optArgs.orderBy)} ${optArgs.sortOrder != SortOrder.Descending ? "asc" : "desc"}`);
         if (optArgs.filter) options.push(`$filter=${parseWithTransform(optArgs.filter)}`);
       }
       this.expands.push(expand + (options.length > 0 ? `(${options.join(";")})` : ""));
@@ -981,14 +988,13 @@ namespace XQW {
     }
   }
 
-
-	/**
-	 * Contains information about a Create query
-	 */
+  /**
+   * Contains information about a Create query
+   */
   export class CreateRecord<ICreate> extends Query<string> {
-		/**
-		 * @internal
-		 */
+    /**
+     * @internal
+     */
     private entitySetName: string;
 
     constructor(entityPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<ICreate, any, any>, private record?: ICreate) {
@@ -998,7 +1004,7 @@ namespace XQW {
 
     protected handleResponse(req: XMLHttpRequest, successCallback: (r: string) => any, errorCallback: (e: Error) => any) {
       let header = req.getResponseHeader("OData-EntityId");
-      if (header) successCallback(header!.substr(-37, 36))
+      if (header) successCallback(header!.substr(-37, 36));
       else errorCallback(new Error("No valid OData-EntityId found in header."));
     }
 
@@ -1014,13 +1020,13 @@ namespace XQW {
     }
   }
 
-	/**
-	 * Contains information about a Delete query
-	 */
+  /**
+   * Contains information about a Delete query
+   */
   export class DeleteRecord extends Query<undefined> {
-		/**
-		 * @internal
-		 */
+    /**
+     * @internal
+     */
     private entitySetName: string;
 
     constructor(entityPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, any>, private id?: string) {
@@ -1043,14 +1049,13 @@ namespace XQW {
     }
   }
 
-
-	/**
-	 * Contains information about an UpdateRecord query
-	 */
+  /**
+   * Contains information about an UpdateRecord query
+   */
   export class UpdateRecord<IUpdate> extends Query<undefined> {
-		/**
-		 * @internal
-		 */
+    /**
+     * @internal
+     */
     private entitySetName: string;
 
     constructor(entityPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, IUpdate, any>, private id?: string, private record?: IUpdate) {
@@ -1076,8 +1081,8 @@ namespace XQW {
     }
   }
   /**
- * Contains information about an AssociateRecord query for single-valued properties
- */
+   * Contains information about an AssociateRecord query for single-valued properties
+   */
   export class AssociateRecordSingle<ISingle, ISelect> extends Query<undefined> {
     /**
      * @internal
@@ -1094,7 +1099,7 @@ namespace XQW {
       entityTargetPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, ISelect>,
       targetid: string,
       relationPicker: (x: ISingle) => WebMappingRetrieve<ISelect, any, any, any, any, any>) {
-      super("PUT")
+      super("PUT");
       this.entitySetName = taggedExec(entityPicker).toString();
       this.id = id !== undefined ? stripGUID(id) : id;
       this.entitySetNameTarget = taggedExec(entityTargetPicker).toString();
@@ -1121,8 +1126,8 @@ namespace XQW {
     }
   }
   /**
- * Contains information about an AssociateRecord query for collection-valued properties
- */
+   * Contains information about an AssociateRecord query for collection-valued properties
+   */
   export class AssociateRecordCollection<IMultiple, ISelect> extends Query<undefined> {
     /**
      * @internal
@@ -1182,7 +1187,7 @@ namespace XQW {
       entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>,
       id: string,
       relationPicker: (x: ISingle) => WebMappingRetrieve<ISelect, any, any, any, any, any>) {
-      return new DisassociateRecord<ISelect>(taggedExec(entityPicker).toString(), id, taggedExec(relationPicker).toString())
+      return new DisassociateRecord<ISelect>(taggedExec(entityPicker).toString(), id, taggedExec(relationPicker).toString());
     }
 
     static Collection<IMultiple, ISelect>(
@@ -1190,7 +1195,7 @@ namespace XQW {
       id: string,
       relationPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, any, any, any, any, any>,
       targetId: string) {
-      return new DisassociateRecord<ISelect>(taggedExec(entityPicker).toString(), id, taggedExec(relationPicker).toString(), targetId)
+      return new DisassociateRecord<ISelect>(taggedExec(entityPicker).toString(), id, taggedExec(relationPicker).toString(), targetId);
     }
 
     constructor(entityName: string, private id: string, rel: string, private targetid?: string) {
@@ -1211,12 +1216,13 @@ namespace XQW {
     }
 
     getQueryString(): string {
-      if (this.targetId == undefined)
+      if (this.targetId == undefined) {
         // single-valued
         return `${this.entitySetName}(${this.id})/${this.relation}/$ref`;
-      else
+      } else {
         // collection-valued
-        return `${this.entitySetName}(${this.id})/${this.relation}(${this.targetId})/$ref`;;
+        return `${this.entitySetName}(${this.id})/${this.relation}(${this.targetId})/$ref`;
+      }
     }
   }
 
@@ -1226,37 +1232,37 @@ namespace XQW {
   function startsWith(needle: string, haystack: string) {
     return haystack.lastIndexOf(needle, 0) === 0;
   }
-	/**
-	 * @internal
-	 */
+  /**
+   * @internal
+   */
   function taggedExec<T>(f: (x: any) => T, transformer?: (x: string) => string): T {
     return f(tagMatches(f, transformer));
   }
 
-	/**
-	 * @internal
-	 */
-  const fPatt = /function[^\(]*\(([a-zA-Z0-9_]+)[^\{]*\{([\s\S]*)\}$/m
+  /**
+   * @internal
+   */
+  const fPatt = /function[^\(]*\(([a-zA-Z0-9_]+)[^\{]*\{([\s\S]*)\}$/m;
 
-	/**
-	 * @internal
-	 */
+  /**
+   * @internal
+   */
   function objRegex(oName: string) {
     return new RegExp("\\b" + oName + "\\.([a-zA-Z_$][0-9a-zA-Z_$]*)(\\.([a-zA-Z_$][0-9a-zA-Z_$]*))?", "g");
   }
 
-	/**
-	 * @internal
-	 */
+  /**
+   * @internal
+   */
   function analyzeFunc(f: (x: any) => any) {
     let m = f.toString().match(fPatt);
     if (!m) throw new Error(`XrmQuery: Unable to properly parse function: ${f.toString()}`);
     return { arg: m[1], body: m[2] };
   }
 
-	/**
-	 * @internal
-	 */
+  /**
+   * @internal
+   */
   function tagMatches(f: (x: any) => any, transformer?: (x: string) => string) {
     let funcInfo = analyzeFunc(f);
     let regex = objRegex(funcInfo.arg);
@@ -1275,10 +1281,9 @@ namespace XQW {
     return obj;
   }
 
-
-	/**
-	 * @internal
-	 */
+  /**
+   * @internal
+   */
   export var ApiUrl: string | null = null;
   const DefaultApiVersion = "8.0";
 
@@ -1291,83 +1296,78 @@ namespace XQW {
   }
 
   declare var Xrm: any;
-	/**
-	 * @internal
-	 */
+  /**
+   * @internal
+   */
   function getClientUrl() {
     try {
       if (GetGlobalContext && GetGlobalContext().getClientUrl) {
         return GetGlobalContext().getClientUrl();
       }
-    } catch (e) { }
+    } catch (e) {}
     try {
       if (Xrm && Xrm.Page && Xrm.Page.context) {
         return Xrm.Page.context.getClientUrl();
       }
-    } catch (e) { }
+    } catch (e) {}
     throw new Error("Context is not available.");
   }
 
-	/**
-	 * Converts a XrmQuery select/filter name to the Web API format
-	 * @param name
-	 */
+  /**
+   * Converts a XrmQuery select/filter name to the Web API format
+   * @param name
+   */
   function xrmQueryToCrm(name: string) {
     // check if the attribute name ends with '_guid'
     const endsWithUnderscoreGuid = name.match(/_guid$/);
-    if (!endsWithUnderscoreGuid) 
-      return name;
-    
+    if (!endsWithUnderscoreGuid) return name;
+
     return `_${name.substr(0, endsWithUnderscoreGuid.index)}_value`;
   }
 
-	/**
-	 * Helper function to perform tagged execution and mapping to array of selects
-	 * @internal
-	 */
+  /**
+   * Helper function to perform tagged execution and mapping to array of selects
+   * @internal
+   */
   function parseSelects(selectFunc: (x: any) => any[]): string[] {
     return parseWithTransform(selectFunc).map((x: any) => x.toString());
   }
 
-	/**
-	 * Parses a given function and transforms any XrmQuery-specific values to it's corresponding CRM format
-	 * @param filterFunc
-	 */
+  /**
+   * Parses a given function and transforms any XrmQuery-specific values to it's corresponding CRM format
+   * @param filterFunc
+   */
   function parseWithTransform(filterFunc: (x: any) => any) {
     return taggedExec(filterFunc, xrmQueryToCrm);
   }
 
-	/**
-	 * Transforms an object XrmQuery format to a CRM format
-	 * @param obj
-	 */
+  /**
+   * Transforms an object XrmQuery format to a CRM format
+   * @param obj
+   */
   function transformObject(obj: any) {
     if (obj instanceof Date) {
       return obj;
-
-    } else if (typeof (obj) === 'string' && startsWith("{", obj) && endsWith(obj, "}")) {
+    } else if (typeof obj === "string" && startsWith("{", obj) && endsWith(obj, "}")) {
       return obj.substring(1, obj.length - 1);
-
     } else if (obj instanceof Array) {
       var arr: any[] = [];
-      obj.forEach((v, idx) => arr[idx] = transformObject(v));
+      obj.forEach((v, idx) => (arr[idx] = transformObject(v)));
       return arr;
-
     } else if (obj instanceof Object) {
       var newObj = {};
       Object.keys(obj).forEach(key => parseAttribute(key, transformObject(obj[key]), newObj));
       return newObj;
-    }
-    else {
+    } else {
       return obj;
     }
   }
 
-	/**
-	 * Parses attributes from XrmQuery format to CRM format
-	 * @param key
-	 * @param value
-	 */
+  /**
+   * Parses attributes from XrmQuery format to CRM format
+   * @param key
+   * @param value
+   */
   function parseAttribute(key: string, val: any, newObj: any) {
     if (key.indexOf(BIND_ID) >= 0) {
       const lookupIdx = key.indexOf(BIND_ID);
@@ -1375,16 +1375,14 @@ namespace XQW {
         const setName = key.substr(lookupIdx + BIND_ID.length);
         newObj[`${key.substr(0, lookupIdx)}@odata.bind`] = `/${setName}(${val})`;
       }
-    }
-    else if (key.indexOf(ID_ID) >= 0) {
+    } else if (key.indexOf(ID_ID) >= 0) {
       const lookupIdx = key.indexOf(ID_ID);
       if (lookupIdx >= 0) {
         const setName = key.substr(lookupIdx + ID_ID.length);
         const url = getDefaultUrl(DefaultApiVersion);
         newObj[`${key.substr(0, lookupIdx)}@odata.id`] = `${url}${setName}(${val})`;
       }
-    }
-    else {
+    } else {
       newObj[key] = val;
     }
   }

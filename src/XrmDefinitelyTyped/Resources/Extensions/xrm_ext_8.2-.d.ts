@@ -1,14 +1,13 @@
 ﻿/// <reference path="..\xrm.d.ts" />
 
 //Function helper type for a function that can be set to be called by a view column to show an image with a tooltip instead of the ordinary data
-type TooltipFunc = (rowData: string, lcid: LCID) => [WebResourceImage, string]
+type TooltipFunc = (rowData: string, lcid: LCID) => [WebResourceImage, string];
 
 declare namespace Xrm {
-
   const enum ProcessStatus {
     Active = "active",
     Aborted = "aborted",
-    Finished = "finished"
+    Finished = "finished",
   }
 
   /**
@@ -26,7 +25,7 @@ declare namespace Xrm {
     /**
      * Values to display in the result. Support up to three values
      */
-    fields: string[]
+    fields: string[];
   }
 
   /**
@@ -48,7 +47,7 @@ declare namespace Xrm {
     /**
      * Command action
      */
-    action: () => any
+    action: () => any;
   }
 
   /**
@@ -117,10 +116,10 @@ declare namespace Xrm {
     addOnProcessStatusChange(handler: (context?: ExecutionContext<this>) => any): void;
 
     /**
-    * Use this to remove a function as an event handler for the OnProcessStatusChange event.
-    * @param handler If an anonymous function is set using the addOnProcessStatusChange method it
-    *                cannot be removed using this method.
-    */
+     * Use this to remove a function as an event handler for the OnProcessStatusChange event.
+     * @param handler If an anonymous function is set using the addOnProcessStatusChange method it
+     *                cannot be removed using this method.
+     */
     removeOnProcessStatusChange(handler: (context?: ExecutionContext<this>) => any): void;
   }
 }

@@ -21,12 +21,12 @@ declare namespace SDK {
      * Sends an asynchronous RetrieveAllEntities Request to retrieve all entities in the system.
      *
      * @param EntityFilters SDK.Metadata.EntityFilters provides an enumeration for the filters available to filter which data is retrieved.
-                            Include only those elements of the entity you want to retrieve. Retrieving all parts of all entitities may take significant time.
+     *                      Include only those elements of the entity you want to retrieve. Retrieving all parts of all entitities may take significant time.
      * @param RetrieveAsIfPublished Sets whether to retrieve the metadata that has not been published.
      * @param successCallback The function that will be passed through and be called by a successful response.
-                              This function must accept the entityMetadataCollection as a parameter.
+     *                        This function must accept the entityMetadataCollection as a parameter.
      * @param errorCallBack The function that will be passed through and be called by a failed response.
-                            This function must accept an Error object as a parameter.
+     *                      This function must accept an Error object as a parameter.
      * @param passThroughObject An Object that will be passed through to as the second parameter to the successCallBack.
      */
     function RetrieveAllEntities(EntityFilters: EntityFilters, RetrieveAsIfPublished: boolean, successCallback: (metadata: EntityMetadata[], passThroughObject?: any) => any, errorCallback: (error: Error) => any, passThroughObject: any): void;
@@ -35,14 +35,14 @@ declare namespace SDK {
      * Sends an asynchronous RetrieveEntity Request to retrieve a specific entity.
      *
      * @param EntityFilters SDK.Metadata.EntityFilters provides an enumeration for the filters available to filter which data is retrieved.
-                            Include only those elements of the entity you want to retrieve. Retrieving all parts of all entitities may take significant time.
+     *                      Include only those elements of the entity you want to retrieve. Retrieving all parts of all entitities may take significant time.
      * @param LogicalName The logical name of the entity requested. A null value may be used if a MetadataId is provided.
      * @param MetadataId A null value or an empty guid may be passed if a LogicalName is provided.
      * @param RetrieveAsIfPublished Sets whether to retrieve the metadata that has not been published.
      * @param successCallback The function that will be passed through and be called by a successful response.
-                              This function must accept the entityMetadata as a parameter.
+     *                        This function must accept the entityMetadata as a parameter.
      * @param errorCallback The function that will be passed through and be called by a failed response.
-                            This function must accept an Error object as a parameter.
+     *                      This function must accept an Error object as a parameter.
      * @param passThroughObject An Object that will be passed through to as the second parameter to the successCallBack.
      */
     function RetrieveEntity(EntityFilters: EntityFilters, LogicalName: string, MetadataId: string | null, RetrieveAsIfPublished: boolean, successCallback: (metadata: EntityMetadata, passThroughObject?: any) => any, errorCallback: (error: Error) => any, passThroughObject: any): void;
@@ -50,7 +50,7 @@ declare namespace SDK {
      * Sends an asynchronous RetrieveAttribute Request to retrieve a specific entity.
      *
      * @param EntityLogicalName The logical name of the entity for the attribute requested. A null value may be used if a MetadataId is provided.
-     * @param LogicalName The logical name of the attribute requested. 
+     * @param LogicalName The logical name of the attribute requested.
      * @param MetadataId A null value may be passed if an EntityLogicalName and LogicalName is provided.
      * @param RetrieveAsIfPublished Sets whether to retrieve the metadata that has not been published.
      * @param successCallback The function that will be passed through and be called by a successful response.
@@ -60,7 +60,6 @@ declare namespace SDK {
      * @param passThroughObject An Object that will be passed through to as the second parameter to the successCallBack.
      */
     function RetrieveAttribute(EntityLogicalName: string, LogicalName: string, MetadataId: string | null, RetrieveAsIfPublished: boolean, successCallback: (metadata: AttributeMetadata, passThroughObject?: any) => any, errorCallback: (error: Error) => any, passThroughObject: any): void;
-
 
     interface BasicMetadata {
       HasChanged: any;
@@ -96,7 +95,6 @@ declare namespace SDK {
        */
       EntityLogicalName: string;
 
-
       IsAuditEnabled: ManagedProperty<boolean>;
       IsCustomAttribute: boolean;
       IsLogical: string;
@@ -122,7 +120,6 @@ declare namespace SDK {
        * Schema name of the attribute.
        */
       SchemaName: string;
-
 
       SourceType: string;
 
@@ -180,7 +177,7 @@ declare namespace SDK {
     const enum PrecisionSource {
       Precision = 0,
       UseOrganizationPricingDecimalPrecision = 1,
-      UseCurrencyPrecision = 2
+      UseCurrencyPrecision = 2,
     }
 
     interface OptionSetMetadata extends GeneralMetadata {
@@ -211,7 +208,6 @@ declare namespace SDK {
       LanguageCode: number;
     }
 
-
     interface ManagedProperty<T> {
       CanBeChanged: boolean;
       ManagedPropertyLogicalName: string;
@@ -222,7 +218,6 @@ declare namespace SDK {
      * Interface that holds metadata for an entity.
      */
     interface EntityMetadata extends GeneralMetadata {
-
       AttributeTypeMask: number;
 
       /**
@@ -263,7 +258,7 @@ declare namespace SDK {
       IsAvailableOffline: boolean;
       IsBusinessProcessEnabled: string;
       IsChildEntity: boolean;
-      IsConnectionsEnabled: ManagedProperty<boolean>
+      IsConnectionsEnabled: ManagedProperty<boolean>;
       IsCustomEntity: boolean;
       IsDocumentManagementEnabled: boolean;
       IsDuplicateDetectionEnabled: ManagedProperty<boolean>;
@@ -309,7 +304,6 @@ declare namespace SDK {
       SchemaName: string;
       SecurityTypes: string;
     }
-
 
     interface OneToManyRelationshipMetadata extends RelationshipMetadata {
       AssociatedMenuConfiguration: AssociatedMenuConfiguration;
@@ -365,5 +359,4 @@ declare namespace SDK {
       Value: T;
     }
   }
-
 }

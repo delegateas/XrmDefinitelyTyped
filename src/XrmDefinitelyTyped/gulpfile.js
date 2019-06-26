@@ -8,6 +8,7 @@ var merge = require('merge2');
 var uglify = require("gulp-uglify");
 
 var ts = require("gulp-typescript");
+var tslint = require("gulp-tslint");
 var tsProject = ts.createProject("tsconfig.json");
 
 var outDir = tsProject.options.outDir;
@@ -35,6 +36,14 @@ gulp.task("compile-ts", function () {
         
 });
 
+gulp.task("tslint", function () {
+    gulp.src("**/*.ts")
+        .pipe(tslint({
+            formatter: "verbose"
+        }))
+        .pipe(tslint.report());
+});
+
 gulp.task("concat-promise", function () {
     return gulp.src(
         [
@@ -51,6 +60,7 @@ gulp.task('default', function (cb) {
     runSequence(
         'clean',
         'compile-ts',
+        'tslint',
         'concat-promise',
         'uglify',
         cb

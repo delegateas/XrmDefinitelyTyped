@@ -22,7 +22,7 @@ declare namespace Xrm {
      * On selecting an item in the drop-down list, the value in the text field changes to the selected item, the drop-down list disappears, and the OnChange event for the text field is invoked.
      * This methods isn’t supported for Dynamics 365 mobile clients (phones or tablets) and the interactive service hub. This methods are only available for Updated entities.
      *
-     * @param resultSet to be shown in 
+     * @param resultSet to be shown in
      */
     showAutoComplete(resultSet: AutoCompleteResultSet): void;
 
