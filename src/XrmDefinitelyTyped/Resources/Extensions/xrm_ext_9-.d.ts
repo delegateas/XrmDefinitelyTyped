@@ -861,6 +861,11 @@ declare namespace Xrm {
      * Returns information about the current organization settings.
      */
     organizationSettings: organizationSettings;
+
+    /**
+     * Returns the URL of the current business app in Customer Engagement.
+     */
+    getCurrentAppUrl(): string;
   }
 
   /**
@@ -933,6 +938,11 @@ declare namespace Xrm {
      * Use this method to set which entity types the lookup control will show the user
      */
     setEntityTypes(entityTypes: string[]): void;
+
+    /**
+    * Use this method to get which entity types the lookup control will show the user
+    */
+    getEntityTypes(): string[];
   }
 }
 
