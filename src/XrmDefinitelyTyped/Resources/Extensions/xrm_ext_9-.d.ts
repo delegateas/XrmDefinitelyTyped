@@ -863,6 +863,11 @@ declare namespace Xrm {
 		* Returns information about the current organization settings.
 		*/
     organizationSettings: organizationSettings;
+
+    /**
+     * Returns the URL of the current business app in Customer Engagement.
+     */
+    getCurrentAppUrl(): string;
   }
 
 	/**
