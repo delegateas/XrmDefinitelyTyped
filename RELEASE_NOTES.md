@@ -1,4 +1,7 @@
 # Release Notes
+### 4.3.12 - June 26 2019
+* Added typings for getCurrentAppUrl() on the global context
+
 ### 4.3.11 - June 26 2019
 * Added typings for getEntityTypes() on LookupControl (@CoreySutton)
 
