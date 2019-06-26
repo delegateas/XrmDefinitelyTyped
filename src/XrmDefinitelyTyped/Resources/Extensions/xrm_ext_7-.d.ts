@@ -1,6 +1,5 @@
 ﻿/// <reference path="..\xrm.d.ts" />
 declare namespace Xrm {
-
   /**
    * Interface for the ui of a form.
    */

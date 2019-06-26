@@ -3,7 +3,7 @@ declare namespace Xrm {
   interface DataModule<T extends AttributeCollectionBase> {
     /**
      * Asynchronously refreshes and optionally saves all the data of the form without reloading the page.
-     * 
+     *
      * @param save true if the data should be saved after it is refreshed, otherwise false.
      */
     refresh(save?: boolean): Then<undefined>;

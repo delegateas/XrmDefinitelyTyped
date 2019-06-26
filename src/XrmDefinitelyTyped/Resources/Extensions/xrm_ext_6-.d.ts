@@ -20,7 +20,7 @@ declare namespace Xrm {
   interface LookupControl<T extends string> extends Control<LookupAttribute<T>> {
     /**
      * Use to add filters to the results displayed in the lookup. Each filter will be combined with any previously added filters as an 'AND' condition.
-     * 
+     *
      * @param fetchXml The fetchXml filter element to apply.
      * @param entityType If this is set, the filter only applies to that entity type. Otherwise, it applies to all types of entities returned.
      */
@@ -67,8 +67,8 @@ declare namespace Xrm {
     clearFormNotification(uniqueId: string): boolean;
 
     /**
-     * Use this method to display form level notifications. You can display any number of notifications and they will be displayed until 
-     * they are removed using clearFormNotification. The height of the notification area is limited so each new message will be added to the top. 
+     * Use this method to display form level notifications. You can display any number of notifications and they will be displayed until
+     * they are removed using clearFormNotification. The height of the notification area is limited so each new message will be added to the top.
      * Users can scroll down to view older messages that have not yet been removed.
      *
      * @param message The text of the message.

@@ -1,9 +1,9 @@
 ﻿/// <reference path="..\xrm.d.ts" />
 declare namespace Xrm {
   var Page: Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>;
-	/**
-     * Interface for the base of an Xrm.Page
-     */
+  /**
+   * Interface for the base of an Xrm.Page
+   */
   interface PageBase<T extends AttributeCollectionBase, U extends TabCollectionBase, V extends ControlCollectionBase> {
     /**
      * The context of the page.
@@ -47,7 +47,6 @@ declare namespace Xrm {
    * Interface for the entity on a form.
    */
   interface PageEntity<T extends AttributeCollectionBase> {
-
     /**
      * This is the equivalent of using the "Save and Close" command.
      */
@@ -63,9 +62,9 @@ declare namespace Xrm {
      */
     save(type: string): boolean;
 
-		/**
-         * Saves the record synchronously with the options to close the form or open a new form after the save is completed.
-         */
+    /**
+     * Saves the record synchronously with the options to close the form or open a new form after the save is completed.
+     */
     save(): boolean;
   }
 
@@ -73,7 +72,6 @@ declare namespace Xrm {
    * Interface for the Xrm.Utility functionality.
    */
   interface Utility {
-
     /**
      * Opens an entity form for a new or existing entity record using the options you set as parameters.
      *
@@ -86,7 +84,7 @@ declare namespace Xrm {
 
     /**
      * Opens an HTML web resource.
-     * 
+     *
      * @param webResourceName The name of the HTML web resource to open.
      * @param webResourceData Data to be passed into the data parameter.
      * @param width The width of the window to open in pixels.

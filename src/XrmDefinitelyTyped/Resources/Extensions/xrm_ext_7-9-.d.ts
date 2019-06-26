@@ -1,4 +1,4 @@
-﻿// <reference path="..\xrm.d.ts" />
+﻿/// <reference path="..\xrm.d.ts" />
 declare namespace Xrm {
   interface context {
     /**

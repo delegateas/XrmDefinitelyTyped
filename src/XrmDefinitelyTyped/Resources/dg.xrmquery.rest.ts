@@ -1,4 +1,4 @@
-interface RestEntities { }
+interface RestEntities {}
 
 /**
  * @internal
@@ -30,37 +30,67 @@ interface RestFilter {
 }
 
 namespace Filter.REST {
-  export function equals<T>(v1: T, v2: T): RestFilter { return Comp(v1, "eq", v2) }
-  export function notEquals<T>(v1: T, v2: T): RestFilter { return Comp(v1, "ne", v2) }
+  export function equals<T>(v1: T, v2: T): RestFilter {
+    return Comp(v1, "eq", v2);
+  }
+  export function notEquals<T>(v1: T, v2: T): RestFilter {
+    return Comp(v1, "ne", v2);
+  }
 
-  export function greaterThan<T extends Number | Date>(v1: T, v2: T): RestFilter { return Comp(v1, "gt", v2) }
-  export function greaterThanOrEqual<T extends Number | Date>(v1: T, v2: T): RestFilter { return Comp(v1, "ge", v2) }
-  export function lessThan<T extends Number | Date>(v1: T, v2: T): RestFilter { return Comp(v1, "lt", v2) }
-  export function lessThanOrEqual<T extends Number | Date>(v1: T, v2: T): RestFilter { return Comp(v1, "le", v2) }
+  export function greaterThan<T extends Number | Date>(v1: T, v2: T): RestFilter {
+    return Comp(v1, "gt", v2);
+  }
+  export function greaterThanOrEqual<T extends Number | Date>(v1: T, v2: T): RestFilter {
+    return Comp(v1, "ge", v2);
+  }
+  export function lessThan<T extends Number | Date>(v1: T, v2: T): RestFilter {
+    return Comp(v1, "lt", v2);
+  }
+  export function lessThanOrEqual<T extends Number | Date>(v1: T, v2: T): RestFilter {
+    return Comp(v1, "le", v2);
+  }
 
-  export function and(f1: RestFilter, f2: RestFilter): RestFilter { return BiFilter(f1, "and", f2) }
-  export function or(f1: RestFilter, f2: RestFilter): RestFilter { return BiFilter(f1, "or", f2) }
-  export function not(f1: RestFilter): RestFilter { return <RestFilter><any>("not " + f1) }
+  export function and(f1: RestFilter, f2: RestFilter): RestFilter {
+    return BiFilter(f1, "and", f2);
+  }
+  export function or(f1: RestFilter, f2: RestFilter): RestFilter {
+    return BiFilter(f1, "or", f2);
+  }
+  export function not(f1: RestFilter): RestFilter {
+    return <RestFilter><any>("not " + f1);
+  }
 
-  export function ands(fs: RestFilter[]): RestFilter { return NestedFilter(fs, "and") }
-  export function ors(fs: RestFilter[]): RestFilter { return NestedFilter(fs, "or") }
+  export function ands(fs: RestFilter[]): RestFilter {
+    return NestedFilter(fs, "and");
+  }
+  export function ors(fs: RestFilter[]): RestFilter {
+    return NestedFilter(fs, "or");
+  }
 
-  export function startsWith(v1: string, v2: string): RestFilter { return DataFunc("startswith", v1, v2) }
-  export function substringOf(v1: string, v2: string): RestFilter { return DataFunc("substringof", v1, v2) }
-  export function endsWith(v1: string, v2: string): RestFilter { return DataFunc("endswith", v1, v2) }
+  export function startsWith(v1: string, v2: string): RestFilter {
+    return DataFunc("startswith", v1, v2);
+  }
+  export function substringOf(v1: string, v2: string): RestFilter {
+    return DataFunc("substringof", v1, v2);
+  }
+  export function endsWith(v1: string, v2: string): RestFilter {
+    return DataFunc("endswith", v1, v2);
+  }
 
   /**
    * Makes a string into a GUID that can be sent to the OData source
    */
-  export function makeGuid(id: string): XQR.Guid { return <XQR.Guid><any>XQR.makeTag(`(guid'${id}')`) }
+  export function makeGuid(id: string): XQR.Guid {
+    return <XQR.Guid><any>XQR.makeTag(`(guid'${id}')`);
+  }
 
   /**
    * @internal
    */
   function getVal(v: any) {
-    if (v == null) return "null"
-    if (typeof (v) === "string") return `'${v}'`;
-    if (Object.prototype.toString.call(v) === "[object Date]") return `DateTime'${v.format('yyyy-MM-ddTHH:mm:ss')}'`;
+    if (v == null) return "null";
+    if (typeof v === "string") return `'${v}'`;
+    if (Object.prototype.toString.call(v) === "[object Date]") return `DateTime'${v.format("yyyy-MM-ddTHH:mm:ss")}'`;
     return v.toString();
   }
 
@@ -91,21 +121,16 @@ namespace Filter.REST {
   function NestedFilter(fs: RestFilter[], conj: string): RestFilter {
     var last = fs.pop();
     if (last === undefined) {
-      return <RestFilter><any>('');
+      return <RestFilter><any>("");
     }
     return fs.reduceRight((acc, c) => BiFilter(c, conj, acc), last);
   }
 }
 
-
-
 namespace XrmQuery.REST {
-
   export function stripGUID(guid: string) {
-    if (guid.startsWith("{") && guid.endsWith("}"))
-      return guid.substring(1, guid.length - 1);
-    else
-      return guid;
+    if (guid.startsWith("{") && guid.endsWith("}")) return guid.substring(1, guid.length - 1);
+    else return guid;
   }
 
   export function retrieveRecord<O, S, E, R>(entityPicker: (x: RestEntities) => RestMapping<O, S, E, any, R>, id: string) {
@@ -125,9 +150,7 @@ namespace XrmQuery.REST {
   }
 }
 
-
 namespace XQR {
-
   export interface Guid {
     __XqrGuid: any;
   }
@@ -146,7 +169,7 @@ namespace XQR {
    * @internal
    */
   export function makeTag(name: string) {
-    return { __str: name, toString: function () { return this.__str } }
+    return { __str: name, toString: function () { return this.__str; } };
   }
 
   /**
@@ -160,7 +183,7 @@ namespace XQR {
   /**
    * @internal
    */
-  var fPatt = /function[^\(]*\(([a-zA-Z0-9_]+)[^\{]*\{([\s\S]*)\}$/m
+  var fPatt = /function[^\(]*\(([a-zA-Z0-9_]+)[^\{]*\{([\s\S]*)\}$/m;
 
   /**
    * @internal
@@ -177,7 +200,6 @@ namespace XQR {
     if (!m) throw new Error(`XrmQuery: Unable to properly parse function: ${f.toString()}`);
     return { arg: m[1], body: m[2] };
   }
-
 
   /**
    * @internal
@@ -202,14 +224,14 @@ namespace XQR {
   /**
    * @internal
    */
-  var NoOp = () => { };
+  var NoOp = () => {};
 
   /**
    * Contains information about a Retrieve query
    */
   export class RetrieveRecord<S, E, R> {
-    /** 
-     * @internal 
+    /**
+     * @internal
      */
     private logicalName: string;
     /**
@@ -220,8 +242,8 @@ namespace XQR {
      * @internal
      */
     private expands: string[] = [];
-    /** 
-     * @internal 
+    /**
+     * @internal
      */
     private id: string;
 
@@ -257,8 +279,8 @@ namespace XQR {
    * Contains information about a RetrieveMultiple query
    */
   export class RetrieveMultipleRecords<S, E, F, R> {
-    /** 
-     * @internal 
+    /**
+     * @internal
      */
     private logicalName: string;
     /**
@@ -370,7 +392,7 @@ namespace XQR {
       SDK.REST.retrieveMultipleRecords(
         this.logicalName,
         this.getOptionString(),
-        (page) => {
+        page => {
           pages.push(page);
         },
         errorCallback ? errorCallback : NoOp,
@@ -388,7 +410,6 @@ namespace XQR {
       this.top(1);
       this.execute(recs => successCallback((recs.length > 0) ? recs[0] : null), errorCallback ? errorCallback : NoOp, NoOp);
     }
-
 
     getOptionString(): string {
       var options: string[] = [];
@@ -418,12 +439,12 @@ namespace XQR {
    * Contains information about a Create query
    */
   export class CreateRecord<O, R> {
-    /** 
-     * @internal 
+    /**
+     * @internal
      */
     private logicalName: string;
-    /** 
-     * @internal 
+    /**
+     * @internal
      */
     private record: O;
 
@@ -445,16 +466,16 @@ namespace XQR {
    * Contains information about an Update query
    */
   export class UpdateRecord<O> {
-    /** 
-     * @internal 
+    /**
+     * @internal
      */
     private logicalName: string;
-    /** 
-     * @internal 
+    /**
+     * @internal
      */
     private id: string;
-    /** 
-     * @internal 
+    /**
+     * @internal
      */
     private record: O;
 
@@ -478,12 +499,12 @@ namespace XQR {
    * Contains information about a Delete query
    */
   export class DeleteRecord<O> {
-    /** 
-     * @internal 
+    /**
+     * @internal
      */
     private logicalName: string;
-    /** 
-     * @internal 
+    /**
+     * @internal
      */
     private id: string;
 
