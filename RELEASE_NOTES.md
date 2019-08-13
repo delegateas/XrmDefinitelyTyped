@@ -1,4 +1,8 @@
 # Release Notes
+
+### 4.3.13 - August 13 2019
+* Fix bug where some formatted values replaced the base value instead of including the formatted value
+
 ### 4.3.12 - June 26 2019
 * Added typings for getCurrentAppUrl() on the global context
 
