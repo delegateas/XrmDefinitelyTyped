@@ -419,11 +419,13 @@ namespace XQW {
     else if (lookupNavProperty) newName = newName.substr(0, newName.length - LOOKUP_NAVIGATIONPROPERTY_SUFFIX.length);
 
     if (beginsWith(newName, "_") && endsWith(newName, "_value")) {
-      newName = newName.substr(1, newName.length - 7);
+        newName = newName.substr(1, newName.length - 7);
+        if (formatted) newName += FORMATTED_ENDING;
+        else if (lookupLogicalName) newName += LOOKUP_LOGICALNAME_ENDING;
+        else if (lookupNavProperty) newName += LOOKUP_NAVIGATIONPROPERTY_ENDING;
+        else newName += GUID_ENDING;
+    } else {
       if (formatted) newName += FORMATTED_ENDING;
-      else if (lookupLogicalName) newName += LOOKUP_LOGICALNAME_ENDING;
-      else if (lookupNavProperty) newName += LOOKUP_NAVIGATIONPROPERTY_ENDING;
-      else newName += GUID_ENDING;
     }
 
     if (newName != name) {
