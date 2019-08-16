@@ -761,6 +761,14 @@ declare namespace Xrm {
      */
     save(saveOptions?: SaveOptions): Promise<undefined>;
   }
+  
+  /**
+   * Specify options for saving the record. If no parameter is included in the method, the record will simply be saved. This is the equivalent of using the Save command.
+   * You can specify one of the following values:
+   * - saveandclose: This is the equivalent of using the Save and Close command.
+   * - saveandnew: This is the equivalent of the using the Save and New command
+   */
+  type saveOption = "saveandclose" | "saveandnew";
 
   /**
    * Interface for the entity on a form.
@@ -779,7 +787,7 @@ declare namespace Xrm {
     /**
      * Saves the record synchronously with the options to close the form or open a new form after the save is completed.
      */
-    save(saveOptions?: SaveOptions): boolean;
+    save(saveOptions?: saveOption): boolean;
   }
 
   /**
