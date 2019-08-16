@@ -787,7 +787,7 @@ declare namespace Xrm {
     /**
      * Saves the record synchronously with the options to close the form or open a new form after the save is completed.
      */
-    save(saveOptions?: saveOption): boolean;
+    save(saveOptions?: saveOption): void;
   }
 
   /**
