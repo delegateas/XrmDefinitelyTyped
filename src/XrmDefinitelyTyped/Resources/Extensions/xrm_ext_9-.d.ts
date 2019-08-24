@@ -761,7 +761,7 @@ declare namespace Xrm {
      */
     save(saveOptions?: SaveOptions): Promise<undefined>;
   }
-  
+
   /**
    * Specify options for saving the record. If no parameter is included in the method, the record will simply be saved. This is the equivalent of using the Save command.
    * You can specify one of the following values:
