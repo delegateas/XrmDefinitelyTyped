@@ -1,4 +1,6 @@
 # Release Notes
+### 4.3.14 - September 13 2019
+* Added missing short-hands for BPF typings
 
 ### 4.3.13 - August 13 2019
 * Fix bug where some formatted values replaced the base value instead of including the formatted value
