@@ -121,5 +121,27 @@ declare namespace Xrm {
      *                cannot be removed using this method.
      */
     removeOnProcessStatusChange(handler: (context?: ExecutionContext<this>) => any): void;
+
+    /**
+     * Returns the unique identifier of the process instance.
+     */
+    getInstanceId(): string;
+
+    /**
+     * Returns the name of the process instance.
+     */
+    getInstanceName(): string;
+
+    /**
+     * Returns the current status of the process instance.
+     */
+    getStatus(): ProcessStatus;
+
+    /**
+     * Sets the current status of the active process instance.
+     * @param status The new status. The values can be active, aborted, or finished.
+     * @param callbackFunction A function to call when the operation is complete. This callback function is passed the new status as a string value.
+     */
+    setStatus(status: ProcessStatus, callbackFunction?: (status: ProcessStatus) => any): ProcessStatus;
   }
 }
