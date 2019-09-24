@@ -8,4 +8,5 @@ nuget FSharp.Core
 nuget Microsoft.CrmSdk.CoreAssemblies >= 8
 nuget Microsoft.CrmSdk.Deployment >= 8
 nuget Microsoft.CrmSdk.XrmTooling.CoreAssembly >= 8
+nuget Microsoft.IdentityModel.Clients.ActiveDirectory ~> 2.22.0
 github fsharp/FAKE modules/Octokit/Octokit.fsx
