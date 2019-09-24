@@ -6,4 +6,6 @@ nuget FSharp.Formatting
 
 nuget FSharp.Core
 nuget Microsoft.CrmSdk.CoreAssemblies >= 8
+nuget Microsoft.CrmSdk.Deployment >= 8
+nuget Microsoft.CrmSdk.XrmTooling.CoreAssembly >= 8
 github fsharp/FAKE modules/Octokit/Octokit.fsx

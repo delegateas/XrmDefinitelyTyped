@@ -127,6 +127,16 @@ type Args private () =
       altCommands=[]
       description="Authentication Provider Type"
       required=false }
+
+    { command="mfaAppId"
+      altCommands=[]
+      description="Azure Application Id"
+      required=false }
+
+    { command="mfaReturnUrl"
+      altCommands=[]
+      description="Return URL defined for the Azure Application"
+      required=false }
   ]
 
 

@@ -15,6 +15,8 @@ type XrmAuthentication = {
   password: string
   domain: string option
   ap: AuthenticationProviderType option
+  mfaAppId: string option
+  mfaReturnUrl: string option
 }
 
 type OptionalNamespace = string option

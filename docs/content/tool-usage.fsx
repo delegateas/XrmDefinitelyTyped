@@ -24,6 +24,8 @@ Here is the full list of arguments for configuring the tool:
 | username          | u, usr      | Username for the CRM system.
 | password          | p, pwd      | Password for the CRM system.
 | domain            | d, dmn      | Domain for the user.
+| mfaAppId          |             | Azure Application Id
+| mfaReturnUrl      |             | Return URL of the Azure Application
 | ap                |             | Authentication Provider Type
 | out               | o           | Output directory for the generated declaration files.
 | jsLib             | jl          | Output directory for the JavaScript library files (**XrmQuery files**)

@@ -52,7 +52,7 @@ let getAllEntityForms proxy skipInactiveForms =
 
 
 // Retrieve fields for bpf
-let getBpfData (proxy:OrganizationServiceProxy) =
+let getBpfData (proxy:IOrganizationService) =
   let query = new QueryExpression("workflow")
   query.ColumnSet <- new ColumnSet([| "name"; "clientdata"; "category"; "primaryentity" |])
 

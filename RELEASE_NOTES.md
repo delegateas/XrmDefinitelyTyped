@@ -1,4 +1,7 @@
 # Release Notes
+### 4.4.0 - September 24 2019
+* Added support for MFA (@StevenRasmussen)
+
 ### 4.3.14 - September 13 2019
 * Added missing short-hands for BPF typings
 
@@ -40,6 +43,7 @@
 
 ### 4.3.1 - April 16 2019
 * Fixed bug when using expand
+
 
 ### 4.3.0 - March 11 2019
 * Added support for synchronous execution of XrmQuery. Should be used sparingly. (@majakubowski)

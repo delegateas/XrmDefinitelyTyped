@@ -10,10 +10,13 @@ open Microsoft.Xrm.Sdk.Messages
 open Microsoft.Xrm.Sdk.Query
 open Microsoft.Xrm.Sdk.Metadata
 open Microsoft.Crm.Sdk.Messages
+open Microsoft.Xrm.Sdk.WebServiceClient
 
 // Execute request
-let getResponse<'T when 'T :> OrganizationResponse> (proxy:OrganizationServiceProxy) request =
-  proxy.Timeout <- TimeSpan(1,0,0)
+let getResponse<'T when 'T :> OrganizationResponse> (proxy:IOrganizationService) request =
+  if(proxy :? OrganizationServiceProxy) then 
+    let orgProxy = proxy :?> OrganizationServiceProxy
+    orgProxy.Timeout <- TimeSpan(1,0,0)
   (proxy.Execute(request)) :?> 'T
 
 // Retrieve version
@@ -23,11 +26,11 @@ let retrieveVersion proxy =
   parseVersion resp.Version
 
 // Retrieve data
-let internal retrieveMultiple proxy logicalName (query:QueryExpression) = 
+let internal retrieveMultiple (proxy:IOrganizationService) logicalName (query:QueryExpression) = 
   query.PageInfo <- PagingInfo()
 
   let rec retrieveMultiple' 
-    (proxy:OrganizationServiceProxy) (query:QueryExpression) page cookie =
+    (proxy:IOrganizationService) (query:QueryExpression) page cookie =
     seq {
         query.PageInfo.PageNumber <- page
         query.PageInfo.PagingCookie <- cookie
@@ -68,7 +71,7 @@ let internal getEntities
 
 // Get all entities with a filter
 let internal getEntitiesFilter 
-  proxy (logicalName:string)
+  (proxy:IOrganizationService) (logicalName:string)
   (cols:string list) (filter:Map<string,obj>) =
     
   let f = FilterExpression()
@@ -89,7 +92,7 @@ let getAllEntityMetadataLight proxy =
   resp.EntityMetadata
 
 // Retrieve all metadata for all entities
-let getAllEntityMetadata (proxy:OrganizationServiceProxy) =
+let getAllEntityMetadata (proxy:IOrganizationService) =
   let request = RetrieveAllEntitiesRequest()
   request.EntityFilters <- Microsoft.Xrm.Sdk.Metadata.EntityFilters.All
   request.RetrieveAsIfPublished <- false
@@ -176,7 +179,7 @@ let getSpecificEntitiesAndDependentMetadata proxy logicalNames =
 
 
 // Retrieve single entity metadata
-let getEntityLogicalNameFromId (proxy:OrganizationServiceProxy) metadataId =
+let getEntityLogicalNameFromId (proxy:IOrganizationService) metadataId =
   let request = RetrieveEntityRequest()
   request.MetadataId <- metadataId
   request.EntityFilters <- Microsoft.Xrm.Sdk.Metadata.EntityFilters.Entity
@@ -187,7 +190,7 @@ let getEntityLogicalNameFromId (proxy:OrganizationServiceProxy) metadataId =
 
 
 // Retrieves all the logical names of entities in a solution
-let retrieveSolutionEntities proxy solutionName =
+let retrieveSolutionEntities (proxy:IOrganizationService) solutionName =
   let solutionFilter = [("uniquename", solutionName)] |> Map.ofList
   let solutions = 
     getEntitiesFilter proxy "solution" 
@@ -212,7 +215,13 @@ let retrieveSolutionEntities proxy solutionName =
 let proxyHelper xrmAuth () =
   let ap = xrmAuth.ap ?| AuthenticationProviderType.OnlineFederation
   let domain = xrmAuth.domain ?| ""
-  CrmAuth.authenticate
-    xrmAuth.url ap xrmAuth.username 
-    xrmAuth.password domain
-  ||> CrmAuth.proxyInstance
+  let mfaAppId = xrmAuth.mfaAppId ?| ""
+  let mfaReturnUrl = xrmAuth.mfaReturnUrl ?| ""
+  let proxyInstance = 
+    match mfaReturnUrl with
+        | "" ->
+            let manager = CrmAuth.getServiceManagement xrmAuth.url
+            let authToken = CrmAuth.authenticate manager ap xrmAuth.username xrmAuth.password domain
+            CrmAuth.getOrganizationServiceProxy manager authToken
+        | _ -> CrmAuth.getOrganizationServiceProxyUsingMFA xrmAuth.username xrmAuth.password xrmAuth.url mfaAppId mfaReturnUrl 
+  proxyInstance
