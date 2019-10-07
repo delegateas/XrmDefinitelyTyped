@@ -78,4 +78,20 @@ class Web_Retrieve_Promise extends FakeRequests {
         req.respond(200, { 'OData-EntityId': newAccountId }, "");
         expect(result).to.eventually.equal(newAccountId);
     }
+
+    @test
+    "No-Content response"() {
+        var result = XrmQuery.retrieveRelated(x => x.accounts, "0000-SOME-GUID", y => y.parentaccountid)
+        .select(x => [x.createdby_guid])    
+        .promise();
+
+        // Check request
+        expect(this.requests.length).to.equal(1);
+        var req = this.requests[0];
+
+        // Respond and check that body is parsed correctly
+        req.respond(204, {}, "");
+
+        expect(result).to.eventually.deep.equal([]);
+    }
 }
