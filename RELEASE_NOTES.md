@@ -1,4 +1,7 @@
 # Release Notes
+### 4.4.1 - October 16 2019
+* Fixed a bug with the typings for Xrm.Navigation.openForm (@sergeytunnik)
+
 ### 4.4.0 - September 24 2019
 * Added support for MFA (@StevenRasmussen)
 
