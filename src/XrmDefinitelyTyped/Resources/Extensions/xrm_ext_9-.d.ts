@@ -959,6 +959,34 @@ declare namespace Xrm {
      */
     getEntityTypes(): string[];
   }
+
+  interface GridRow<T extends string> {
+    /**
+     * A collection containing the GridRowData for the GridRow.
+     */
+    data: GridRowData<T>;
+  }
+
+  interface GridRowData<T extends string> {
+    /**
+     * Returns the GridEntity for the GridRowData.
+     */
+    entity: GridEntity<T>;
+  }
+
+  interface GridEntity<T extends string> {
+    /**
+     * Each attribute (GridAttribute) represents the data in the cell of an editable grid,
+     * and contains a reference to all the cells associated with the attribute.
+     */
+     attributes: GridCollection<GridEntityAttribute<T>>;
+  }
+
+  interface GridCollection<T> {
+  }
+
+  interface GridEntityAttribute<T extends string> {
+  }
 }
 
 interface Xrm<T extends Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>> extends BaseXrm {
