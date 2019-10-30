@@ -987,6 +987,24 @@ declare namespace Xrm {
 
   interface GridEntityAttribute<T extends string> {
   }
+
+  type AddNotificationLevel = "RECOMMENDATION" | "ERROR";
+
+  interface actionsObject {
+    message?: string | null;
+    actions?: Function[] | null;
+  }
+
+  interface AddNotificationObject {
+    actions?: actionsObject | null;
+    messages: string[];
+    notificationLevel: AddNotificationLevel;
+    uniqueId: string;
+  }
+
+  interface BaseControl {
+    addNotification(notification: AddNotificationObject): void;
+  }
 }
 
 interface Xrm<T extends Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>> extends BaseXrm {
