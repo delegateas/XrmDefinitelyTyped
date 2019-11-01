@@ -436,7 +436,7 @@ declare namespace Xrm {
      * @param file An object describing the file to open.
      * @param openFileOptions Specify whether to open or save the file.
      */
-    openFile(file: Xrm.File, openFileOptions?: OpenFileOptions);
+    openFile(file: Xrm.File, openFileOptions?: OpenFileOptions): void;
 
     /**
      * Opens an entity form or a quick create form.
@@ -451,7 +451,7 @@ declare namespace Xrm {
      * @param url URL to open.
      * @param openUrlOptions Options to open the URL.
      */
-    openUrl(url: string, openUrlOptions: SizeOptions);
+    openUrl(url: string, openUrlOptions: SizeOptions): void;
 
     /**
      * Opens an HTML web resource.
@@ -460,7 +460,7 @@ declare namespace Xrm {
      * @param windowOptions Window options for opening web resource.
      * @param data Data to be passed into the data parameter.
      */
-    openWebResource(webResourceName: string, windowOptions?: WindowOptions, data?: string);
+    openWebResource(webResourceName: string, windowOptions?: WindowOptions, data?: string): void;
   }
 
   /**
@@ -698,14 +698,14 @@ declare namespace Xrm {
      * Refreshes the parent grid containing the specified record.
      * @param lookupOptions The record who's parent's grid to refresh.
      */
-    refreshParentGrid(lookupOptions: Lookup);
+    refreshParentGrid(lookupOptions: Lookup): void;
 
     /**
      * Displays a progress dialog with the specified message.
      * Any subsequent call to this method will update the displayed message in the existing progress dialog with the message specified in the latest method call.
      * @param message The message to be displayed in the progress dialog.
      */
-    showProgressIndicator(message: string);
+    showProgressIndicator(message: string): void;
   }
 
   /**
