@@ -1,4 +1,8 @@
 # Release Notes
+### 4.4.2 - November 01 2019
+* Added return void types to implicit any (@mathiasbl)
+* Added support for property accesses data on Subgrids (@mkholt)
+
 ### 4.4.1 - October 16 2019
 * Fixed a bug with the typings for Xrm.Navigation.openForm (@sergeytunnik)
 
