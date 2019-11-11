@@ -532,44 +532,7 @@ declare namespace Xrm {
     isAvailableOffline(entityLogicalName: string): boolean;
   }
 
-  type WebApiResponseType = "" | "arraybuffer" | "blob" | "document" | "json" | "text";
-
-  interface WebApiResponse {
-    /**
-     * Response body.
-     */
-    body?: Object;
-
-    /**
-     * Response headers.
-     */
-    headers: Object;
-
-    /**
-     * Indicates whether the request was successful.
-     */
-    ok: boolean;
-
-    /**
-     * Numeric value in the response status code. For example: 200
-     */
-    status: number;
-
-    /**
-     * Description of the response status code. For example: OK
-     */
-    statusText: string;
-
-    /**
-     * Response type. Values are: the empty string (default), "arraybuffer", "blob", "document", "json", and "text".
-     */
-    type: WebApiResponseType;
-
-    /**
-     * Request URL of the action, function, or CRUD request that was sent to the Web API endpoint.
-     */
-    url: string;
-  }
+  interface WebApiResponse extends Response {}
 
   interface WebApiOnline extends WebApiBase {
     /**
