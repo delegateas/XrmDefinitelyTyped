@@ -167,9 +167,14 @@ declare namespace Xrm {
     confirmButtonLabel?: string;
 
     /**
-     * Tge message to be displayed in the alert dialog.
+     * The message to be displayed in the alert dialog.
      */
     text: string;
+
+    /**
+     * The title of the alert dialog.
+     */
+    title?: string;
   }
 
   /**
