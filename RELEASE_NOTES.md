@@ -1,4 +1,8 @@
 # Release Notes
+### 4.4.3 - November 12 2019
+* WebApi execute method now returns Fetch API Response object(@sergeytunnik)
+* AlertStrings typing now supports title
+
 ### 4.4.2 - November 01 2019
 * Added return void types to implicit any (@mathiasbl)
 * Added support for property accesses data on Subgrids (@mkholt)
