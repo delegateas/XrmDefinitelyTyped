@@ -1,4 +1,8 @@
 # Release Notes
+
+### 4.4.4 - November 22 2019
+* Fix issue with ts compiler issue due to form context containing invalid type "NoAttribute" due to bad metadata
+
 ### 4.4.3 - November 12 2019
 * WebApi execute method now returns Fetch API Response object(@sergeytunnik)
 * AlertStrings typing now supports title
