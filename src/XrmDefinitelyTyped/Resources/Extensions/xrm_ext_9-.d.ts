@@ -574,6 +574,18 @@ declare namespace Xrm {
      */
     offline: WebApiOffline;
   }
+  
+  interface LookupOptionsFilter {
+    /**
+     * The FetchXML filter element to apply.
+     */
+    filterXml: string;
+    
+    /**
+     * The entity type to which to apply this filter.
+     */
+    entityLogicalName: string
+  }
 
   interface LookupOptions {
     /**
@@ -592,9 +604,19 @@ declare namespace Xrm {
     defaultViewId?: string;
 
     /**
+    * Decides whether to display the most recently used(MRU) item. Available only for Unified Interface.
+    */
+    disableMru?: boolean;
+    
+    /**
      * The entity types to display.
      */
     entityTypes?: string[];
+    
+    /**
+     * Used to filter the results. Each object in the array contains the following attributes.
+     */
+    filters? : LookupOptionsFilter[];
 
     /**
      * Indicates whether the lookup control should show the barcode scanner in mobile clients.
