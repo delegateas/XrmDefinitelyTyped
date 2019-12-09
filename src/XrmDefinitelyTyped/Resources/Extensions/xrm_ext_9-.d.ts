@@ -950,6 +950,48 @@ declare namespace Xrm {
         getEntityTypes(): string[];
     }
 
+    const enum GridType {
+        HomePageGrid = 1,
+        Subgrid = 2,
+    }
+
+    const enum GridUrlClient {
+        Browser = 1,
+        MobileApplication = 2,
+    }
+
+    interface SubGridControl<T extends string> extends BaseControl {
+        /**
+         * Gets the FetchXML query that represents the current data, including filtered and sorted data, in the grid control.
+         */
+        getFetchXml(): string;
+
+        /**
+         * Gets the FetchXML query that represents the current data, including filtered and sorted data, in the grid control.
+         */
+        getRelationship(): EntityFormRelationship;
+
+        /**
+         * Gets information about the relationship used to filter the subgrid.
+         */
+        getGridType(): GridType;
+
+        /**
+         * Gets the URL of the current grid control.
+         */
+        getUrl(client?: GridUrlClient): string
+
+        /**
+         * Gets the URL of the current grid control.
+         */
+        openRelatedGrid(): void;
+
+        /**
+         * Refreshes the ribbon rules for the grid control.
+         */
+        refreshRibbon(): void;
+    }
+
     interface GridRow<T extends string> {
         /**
          * A collection containing the GridRowData for the GridRow.
