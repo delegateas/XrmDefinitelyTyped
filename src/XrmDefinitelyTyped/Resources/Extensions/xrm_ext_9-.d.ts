@@ -955,9 +955,9 @@ declare namespace Xrm {
         Subgrid = 2,
     }
 
-    const enum GridUrlClient {
-        Browser = 1,
-        MobileApplication = 2,
+    const enum ClientType {
+        Browser = 0,
+        MobileApplication = 1,
     }
 
     interface SubGridControl<T extends string> extends BaseControl {
@@ -979,7 +979,7 @@ declare namespace Xrm {
         /**
          * Gets the URL of the current grid control.
          */
-        getUrl(client?: GridUrlClient): string
+        getUrl(client?: ClientType): string;
 
         /**
          * Gets the URL of the current grid control.
