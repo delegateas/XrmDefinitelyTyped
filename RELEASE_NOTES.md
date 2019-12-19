@@ -1,4 +1,6 @@
 # Release Notes
+### 4.4.6 - December 19 2019
+* Added grid control methods and user settings properties (@mathiasbl)
 
 ### 4.4.4 - November 22 2019
 * Fix issue with ts compiler issue due to form context containing invalid type "NoAttribute" due to bad metadata
