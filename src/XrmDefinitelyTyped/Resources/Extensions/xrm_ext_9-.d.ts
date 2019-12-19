@@ -812,7 +812,87 @@ declare namespace Xrm {
         removeOnLoad(myFunction: Function): void;
     }
 
+    interface dateFormattingInfo {
+        AMDesignator: string;
+        Calendar: Calendar;
+        DateSeparator: string;
+        FirstDayOfWeek: number;
+        CalendarWeekRule: number;
+        FullDateTimePattern: string;
+        LongDatePattern: string;
+        LongTimePattern: string;
+        MonthDayPattern: string;
+        PMDesignator: string;
+        RFC1123Pattern: string;
+        ShortDatePattern: string;
+        ShortTimePattern: string;
+        SortableDateTimePattern: string;
+        TimeSeparator: string;
+        UniversalSortableDateTimePattern: string;
+        YearMonthPattern: string;
+        AbbreviatedDayNames: string[];
+        ShortestDayNames: string[];
+        DayNames: string[];
+        AbbreviatedMonthNames: string[];
+        MonthNames: string[];
+        IsReadOnly: boolean;
+        NativeCalendarName: string;
+        AbbreviatedMonthGenitiveNames: string[];
+        MonthGenitiveNames: string[];
+        eras: (null | number | string)[];
+    }
+
+    interface Calendar {
+        MinSupportedDateTime: string;
+        MaxSupportedDateTime: string;
+        AlgorithmType: number;
+        CalendarType: number;
+        Eras: number[];
+        TwoDigitYearMax: number;
+        IsReadOnly: boolean;
+    }
+
     interface userSettings {
+        /**
+         * The name of the current user.
+         */
+        dateFormattingInfo: dateFormattingInfo;
+
+        /**
+         * Returns the ID of the default dashboard for the current user.
+         */
+        defaultDashboardId: string;
+
+        /**
+         * Indicates whether high contrast is enabled for the current user.
+         */
+        isGuidedHelpEnabled: boolean;
+
+        /**
+         * Indicates whether guided help is enabled for the current user..
+         */
+        isHighContrastEnabled: boolean;
+
+        /**
+         * Indicates whether the language for the current user is a right-to-left (RTL) language.
+         */
+        isRTL: boolean;
+
+        /**
+         * The LCID value that represents the provisioned language that the user selected as their preferred language.
+         */
+        languageId: number;
+
+        /**
+         * Returns an array of strings that represent the GUID values of each of the security role privilege that the user is associated with or any teams that the user is associated with.
+         */
+        securityRolePrivileges: string[]
+
+        /**
+         * An array of strings that represent the GUID values of each of the security roles that the user is associated with or any teams that the user is associated with.
+         */
+        securityRoles: string[];
+
         /**
          * The name of the current user.
          */
@@ -828,15 +908,6 @@ declare namespace Xrm {
          */
         userId: string;
 
-        /**
-         * The LCID value that represents the provisioned language that the user selected as their preferred language.
-         */
-        languageId: number;
-
-        /**
-         * An array of strings that represent the GUID values of each of the security roles that the user is associated with or any teams that the user is associated with.
-         */
-        securityRoles: string[];
     }
 
     interface organizationSettings {
@@ -948,6 +1019,48 @@ declare namespace Xrm {
          * Use this method to get which entity types the lookup control will show the user
          */
         getEntityTypes(): string[];
+    }
+
+    const enum GridType {
+        HomePageGrid = 1,
+        Subgrid = 2,
+    }
+
+    const enum ClientType {
+        Browser = 0,
+        MobileApplication = 1,
+    }
+
+    interface SubGridControl<T extends string> extends BaseControl {
+        /**
+         * Gets the FetchXML query that represents the current data, including filtered and sorted data, in the grid control.
+         */
+        getFetchXml(): string;
+
+        /**
+         * Gets the FetchXML query that represents the current data, including filtered and sorted data, in the grid control.
+         */
+        getRelationship(): EntityFormRelationship;
+
+        /**
+         * Gets information about the relationship used to filter the subgrid.
+         */
+        getGridType(): GridType;
+
+        /**
+         * Gets the URL of the current grid control.
+         */
+        getUrl(client?: ClientType): string;
+
+        /**
+         * Gets the URL of the current grid control.
+         */
+        openRelatedGrid(): void;
+
+        /**
+         * Refreshes the ribbon rules for the grid control.
+         */
+        refreshRibbon(): void;
     }
 
     interface GridRow<T extends string> {

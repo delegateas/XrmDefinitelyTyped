@@ -14,5 +14,12 @@ declare namespace Xrm {
      * @param saveOptions This option is only applicable when used with appointment, recurring appointment, or service activity records.
      */
     save(saveOptions?: SaveOptions): Then<undefined>;
-  }
+    }
+
+    interface SubGridControl<T extends string> extends BaseControl {
+        /**
+         * Use this method to get the logical name of the relationship used for the data displayed in the grid.
+         */
+        getRelationshipName(): string;
+    }
 }
