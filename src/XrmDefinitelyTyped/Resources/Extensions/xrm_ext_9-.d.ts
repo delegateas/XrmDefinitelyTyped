@@ -411,10 +411,96 @@ declare namespace Xrm {
         savedEntityReference: Lookup[];
     }
 
+    type PageType = "entitylist" | "webresource";
+
+    type ViewType = "savedquery" | "userquery";
+
+    interface PageInput {
+        pageType: PageType
+
+        /**
+         *  The data to pass to the web resource.
+         */
+        data?: string;
+
+        /**
+         *  The logical name of the entity to load in the list control.
+         */
+        entityName?: string;
+
+        /**
+         * The ID of the view to load. If you don't specify it, navigates to the default main view for the entity.
+         */
+        viewId?: string;
+
+        /**
+         * Type of view to load. Specify "savedquery" or "userquery".
+         */
+        viewType?: ViewType;
+
+        /**
+         * The name of the web resource to load.
+         */
+        webResourceName?: string;
+    }
+
+    const enum NavigateToTarget {
+        PageInline = 1,
+        Dialog = 2,
+    }
+
+    type SizeValueUnit = "%" | "px";
+
+    interface SizeValue {
+        /**
+         * The numerical value.
+         */
+        value: number;
+
+        /**
+         * The unit of measurement.Specify "%" or "px".Default value is "px".
+         */
+        unit: SizeValueUnit;
+    }
+
+    const enum NavigationOptionsPosition {
+        Center = 1,
+        Side = 2,
+    }
+
+    interface NavigationOtions {
+        /**
+         * Specify 1 to open the page inline; 2 to open the page in a dialog. Entity lists can only be opened inline; web resources can be opened either inline or in a dialog
+         */
+        target: NavigateToTarget;
+
+        /**
+         * The width of dialog. To specify the width in pixels, just type a numeric value. To specify the width in percentage, specify an object of type SizeValue
+         */
+        width?: number | SizeValue;
+
+        /**
+         * The width of dialog. To specify the width in pixels, just type a numeric value. To specify the width in percentage, specify an object of type SizeValue
+         */
+        height?: number | SizeValue;
+
+        /**
+         * Number. Specify 1 to open the dialog in center; 2 to open the dialog on the side. Default is 1 (center).
+         */
+        position?: NavigationOptionsPosition;
+    }
+
     /**
      * Contains methods for multi-page dialogs and task flow, and some methods moved from the Xrm.Utility namespace.
      */
     interface Navigation {
+        /**
+         * Navigates to the specified page.
+         * @param pageInput Input about the page to navigate to. The object definition changes depending on the type of page to navigate to: entity list or HTML web resource.
+         * @param navigationOptions Options for navigating to a page: whether to open inline or in a dialog. If you don't specify this parameter, page is opened inline by default.
+         */
+        navigateTo(pageInput: PageInput, navigationOptions: NavigationOtions): Promise<undefined>;
+
         /**
          * Displays an alert dialog containing a message and a button.
          * @param alertStrings The string to be used in the alert dialog.
