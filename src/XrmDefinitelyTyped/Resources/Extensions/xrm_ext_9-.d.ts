@@ -444,7 +444,7 @@ declare namespace Xrm {
         webResourceName?: string;
     }
 
-    const enum NavigateToTarget {
+    const enum NavigationOptionsTarget {
         PageInline = 1,
         Dialog = 2,
     }
@@ -468,11 +468,11 @@ declare namespace Xrm {
         Side = 2,
     }
 
-    interface NavigationOtions {
+    interface NavigationOptions {
         /**
          * Specify 1 to open the page inline; 2 to open the page in a dialog. Entity lists can only be opened inline; web resources can be opened either inline or in a dialog
          */
-        target: NavigateToTarget;
+        target: NavigationOptionsTarget;
 
         /**
          * The width of dialog. To specify the width in pixels, just type a numeric value. To specify the width in percentage, specify an object of type SizeValue
@@ -480,7 +480,7 @@ declare namespace Xrm {
         width?: number | SizeValue;
 
         /**
-         * The width of dialog. To specify the width in pixels, just type a numeric value. To specify the width in percentage, specify an object of type SizeValue
+         * The height of dialog. To specify the width in pixels, just type a numeric value. To specify the width in percentage, specify an object of type SizeValue
          */
         height?: number | SizeValue;
 
@@ -499,7 +499,7 @@ declare namespace Xrm {
          * @param pageInput Input about the page to navigate to. The object definition changes depending on the type of page to navigate to: entity list or HTML web resource.
          * @param navigationOptions Options for navigating to a page: whether to open inline or in a dialog. If you don't specify this parameter, page is opened inline by default.
          */
-        navigateTo(pageInput: PageInput, navigationOptions: NavigationOtions): Promise<undefined>;
+        navigateTo(pageInput: PageInput, navigationOptions: NavigationOptions): Promise<undefined>;
 
         /**
          * Displays an alert dialog containing a message and a button.
