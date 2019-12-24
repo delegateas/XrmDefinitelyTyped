@@ -102,6 +102,10 @@ declare namespace Xrm {
     getStatus(): ProcessStatus;
   }
 
+  interface ProcessStatusChangeContext extends ExecutionContext<Process> {
+    getEventArgs(): any;
+  }
+
   interface ProcessModule {
     /**
      * Use this to add a function as an event handler for the OnProcessStatusChange event so that it will be called when the
@@ -113,14 +117,14 @@ declare namespace Xrm {
      *                anonymous function if you may later want to remove the
      *                event handler.
      */
-    addOnProcessStatusChange(handler: (context?: ExecutionContext<this>) => any): void;
+    addOnProcessStatusChange(handler: (context?: ProcessStatusChangeContext) => any): void;
 
     /**
      * Use this to remove a function as an event handler for the OnProcessStatusChange event.
      * @param handler If an anonymous function is set using the addOnProcessStatusChange method it
      *                cannot be removed using this method.
      */
-    removeOnProcessStatusChange(handler: (context?: ExecutionContext<this>) => any): void;
+    removeOnProcessStatusChange(handler: (context?: ProcessStatusChangeContext) => any): void;
 
     /**
      * Returns the unique identifier of the process instance.

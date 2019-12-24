@@ -590,7 +590,7 @@
      * @param functionRef Reference to a function. It will be added to the bottom of the event handler pipeline.
      *                  The execution context is automatically set to be passed as the first parameter passed to event handlers set using this method.
      */
-    addOnSave(functionRef: (context?: ExecutionContext<this>) => any): void;
+    addOnSave(functionRef: (context?: SaveEventContext<this>) => any): void;
 
     /**
      * Removes a function to be called when the record is saved.
@@ -632,11 +632,6 @@
     getDepth(): number;
 
     /**
-     * Method that returns an object with methods to manage the Save event.
-     */
-    getEventArgs(): SaveEventArgs;
-
-    /**
      * Method that returns a reference to the object that the event occurred on.
      */
     getEventSource(): T;
@@ -655,6 +650,13 @@
      * @param key Key for the desired value
      */
     getSharedVariable(key: string): any;
+  }
+
+  interface SaveEventContext<T> extends ExecutionContext<T> {
+    /**
+     * Method that returns an object with methods to manage the Save event.
+     */
+    getEventArgs(): SaveEventArgs;
   }
 
   interface SaveEventArgs {
