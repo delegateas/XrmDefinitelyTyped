@@ -1,4 +1,14 @@
 # Release Notes
+### 4.4.6 - December 19 2019
+* Added grid control methods and user settings properties (@mathiasbl)
+
+### 4.4.4 - November 22 2019
+* Fix issue with ts compiler issue due to form context containing invalid type "NoAttribute" due to bad metadata
+
+### 4.4.3 - November 12 2019
+* WebApi execute method now returns Fetch API Response object(@sergeytunnik)
+* AlertStrings typing now supports title
+
 ### 4.4.2 - November 01 2019
 * Added return void types to implicit any (@mathiasbl)
 * Added support for property accesses data on Subgrids (@mkholt)
