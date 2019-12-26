@@ -233,7 +233,7 @@
      *
      * @param functionRef The event handler for the on change event.
      */
-    addOnChange(functionRef: (context?: ExecutionContext<this>) => any): void;
+    addOnChange(functionRef: (context?: ExecutionContext<this, undefined>) => any): void;
 
     /**
      * Removes a function from the OnChange event hander for an attribute.
@@ -620,7 +620,7 @@
     getIsDirty(): boolean;
   }
 
-  interface ExecutionContext<T> {
+  interface ExecutionContext<TSource, TArgs> {
     /**
      * Method that returns the Client-side context object
      */
@@ -632,9 +632,14 @@
     getDepth(): number;
 
     /**
+     * Method that returns an object with methods to manage the Save event.
+     */
+    getEventArgs(): TArgs;
+
+    /**
      * Method that returns a reference to the object that the event occurred on.
      */
-    getEventSource(): T;
+    getEventSource(): TSource;
 
     /**
      * Sets the value of a variable to be used by a handler after the current handler completes.
@@ -652,12 +657,7 @@
     getSharedVariable(key: string): any;
   }
 
-  interface SaveEventContext<T> extends ExecutionContext<T> {
-    /**
-     * Method that returns an object with methods to manage the Save event.
-     */
-    getEventArgs(): SaveEventArgs;
-  }
+  interface SaveEventContext<T> extends ExecutionContext<T, SaveEventArgs> { }
 
   interface SaveEventArgs {
     /**
@@ -1098,6 +1098,11 @@
      * UI of the page.
      */
     ui: Xrm.UiModule<U, V>;
+
+    /**
+     * Returns string with current page URL.
+     */
+    getUrl(): string;
   }
 
   /**

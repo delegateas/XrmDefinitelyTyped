@@ -102,9 +102,7 @@ declare namespace Xrm {
     getStatus(): ProcessStatus;
   }
 
-  interface ProcessStatusChangeContext extends ExecutionContext<Process> {
-    getEventArgs(): any;
-  }
+  interface ProcessStatusChangeContext extends ExecutionContext<Process, any> { }
 
   interface ProcessModule {
     /**

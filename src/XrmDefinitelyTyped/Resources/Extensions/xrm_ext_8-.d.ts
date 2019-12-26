@@ -88,13 +88,9 @@ declare namespace Xrm {
     getDirection(): ProcessStageChangeDirection;
   }
 
-  interface StageSelectedContext extends ExecutionContext<Stage> {
-    getEventArgs(): StageSelectedEventArguments;
-  }
+  interface StageSelectedContext extends ExecutionContext<Stage, StageSelectedEventArguments> { }
 
-  interface StageChangeContext extends ExecutionContext<Stage> {
-    getEventArgs(): StageChangeEventArguments;
-  }
+  interface StageChangeContext extends ExecutionContext<Stage, StageChangeEventArguments> { }
 
   /**
    * Interface for the business process flow on a form.
