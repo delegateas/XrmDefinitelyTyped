@@ -78,6 +78,19 @@ declare namespace Xrm {
 
   type ProcessStageMoveAnswer = "success" | "crossEntity" | "end" | "invalid" | "dirtyForm";
   type ProcessStageSetAnswer = "crossEntity" | "unreachable" | "dirtyForm" | "invalid";
+  type ProcessStageChangeDirection = "Next" | "Previous";
+
+  interface StageSelectedEventArguments {
+    getStage(): Stage;
+  }
+
+  interface StageChangeEventArguments extends StageSelectedEventArguments {
+    getDirection(): ProcessStageChangeDirection;
+  }
+
+  interface StageSelectedContext extends ExecutionContext<Stage, StageSelectedEventArguments> { }
+
+  interface StageChangeContext extends ExecutionContext<Stage, StageChangeEventArguments> { }
 
   /**
    * Interface for the business process flow on a form.
@@ -148,14 +161,14 @@ declare namespace Xrm {
      *
      * @param handler The function will be added to the bottom of the event handler pipeline.
      */
-    addOnStageChange(handler: (context?: ExecutionContext<this>) => any): void;
+    addOnStageChange(handler: (context?: StageChangeContext) => any): void;
 
     /**
      * Use this to remove a function as an event handler for the OnStageChange event.
      *
      * @param handler If an anonymous function is set using the addOnStageChange method it cannot be removed using this method.
      */
-    removeOnStageChange(handler: (context?: ExecutionContext<this>) => any): void;
+    removeOnStageChange(handler: (context?: StageChangeContext) => any): void;
 
     /**
      * Use this to add a function as an event handler for the OnStageSelected event so that it will be called when a business process flow stage is selected.
@@ -163,14 +176,14 @@ declare namespace Xrm {
      *
      * @param handler The function will be added to the bottom of the event handler pipeline.
      */
-    addOnStageSelected(handler: (context?: ExecutionContext<this>) => any): void;
+    addOnStageSelected(handler: (context?: StageSelectedContext) => any): void;
 
     /**
      * Use this to remove a function as an event handler for the OnStageSelected event.
      *
      * @param handler If an anonymous function is set using the addOnStageSelected method it cannot be removed using this method.
      */
-    removeOnStageSelected(handler: (context?: ExecutionContext<this>) => any): void;
+    removeOnStageSelected(handler: (context?: StageSelectedContext) => any): void;
 
     /**
      * Progresses to the next stage.

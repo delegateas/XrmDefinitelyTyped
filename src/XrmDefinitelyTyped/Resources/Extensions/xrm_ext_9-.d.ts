@@ -701,9 +701,7 @@ declare namespace Xrm {
     /**
      * Form executionContext
      */
-    interface ExecutionContext<T> {
-        getUrl(): string;
-
+    interface ExecutionContext<TSource, TArgs> {
         getFormContext(): Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>;
     }
 
@@ -714,6 +712,8 @@ declare namespace Xrm {
          */
         saveMode?: SaveMode;
     }
+
+    interface OnLoadEventContext extends ExecutionContext<UiModule<TabCollectionBase, ControlCollectionBase>, any> { }
 
     /**
      * Interface for the data of a form.
@@ -727,7 +727,7 @@ declare namespace Xrm {
         /**
          * Adds a function to be called when form data is loaded.
          */
-        addOnLoad(myFunction: (context?: ExecutionContext<this>) => any): void;
+        addOnLoad(myFunction: (context?: OnLoadEventContext) => any): void;
 
         /**
          * Gets a boolean value indicating whether the form data has been modified.
@@ -803,7 +803,7 @@ declare namespace Xrm {
          * @param myFunction The function to be executed on the form OnLoad event. The function will be added to the bottom of the event handler pipeline.
          * The execution context is automatically passed as the first parameter to the function. See Execution context for more information.
          */
-        addOnLoad(myFunction: (context?: ExecutionContext<this>) => any): void;
+        addOnLoad(myFunction: (context?: OnLoadEventContext) => any): void;
 
         /**
          * Removes a function from the form OnLoad event.
