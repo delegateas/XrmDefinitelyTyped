@@ -1,4 +1,8 @@
 # Release Notes
+### 5.0.0 - January 10 2020
+* Reworked typings of ExecutionContext to accommodate different getEventArgs and getEventSource (@sergeytunnik)
+* Added typings for Xrm.Navigation.navigateTo (@mathiasbl)
+
 ### 4.4.6 - December 19 2019
 * Added grid control methods and user settings properties (@mathiasbl)
 
