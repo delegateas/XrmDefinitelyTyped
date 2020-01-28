@@ -876,8 +876,17 @@ declare namespace Xrm {
     /**
      * Interface for an standard entity attribute.
      */
-    interface Attribute<T> {
-        isValid(): boolean;
+  interface Attribute<T> {
+
+      /**
+       * Returns a boolean value to indicate whether the value of an attribute is valid.
+       */
+      isValid(): boolean;
+
+      /**
+       * Sets a value for an attribute to determine whether it is valid or invalid with a message.
+       */
+      setIsValid(bool: boolean, message?: string);
     }
 
     /**
