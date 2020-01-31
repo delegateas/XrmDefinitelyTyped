@@ -441,7 +441,7 @@ declare namespace Xrm {
         /**
          * The name of the web resource to load.
          */
-        webResourceName?: string;
+        webresourceName?: string;
     }
 
     const enum NavigationOptionsTarget {
