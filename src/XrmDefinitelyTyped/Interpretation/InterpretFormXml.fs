@@ -47,14 +47,14 @@ let classIds =
 let getTargetEntities (tes: string option) (a: XrmAttribute option) =
   match tes, a with
   | Some _, _ -> tes.Value
-  | None, None -> "NoAttribute"
+  | None, None -> "\"NoAttribute\""
   | None, Some a' ->
     match a'.targetEntitySets with
-    | None -> if a.Value.specialType = Guid then "string" else "NoAttributeTargets"
+    | None -> if a.Value.specialType = Guid then "string" else "\"NoAttributeTargets\""
     | Some tes' ->
       let el = tes' |> Array.unzip |> fst |> Array.toList
       match el.IsEmpty with
-      | true -> "NoTargets"
+      | true -> "\"NoTargets\""
       | false -> List.fold(fun acc e -> sprintf "%s | \"%s\"" acc e) (sprintf "\"%s\"" el.Head) el.Tail
 
 let getAttributeType = function

@@ -5,7 +5,7 @@ declare namespace Xrm {
      * Add event handlers to this event to run every time the subgrid refreshes.
      * This includes when users sort the values by clicking the column headings.
      */
-    addOnLoad(functionRef: (context?: ExecutionContext<this>) => any): void;
+    addOnLoad(functionRef: (context?: ExecutionContext<this, any>) => any): void;
 
     /**
      * Use this method to get the logical name of the entity data displayed in the grid.
