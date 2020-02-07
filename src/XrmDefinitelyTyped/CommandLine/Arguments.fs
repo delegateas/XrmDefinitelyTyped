@@ -107,16 +107,21 @@ type Args private () =
       altCommands=[]
       description="Url to the Organization.svc"
       required=true }
+    
+    { command="method"
+      altCommands=[]
+      description="Connection method"
+      required=false }
 
     { command="username"
       altCommands=["u"; "usr"]
       description="CRM Username"
-      required=true }
+      required=false }
 
     { command="password"
       altCommands=["p"; "pwd"]
       description="CRM Password"
-      required=true }
+      required=false }
 
     { command="domain"
       altCommands=["d"; "dmn"]
@@ -136,6 +141,11 @@ type Args private () =
     { command="mfaReturnUrl"
       altCommands=[]
       description="Return URL defined for the Azure Application"
+      required=false }
+
+    { command="mfaClientSecret"
+      altCommands=[]
+      description="Client secret for the Azure Application"
       required=false }
   ]
 

@@ -13,13 +13,22 @@ let getXrmAuth parsedArgs =
     getArg parsedArgs "ap" (fun ap ->
       Enum.Parse(typeof<AuthenticationProviderType>, ap) 
         :?> AuthenticationProviderType)
+  let method =
+    getArg parsedArgs "method" (fun method ->
+      match method with
+      | "OAuth" -> ConnectionType.OAuth
+      | "ClientSecret" -> ConnectionType.ClientSecret
+      | _ -> ConnectionType.Proxy 
+    )
 
   { XrmAuthentication.url = Uri(Map.find "url" parsedArgs)
-    username = Map.find "username" parsedArgs
-    password = Map.find "password" parsedArgs
+    method = method
+    username = Map.tryFind "username" parsedArgs
+    password = Map.tryFind "password" parsedArgs
     domain = Map.tryFind "domain" parsedArgs
-    mfaAppId = Map.tryFind "mfaAppId" parsedArgs
-    mfaReturnUrl = Map.tryFind "mfaReturnUrl" parsedArgs
+    clientId = Map.tryFind "mfaAppId" parsedArgs
+    returnUrl = Map.tryFind "mfaReturnUrl" parsedArgs
+    clientSecret = Map.tryFind "mfaClientSecret" parsedArgs
     ap = ap; }
 
 let getRetrieveSettings parsedArgs =
