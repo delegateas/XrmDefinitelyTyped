@@ -697,13 +697,20 @@ namespace XQW {
 
     getQueryString(): string {
       let prefix = this.entitySetName;
+      let entitySingularName = prefix.slice(0, -1);
+
       if (this.id && this.relatedNav) {
         prefix += `(${this.id})/${this.relatedNav}`;
       }
       if (this.specialQuery) return prefix + this.specialQuery;
 
       let options: string[] = [];
+
       if (this.selects.length > 0) {
+        for (let i in this.selects) {
+          if (this.selects[i] == entitySingularName) this.selects[i] += "1";
+        }
+
         options.push("$select=" + this.selects.join(","));
       }
       if (this.expands.length > 0) {
