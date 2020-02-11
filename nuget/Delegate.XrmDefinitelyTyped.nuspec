@@ -26,7 +26,7 @@
     <file src="..\src\XrmDefinitelyTyped\bin\Release\Microsoft.Xrm.Sdk.Deployment.dll" target="content\XrmDefinitelyTyped" />
     <file src="..\src\XrmDefinitelyTyped\bin\Release\Microsoft.Xrm.Tooling.Connector.dll" target="content\XrmDefinitelyTyped" />
     <file src="..\src\XrmDefinitelyTyped\bin\Release\Microsoft.IdentityModel.Clients.ActiveDirectory.dll" target="content\XrmDefinitelyTyped" />
-    <file src="..\src\XrmDefinitelyTyped\bin\Release\Microsoft.IdentityModel.Clients.ActiveDirectory.WindowsForms.dll" target="content\XrmDefinitelyTyped" />
+    <file src="..\src\XrmDefinitelyTyped\bin\Release\Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.dll" target="content\XrmDefinitelyTyped" />
     <file src="..\src\XrmDefinitelyTyped\bin\Release\XrmDefinitelyTyped.exe" target="content\XrmDefinitelyTyped" />
     <file src="..\src\XrmDefinitelyTyped\bin\Release\XrmDefinitelyTyped.xml" target="content\XrmDefinitelyTyped" />
   </files>

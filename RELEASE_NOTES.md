@@ -1,4 +1,12 @@
 # Release Notes
+### 5.1.0 - February 11 2020
+* Fixed casing error in PageInput - webResourceName
+* Added support for client secret authentication
+
+### 5.0.1 - January 28 2020
+* Added getAttribute().setIsValid
+* Fixed JSDoc for getAttribute().isValid
+
 ### 5.0.0 - January 10 2020
 * Reworked typings of ExecutionContext to accommodate different getEventArgs and getEventSource (@sergeytunnik)
 * Added typings for Xrm.Navigation.navigateTo (@mathiasbl)
