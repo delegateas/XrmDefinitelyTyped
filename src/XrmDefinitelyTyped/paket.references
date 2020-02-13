@@ -2,4 +2,6 @@
 Microsoft.CrmSdk.Deployment
 Microsoft.CrmSdk.XrmTooling.CoreAssembly
 Microsoft.IdentityModel.Clients.ActiveDirectory
+Microsoft.Rest.ClientRuntime
 FSharp.Core
+Newtonsoft.Json

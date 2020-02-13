@@ -9,4 +9,6 @@ nuget Microsoft.CrmSdk.CoreAssemblies >= 9
 nuget Microsoft.CrmSdk.Deployment >= 9
 nuget Microsoft.CrmSdk.XrmTooling.CoreAssembly >= 9
 nuget Microsoft.IdentityModel.Clients.ActiveDirectory ~> 3.19.8
+nuget NewtonSoft.Json ~> 10.0.3
+
 github fsharp/FAKE modules/Octokit/Octokit.fsx
