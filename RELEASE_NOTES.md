@@ -1,5 +1,8 @@
 # Release Notes
 
+### 5.1.2 - February 13 2020
+* Fix conflicting enums ClientType in xrm.d.ts
+
 ### 5.1.1 - February 13 2020
 * Fix assembly reference issue when calling from Daxif
 
