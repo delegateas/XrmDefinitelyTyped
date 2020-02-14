@@ -1121,7 +1121,7 @@ declare namespace Xrm {
         Subgrid = 2,
     }
 
-    const enum ClientType {
+    const enum SubGridControlClientType {
         Browser = 0,
         MobileApplication = 1,
     }
@@ -1145,7 +1145,7 @@ declare namespace Xrm {
         /**
          * Gets the URL of the current grid control.
          */
-        getUrl(client?: ClientType): string;
+        getUrl(client?: SubGridControlClientType): string;
 
         /**
          * Gets the URL of the current grid control.

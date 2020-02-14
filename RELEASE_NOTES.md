@@ -1,4 +1,11 @@
 # Release Notes
+
+### 5.1.2 - February 13 2020
+* Fix conflicting enums ClientType in xrm.d.ts
+
+### 5.1.1 - February 13 2020
+* Fix assembly reference issue when calling from Daxif
+
 ### 5.1.0 - February 11 2020
 * Fixed casing error in PageInput - webResourceName
 * Added support for client secret authentication

@@ -20,14 +20,8 @@
     <file src="..\files\Run.ps1" target="content\XrmDefinitelyTyped" />
     <file src="..\files\Run.fsx" target="content\XrmDefinitelyTyped" />
     <file src="..\files\XrmDefinitelyTyped.exe.config" target="content\XrmDefinitelyTyped" />
-    <file src="..\src\XrmDefinitelyTyped\bin\Release\FSharp.Core.dll" target="content\XrmDefinitelyTyped" />
-    <file src="..\src\XrmDefinitelyTyped\bin\Release\Microsoft.Xrm.Sdk.dll" target="content\XrmDefinitelyTyped" />
-    <file src="..\src\XrmDefinitelyTyped\bin\Release\Microsoft.Crm.Sdk.Proxy.dll" target="content\XrmDefinitelyTyped" />
-    <file src="..\src\XrmDefinitelyTyped\bin\Release\Microsoft.Xrm.Sdk.Deployment.dll" target="content\XrmDefinitelyTyped" />
-    <file src="..\src\XrmDefinitelyTyped\bin\Release\Microsoft.Xrm.Tooling.Connector.dll" target="content\XrmDefinitelyTyped" />
-    <file src="..\src\XrmDefinitelyTyped\bin\Release\Microsoft.IdentityModel.Clients.ActiveDirectory.dll" target="content\XrmDefinitelyTyped" />
-    <file src="..\src\XrmDefinitelyTyped\bin\Release\Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.dll" target="content\XrmDefinitelyTyped" />
-    <file src="..\src\XrmDefinitelyTyped\bin\Release\XrmDefinitelyTyped.exe" target="content\XrmDefinitelyTyped" />
+    <file src="..\src\XrmDefinitelyTyped\bin\Release\*.dll" target="content\XrmDefinitelyTyped" />
+    <file src="..\src\XrmDefinitelyTyped\bin\Release\*.exe" target="content\XrmDefinitelyTyped" />
     <file src="..\src\XrmDefinitelyTyped\bin\Release\XrmDefinitelyTyped.xml" target="content\XrmDefinitelyTyped" />
   </files>
 </package>
