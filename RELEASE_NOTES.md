@@ -1,4 +1,6 @@
 # Release Notes
+### 5.1.3 - February 14 2020
+* Fixed error where attributes were not correctly appended with 1 when the attribute name was the same as the entity name in XrmQuery.
 
 ### 5.1.2 - February 13 2020
 * Fix conflicting enums ClientType in xrm.d.ts
