@@ -26,7 +26,7 @@ Recommended environment: [Visual Studio 2019](https://www.visualstudio.com/downl
 
 * [F# 4.0+](https://www.microsoft.com/en-us/download/details.aspx?id=48179)
 * [Node.js and npm](https://nodejs.org/)
-* [TypeScript 2.0+<](http://www.typescriptlang.org/index.html#download-links)
+* [TypeScript 2.0+](http://www.typescriptlang.org/index.html#download-links)
 
 **Building the project**
 
