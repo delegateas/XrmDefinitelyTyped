@@ -171,10 +171,11 @@ let renameControls (controls:XrmFormControl list) =
   |> List.groupBy (fun (x,_,_,_,_) -> x)
   |> List.map (fun (x,cs) -> 
     List.mapi (fun i (_,a,c,isBpf,canBeNull) -> 
-      if i > 0 then if isBpf 
-                       then sprintf "%s_%d" x i, a, c, isBpf, canBeNull  
-                       else sprintf "%s%d" x i, a, c, isBpf, canBeNull 
-      else x, a, c, isBpf, canBeNull
+      if i = 0 then x, a, c, isBpf, canBeNull else 
+      
+      if isBpf 
+      then sprintf "%s_%d" x i, a, c, isBpf, canBeNull  
+      else sprintf "%s%d" x i, a, c, isBpf, canBeNull 
     ) cs)
   |> List.concat
 
@@ -246,7 +247,6 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
       let classId = getValue c "classid"
       let controlClass = getControlClass id classId
       let datafieldname = getValue c "datafieldname"
-      let isBpf = false
 
       let targetEntities = 
         let parms = c.Descendants(XName.Get("parameters")) 
@@ -270,9 +270,9 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
       if(targetEntities.Length > 0) then
         let tes =
           Seq.fold(fun acc e -> sprintf "%s | \"%s\"" acc e) (sprintf "\"%s\"" targetEntities.Head) targetEntities.Tail
-        id, datafieldname, controlClass, canBeNull, isBpf, Some tes
+        id, datafieldname, controlClass, canBeNull, false, Some tes
       else
-        id, datafieldname, controlClass, canBeNull, isBpf, None)
+        id, datafieldname, controlClass, canBeNull, false, None)
     |> List.ofSeq
 
   let compositeFields = getCompositeFields controlFields
