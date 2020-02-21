@@ -1,4 +1,4 @@
-module internal DG.XrmDefinitelyTyped.InterpretBpfJson
+﻿module internal DG.XrmDefinitelyTyped.InterpretBpfJson
 
 open Utility
 open InterpretFormXml
@@ -75,6 +75,7 @@ let rec analyzeEntity (data:List<InnerData>) (fields:ControlField list) : Contro
           d.dataFieldName, 
           controlClass,
           true,
+          false,
           match box d.entity, controlClass with
           | e, Lookup when e <> null -> Some (sprintf "\"%s\"" d.entity.entityName)
           | _, _ -> None
@@ -106,6 +107,6 @@ let interpretBpfs (workflows:Entity[]): Map<string,ControlField list> =
     lname, 
     x |> Array.map snd 
     |> List.concat 
-    |> List.filter (fun (_, datafieldname,_,_,_) -> datafieldname <> String.Empty)
-    |> List.map (fun (id, datafieldname, controlClass, canBeNull, tes) -> sprintf "header_process_%s" datafieldname, datafieldname,  controlClass, canBeNull, tes))
+    |> List.filter (fun (_, datafieldname,_,_,_,_) -> datafieldname <> String.Empty)
+    |> List.map (fun (id, datafieldname, controlClass, canBeNull, _, tes) -> sprintf "header_process_%s" datafieldname, datafieldname,  controlClass, canBeNull, true, tes))
     |> Map.ofArray

@@ -105,7 +105,7 @@ let includeControl (name: string) crmVersion =
 let getControlCollection (controls: XrmFormControl list) (crmVersion: Version)=
   let getFuncs = 
     controls
-    |> List.map (fun (name, aType, cType, canBeNull) ->
+    |> List.map (fun (name, aType, cType, isBpf, canBeNull) ->
       let paramType = getConstantType name
       let returnType = getControlInterface cType aType  canBeNull         
       match includeControl name crmVersion with
@@ -123,7 +123,7 @@ let getControlCollection (controls: XrmFormControl list) (crmVersion: Version)=
 let getControlCollectionMap (controls: XrmFormControl list) (crmVersion: Version)=
   let getVars = 
     controls
-    |> List.map (fun (name, aType, cType, canBeNull) ->
+    |> List.map (fun (name, aType, cType, isBpf, canBeNull) ->
       let returnType = getControlInterface cType aType canBeNull          
       match includeControl name crmVersion with
       | false -> None
@@ -188,7 +188,7 @@ let getAttributeFuncs (attributes: XrmFormAttribute list) =
 let getControlFuncs (controls: XrmFormControl list) (crmVersion: Version)=
   let ctrlFuncs = 
     controls
-    |> List.map (fun (name, aType, cType, canBeNull) ->
+    |> List.map (fun (name, aType, cType, isBpf, canBeNull) ->
       let paramType = getConstantType name
       let returnType = getControlInterface cType aType canBeNull
       match includeControl name crmVersion with

@@ -60,7 +60,7 @@ let getTargetEntities (tes: string option) (a: XrmAttribute option) =
 let getAttributeType = function
   | None -> TsType.Undefined
   | Some a -> a.varType
-let getAttribute (enums:Map<string,TsType>) (entity: XrmEntity) (_, attrName, controlClass, canBeNull, tes) =
+let getAttribute (enums:Map<string,TsType>) (entity: XrmEntity) (_, attrName, controlClass, canBeNull, _, tes) =
   if String.IsNullOrEmpty attrName then None else 
   
   let attribute =
@@ -103,7 +103,7 @@ let getAttribute (enums:Map<string,TsType>) (entity: XrmEntity) (_, attrName, co
 
 
 let getControl  (enums:Map<string,TsType>) entity (controlField:ControlField): XrmFormControl option =
-  let controlId, attrName, controlClass, canBeNull, tes = controlField
+  let controlId, attrName, controlClass, canBeNull, isBpf, tes = controlField
   if controlClass = QuickView then None else
 
   let aType = 
@@ -149,7 +149,7 @@ let getControl  (enums:Map<string,TsType>) entity (controlField:ControlField): X
     | Timer
     | _ -> ControlType.Default
   
-  Some (controlId, aType, cType, canBeNull)
+  Some (controlId, aType, cType, isBpf, canBeNull)
   
 let getValue (xEl:XElement) (str:string) =
   match xEl.Attribute(XName.Get(str)) with
@@ -168,20 +168,23 @@ let getControlClass id (classId:string) =
 /// Renames controls with number suffixes if some share the same id
 let renameControls (controls:XrmFormControl list) =
   controls
-  |> List.groupBy (fun (x,_,_,_) -> x)
+  |> List.groupBy (fun (x,_,_,_,_) -> x)
   |> List.map (fun (x,cs) -> 
-    List.mapi (fun i (_,a,c,canBeNull) -> 
-      if i > 0 then sprintf "%s_%d" x i, a, c, canBeNull 
-      else x, a, c, canBeNull
+    List.mapi (fun i (_,a,c,isBpf,canBeNull) -> 
+      if i > 0 then if isBpf 
+                       then sprintf "%s_%d" x i, a, c, isBpf, canBeNull  
+                       else sprintf "%s%d" x i, a, c, isBpf, canBeNull 
+      else x, a, c, isBpf, canBeNull
     ) cs)
   |> List.concat
 
 
-let getCompositeField (id, datafieldname, _, canBeNull, _) subFieldName ty : ControlField =
+let getCompositeField (id, datafieldname, _, canBeNull, isBpf, _) subFieldName ty : ControlField =
   sprintf "%s_compositionLinkControl_%s" id subFieldName,
   subFieldName,
   ty,
   canBeNull,
+  isBpf,
   None
 
 let (|IsCompositeAddress|_|) (str:string) = 
@@ -193,7 +196,7 @@ let (|IsCompositeAddress|_|) (str:string) =
 /// Finds all composite fields and adds the sub-fields that they bring along
 let getCompositeFields : ControlField list -> ControlField list =
   List.choose (fun field  ->
-    let (id, datafieldname, _, _, _) = field
+    let (id, datafieldname, _, _,_, _) = field
 
     match datafieldname with
     | null -> None
@@ -242,9 +245,9 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
       let id = getValue c "id"
       let classId = getValue c "classid"
       let controlClass = getControlClass id classId
-          
       let datafieldname = getValue c "datafieldname"
-      
+      let isBpf = false
+
       let targetEntities = 
         let parms = c.Descendants(XName.Get("parameters")) 
         if Seq.isEmpty parms then 
@@ -267,9 +270,9 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
       if(targetEntities.Length > 0) then
         let tes =
           Seq.fold(fun acc e -> sprintf "%s | \"%s\"" acc e) (sprintf "\"%s\"" targetEntities.Head) targetEntities.Tail
-        id, datafieldname, controlClass, canBeNull, Some tes
+        id, datafieldname, controlClass, canBeNull, isBpf, Some tes
       else
-        id, datafieldname, controlClass, canBeNull, None)
+        id, datafieldname, controlClass, canBeNull, isBpf, None)
     |> List.ofSeq
 
   let compositeFields = getCompositeFields controlFields
@@ -294,7 +297,7 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
       controlFields @ compositeFields @ bpfFields
       |> List.choose (getControl enums entity)
       |> renameControls
-      |> List.sortBy (fun (name, _, _, _) -> name)
+      |> List.sortBy (fun (name, _, _, _,_) -> name)
 
     tabs = tabs
   }
