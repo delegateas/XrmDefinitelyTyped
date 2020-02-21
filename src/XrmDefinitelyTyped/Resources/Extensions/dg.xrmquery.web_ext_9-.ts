@@ -50,7 +50,7 @@ namespace Filter {
   function parsePropertyName(name: string) {
     const idxStart = name.indexOf(GUID_START);
     const idxEnd = name.indexOf(GUID_ENDING);
-    if (idxStart === -1 && idxEnd === -1) return name;
+    if (idxStart === -1 || idxEnd === -1) return name;
     return `${name.substr(idxStart + 1, idxEnd - 1)}`;
   }
 
