@@ -1,4 +1,7 @@
 # Release Notes
+### 5.1.5 - February 21 2020
+* Fixed an error when XrmQuery was parsing attributes containing underscores
+
 ### 5.1.4 - February 21 2020
 * Improved typings for Filter.In and Filter.NotIn
 
