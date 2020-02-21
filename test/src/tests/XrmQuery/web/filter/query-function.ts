@@ -7,10 +7,19 @@ class Web_Query_Function_Filter {
     @test 
     "In filter"() {
         const qs = XrmQuery.retrieveMultiple(x => x.accounts)
-            .filter(x => Filter.$in(x.accountnumber,["12345"]))
+            .filter(x => Filter.$in(x.address1_city,["12345"]))
             .getQueryString();
 
-        expect(qs).to.equal("accounts?$filter=Microsoft.Dynamics.CRM.In(PropertyName='accountnumber',PropertyValues=['12345'])");
+        expect(qs).to.equal("accounts?$filter=Microsoft.Dynamics.CRM.In(PropertyName='address1_city',PropertyValues=['12345'])");
+    }
+
+    @test 
+    "In custom filter"() {
+        const qs = XrmQuery.retrieveMultiple(x => x.accounts)
+            .filter(x => Filter.$in(x.dg_test_med_underscore,["12345"]))
+            .getQueryString();
+
+        expect(qs).to.equal("accounts?$filter=Microsoft.Dynamics.CRM.In(PropertyName='dg_test_med_underscore',PropertyValues=['12345'])");
     }
 
     @test 

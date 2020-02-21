@@ -150,4 +150,22 @@ class Web_RetrieveMultiple_QueryString {
 
         expect(qs).to.equal(`accounts?savedQuery=${this.viewId}`);
     }
+
+    @test
+    "select field with same name as entity"() {
+        const qs = XrmQuery.retrieveMultiple(x => x.dg_responses)
+        .select(x => [x.dg_response])
+        .getQueryString();
+
+        expect(qs).to.equal('dg_responses?$select=dg_response1');
+    }
+
+    @test
+    "select multiple fields one with same name as entity"() {
+        const qs = XrmQuery.retrieveMultiple(x => x.dg_responses)
+            .select(x => [x.dg_name, x.dg_response])
+            .getQueryString()
+
+        expect(qs).to.equal('dg_responses?$select=dg_name,dg_response1');
+    }
 }
