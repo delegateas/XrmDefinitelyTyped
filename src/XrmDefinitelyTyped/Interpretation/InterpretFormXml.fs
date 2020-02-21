@@ -1,4 +1,4 @@
-﻿module internal DG.XrmDefinitelyTyped.InterpretFormXml
+module internal DG.XrmDefinitelyTyped.InterpretFormXml
 
 open System
 open System.Xml.Linq
@@ -171,7 +171,7 @@ let renameControls (controls:XrmFormControl list) =
   |> List.groupBy (fun (x,_,_,_) -> x)
   |> List.map (fun (x,cs) -> 
     List.mapi (fun i (_,a,c,canBeNull) -> 
-      if i > 0 then sprintf "%s%d" x i, a, c, canBeNull 
+      if i > 0 then sprintf "%s_%d" x i, a, c, canBeNull 
       else x, a, c, canBeNull
     ) cs)
   |> List.concat
