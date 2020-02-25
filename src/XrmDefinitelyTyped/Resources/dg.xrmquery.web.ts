@@ -707,10 +707,7 @@ namespace XQW {
       let options: string[] = [];
 
       if (this.selects.length > 0) {
-        for (let i in this.selects) {
-          if (this.selects[i] == entitySingularName) this.selects[i] += "1";
-        }
-
+        this.selects = this.selects.map(x => x == entitySingularName ? x += "1" : x);
         options.push("$select=" + this.selects.join(","));
       }
       if (this.expands.length > 0) {
@@ -974,9 +971,7 @@ namespace XQW {
 
       let options: string[] = [];
       if (this.selects.length > 0) {
-        for (let i in this.selects) {
-          if (this.selects[i] == entitySingularName) this.selects[i] += 1;
-        }
+        this.selects = this.selects.map(x => x == entitySingularName ? x += "1" : x);
         options.push("$select=" + this.selects.join(","));
       }
 
