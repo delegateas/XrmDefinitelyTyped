@@ -1203,6 +1203,43 @@ declare namespace Xrm {
     interface BaseControl {
         addNotification(notification: AddNotificationObject): void;
     }
+
+    interface PreProcessStatusChangeContext extends ExecutionContext<Process, any> { }
+
+    interface ProcessInstanceContext {
+        CreatedOnDate: Date,
+        ProccessDefinitionID: string,
+        ProccessDefinitionName: string,
+        ProcessInstanceID: string,
+        ProcessInstanceName: string,
+        StatusCodeName: string
+    }
+
+    interface ProcessModule {
+        /**
+         * Use this to add a function as an event handler for the OnPreProcessStatusChange event 
+         * so that it will be called before the business process flow status changes.
+         * @param handler The function will be added to the start of the event handler pipeline.
+         *                The execution context is automatically passed as the first parameter to the function.
+         *                use a reference to a named function rather than an anonymous function if you may later
+         *                want to remove the event handler.
+         */
+        addOnPreProcessStatusChange(handler: (context?: PreProcessStatusChangeContext) => any): void;
+
+        /**
+         * Use this to remove an event handler from the OnPreProcessStatusChange event.
+         * @param handler If an anonymous function is set using the addOnPreProcessStatusChange method it
+         *                cannot be removed using this method.
+         */
+        removeOnPreProcessStatusChange(handler: (context?: PreProcessStatusChangeContext) => any): void;
+        /**
+         * Returns all the process instances for the entity record that the calling user has access to.
+         * 
+         * @param handler The callback function is passed an object with the following attributes 
+         *                and their corresponding values as the key: value pair.
+         */
+        getProcessInstances(handler: (context?: ProcessInstanceContext) => any): void;
+    }
 }
 
 interface Xrm<T extends Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>> extends BaseXrm {
