@@ -1217,7 +1217,7 @@ declare namespace Xrm {
 
     interface ProcessModule {
         /**
-         * Use this to add a function as an event handler for the OnPreProcessStatusChange event 
+         * Use this to add a function as an event handler for the OnPreProcessStatusChange event
          * so that it will be called before the business process flow status changes.
          * @param handler The function will be added to the start of the event handler pipeline.
          *                The execution context is automatically passed as the first parameter to the function.
@@ -1234,11 +1234,36 @@ declare namespace Xrm {
         removeOnPreProcessStatusChange(handler: (context?: PreProcessStatusChangeContext) => any): void;
         /**
          * Returns all the process instances for the entity record that the calling user has access to.
-         * 
-         * @param handler The callback function is passed an object with the following attributes 
+         * @param handler The callback function is passed an object with the following attributes
          *                and their corresponding values as the key: value pair.
          */
-        getProcessInstances(handler: (context?: ProcessInstanceContext) => any): void;
+        getProcessInstances(callbackFunction: (context?: ProcessInstanceContext) => any): void;
+
+        /**
+         * Sets a process instance as the active instance.
+         * @param processInstanceid The Id of the process instance to set as the active instance.
+         * @param callbackFunction A function to call when the operation is complete. This callback function is passed either string "succes" or "invalid" to indicate whether the operation succeeded:
+         */
+        setActiveProcessInstance(processInstanceId: string, callbackFunction?: (context: string) => any): void;
+    }
+
+    interface StageStep {
+        /**
+        * Returns the progress of the action step.
+        */
+        getProgress(): number;
+
+        /**
+        * Updates the progress of the action step.
+        * @param stepProgress number value specifying the step progress:
+        * 0: None
+        * 1: Processing
+        * 2: Completed
+        * 3: Failure
+        * 4: Invalid
+        * @param message An optional message that is set as the Alt text on the icon for the step.
+        */
+        setProgress(stepProgress: number, message?: string): string;
     }
 }
 
