@@ -1,4 +1,4 @@
-﻿/// <reference path="..\xrm.d.ts" />
+/// <reference path="..\xrm.d.ts" />
 
 declare namespace Xrm {
     var Device: Device;
@@ -623,7 +623,7 @@ declare namespace Xrm {
         isAvailableOffline(entityLogicalName: string): boolean;
     }
 
-    interface WebApiResponse extends Response {}
+    interface WebApiResponse extends Response { }
 
     interface WebApiOnline extends WebApiBase {
         /**
@@ -876,17 +876,17 @@ declare namespace Xrm {
     /**
      * Interface for an standard entity attribute.
      */
-  interface Attribute<T> {
+    interface Attribute<T> {
 
-      /**
-       * Returns a boolean value to indicate whether the value of an attribute is valid.
-       */
-      isValid(): boolean;
+        /**
+         * Returns a boolean value to indicate whether the value of an attribute is valid.
+         */
+        isValid(): boolean;
 
-      /**
-       * Sets a value for an attribute to determine whether it is valid or invalid with a message.
-       */
-      setIsValid(bool: boolean, message?: string);
+        /**
+         * Sets a value for an attribute to determine whether it is valid or invalid with a message.
+         */
+        setIsValid(bool: boolean, message?: string);
     }
 
     /**
@@ -1002,7 +1002,6 @@ declare namespace Xrm {
          * The GUID of the SystemUser.Id value for the current user.
          */
         userId: string;
-
     }
 
     interface organizationSettings {
@@ -1232,6 +1231,7 @@ declare namespace Xrm {
          *                cannot be removed using this method.
          */
         removeOnPreProcessStatusChange(handler: (context?: PreProcessStatusChangeContext) => any): void;
+
         /**
          * Returns all the process instances for the entity record that the calling user has access to.
          * @param handler The callback function is passed an object with the following attributes
@@ -1249,21 +1249,43 @@ declare namespace Xrm {
 
     interface StageStep {
         /**
-        * Returns the progress of the action step.
-        */
+         * Returns the progress of the action step.
+         */
         getProgress(): number;
 
         /**
-        * Updates the progress of the action step.
-        * @param stepProgress number value specifying the step progress:
-        * 0: None
-        * 1: Processing
-        * 2: Completed
-        * 3: Failure
-        * 4: Invalid
-        * @param message An optional message that is set as the Alt text on the icon for the step.
-        */
+         * Updates the progress of the action step.
+         * @param stepProgress number value specifying the step progress:
+         * 0: None
+         * 1: Processing
+         * 2: Completed
+         * 3: Failure
+         * 4: Invalid
+         * @param message An optional message that is set as the Alt text on the icon for the step.
+         */
         setProgress(stepProgress: number, message?: string): string;
+    }
+
+    interface ProcessInstance {
+        /**
+         * Returns the unique identifier of the process instance.
+         */
+        getInstanceId(): string;
+
+        /**
+         * Returns the name of the process instance.
+         */
+        getInstanceName(): string;
+
+        /**
+         * Returns the current status of the process instance
+         */
+        getStatus(): string;
+
+        /**
+         * Sets the current status of the active process instance.
+         */
+        setStatus(status: string, callbackFunction?): string;
     }
 }
 

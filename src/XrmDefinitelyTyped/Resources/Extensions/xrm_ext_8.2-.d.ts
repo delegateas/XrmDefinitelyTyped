@@ -94,6 +94,8 @@ declare namespace Xrm {
     isInHierarchy(): boolean;
   }
 
+
+  //TODO: Kan denne fjernes?
   interface Process {
     /**
      * Use this method to get the current status of the process instance
