@@ -103,22 +103,4 @@ class Web_Retrieve_QueryString {
 
         expect(qs).to.equal(`accounts(${this.accountId})?$expand=contact_customer_accounts($select=fullname;$filter=firstname eq '*._-~''!()%2F%2B@%3F=:%23;,$%26%20%25%5E%5B%5D%7B%7D%3C%3E%22%5C%7C%60')`);
     }
-
-    @test
-    "select when field name is same as entity name"() {
-        const qs = XrmQuery.retrieve(x => x.dg_responses, this.responseId)
-            .select(x => [x.dg_response])
-            .getQueryString();
-            
-        expect(qs).to.equal(`dg_responses(${this.responseId})?$select=dg_response1`);
-    }   
-
-    @test
-    "select multiple when one field name is same as entity name"() {
-        const qs = XrmQuery.retrieve(x => x.dg_responses, this.responseId)
-            .select(x => [x.dg_name, x.dg_response])
-            .getQueryString();
-            
-        expect(qs).to.equal(`dg_responses(${this.responseId})?$select=dg_name,dg_response1`);
-    }
 }
