@@ -1244,7 +1244,27 @@ declare namespace Xrm {
          * @param processInstanceid The Id of the process instance to set as the active instance.
          * @param callbackFunction A function to call when the operation is complete. This callback function is passed either string "succes" or "invalid" to indicate whether the operation succeeded:
          */
-        setActiveProcessInstance(processInstanceId: string, callbackFunction?: (context: string) => any): void;
+        setActiveProcessInstance(processInstanceId: string, callbackFunction?: (succesOrInvalid: string) => any): void;
+
+        /**
+         * Set a Process as the active process. abc
+         *
+         * @param processId The Id of the process to make the active process.
+         * @param callback A function to call when the operation is complete. This callback function is passed one of the following string
+         *    values to indicate whether the operation succeeded. Is "success" or "invalid".
+         */
+        setActiveProcess(processId: string, callback?: (successOrInvalid: string) => any): void;
+    }
+
+    interface NavigationBehaviorObject {
+        allowCreateNew(): boolean
+    }
+
+    interface Stage {
+        /**
+         * Returns a navigation behavior object for a stage that can be used to define whether the Create button is available for users to create other entity record in a cross-entity business process flow navigation scenario.
+         */
+        getNavigationBehavior(): NavigationBehaviorObject;
     }
 
     interface StageStep {
@@ -1265,29 +1285,8 @@ declare namespace Xrm {
          */
         setProgress(stepProgress: number, message?: string): string;
     }
-
-    interface ProcessInstance {
-        /**
-         * Returns the unique identifier of the process instance.
-         */
-        getInstanceId(): string;
-
-        /**
-         * Returns the name of the process instance.
-         */
-        getInstanceName(): string;
-
-        /**
-         * Returns the current status of the process instance
-         */
-        getStatus(): string;
-
-        /**
-         * Sets the current status of the active process instance.
-         */
-        setStatus(status: string, callbackFunction?): string;
-    }
 }
+
 
 interface Xrm<T extends Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>> extends BaseXrm {
     Device: Xrm.Device;

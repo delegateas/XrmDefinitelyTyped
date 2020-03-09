@@ -94,16 +94,6 @@ declare namespace Xrm {
     isInHierarchy(): boolean;
   }
 
-
-  //TODO: Kan denne fjernes?
-  interface Process {
-    /**
-     * Use this method to get the current status of the process instance
-     * @returns The current status of the process
-     */
-    getStatus(): ProcessStatus;
-  }
-
   interface ProcessStatusChangeContext extends ExecutionContext<Process, any> { }
 
   interface ProcessModule {
@@ -135,5 +125,17 @@ declare namespace Xrm {
      * Returns the name of the process instance.
      */
     getInstanceName(): string;
+
+    /**
+     * Returns the current status of the process instance.
+     */
+    getStatus(): ProcessStatus;
+
+    /**
+     * Sets the current status of the active process instance.
+     * @param status The new status. The values can be active, aborted, or finished.
+     * @param callbackFunction A function to call when the operation is complete. This callback function is passed the new status as a string value.
+     */
+    setStatus(status: ProcessStatus, callbackFunction?: (status: ProcessStatus) => any): ProcessStatus;
   }
 }
