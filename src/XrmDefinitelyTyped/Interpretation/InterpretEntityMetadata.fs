@@ -62,6 +62,7 @@ let interpretAttribute nameMap entityNames labelMapping (a: AttributeMetadata) =
       a.LogicalName.StartsWith("yomi") then None, None
   else
 
+
   let options =
     match a with
     | :? EnumAttributeMetadata as eam -> interpretOptionSet entityNames eam.OptionSet labelMapping
@@ -84,7 +85,9 @@ let interpretAttribute nameMap entityNames labelMapping (a: AttributeMetadata) =
     match aType with
     | AttributeTypeCode.Virtual -> interpretVirtualAttribute a options
     | _ -> Some (interpretNormalAttribute aType a options)
-    
+  
+                        
+
   match vTypeOption with
   | None -> None, None
   | Some (vType, sType) ->
@@ -97,6 +100,7 @@ let interpretAttribute nameMap entityNames labelMapping (a: AttributeMetadata) =
       readable = a.IsValidForRead.GetValueOrDefault(false)
       createable = a.IsValidForCreate.GetValueOrDefault(false)
       updateable = a.IsValidForUpdate.GetValueOrDefault(false)
+      deprecated = a.DisplayName.UserLocalizedLabel.Label.Substring(0,3) = "ZZ_"
     }
 
 let sanitizeNavigationProptertyName string =
