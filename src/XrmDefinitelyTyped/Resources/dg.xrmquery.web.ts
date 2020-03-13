@@ -697,7 +697,6 @@ namespace XQW {
 
     getQueryString(): string {
       let prefix = this.entitySetName;
-      let entitySingularName = prefix.slice(0, -1);
 
       if (this.id && this.relatedNav) {
         prefix += `(${this.id})/${this.relatedNav}`;
@@ -707,9 +706,9 @@ namespace XQW {
       let options: string[] = [];
 
       if (this.selects.length > 0) {
-        this.selects = this.selects.map(x => x == entitySingularName ? x += "1" : x);
         options.push("$select=" + this.selects.join(","));
       }
+
       if (this.expands.length > 0) {
         options.push("$expand=" + this.expands.join(","));
       }
@@ -967,11 +966,10 @@ namespace XQW {
 
     getQueryString(): string {
       let prefix = `${this.entitySetName}(${this.id})`;
-      let entitySingularName = this.entitySetName.slice(0, -1);
 
       let options: string[] = [];
+
       if (this.selects.length > 0) {
-        this.selects = this.selects.map(x => x == entitySingularName ? x += "1" : x);
         options.push("$select=" + this.selects.join(","));
       }
 
