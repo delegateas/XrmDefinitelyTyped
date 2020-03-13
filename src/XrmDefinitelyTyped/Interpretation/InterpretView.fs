@@ -83,6 +83,7 @@ let interpretView (xrmEntities: XrmEntity[]) parsedFetchXml =
             readable = a.readable
             createable = a.createable
             updateable = a.updateable
+            deprecated = a.deprecated
           })
     )
     |> List.concat
