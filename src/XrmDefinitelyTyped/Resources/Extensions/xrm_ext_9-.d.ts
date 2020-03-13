@@ -1244,16 +1244,16 @@ declare namespace Xrm {
          * @param processInstanceid The Id of the process instance to set as the active instance.
          * @param callbackFunction A function to call when the operation is complete. This callback function is passed either string "succes" or "invalid" to indicate whether the operation succeeded:
          */
-        setActiveProcessInstance(processInstanceId: string, callbackFunction?: (succesOrInvalid: string) => any): void;
+        setActiveProcessInstance(processInstanceId: string, callbackFunction?: (succesOrInvalid: "success" | "invalid") => any): void;
 
         /**
-         * Set a Process as the active process. abc
+         * Set a Process as the active process.
          *
          * @param processId The Id of the process to make the active process.
          * @param callback A function to call when the operation is complete. This callback function is passed one of the following string
          *    values to indicate whether the operation succeeded. Is "success" or "invalid".
          */
-        setActiveProcess(processId: string, callback?: (successOrInvalid: string) => any): void;
+        setActiveProcess(processId: string, callback?: (successOrInvalid: "success" | "invalid") => any): void;
     }
 
     interface NavigationBehaviorObject {
