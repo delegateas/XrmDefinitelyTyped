@@ -705,9 +705,7 @@ namespace XQW {
 
       let options: string[] = [];
 
-      if (this.selects.length > 0) {
-        options.push("$select=" + this.selects.join(","));
-      }
+      if (this.selects.length > 0) options.push("$select=" + this.selects.join(","));
 
       if (this.expands.length > 0) {
         options.push("$expand=" + this.expands.join(","));
@@ -968,10 +966,7 @@ namespace XQW {
       let prefix = `${this.entitySetName}(${this.id})`;
 
       let options: string[] = [];
-
-      if (this.selects.length > 0) {
-        options.push("$select=" + this.selects.join(","));
-      }
+      if (this.selects.length > 0) options.push("$select=" + this.selects.join(","));
 
       if (this.expands.length > 0) options.push("$expand=" + this.expands.join(","));
 
