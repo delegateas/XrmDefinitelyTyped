@@ -116,16 +116,21 @@ let relatedMappingType eName ns =
   [ oneRelName; manyRelName ]
   |> getMapping eName ns relatedMapping
 
+let getDeprecated (a:XrmAttribute) = 
+  match a.deprecated with
+  | true -> TsType.Deprecated
+  | _ -> TsType.String
+
 (** Definition functions *)
-let defToBaseVars (a, ty, nameTransform) =
-  Variable.Create(nameTransform ?| logicalName <| a, TsType.Union [ ty; TsType.Null ], optional = true) 
+let defToBaseVars (a:XrmAttribute, ty, nameTransform) =
+  if a.deprecated then Variable.Create(nameTransform ?| logicalName <| a, TsType.Union [ ty; TsType.Null; TsType.Deprecated ], optional = true)
+  else Variable.Create(nameTransform ?| logicalName <| a, TsType.Union [ ty; TsType.Null ], optional = true)
 
 let defToResVars (a, ty, nameTransform) =
   Variable.Create(nameTransform ?| logicalName <| a, TsType.Union [ ty; TsType.Null ]) 
 
 let defToFormattedVars (a, _, _) =
   Variable.Create(formattedName a, TsType.String, optional = true) 
-
 
 let getEntityRefDef nameFormat (a: XrmAttribute) =
   nameFormat a, [ a, a.varType, Some guidName ]
@@ -163,7 +168,7 @@ let getFilterVariable (a: XrmAttribute) =
   let vType = 
     match a.specialType with
     | SpecialType.EntityReference 
-    | SpecialType.Guid -> TsType.Custom "XQW.Guid"
+    |  SpecialType.Guid -> TsType.Custom "XQW.Guid"
     | _ -> a.varType
   
   let name = 

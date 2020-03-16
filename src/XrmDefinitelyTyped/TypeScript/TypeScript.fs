@@ -22,6 +22,7 @@ type TsType =
   | String
   | Number
   | Date
+  | Deprecated
   | Array of TsType
   | Generic of string * string
   | SpecificGeneric of string * TsType list

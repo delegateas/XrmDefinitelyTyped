@@ -37,6 +37,7 @@ let unwrapUnionIntersect (t: TsType) =
   | TsType.SpecificGeneric _
   | TsType.Number
   | TsType.String
+  | TsType.Deprecated
   | TsType.Undefined
   | TsType.Void -> [t]
   | TsType.Intersection x

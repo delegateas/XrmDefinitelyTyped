@@ -16,6 +16,7 @@ and typeToString = function
   | TsType.Any            -> "any"
   | TsType.Boolean        -> "boolean"
   | TsType.String         -> "string"
+  | TsType.Deprecated     -> "deprecated"
   | TsType.Number         -> "number"
   | TsType.Array a        -> sprintf "%s[]" (wrapIfRecursive a)
   | TsType.Date           -> "Date"

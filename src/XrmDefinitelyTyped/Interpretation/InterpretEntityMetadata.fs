@@ -35,6 +35,8 @@ let interpretVirtualAttribute (a:AttributeMetadata) (options:OptionSet option) =
   | _ -> None
 
 
+let deprecatedPrefix = "ZZ_"
+
 let interpretNormalAttribute aType (a:AttributeMetadata) (options:OptionSet option)  =
   match aType with
   | AttributeTypeCode.Money     -> TsType.Number, SpecialType.Money
@@ -86,7 +88,10 @@ let interpretAttribute nameMap entityNames labelMapping (a: AttributeMetadata) =
     | AttributeTypeCode.Virtual -> interpretVirtualAttribute a options
     | _ -> Some (interpretNormalAttribute aType a options)
   
-                        
+  let getDeprecated (a:AttributeMetadata) =
+    match a.DisplayName.LocalizedLabels.Count with
+    | 0 -> false
+    | _ -> a.DisplayName.UserLocalizedLabel.Label.Substring(0,3) = deprecatedPrefix 
 
   match vTypeOption with
   | None -> None, None
@@ -100,7 +105,8 @@ let interpretAttribute nameMap entityNames labelMapping (a: AttributeMetadata) =
       readable = a.IsValidForRead.GetValueOrDefault(false)
       createable = a.IsValidForCreate.GetValueOrDefault(false)
       updateable = a.IsValidForUpdate.GetValueOrDefault(false)
-      deprecated = a.DisplayName.UserLocalizedLabel.Label.Substring(0,3) = "ZZ_"
+      deprecated = getDeprecated a
+      //deprecated = a.DisplayName.UserLocalizedLabel.Label <> null && a.DisplayName.UserLocalizedLabel.Label.Substring(0,3) = deprecatedPrefix
     }
 
 let sanitizeNavigationProptertyName string =
