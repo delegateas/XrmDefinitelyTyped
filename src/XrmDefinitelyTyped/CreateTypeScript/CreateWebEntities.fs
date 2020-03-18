@@ -1,4 +1,4 @@
-﻿module internal DG.XrmDefinitelyTyped.CreateWebEntities
+module internal DG.XrmDefinitelyTyped.CreateWebEntities
 
 open Utility
 open TsStringUtil
@@ -116,18 +116,16 @@ let relatedMappingType eName ns =
   [ oneRelName; manyRelName ]
   |> getMapping eName ns relatedMapping
 
-let getDeprecated (a:XrmAttribute) = 
-  match a.deprecated with
-  | true -> TsType.Deprecated
-  | _ -> TsType.String
-
 (** Definition functions *)
 let defToBaseVars (a:XrmAttribute, ty, nameTransform) =
-  if a.deprecated then Variable.Create(nameTransform ?| logicalName <| a, TsType.Union [ ty; TsType.Null; TsType.Deprecated ], optional = true)
-  else Variable.Create(nameTransform ?| logicalName <| a, TsType.Union [ ty; TsType.Null ], optional = true)
+  match a.deprecated with
+  | true -> Variable.Create(nameTransform ?| logicalName <| a, TsType.Union [ ty; TsType.Null; TsType.Deprecated ], optional = true)
+  | _    -> Variable.Create(nameTransform ?| logicalName <| a, TsType.Union [ ty; TsType.Null ], optional = true)
 
-let defToResVars (a, ty, nameTransform) =
-  Variable.Create(nameTransform ?| logicalName <| a, TsType.Union [ ty; TsType.Null ]) 
+let defToResVars (a:XrmAttribute, ty, nameTransform) =
+  match a.deprecated with
+  | true   -> Variable.Create(nameTransform ?| logicalName <| a, TsType.Union [ ty; TsType.Null; TsType.Deprecated ]) 
+  | _      -> Variable.Create(nameTransform ?| logicalName <| a, TsType.Union [ ty; TsType.Null ]) 
 
 let defToFormattedVars (a, _, _) =
   Variable.Create(formattedName a, TsType.String, optional = true) 
@@ -150,6 +148,7 @@ let getSelectVariable parent (a: XrmAttribute) =
   let name, vars = getResultDef a
 
   let resType = vars |> List.map defToResVars |> varsToType
+
   let formattedType = 
     match hasFormattedValue a with
     | true -> vars |> List.map defToFormattedVars  
