@@ -325,7 +325,7 @@ namespace Filter {
 interface WebEntitiesRetrieve {}
 interface WebEntitiesRelated {}
 interface WebEntitiesCUDA {}
-
+interface deprecated {}
 declare var GetGlobalContext: any;
 
 interface WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult> {

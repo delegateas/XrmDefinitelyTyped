@@ -91,7 +91,7 @@ let interpretAttribute nameMap entityNames labelMapping (a: AttributeMetadata) =
   let getDeprecated (a:AttributeMetadata) =
     match a.DisplayName.LocalizedLabels.Count with
     | 0 -> false
-    | _ -> a.DisplayName.UserLocalizedLabel.Label.Substring(0,3) = deprecatedPrefix 
+    | _ -> a.DisplayName.UserLocalizedLabel.Label.Substring(0,deprecatedPrefix.Length) = deprecatedPrefix 
 
   match vTypeOption with
   | None -> None, None
