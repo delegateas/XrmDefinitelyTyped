@@ -1,4 +1,7 @@
 # Release Notes
+### 5.1.8 - March 19 2020
+* Fixed error with naming in typings for Xrm.Utility.getGlobalContext().userSettings.roles
+
 ### 5.1.7 - March 13 2020
 * Improved way that XDT handles attributes with the same name as entity name
 
