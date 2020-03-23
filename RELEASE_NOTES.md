@@ -1,4 +1,40 @@
 # Release Notes
+### 5.1.8 - March 19 2020
+* Fixed error with naming in typings for Xrm.Utility.getGlobalContext().userSettings.roles
+
+### 5.1.7 - March 13 2020
+* Improved way that XDT handles attributes with the same name as entity name
+
+### 5.1.6 - February 21 2020
+* Fixed error with naming of controls in business process flows
+
+### 5.1.5 - February 21 2020
+* Fixed an error when XrmQuery was parsing attributes containing underscores
+
+### 5.1.4 - February 21 2020
+* Improved typings for Filter.In and Filter.NotIn
+
+### 5.1.3 - February 14 2020
+* Fixed error where attributes were not correctly appended with 1 when the attribute name was the same as the entity name in XrmQuery.
+
+### 5.1.2 - February 13 2020
+* Fix conflicting enums ClientType in xrm.d.ts
+
+### 5.1.1 - February 13 2020
+* Fix assembly reference issue when calling from Daxif
+
+### 5.1.0 - February 11 2020
+* Fixed casing error in PageInput - webResourceName
+* Added support for client secret authentication
+
+### 5.0.1 - January 28 2020
+* Added getAttribute().setIsValid
+* Fixed JSDoc for getAttribute().isValid
+
+### 5.0.0 - January 10 2020
+* Reworked typings of ExecutionContext to accommodate different getEventArgs and getEventSource (@sergeytunnik)
+* Added typings for Xrm.Navigation.navigateTo (@mathiasbl)
+
 ### 4.4.6 - December 19 2019
 * Added grid control methods and user settings properties (@mathiasbl)
 

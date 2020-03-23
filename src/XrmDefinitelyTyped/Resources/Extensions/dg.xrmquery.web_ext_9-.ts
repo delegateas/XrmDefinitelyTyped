@@ -3,10 +3,10 @@ namespace Filter {
   const GUID_ENDING = "_value";
   const GUID_START = "_";
 
-  export function $in(val: string | number | XQW.Guid, listVal: (string | number | XQW.Guid)[]): WebFilter {
+  export function $in<T extends string | number | XQW.Guid>(val: T, listVal: T[]): WebFilter {
     return queryFunc("In", val, listVal);
   }
-  export function notIn(val: string | number | XQW.Guid, listVal: (string | number | XQW.Guid)[]): WebFilter {
+  export function notIn<T extends string | number | XQW.Guid>(val: T, listVal: T[]): WebFilter {
     return queryFunc("NotIn", val, listVal);
   }
   export function under(v1: XQW.Guid, v2: string | XQW.Guid): WebFilter {
@@ -50,7 +50,7 @@ namespace Filter {
   function parsePropertyName(name: string) {
     const idxStart = name.indexOf(GUID_START);
     const idxEnd = name.indexOf(GUID_ENDING);
-    if (idxStart === -1 && idxEnd === -1) return name;
+    if (idxStart === -1 || idxEnd === -1) return name;
     return `${name.substr(idxStart + 1, idxEnd - 1)}`;
   }
 

@@ -697,15 +697,16 @@ namespace XQW {
 
     getQueryString(): string {
       let prefix = this.entitySetName;
+
       if (this.id && this.relatedNav) {
         prefix += `(${this.id})/${this.relatedNav}`;
       }
       if (this.specialQuery) return prefix + this.specialQuery;
 
       let options: string[] = [];
-      if (this.selects.length > 0) {
-        options.push("$select=" + this.selects.join(","));
-      }
+
+      if (this.selects.length > 0) options.push("$select=" + this.selects.join(","));
+
       if (this.expands.length > 0) {
         options.push("$expand=" + this.expands.join(","));
       }
@@ -962,11 +963,13 @@ namespace XQW {
     }
 
     getQueryString(): string {
+      let prefix = `${this.entitySetName}(${this.id})`;
+
       let options: string[] = [];
       if (this.selects.length > 0) options.push("$select=" + this.selects.join(","));
+
       if (this.expands.length > 0) options.push("$expand=" + this.expands.join(","));
 
-      let prefix = `${this.entitySetName}(${this.id})`;
       if (this.relatedNav) {
         prefix += `/${this.relatedNav}`;
       }

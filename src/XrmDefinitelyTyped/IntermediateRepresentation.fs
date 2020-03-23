@@ -99,7 +99,7 @@ type FormType =
 
 type CanBeNull = bool
 type XrmFormAttribute = string * AttributeType * CanBeNull
-type XrmFormControl = string * AttributeType option * ControlType * CanBeNull
+type XrmFormControl = string * AttributeType option * ControlType * bool * CanBeNull
 type XrmFormTab = string * string * string list
   
 type ControlClassId =
@@ -111,7 +111,7 @@ type ControlClassId =
   | Other
   with override x.ToString() = x.GetType().Name
 
-type ControlField = string * string * ControlClassId * CanBeNull * string option
+type ControlField = string * string * ControlClassId * CanBeNull * bool * string option
 
 
 type XrmForm = {

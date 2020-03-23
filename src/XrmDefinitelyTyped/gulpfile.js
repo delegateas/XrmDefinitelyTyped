@@ -1,6 +1,5 @@
 var gulp = require("gulp");
 var del = require("del");
-var runSequence = require('run-sequence');
 var rename = require("gulp-rename");
 var concat = require('gulp-concat');
 var merge = require('merge2');
@@ -13,38 +12,36 @@ var tsProject = ts.createProject("tsconfig.json");
 
 var outDir = tsProject.options.outDir;
 
-
-gulp.task("clean", function () {
+function clean() {
     return del(outDir);
-});
+}
 
-gulp.task("uglify", function () {
+function runUglify() {
     return gulp.src(outDir + '/*.js')
         .pipe(uglify({ mangle: true }))
         .pipe(rename({ suffix: '.min' }))
         .pipe(gulp.dest(outDir));
-});
+}
 
-gulp.task("compile-ts", function () {
+function compile_ts(){
     var result = tsProject.src()
         .pipe(tsProject());
 
     return merge([
-       result.js.pipe(gulp.dest(outDir)),
-       result.dts.pipe(gulp.dest(outDir))
+        result.js.pipe(gulp.dest(outDir)),
+        result.dts.pipe(gulp.dest(outDir))
     ]);
-        
-});
+}
 
-gulp.task("tslint", function () {
-    gulp.src("**/*.ts")
+function runTSLint() {
+    return gulp.src("**/*.ts")
         .pipe(tslint({
             formatter: "verbose"
         }))
         .pipe(tslint.report());
-});
+}
 
-gulp.task("concat-promise", function () {
+function concat_promise() {
     return gulp.src(
         [
             outDir + "/../es6-promise.auto.min.js",
@@ -52,20 +49,16 @@ gulp.task("concat-promise", function () {
         ])
         .pipe(concat("dg.xrmquery.web.promise.js"))
         .pipe(gulp.dest(outDir));
-});
+}
 
 
-// Run tasks in sequence
-gulp.task('default', function (cb) {
-    runSequence(
-        'clean',
-        'compile-ts',
-        'tslint',
-        'concat-promise',
-        'uglify',
-        cb
-    );
-});
+// Run tasks in series
+gulp.task("default", gulp.series(
+    clean,
+    compile_ts,
+    runTSLint,
+    concat_promise,
+    runUglify));
 
-gulp.task("build-Debug", ["default"]);
-gulp.task("build-Release", ["default"]);
+gulp.task("build-Debug", gulp.series('default'));
+gulp.task("build-Release", gulp.series('default'));

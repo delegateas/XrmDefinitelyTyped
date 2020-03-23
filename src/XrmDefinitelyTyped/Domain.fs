@@ -9,14 +9,21 @@ open System.Runtime.Serialization
 type Version = int * int * int * int
 type Intersect = string * Guid[]
 
+type ConnectionType = 
+  | Proxy
+  | OAuth
+  | ClientSecret
+
 type XrmAuthentication = {
   url: Uri
-  username: string
-  password: string
+  method: ConnectionType option
+  username: string option
+  password: string option
   domain: string option
   ap: AuthenticationProviderType option
-  mfaAppId: string option
-  mfaReturnUrl: string option
+  clientId: string option
+  returnUrl: string option
+  clientSecret: string option
 }
 
 type OptionalNamespace = string option

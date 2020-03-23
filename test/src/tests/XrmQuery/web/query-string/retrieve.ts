@@ -6,9 +6,11 @@ import { suite, test, slow, timeout, skip, only } from "mocha-typescript";
 class Web_Retrieve_QueryString {
 
     accountId: string;
+    responseId: string;
 
     before() {
         this.accountId = "ACCOUNT_ID";
+        this.responseId = "RESPONSE_ID";
     }
 
     @test

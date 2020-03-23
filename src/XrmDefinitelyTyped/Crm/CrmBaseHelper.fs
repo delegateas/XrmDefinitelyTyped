@@ -213,15 +213,21 @@ let retrieveSolutionEntities (proxy:IOrganizationService) solutionName =
 
 // Proxy helper that makes it easy to get a new proxy instance
 let proxyHelper xrmAuth () =
+  let method = xrmAuth.method ?| ConnectionType.Proxy
+  let username = xrmAuth.username ?| ""
+  let password = xrmAuth.password ?| ""
   let ap = xrmAuth.ap ?| AuthenticationProviderType.OnlineFederation
   let domain = xrmAuth.domain ?| ""
-  let mfaAppId = xrmAuth.mfaAppId ?| ""
-  let mfaReturnUrl = xrmAuth.mfaReturnUrl ?| ""
+  let clientId = xrmAuth.clientId ?| ""
+  let returnUrl = xrmAuth.returnUrl ?| ""
+  let clientSecret = xrmAuth.clientSecret ?| ""
+
   let proxyInstance = 
-    match mfaReturnUrl with
-        | "" ->
-            let manager = CrmAuth.getServiceManagement xrmAuth.url
-            let authToken = CrmAuth.authenticate manager ap xrmAuth.username xrmAuth.password domain
-            CrmAuth.getOrganizationServiceProxy manager authToken
-        | _ -> CrmAuth.getOrganizationServiceProxyUsingMFA xrmAuth.username xrmAuth.password xrmAuth.url mfaAppId mfaReturnUrl 
+    match method with
+    | Proxy ->
+      let manager = CrmAuth.getServiceManagement xrmAuth.url
+      let authToken = CrmAuth.authenticate manager ap username password domain
+      CrmAuth.getOrganizationServiceProxy manager authToken
+    | OAuth -> CrmAuth.getCrmServiceClient username password xrmAuth.url clientId returnUrl 
+    | ClientSecret -> CrmAuth.getCrmServiceClientClientSecret xrmAuth.url clientId clientSecret
   proxyInstance
