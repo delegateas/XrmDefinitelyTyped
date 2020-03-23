@@ -947,6 +947,25 @@ declare namespace Xrm {
         IsReadOnly: boolean;
     }
 
+    /**
+     * Lookup-like type object for userSettings.roles.
+     */
+    interface Role {
+        id: string;
+        name: string;
+    }
+
+    /**
+     * XRM wrapper for collections.
+     */
+    interface ReadOnlyCollection<T> {
+        getAll(): T[];
+        getByIndex(index: number): T | null | undefined;
+        getByFilter(predicate: (value: T, index: number) => boolean): T[];
+        getFirst(predicate: (value: T, index: number) => boolean): T | null;
+        getLength(): number;
+    }
+
     interface userSettings {
         /**
          * The name of the current user.
@@ -979,14 +998,20 @@ declare namespace Xrm {
         languageId: number;
 
         /**
+         * Collection of lookup-like objects containing the GUID and display name of each of the security role or teams that the user is associated with.
+         */
+        roles: ReadOnlyCollection<Role>;
+
+        /**
          * Returns an array of strings that represent the GUID values of each of the security role privilege that the user is associated with or any teams that the user is associated with.
          */
         securityRolePrivileges: string[]
 
         /**
          * An array of strings that represent the GUID values of each of the security roles that the user is associated with or any teams that the user is associated with.
+         * @deprecated Please use roles instead.
          */
-        roles: string[];
+        securityRoles: string[];
 
         /**
          * The name of the current user.
@@ -1002,7 +1027,6 @@ declare namespace Xrm {
          * The GUID of the SystemUser.Id value for the current user.
          */
         userId: string;
-
     }
 
     interface organizationSettings {
