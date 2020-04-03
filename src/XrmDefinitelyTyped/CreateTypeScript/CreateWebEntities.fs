@@ -124,11 +124,13 @@ let defToBaseVars (a:XrmAttribute, ty, nameTransform) =
 
 let defToResVars (a:XrmAttribute, ty, nameTransform) =
   match a.deprecated with
-  | true   -> Variable.Create(nameTransform ?| logicalName <| a, TsType.Union [ ty; TsType.Null; TsType.Deprecated ]) 
-  | _      -> Variable.Create(nameTransform ?| logicalName <| a, TsType.Union [ ty; TsType.Null ]) 
+  | true -> Variable.Create(nameTransform ?| logicalName <| a, TsType.Union [ ty; TsType.Null; TsType.Deprecated ]) 
+  | _    -> Variable.Create(nameTransform ?| logicalName <| a, TsType.Union [ ty; TsType.Null ]) 
 
 let defToFormattedVars (a, _, _) =
-  Variable.Create(formattedName a, TsType.String, optional = true) 
+  match a.deprecated with
+  | true -> Variable.Create(formattedName a, TsType.Union [TsType.String; TsType.Deprecated], optional = true)
+  | _    -> Variable.Create(formattedName a, TsType.String, optional = true) 
 
 let getEntityRefDef nameFormat (a: XrmAttribute) =
   nameFormat a, [ a, a.varType, Some guidName ]
@@ -175,8 +177,10 @@ let getFilterVariable (a: XrmAttribute) =
     | SpecialType.EntityReference -> guidName a
     | _ -> a.logicalName
 
-  Variable.Create(name, vType)
-
+  match a.deprecated with 
+  | true -> Variable.Create(name, TsType.Union [vType; TsType.Deprecated])
+  | _    -> Variable.Create(name, vType)
+  
 
 let getBindVariables isCreate isUpdate attrMap (r: XrmRelationship) =
   Map.tryFind r.attributeName attrMap
@@ -205,7 +209,6 @@ let getResultVariable (a: XrmAttribute) =
   | SpecialType.EntityReference -> getEntityRefDef guidName a |> snd |> List.map defToResVars
   | _ -> []
 
-
 let getRelationVars (r: XrmRelationship) = 
   TsType.Custom (resultName r.relatedSchemaName)
   |> 
@@ -213,7 +216,6 @@ let getRelationVars (r: XrmRelationship) =
     | true  -> id
     | false -> TsType.Array
   |> fun ty -> Variable.Create(r.navProp, TsType.Union [ ty; TsType.Null ], optional = true)
-
 
 let getFormattedResultVariable (a: XrmAttribute) = 
   match hasFormattedValue a with

@@ -1,4 +1,4 @@
-﻿module internal DG.XrmDefinitelyTyped.InterpretEntityMetadata
+module internal DG.XrmDefinitelyTyped.InterpretEntityMetadata
 
 open Utility
 
@@ -106,7 +106,6 @@ let interpretAttribute nameMap entityNames labelMapping (a: AttributeMetadata) =
       createable = a.IsValidForCreate.GetValueOrDefault(false)
       updateable = a.IsValidForUpdate.GetValueOrDefault(false)
       deprecated = getDeprecated a
-      //deprecated = a.DisplayName.UserLocalizedLabel.Label <> null && a.DisplayName.UserLocalizedLabel.Label.Substring(0,3) = deprecatedPrefix
     }
 
 let sanitizeNavigationProptertyName string =
