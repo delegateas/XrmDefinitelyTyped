@@ -7,7 +7,7 @@ declare namespace Xrm {
      *
      * @param functionRef The event handler for the OnKeyPressed event.
      */
-    addOnKeyPress(functionRef: (context?: ExecutionContext<this>) => any): void;
+    addOnKeyPress(functionRef: (context?: ExecutionContext<this, undefined>) => any): void;
 
     /**
      * Use this to remove an event handler for a text field that you added using addOnKeyPress.

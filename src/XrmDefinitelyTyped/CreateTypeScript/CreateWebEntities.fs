@@ -68,6 +68,16 @@ let assignUniqueNames =
   >> List.concat
 //  >> sortByName
 
+// generates typings for the case where fieldname is the same as the entityname.
+let fixSameNameAttribute (entityLogicalname: string) (vars: Variable list) =
+  vars
+    |> List.fold (fun current var ->
+        if (var.name <> entityLogicalname) then var :: current else
+            match (List.contains (var.name + "1") (List.map (fun (v:Variable) -> v.name) vars)) with
+            | true -> current
+            | false -> Variable.Create(var.name + "1") :: current 
+    ) List.empty             
+
 let concatDistinctSort = 
   List.concat >> List.distinctBy (fun (x: Variable) -> x.name) >> sortByName
 
@@ -307,7 +317,7 @@ let getEntityInterfaceLines ns e =
       { entityInterfaces.create with vars = e.allRelationships |> List.choose (getBindVariables true false attrMap) |> assignUniqueNames |> sortByName }
       { entityInterfaces.update with vars = e.allRelationships |> List.choose (getBindVariables false true attrMap) |> assignUniqueNames |> sortByName }
 
-      { entityInterfaces.select with vars = e.attributes |> List.map (getSelectVariable entityInterfaces.select) |> assignUniqueNames |> sortByName } 
+      { entityInterfaces.select with vars = e.attributes |> List.map (getSelectVariable entityInterfaces.select) |> fixSameNameAttribute (e.logicalName) |> assignUniqueNames |> sortByName } 
       { entityInterfaces.filter with vars = e.attributes |> List.map getFilterVariable |> assignUniqueNames |> sortByName }
       { entityInterfaces.expand with vars = e.availableRelationships |> List.map (getExpandVariable entityInterfaces.expand) |> CreateCommon.mergeOwnerExpand webExpand |> assignUniqueNames |> sortByName }
 
