@@ -1023,16 +1023,6 @@ declare namespace Xrm {
         languageId: number;
 
         /**
-         * Returns an array of strings that represent the GUID values of each of the security role privilege that the user is associated with or any teams that the user is associated with.
-         */
-        securityRolePrivileges: string[]
-
-        /**
-         * An array of strings that represent the GUID values of each of the security roles that the user is associated with or any teams that the user is associated with.
-         */
-        roles: string[];
-
-        /**
          * The name of the current user.
          */
         userName: string;
@@ -1046,7 +1036,6 @@ declare namespace Xrm {
          * The GUID of the SystemUser.Id value for the current user.
          */
         userId: string;
-
     }
 
     interface organizationSettings {
