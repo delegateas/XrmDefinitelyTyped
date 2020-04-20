@@ -1,4 +1,9 @@
 # Release Notes
+
+### 5.2.0 - April 20 2020
+* Add a new field `securityRoles` in `Xrm.Utility.getGlobalContext().userSettings` that replaces `roles` for CRM version 9.1 and up
+* Add new events to `formContext.data.process.`
+
 ### 5.1.8 - March 19 2020
 * Fixed error with naming in typings for Xrm.Utility.getGlobalContext().userSettings.roles
 
