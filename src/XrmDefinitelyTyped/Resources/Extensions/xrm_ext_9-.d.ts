@@ -930,7 +930,7 @@ declare namespace Xrm {
       /**
        * Sets a value for an attribute to determine whether it is valid or invalid with a message.
        */
-      setIsValid(bool: boolean, message?: string);
+      setIsValid(bool: boolean, message?: string): void;
     }
 
     /**
@@ -1227,7 +1227,7 @@ declare namespace Xrm {
     }
 
     interface AddNotificationObject {
-        actions?: actionsObject | null;
+        actions?: actionsObject[] | null;
         messages: string[];
         notificationLevel: AddNotificationLevel;
         uniqueId: string;
