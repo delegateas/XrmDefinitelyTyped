@@ -72,6 +72,9 @@ let parseJson<'t> (jsonString:string)  : 't =
 type Version = int * int * int * int
 type VersionCriteria = Version option * Version option * Version option
 
+let defaultVersion: Version =
+  (9,1,0,0)
+
 let parseVersion (str:string): Version =
   let vArr = str.Split('.')
   let getIdx idx = Array.tryItem idx vArr ?>> parseInt ?| 0

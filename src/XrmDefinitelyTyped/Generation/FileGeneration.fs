@@ -103,20 +103,20 @@ let generateJSExtResourceFiles crmVersion gSettings =
   ] |> List.choose id |> List.iter(fun param -> param |||> versionExtendFile crmVersion gSettings path)
  
 /// Generate the declaration files stored as resources
-let generateDtsResourceFiles crmVersion gSettings state =
+let generateDtsResourceFiles crmVersion gSettings outputDir =
 
   // Generate extendable files
   [ Some ("xrm.d.ts", "xrm_ext_", ".d.ts")
     gSettings.webNs ?|> fun _ -> ("dg.xrmquery.web.d.ts", "dg.xrmquery.web_ext_", ".d.ts")
-  ] |> List.choose id |> List.iter(fun param -> param |||> versionExtendFile crmVersion gSettings state.outputDir)
+  ] |> List.choose id |> List.iter(fun param -> param |||> versionExtendFile crmVersion gSettings outputDir)
  
   // Copy stable declaration files directly
   [ Some "metadata.d.ts"
     gSettings.restNs ?|> fun _ -> "dg.xrmquery.rest.d.ts"
-  ] |> List.choose id |> List.iter (copyResourceDirectly state.outputDir)
+  ] |> List.choose id |> List.iter (copyResourceDirectly outputDir)
 
   [ "sdk.d.ts"
-  ] |> List.iter (copyResourceDirectly (sprintf "%s/_internal" state.outputDir))
+  ] |> List.iter (copyResourceDirectly (sprintf "%s/_internal" outputDir))
     
 
 /// Copy the js files stored as resources

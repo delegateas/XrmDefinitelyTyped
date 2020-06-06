@@ -111,6 +111,11 @@ let dataSave parsedArgs =
       getRetrieveSettings parsedArgs,
       filename)
 
+// Generate dts files only
+let dtsGen parsedArgs =
+  XrmDefinitelyTyped.GenerateDtsFiles(
+    getGenerationSettings parsedArgs)
+
 // Regular connect to CRM and generate
 let connectGen parsedArgs =
   XrmDefinitelyTyped.GenerateFromCrm(
@@ -122,9 +127,13 @@ let connectGen parsedArgs =
 // Main executable function
 let executeWithArgs argv =
   let parsedArgs = parseArgs argv Args.argMap
-
-  match parsedArgs |> Map.tryPick (fun k _ -> Args.flagArgMap.TryFind k) with
+  let flagKeys = Args.flagArgMap |> Map.toList |> List.map(fun (x,_) -> x) |> String.concat ", "
+  Console.WriteLine(flagKeys)
+  match parsedArgs |> Map.tryPick (fun k _ -> 
+    Console.WriteLine("checking: " + k)
+    Args.flagArgMap.TryFind k) with
   | Some flagArg when flagArg = Args.genConfigFlag -> 
+    Console.WriteLine("genConfig")
     Args.genConfig()
 
   | Some flagArg when flagArg = Args.loadFlag ->
@@ -133,7 +142,12 @@ let executeWithArgs argv =
   | Some flagArg when flagArg = Args.saveFlag ->
     parsedArgs |> checkArgs Args.connectionArgs |> dataSave
 
+  | Some flagArg when flagArg = Args.genDtsFlag ->
+    Console.WriteLine("genDts")
+    parsedArgs |> checkArgs Args.dtsGenerationArgs |> dtsGen
+
   | _ -> 
+    Console.WriteLine("connectGen")
     parsedArgs |> checkArgs Args.fullArgList |> connectGen
 
 

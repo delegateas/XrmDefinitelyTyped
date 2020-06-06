@@ -21,7 +21,6 @@ let retrieveRawState xrmAuth rSettings =
   // Retrieve data from CRM
   retrieveCrmData crmVersion entities rSettings.solutions mainProxy skipInactiveForms
 
-
 /// Main generator function
 let generateFromRaw gSettings rawState =
   let out = gSettings.out ?| "."
@@ -70,7 +69,7 @@ let generateFromRaw gSettings rawState =
   copyJsLibResourceFiles gSettings
   copyTsLibResourceFiles gSettings
   generateJSExtResourceFiles crmVersion gSettings
-  generateDtsResourceFiles crmVersion gSettings data
+  generateDtsResourceFiles crmVersion gSettings out
 
   match gSettings.oneFile with
   | false -> 
@@ -83,3 +82,13 @@ let generateFromRaw gSettings rawState =
     let singleFilePath = Path.Combine(out, "context.d.ts")
     defs |> Array.Parallel.map snd |> List.concat |> fun lines -> File.WriteAllLines(singleFilePath, lines)
   printfn "Done!"
+
+
+let GenerateDtsResourcesOnly gSettings =
+  let out = gSettings.out ?| "."
+  let crmVersion = gSettings.crmVersion ?| defaultVersion
+
+  clearOldOutputFiles out
+  generateFolderStructure out gSettings
+  generateDtsResourceFiles crmVersion gSettings out
+  
