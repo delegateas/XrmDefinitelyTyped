@@ -1,4 +1,4 @@
-﻿/// <reference path="..\xrm.d.ts" />
+/// <reference path="..\xrm.d.ts" />
 
 declare namespace Xrm {
     var Device: Device;
@@ -623,7 +623,7 @@ declare namespace Xrm {
         isAvailableOffline(entityLogicalName: string): boolean;
     }
 
-    interface WebApiResponse extends Response {}
+    interface WebApiResponse extends Response { }
 
     interface WebApiOnline extends WebApiBase {
         /**
@@ -1272,7 +1272,91 @@ declare namespace Xrm {
     interface BaseControl {
         addNotification(notification: AddNotificationObject): void;
     }
+
+    interface PreProcessStatusChangeContext extends ExecutionContext<Process, any> { }
+
+    interface ProcessInstanceContext {
+        CreatedOnDate: Date,
+        ProccessDefinitionID: string,
+        ProccessDefinitionName: string,
+        ProcessInstanceID: string,
+        ProcessInstanceName: string,
+        StatusCodeName: string
+    }
+
+    interface ProcessModule {
+        /**
+         * Use this to add a function as an event handler for the OnPreProcessStatusChange event
+         * so that it will be called before the business process flow status changes.
+         * @param handler The function will be added to the start of the event handler pipeline.
+         *                The execution context is automatically passed as the first parameter to the function.
+         *                use a reference to a named function rather than an anonymous function if you may later
+         *                want to remove the event handler.
+         */
+        addOnPreProcessStatusChange(handler: (context?: PreProcessStatusChangeContext) => any): void;
+
+        /**
+         * Use this to remove an event handler from the OnPreProcessStatusChange event.
+         * @param handler If an anonymous function is set using the addOnPreProcessStatusChange method it
+         *                cannot be removed using this method.
+         */
+        removeOnPreProcessStatusChange(handler: (context?: PreProcessStatusChangeContext) => any): void;
+
+        /**
+         * Returns all the process instances for the entity record that the calling user has access to.
+         * @param handler The callback function is passed an object with the following attributes
+         *                and their corresponding values as the key: value pair.
+         */
+        getProcessInstances(callbackFunction: (context?: ProcessInstanceContext) => any): void;
+
+        /**
+         * Sets a process instance as the active instance.
+         * @param processInstanceid The Id of the process instance to set as the active instance.
+         * @param callbackFunction A function to call when the operation is complete. This callback function is passed either string "succes" or "invalid" to indicate whether the operation succeeded:
+         */
+        setActiveProcessInstance(processInstanceId: string, callbackFunction?: (succesOrInvalid: "success" | "invalid") => any): void;
+
+        /**
+         * Set a Process as the active process.
+         *
+         * @param processId The Id of the process to make the active process.
+         * @param callback A function to call when the operation is complete. This callback function is passed one of the following string
+         *    values to indicate whether the operation succeeded. Is "success" or "invalid".
+         */
+        setActiveProcess(processId: string, callback?: (successOrInvalid: "success" | "invalid") => any): void;
+    }
+
+    interface NavigationBehaviorObject {
+        allowCreateNew(): boolean
+    }
+
+    interface Stage {
+        /**
+         * Returns a navigation behavior object for a stage that can be used to define whether the Create button is available for users to create other entity record in a cross-entity business process flow navigation scenario.
+         */
+        getNavigationBehavior(): NavigationBehaviorObject;
+    }
+
+    interface StageStep {
+        /**
+         * Returns the progress of the action step.
+         */
+        getProgress(): number;
+
+        /**
+         * Updates the progress of the action step.
+         * @param stepProgress number value specifying the step progress:
+         * 0: None
+         * 1: Processing
+         * 2: Completed
+         * 3: Failure
+         * 4: Invalid
+         * @param message An optional message that is set as the Alt text on the icon for the step.
+         */
+        setProgress(stepProgress: number, message?: string): string;
+    }
 }
+
 
 interface Xrm<T extends Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>> extends BaseXrm {
     Device: Xrm.Device;
