@@ -1105,7 +1105,7 @@ declare namespace Xrm {
         /**
          * Returns a boolean value indicating if the model-driven apps instance is hosted on-premises or online.
          */
-        isOnPremise(): boolean;
+        isOnPremises(): boolean;
     }
 
     /**
