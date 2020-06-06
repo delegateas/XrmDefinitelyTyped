@@ -112,6 +112,7 @@ let retrieveCrmVersion mainProxy =
     CrmBaseHelper.retrieveVersion mainProxy
 
   printfn "Done!"
+  printfn "Version: %A" (version)
   version
 
 /// Retrieve all the necessary CRM data

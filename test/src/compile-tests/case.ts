@@ -9,8 +9,11 @@ namespace Test.Case {
         Page.getControl("header_process_primarycontactid")
         Page.getControl("header_process_primarycontactid_1")
 
-        
+
         Page.getControl("hss")
+
+        Page.data.process.addOnPreStageChange(() => { console.log("addOnPreStageChange called!") });
+        Page.data.process.addOnPreProcessStatusChange(() => { console.log("addOnPreProcessStatusChange called!") });
     }
 
 }

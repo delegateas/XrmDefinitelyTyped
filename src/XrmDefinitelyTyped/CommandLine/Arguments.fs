@@ -149,6 +149,22 @@ type Args private () =
       required=false }
   ]
 
+  static member dtsGenerationArgs = [
+    { command="out"
+      altCommands=["o"]
+      description="Output directory for the generated files."
+      required=true }
+
+    { command="crmVersion"
+      altCommands=["cv"]
+      description="Version of the targeted CRM"
+      required=true }
+
+    { command="useDeprecated"
+      altCommands=["ud"]
+      description="Flag to include deprecated functionality"
+      required=false }
+  ]
 
   (** Special arguments, which make the program act differently than normal *)
   static member saveFlag = 
@@ -169,10 +185,17 @@ type Args private () =
       description="Flag to indicate that a dummy configuration file should be generated."
       required=false }
 
+  static member genDtsFlag = 
+    { command="gendts"
+      altCommands=["gd"]
+      description="Flag to indicate that only the .d.ts file should be generated"
+      required=false }
+
   static member flagArgs = [
     Args.saveFlag
     Args.loadFlag
     Args.genConfigFlag
+    Args.genDtsFlag
   ] 
 
   static member useConfig = 
@@ -180,8 +203,6 @@ type Args private () =
       altCommands=["uc"]
       description="Flag to indicate that it should use the given configuration along with command-line arguments."
       required=false }
-
-
 
   static member useConfigSet = Args.useConfig.command :: Args.useConfig.altCommands |> Set.ofList
 
@@ -196,7 +217,7 @@ type Args private () =
 
   static member flagArgMap = Args.makeArgMap Args.flagArgs
 
-  static member fullArgList = List.concat [ Args.connectionArgs; Args.generationArgs; Args.flagArgs; [Args.useConfig] ]
+  static member fullArgList = List.concat [ Args.connectionArgs; Args.generationArgs; Args.dtsGenerationArgs; Args.flagArgs; [Args.useConfig] ]
   static member argMap = Args.makeArgMap Args.fullArgList
 
   // Usage

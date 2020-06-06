@@ -47,7 +47,6 @@ type XrmDefinitelyTyped private () =
     XrmDefinitelyTyped.GenerateFromCrm(xrmAuth, rSettings, gSettings)
   
 
-
   static member GenerateFromCrm(xrmAuth, rSettings, gSettings) =
     #if !DEBUG 
     try
@@ -121,3 +120,16 @@ type XrmDefinitelyTyped private () =
     #if !DEBUG
     with ex -> getFirstExceptionMessage ex |> failwithf "\nUnable to generate TypeScript files: %s"
     #endif
+
+  
+  static member GenerateDtsFiles(gSettings) =
+    #if !DEBUG 
+    try
+    #endif 
+      GenerateDtsResourcesOnly gSettings
+      printfn "\nSuccessfully generated all dts files."
+
+    #if !DEBUG
+    with ex -> getFirstExceptionMessage ex |> failwithf "\nUnable to generate dts files: %s"
+    #endif
+

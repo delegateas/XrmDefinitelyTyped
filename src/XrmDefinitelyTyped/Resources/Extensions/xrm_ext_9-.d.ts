@@ -784,6 +784,50 @@ declare namespace Xrm {
         showProgressIndicator(message: string): void;
     }
 
+    interface PreProcessStatusChangeContext extends ExecutionContext<Process, any> { }
+
+    interface PreStageChangeContext extends ExecutionContext<Stage, StageChangeEventArguments> { }
+
+    interface ProcessModule {
+        /**
+         * Adds a function as an event handler for the OnPreProcessStatusChange event so that it will be called before the business process flow status changes.
+         * @param handler The function to be executed when the business process flow status changes.
+         *                The function will be added to the start of the event handler pipeline.
+         *                The execution context is automatically passed as the first parameter to
+         *                the function. See Execution context for more information.
+         *                Use a reference to a named function rather than an
+         *                anonymous function if you may later want to remove the
+         *                event handler.
+         * This client API is only supported on the Unified Client. The legacy web client does not support this client API.
+         */
+        addOnPreProcessStatusChange(handler: (context?: PreProcessStatusChangeContext) => any): void;
+
+        /**
+         * Removes an event handler from the OnPreProcessStatusChange event.
+         * @param handler The function to be removed from the OnPreProcessStatusChange event.
+         */
+        removeOnPreProcessStatusChange(handler: (context?: PreProcessStatusChangeContext) => any): void;
+
+        /**
+         * Adds a function as an event handler for the OnPreStageChange event so that it will be called before the business process flow stage changes.
+         * @param handler The function that runs before the business process flow stage changes.
+         *                The function will be added to the start of the event handler pipeline.
+         *                The execution context is automatically passed as the first parameter
+         *                to the function. See Execution context for more information.
+         *                Use a reference to a named function rather than an
+         *                anonymous function if you may later want to remove the
+         *                event handler.
+         * This client API is only supported on the Unified Client. The legacy web client does not support this client API.
+         */
+        addOnPreStageChange(handler: (context?: PreStageChangeContext) => any): void;
+
+        /**
+         * Removes an event handler from the OnPreStageChange event.
+         * @param handler The function to be removed from the OnPreStageChange event.
+         */
+        removeOnPreStageChange(handler: (context?: PreStageChangeContext) => any): void;
+    }
+
     /**
      * Form executionContext
      */
@@ -886,7 +930,7 @@ declare namespace Xrm {
         /**
          * Sets a value for an attribute to determine whether it is valid or invalid with a message.
          */
-        setIsValid(bool: boolean, message?: string);
+        setIsValid(bool: boolean, message?: string): void;
     }
 
     /**
@@ -979,16 +1023,6 @@ declare namespace Xrm {
         languageId: number;
 
         /**
-         * Returns an array of strings that represent the GUID values of each of the security role privilege that the user is associated with or any teams that the user is associated with.
-         */
-        securityRolePrivileges: string[]
-
-        /**
-         * An array of strings that represent the GUID values of each of the security roles that the user is associated with or any teams that the user is associated with.
-         */
-        securityRoles: string[];
-
-        /**
          * The name of the current user.
          */
         userName: string;
@@ -1021,6 +1055,17 @@ declare namespace Xrm {
         uniqueName: string;
     }
 
+    interface appProperties {
+        appId: string;
+        displayName: string;
+        uniqueName: string;
+        url: string;
+        webResourceId: string;
+        webResourceName: string;
+        welcomePageId: string;
+        welcomePageName: string;
+    }
+
     interface context {
         /**
          * Returns information about the current user settings.
@@ -1036,6 +1081,31 @@ declare namespace Xrm {
          * Returns the URL of the current business app in Customer Engagement.
          */
         getCurrentAppUrl(): string;
+
+        /**
+         * Returns the name of the current business app in model-driven apps.
+         */
+        getCurrentAppName(): Promise<string>;
+
+        /**
+         * Returns the properties of the current business app in model-driven apps.
+         */
+        getCurrentAppProperties(): Promise<appProperties>;
+
+        /**
+         * Returns the version number of the model-driven apps instance.
+         */
+        getVersion(): string;
+
+        /**
+         * Returns the relative URL with the caching token for the specified web resource.
+         */
+        getWebResourceUrl(webResourceName: string): string;
+
+        /**
+         * Returns a boolean value indicating if the model-driven apps instance is hosted on-premises or online.
+         */
+        isOnPremises(): boolean;
     }
 
     /**
@@ -1188,12 +1258,12 @@ declare namespace Xrm {
     type AddNotificationLevel = "RECOMMENDATION" | "ERROR";
 
     interface actionsObject {
-        message?: string | null;
-        actions?: Function[] | null;
+        message?: string;
+        actions?: Function[];
     }
 
     interface AddNotificationObject {
-        actions?: actionsObject | null;
+        actions?: actionsObject[];
         messages: string[];
         notificationLevel: AddNotificationLevel;
         uniqueId: string;
