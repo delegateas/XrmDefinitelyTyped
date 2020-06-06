@@ -145,13 +145,34 @@ Target "BuildSetup" (fun _ ->
     )
 )
 
-
 Target "Build" (fun _ ->
   !! solutionFile
   |> MSBuildRelease "" "Rebuild"
   |> ignore
 )
 
+Target "genDts" (fun _ ->
+  // Run XrmDefinitelyTyped
+  let result = 
+    ExecProcess 
+      (fun info -> 
+        let pathToRelease = Path.GetFullPath @"src/XrmDefinitelyTyped/bin/Release"
+        info.FileName <- pathToRelease @@ @"XrmDefinitelyTyped.exe"
+        info.WorkingDirectory <- pathToRelease
+        info.Arguments <-
+          [
+            "gendts", ""
+            "out", "../../../../test/src/xrm-dts-tests"
+            "cv", "9.1.0.0"
+          ]
+          |> List.map (fun (k,v) -> sprintf "-%s:%s" k v)
+          |> String.concat " "
+      )
+      (TimeSpan.FromMinutes 5.0)
+
+  if result <> 0 then 
+    failwithf "XrmDefinitelyTyped.exe returned with a non-zero exit code"
+)
 
 Target "RunXDT" (fun _ ->
   // Run XrmDefinitelyTyped
