@@ -920,17 +920,17 @@ declare namespace Xrm {
     /**
      * Interface for an standard entity attribute.
      */
-  interface Attribute<T> {
+    interface Attribute<T> {
 
-      /**
-       * Returns a boolean value to indicate whether the value of an attribute is valid.
-       */
-      isValid(): boolean;
+        /**
+         * Returns a boolean value to indicate whether the value of an attribute is valid.
+         */
+        isValid(): boolean;
 
-      /**
-       * Sets a value for an attribute to determine whether it is valid or invalid with a message.
-       */
-      setIsValid(bool: boolean, message?: string);
+        /**
+         * Sets a value for an attribute to determine whether it is valid or invalid with a message.
+         */
+        setIsValid(bool: boolean, message?: string): void;
     }
 
     /**
@@ -1222,12 +1222,12 @@ declare namespace Xrm {
     type AddNotificationLevel = "RECOMMENDATION" | "ERROR";
 
     interface actionsObject {
-        message?: string | null;
-        actions?: Function[] | null;
+        message?: string;
+        actions?: Function[];
     }
 
     interface AddNotificationObject {
-        actions?: actionsObject | null;
+        actions?: actionsObject[];
         messages: string[];
         notificationLevel: AddNotificationLevel;
         uniqueId: string;
