@@ -1055,6 +1055,17 @@ declare namespace Xrm {
         uniqueName: string;
     }
 
+    interface appProperties {
+        appId: string;
+        displayName: string;
+        uniqueName: string;
+        url: string;
+        webResourceId: string;
+        webResourceName: string;
+        welcomePageId: string;
+        welcomePageName: string;
+    }
+
     interface context {
         /**
          * Returns information about the current user settings.
@@ -1070,6 +1081,31 @@ declare namespace Xrm {
          * Returns the URL of the current business app in Customer Engagement.
          */
         getCurrentAppUrl(): string;
+
+        /**
+         * Returns the name of the current business app in model-driven apps.
+         */
+        getCurrentAppName(): Promise<string>;
+
+        /**
+         * Returns the properties of the current business app in model-driven apps.
+         */
+        getCurrentAppProperties(): Promise<appProperties>;
+
+        /**
+         * Returns the version number of the model-driven apps instance.
+         */
+        getVersion(): string;
+
+        /**
+         * Returns the relative URL with the caching token for the specified web resource.
+         */
+        getWebResourceUrl(webResourceName: string): string;
+
+        /**
+         * Returns a boolean value indicating if the model-driven apps instance is hosted on-premises or online.
+         */
+        isOnPremises(): boolean;
     }
 
     /**
