@@ -1,5 +1,8 @@
 # Release Notes
 
+### 5.3.1 - June 08 2020
+* Fix issue where call to XDT with non-special argument would require CrmVersion argument
+
 ### 5.3.0 - June 08 2020
 * New special flag "gendts" allowing XDT to only generating dts files: xrm.d.ts, metadata.d.ts, and sdk.d.ts
 * Update Global Context with missing methods
