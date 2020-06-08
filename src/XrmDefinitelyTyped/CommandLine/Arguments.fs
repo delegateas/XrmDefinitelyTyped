@@ -215,9 +215,13 @@ type Args private () =
       []
     |> Map.ofSeq
 
+  static member removeRequired (args: ArgInfo List) =
+    args
+    |> List.map(fun arg -> { arg with required = false } )
+
   static member flagArgMap = Args.makeArgMap Args.flagArgs
 
-  static member fullArgList = List.concat [ Args.connectionArgs; Args.generationArgs; Args.dtsGenerationArgs; Args.flagArgs; [Args.useConfig] ]
+  static member fullArgList = List.concat [ Args.connectionArgs; Args.generationArgs; Args.dtsGenerationArgs |> Args.removeRequired; Args.flagArgs; [Args.useConfig] ]
   static member argMap = Args.makeArgMap Args.fullArgList
 
   // Usage
