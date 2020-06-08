@@ -94,14 +94,6 @@ declare namespace Xrm {
     isInHierarchy(): boolean;
   }
 
-  interface Process {
-    /**
-     * Use this method to get the current status of the process instance
-     * @returns The current status of the process
-     */
-    getStatus(): ProcessStatus;
-  }
-
   interface ProcessStatusChangeContext extends ExecutionContext<Process, any> { }
 
   interface ProcessModule {

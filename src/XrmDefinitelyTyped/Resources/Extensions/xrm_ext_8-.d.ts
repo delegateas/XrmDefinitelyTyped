@@ -102,15 +102,6 @@ declare namespace Xrm {
     getActiveProcess(): Process;
 
     /**
-     * Set a Process as the active process.
-     *
-     * @param processId The Id of the process to make the active process.
-     * @param callback A function to call when the operation is complete. This callback function is passed one of the following string
-     *    values to indicate whether the operation succeeded. Is "success" or "invalid".
-     */
-    setActiveProcess(processId: string, callback: (successOrInvalid: string) => any): void;
-
-    /**
      * Returns a Stage object representing the active stage.
      */
     getActiveStage(): Stage;
