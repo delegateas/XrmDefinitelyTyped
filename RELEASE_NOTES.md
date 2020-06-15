@@ -1,5 +1,8 @@
 # Release Notes
 
+### 5.3.2 - June 15 2020
+* Fix issue with duplicate methods in `ProcessModule` within xrm.d.ts for CRM version 9.0 and up
+
 ### 5.3.1 - June 08 2020
 * Fix issue where call to XDT with non-special argument would require CrmVersion argument
 
