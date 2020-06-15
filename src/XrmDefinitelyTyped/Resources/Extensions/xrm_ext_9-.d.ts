@@ -788,6 +788,15 @@ declare namespace Xrm {
 
     interface PreStageChangeContext extends ExecutionContext<Stage, StageChangeEventArguments> { }
 
+    interface ProcessInstanceContext {
+        CreatedOnDate: Date,
+        ProccessDefinitionID: string,
+        ProccessDefinitionName: string,
+        ProcessInstanceID: string,
+        ProcessInstanceName: string,
+        StatusCodeName: string
+    }
+
     interface ProcessModule {
         /**
          * Adds a function as an event handler for the OnPreProcessStatusChange event so that it will be called before the business process flow status changes.
@@ -826,6 +835,29 @@ declare namespace Xrm {
          * @param handler The function to be removed from the OnPreStageChange event.
          */
         removeOnPreStageChange(handler: (context?: PreStageChangeContext) => any): void;
+
+        /**
+         * Returns all the process instances for the entity record that the calling user has access to.
+         * @param handler The callback function is passed an object with the following attributes
+         *                and their corresponding values as the key: value pair.
+         */
+        getProcessInstances(callbackFunction: (context?: ProcessInstanceContext) => any): void;
+
+        /**
+         * Sets a process instance as the active instance.
+         * @param processInstanceid The Id of the process instance to set as the active instance.
+         * @param callbackFunction A function to call when the operation is complete. This callback function is passed either string "succes" or "invalid" to indicate whether the operation succeeded:
+         */
+        setActiveProcessInstance(processInstanceId: string, callbackFunction?: (succesOrInvalid: "success" | "invalid") => any): void;
+
+        /**
+         * Set a Process as the active process.
+         *
+         * @param processId The Id of the process to make the active process.
+         * @param callback A function to call when the operation is complete. This callback function is passed one of the following string
+         *    values to indicate whether the operation succeeded. Is "success" or "invalid".
+         */
+        setActiveProcess(processId: string, callback?: (successOrInvalid: "success" | "invalid") => any): void;
     }
 
     /**
@@ -1271,59 +1303,6 @@ declare namespace Xrm {
 
     interface BaseControl {
         addNotification(notification: AddNotificationObject): void;
-    }
-
-    interface PreProcessStatusChangeContext extends ExecutionContext<Process, any> { }
-
-    interface ProcessInstanceContext {
-        CreatedOnDate: Date,
-        ProccessDefinitionID: string,
-        ProccessDefinitionName: string,
-        ProcessInstanceID: string,
-        ProcessInstanceName: string,
-        StatusCodeName: string
-    }
-
-    interface ProcessModule {
-        /**
-         * Use this to add a function as an event handler for the OnPreProcessStatusChange event
-         * so that it will be called before the business process flow status changes.
-         * @param handler The function will be added to the start of the event handler pipeline.
-         *                The execution context is automatically passed as the first parameter to the function.
-         *                use a reference to a named function rather than an anonymous function if you may later
-         *                want to remove the event handler.
-         */
-        addOnPreProcessStatusChange(handler: (context?: PreProcessStatusChangeContext) => any): void;
-
-        /**
-         * Use this to remove an event handler from the OnPreProcessStatusChange event.
-         * @param handler If an anonymous function is set using the addOnPreProcessStatusChange method it
-         *                cannot be removed using this method.
-         */
-        removeOnPreProcessStatusChange(handler: (context?: PreProcessStatusChangeContext) => any): void;
-
-        /**
-         * Returns all the process instances for the entity record that the calling user has access to.
-         * @param handler The callback function is passed an object with the following attributes
-         *                and their corresponding values as the key: value pair.
-         */
-        getProcessInstances(callbackFunction: (context?: ProcessInstanceContext) => any): void;
-
-        /**
-         * Sets a process instance as the active instance.
-         * @param processInstanceid The Id of the process instance to set as the active instance.
-         * @param callbackFunction A function to call when the operation is complete. This callback function is passed either string "succes" or "invalid" to indicate whether the operation succeeded:
-         */
-        setActiveProcessInstance(processInstanceId: string, callbackFunction?: (succesOrInvalid: "success" | "invalid") => any): void;
-
-        /**
-         * Set a Process as the active process.
-         *
-         * @param processId The Id of the process to make the active process.
-         * @param callback A function to call when the operation is complete. This callback function is passed one of the following string
-         *    values to indicate whether the operation succeeded. Is "success" or "invalid".
-         */
-        setActiveProcess(processId: string, callback?: (successOrInvalid: "success" | "invalid") => any): void;
     }
 
     interface NavigationBehaviorObject {
