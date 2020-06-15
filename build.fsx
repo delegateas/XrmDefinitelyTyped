@@ -151,8 +151,8 @@ Target "Build" (fun _ ->
   |> ignore
 )
 
-Target "genDts" (fun _ ->
-  // Run XrmDefinitelyTyped
+Target "GenerateDts" (fun _ ->
+  // Run XrmDefinitelyTyped but only generate declaration files
   let result = 
     ExecProcess 
       (fun info -> 
@@ -292,5 +292,7 @@ Target "All" DoNothing
 "BuildPackage"
   ==> "PublishNuget"
 
+"CopyBinaries"
+==> "GenerateDts"
 
 RunTargetOrDefault "Build"
