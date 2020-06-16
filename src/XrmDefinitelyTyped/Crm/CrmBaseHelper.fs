@@ -230,4 +230,5 @@ let proxyHelper xrmAuth () =
       CrmAuth.getOrganizationServiceProxy manager authToken
     | OAuth -> CrmAuth.getCrmServiceClient username password xrmAuth.url clientId returnUrl 
     | ClientSecret -> CrmAuth.getCrmServiceClientClientSecret xrmAuth.url clientId clientSecret
+    | ConnectionString -> CrmAuth.getCrmServiceClientConnectionString xrmAuth.connectionString
   proxyInstance

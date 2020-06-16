@@ -18,6 +18,7 @@ let getXrmAuth parsedArgs =
       match method with
       | "OAuth" -> ConnectionType.OAuth
       | "ClientSecret" -> ConnectionType.ClientSecret
+      | "ConnectionString" -> ConnectionType.ConnectionString
       | _ -> ConnectionType.Proxy 
     )
 
@@ -29,6 +30,7 @@ let getXrmAuth parsedArgs =
     clientId = Map.tryFind "mfaAppId" parsedArgs
     returnUrl = Map.tryFind "mfaReturnUrl" parsedArgs
     clientSecret = Map.tryFind "mfaClientSecret" parsedArgs
+    connectionString = Map.tryFind "connectionString" parsedArgs
     ap = ap; }
 
 let getRetrieveSettings parsedArgs =

@@ -67,6 +67,12 @@ let internal getCrmServiceClientClientSecret (org: Uri) appId clientSecret =
   |> ensureClientIsReady
   |> fun x -> x :> IOrganizationService
 
+let internal getCrmServiceClientConnectionString (connectionString: string option) =
+  if connectionString.IsNone then failwith "Ensure connectionString is set when using ConnectionString method" else
+  new CrmServiceClient(connectionString.Value)
+  |> ensureClientIsReady
+  |> fun x -> x :> IOrganizationService
+
 // Authentication
 let internal getServiceManagement org = 
     ServiceConfigurationFactory.CreateManagement<IOrganizationService>(org)

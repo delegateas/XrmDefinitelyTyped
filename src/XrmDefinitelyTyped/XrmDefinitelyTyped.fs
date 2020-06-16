@@ -9,7 +9,7 @@ open GenerationMain
 
 type XrmDefinitelyTyped private () = 
 
-  static member GenerateFromCrm(url, ?method, ?username, ?password, ?domain, ?ap, ?clientId, ?returnUrl, ?clientSecret, ?outDir, ?jsLib, ?tsLib, ?entities, ?solutions, ?crmVersion, ?useDeprecated, ?skipForms, ?oneFile, ?restNs, ?webNs, ?viewNs, ?formIntersects, ?viewintersects, ?labelMapping, ?generateMapping, ?skipInactiveForms) = 
+  static member GenerateFromCrm(url, ?method, ?username, ?password, ?domain, ?ap, ?clientId, ?returnUrl, ?clientSecret, ?connectionString, ?outDir, ?jsLib, ?tsLib, ?entities, ?solutions, ?crmVersion, ?useDeprecated, ?skipForms, ?oneFile, ?restNs, ?webNs, ?viewNs, ?formIntersects, ?viewintersects, ?labelMapping, ?generateMapping, ?skipInactiveForms) = 
     let xrmAuth = 
       { XrmAuthentication.url = Uri(url)
         method = method
@@ -19,7 +19,8 @@ type XrmDefinitelyTyped private () =
         ap = ap 
         clientId = clientId
         returnUrl = returnUrl
-        clientSecret = clientSecret}
+        clientSecret = clientSecret
+        connectionString = connectionString}
     
     let rSettings = 
       { XdtRetrievalSettings.entities = entities
