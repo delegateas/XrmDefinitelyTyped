@@ -1,4 +1,6 @@
 # Release Notes
+### 5.3.3 - June 17 2020
+* Added Connection String Authentication method
 
 ### 5.3.2 - June 15 2020
 * Fix issue with duplicate methods in `ProcessModule` within xrm.d.ts for CRM version 9.0 and up
