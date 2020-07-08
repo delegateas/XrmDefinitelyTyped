@@ -453,8 +453,8 @@ declare namespace Xrm {
         createFromEntity?: Lookup;
 
         /**
-        * A dictionary object that passes extra parameters to the form.
-        */
+         * A dictionary object that passes extra parameters to the form.
+         */
         data?: object;
 
         /**
