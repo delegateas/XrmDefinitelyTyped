@@ -20,4 +20,15 @@ declare namespace Xrm {
          */
         securityRolePrivileges: string[]
     }
+
+    /**
+     * Interface for an standard entity attribute.
+     */
+    interface Attribute<T> {
+
+        /**
+         * Sets a value for an attribute to determine whether it is valid or invalid with a message.
+         */
+        setIsValid(bool: boolean, message?: string): void;
+    }
 }
