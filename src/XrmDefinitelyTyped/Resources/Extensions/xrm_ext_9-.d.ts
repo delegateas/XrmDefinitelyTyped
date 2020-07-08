@@ -415,9 +415,11 @@ declare namespace Xrm {
 
     type ViewType = "savedquery" | "userquery";
 
-    interface EntityList {
+    interface PageInput {
         pageType: PageType
+    }
 
+    interface EntityList extends PageInput {
         /**
          *  The logical name of the entity to load in the list control.
          */
@@ -434,11 +436,9 @@ declare namespace Xrm {
         viewType?: ViewType;
     }
 
-    interface EntityRecord {
-        pageType: PageType
-
+    interface EntityRecord extends PageInput {
         /**
-         *  The logical name of the entity to load in the list control.
+         *  Logical name of the entity to display the form for.
          */
         entityName: string;
 
@@ -450,12 +450,12 @@ declare namespace Xrm {
         /**
          * Designates a record that will provide default values based on mapped attribute values.
          */
-        createFromEntity?: null; /* have to specify a lookup object */
+        createFromEntity?: Lookup;
 
         /**
         * A dictionary object that passes extra parameters to the form.
         */
-        data?: null; /* Must be a dictionary objectthat passes extra parameters */
+        data?: object;
 
         /**
          * ID of the form instance to be displayed.
@@ -463,7 +463,7 @@ declare namespace Xrm {
         formId?: string;
 
         /**
-         * Indicates whether the form is navigated to, from a different entity using cross-entity business process flow.
+         * Indicates whether the form is navigated to from a different entity using cross-entity business process flow.
          */
         isCrossEntityNavigate?: boolean;
 
@@ -485,7 +485,7 @@ declare namespace Xrm {
         /**
          * Define a relationship object to display the related records on the form
          */
-        relationship?: null; /* Must be relationship object to display related records*/
+        relationship?: EntityFormRelationship;
 
         /**
          * ID of the selected stage in business process instance.
@@ -493,9 +493,7 @@ declare namespace Xrm {
         selectedStageId?: string;
     }
 
-    interface WebResource {
-        pageType: PageType
-
+    interface WebResource extends PageInput {
         /**
          * The name of the web resource to load.
          */
