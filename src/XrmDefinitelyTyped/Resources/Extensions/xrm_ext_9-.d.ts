@@ -411,15 +411,14 @@ declare namespace Xrm {
         savedEntityReference: Lookup[];
     }
 
-    type PageType = "entitylist" | "entityrecord" | "webresource";
-
     type ViewType = "savedquery" | "userquery";
 
-    interface PageInput {
-        pageType: PageType
-    }
+    interface EntityList {
+        /**
+         * The type of the page 
+         */
+        pageType: "entitylist";
 
-    interface EntityList extends PageInput {
         /**
          *  The logical name of the entity to load in the list control.
          */
@@ -436,7 +435,12 @@ declare namespace Xrm {
         viewType?: ViewType;
     }
 
-    interface EntityRecord extends PageInput {
+    interface EntityRecord {
+        /**
+         * The type of the page 
+         */
+        pageType: "entityrecord";
+
         /**
          *  Logical name of the entity to display the form for.
          */
@@ -493,7 +497,12 @@ declare namespace Xrm {
         selectedStageId?: string;
     }
 
-    interface WebResource extends PageInput {
+    interface WebResource {
+        /**
+         * The type of the page 
+         */
+        pageType: "webresource";
+
         /**
          * The name of the web resource to load.
          */
@@ -560,7 +569,7 @@ declare namespace Xrm {
          * @param pageInput Input about the page to navigate to. The object definition changes depending on the type of page to navigate to: entity list or HTML web resource.
          * @param navigationOptions Options for navigating to a page: whether to open inline or in a dialog. If you don't specify this parameter, page is opened inline by default.
          */
-        navigateTo(pageInput: EntityRecord | EntityList | WebResource, navigationOptions: NavigationOptions): Promise<undefined>;
+        navigateTo(pageInput: EntityRecord | EntityList | WebResource, navigationOptions?: NavigationOptions): Promise<undefined>;
 
         /**
          * Displays an alert dialog containing a message and a button.
