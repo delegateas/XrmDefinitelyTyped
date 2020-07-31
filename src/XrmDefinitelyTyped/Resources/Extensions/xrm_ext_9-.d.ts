@@ -415,7 +415,7 @@ declare namespace Xrm {
 
     interface EntityList {
         /**
-         * The type of the page 
+         * The type of the page.
          */
         pageType: "entitylist";
 
@@ -437,7 +437,7 @@ declare namespace Xrm {
 
     interface EntityRecord {
         /**
-         * The type of the page 
+         * The type of the page.
          */
         pageType: "entityrecord";
 
@@ -499,7 +499,7 @@ declare namespace Xrm {
 
     interface WebResource {
         /**
-         * The type of the page 
+         * The type of the page.
          */
         pageType: "webresource";
 
