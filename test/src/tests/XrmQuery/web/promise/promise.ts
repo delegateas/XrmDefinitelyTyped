@@ -1,7 +1,7 @@
 /// <reference path='../../../../../typings/XRM/dg.xrmquery.web.d.ts'/>
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
-import { suite, test, slow, timeout, skip, only } from "mocha-typescript";
+import { suite, test, slow, timeout, skip, only } from "@testdeck/mocha";
 import FakeRequests from '../../../common/fakeRequests';
 import * as sinon from 'sinon';
 
