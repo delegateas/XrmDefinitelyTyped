@@ -5,7 +5,7 @@ build_script:
 install:
   # Get the latest stable version of Node.js or io.js
   - ps: cd test
-  - ps: Install-Product node 8
+  - ps: Install-Product node 12
   # install modules
   - npm install
   - ps: cd ..
