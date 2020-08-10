@@ -411,22 +411,18 @@ declare namespace Xrm {
         savedEntityReference: Lookup[];
     }
 
-    type PageType = "entitylist" | "webresource";
-
     type ViewType = "savedquery" | "userquery";
 
-    interface PageInput {
-        pageType: PageType
-
+    interface EntityList {
         /**
-         *  The data to pass to the web resource.
+         * The type of the page.
          */
-        data?: string;
+        pageType: "entitylist";
 
         /**
          *  The logical name of the entity to load in the list control.
          */
-        entityName?: string;
+        entityName: string;
 
         /**
          * The ID of the view to load. If you don't specify it, navigates to the default main view for the entity.
@@ -437,11 +433,85 @@ declare namespace Xrm {
          * Type of view to load. Specify "savedquery" or "userquery".
          */
         viewType?: ViewType;
+    }
+
+    interface EntityRecord {
+        /**
+         * The type of the page.
+         */
+        pageType: "entityrecord";
+
+        /**
+         *  Logical name of the entity to display the form for.
+         */
+        entityName: string;
+
+        /**
+         * ID of the entity record to display the form for. If you don't specify this value, the form will be opened in create mode.
+         */
+        entityId?: string;
+
+        /**
+         * Designates a record that will provide default values based on mapped attribute values.
+         */
+        createFromEntity?: Lookup;
+
+        /**
+         * A dictionary object that passes extra parameters to the form.
+         */
+        data?: object;
+
+        /**
+         * ID of the form instance to be displayed.
+         */
+        formId?: string;
+
+        /**
+         * Indicates whether the form is navigated to from a different entity using cross-entity business process flow.
+         */
+        isCrossEntityNavigate?: boolean;
+
+        /**
+         * Indicates whether there are any offline sync errors.
+         */
+        isOfflineSyncError?: boolean;
+
+        /**
+         * ID of the business process to be displayed on the form.
+         */
+        processId?: string;
+
+        /**
+         * ID of the business process instance to be displayed on the form.
+         */
+        processInstanceId?: string;
+
+        /**
+         * Define a relationship object to display the related records on the form
+         */
+        relationship?: EntityFormRelationship;
+
+        /**
+         * ID of the selected stage in business process instance.
+         */
+        selectedStageId?: string;
+    }
+
+    interface WebResource {
+        /**
+         * The type of the page.
+         */
+        pageType: "webresource";
 
         /**
          * The name of the web resource to load.
          */
-        webresourceName?: string;
+        webresourceName: string;
+
+        /**
+         *  The data to pass to the web resource.
+         */
+        data?: string;
     }
 
     const enum NavigationOptionsTarget {
@@ -499,7 +569,7 @@ declare namespace Xrm {
          * @param pageInput Input about the page to navigate to. The object definition changes depending on the type of page to navigate to: entity list or HTML web resource.
          * @param navigationOptions Options for navigating to a page: whether to open inline or in a dialog. If you don't specify this parameter, page is opened inline by default.
          */
-        navigateTo(pageInput: PageInput, navigationOptions: NavigationOptions): Promise<undefined>;
+        navigateTo(pageInput: EntityRecord | EntityList | WebResource, navigationOptions?: NavigationOptions): Promise<undefined>;
 
         /**
          * Displays an alert dialog containing a message and a button.
