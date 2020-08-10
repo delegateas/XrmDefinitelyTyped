@@ -1,4 +1,9 @@
 # Release Notes
+
+### 5.4.0 - August 10 2020
+* Move `SetIsValid` to be available from CRM version 9.1 instead of 9.0 (@KnethM)
+* Update `XRM.Navigation.navigateTo` typings (@KnethM)
+
 ### 5.3.3 - June 17 2020
 * Added Connection String Authentication method
 
@@ -10,11 +15,11 @@
 
 ### 5.3.0 - June 08 2020
 * New special flag "gendts" allowing XDT to only generating dts files: xrm.d.ts, metadata.d.ts, and sdk.d.ts
-* Update Global Context with missing methods
-* Update `formContext.data.process` with missing methods and properties
+* Update Global Context with missing methods (@mkholt)
+* Update `formContext.data.process` with missing methods and properties (@OliverFlint)
 * Fix incorrect arguments for `Xrm.Utility.openQuickCreate` for version 8.2 and up
-* Fix incorrect type of properties in `AddNotificationObject` used in `.addNotification`
-* Fix missing return type on `setIsValied`
+* Fix incorrect type of properties in `AddNotificationObject` used in `.addNotification` (@sergeytunnik)
+* Fix missing return type on `setIsValied` (@sergeytunnik)
 
 ### 5.2.0 - April 20 2020
 * Add a new field `securityRoles` in `Xrm.Utility.getGlobalContext().userSettings` that replaces `roles` for CRM version 9.1 and up
