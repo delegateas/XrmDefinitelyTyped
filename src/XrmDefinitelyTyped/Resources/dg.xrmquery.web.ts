@@ -1305,13 +1305,12 @@ namespace XQW {
    * @internal
    */
   function getClientUrl() {
-    const url = getClientUrlFromGlobalContext()
-      || getClientUrlFromUtility()
-      || getClientUrlFromXrmPage();
-
-    if (url) {
-      return url;
-    }
+    let url = getClientUrlFromGlobalContext();
+    if (url !== undefined) return url;
+    url = getClientUrlFromUtility();
+    if (url !== undefined) return url;
+    url = getClientUrlFromXrmPage();
+    if (url !== undefined) return url;
 
     throw new Error("Context is not available.");
   }
