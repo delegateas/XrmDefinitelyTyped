@@ -1311,6 +1311,11 @@ namespace XQW {
       }
     } catch (e) {}
     try {
+      if (Xrm && Xrm.Utility && Xrm.Utility.getGlobalContext) {
+        return Xrm.Utility.getGlobalContext().getClientUrl();
+      }
+    } catch (e) {}
+    try {
       if (window && window.parent && window.parent.window) {
         const w = <typeof window & { Xrm: any; }>(window.parent.window)
         if (w && w.Xrm && w.Xrm.Utility && w.Xrm.Utility.getGlobalContext) {
