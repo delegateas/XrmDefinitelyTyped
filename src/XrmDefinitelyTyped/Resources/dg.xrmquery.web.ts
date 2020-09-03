@@ -1311,11 +1311,19 @@ namespace XQW {
       }
     } catch (e) {}
     try {
+      if (window && window.parent && window.parent.window) {
+        const w = <typeof window & { Xrm: any; }>(window.parent.window)
+        if (w && w.Xrm && w.Xrm.Utility && w.Xrm.Utility.getGlobalContext) {
+          return w.Xrm.Utility.getGlobalContext().getClientUrl();
+        }
+      }
+    } catch (e) {}
+    try {
       if (Xrm && Xrm.Page && Xrm.Page.context) {
         return Xrm.Page.context.getClientUrl();
       }
     } catch (e) {}
-    throw new Error("Context is not available.");
+    debugger; throw new Error("Context is not available.");
   }
 
   /**
