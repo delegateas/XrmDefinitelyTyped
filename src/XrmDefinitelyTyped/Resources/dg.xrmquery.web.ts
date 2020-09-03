@@ -1305,30 +1305,62 @@ namespace XQW {
    * @internal
    */
   function getClientUrl() {
+    const url = getClientUrlFromGlobalContext()
+      || getClientUrlFromUtility()
+      || getClientUrlFromXrmPage()
+
+    if (url) {
+      return url;
+    }
+    
+    throw new Error("Context is not available.");
+  }
+
+  /**
+   * @internal
+   */
+  function getClientUrlFromGlobalContext() {
     try {
       if (GetGlobalContext && GetGlobalContext().getClientUrl) {
-        return GetGlobalContext().getClientUrl();
+        return GetGlobalContext().getClientUrl() as string;
       }
     } catch (e) {}
+
+    return undefined;
+  }
+
+  /**
+   * @internal
+   */
+  function getClientUrlFromUtility() {
     try {
       if (Xrm && Xrm.Utility && Xrm.Utility.getGlobalContext) {
-        return Xrm.Utility.getGlobalContext().getClientUrl();
+        return Xrm.Utility.getGlobalContext().getClientUrl() as string;
       }
     } catch (e) {}
     try {
       if (window && window.parent && window.parent.window) {
         const w = <typeof window & { Xrm: any; }>(window.parent.window);
         if (w && w.Xrm && w.Xrm.Utility && w.Xrm.Utility.getGlobalContext) {
-          return w.Xrm.Utility.getGlobalContext().getClientUrl();
+          return w.Xrm.Utility.getGlobalContext().getClientUrl() as string;
         }
       }
     } catch (e) {}
+
+    return undefined;
+  }
+
+  /**
+   * @internal
+   */
+  function getClientUrlFromXrmPage() {
     try {
       if (Xrm && Xrm.Page && Xrm.Page.context) {
-        return Xrm.Page.context.getClientUrl();
+        return Xrm.Page.context.getClientUrl() as string;
       }
     } catch (e) {}
-    throw new Error("Context is not available.");
+
+    return undefined;
   }
 
   /**
