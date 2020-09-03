@@ -1307,12 +1307,12 @@ namespace XQW {
   function getClientUrl() {
     const url = getClientUrlFromGlobalContext()
       || getClientUrlFromUtility()
-      || getClientUrlFromXrmPage()
+      || getClientUrlFromXrmPage();
 
     if (url) {
       return url;
     }
-    
+
     throw new Error("Context is not available.");
   }
 
