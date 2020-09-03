@@ -1328,7 +1328,7 @@ namespace XQW {
         return Xrm.Page.context.getClientUrl();
       }
     } catch (e) {}
-    debugger; throw new Error("Context is not available.");
+    throw new Error("Context is not available.");
   }
 
   /**
