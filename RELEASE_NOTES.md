@@ -1,4 +1,6 @@
 # Release Notes
+### 5.4.1 - September 05 2020
+* Added fallback to window.parent.window.Xrm before calling Xrm.Page in getClientUrl in XrmQuery
 
 ### 5.4.0 - August 10 2020
 * Move `SetIsValid` to be available from CRM version 9.1 instead of 9.0 (@KnethM)
