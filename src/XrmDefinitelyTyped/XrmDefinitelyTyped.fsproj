@@ -128,7 +128,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
-  <Target Name="RunGulp" BeforeTargets="Build">
+  <Target Name="RunGulp" BeforeTargets="BeforeBuild">
     <Exec Command="npm install" />
     <Exec Command="npm start" />
   </Target>
