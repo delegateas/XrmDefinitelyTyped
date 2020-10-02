@@ -1,18 +1,13 @@
 @echo off
 cls
 
-.paket\paket.bootstrapper.exe
+WHERE nuget
 if errorlevel 1 (
+  echo nuget not installed. Please install with Chocolatey
   exit /b %errorlevel%
 )
 
-.paket\paket.exe restore
-if errorlevel 1 (
-  exit /b %errorlevel%
-)
-
-IF NOT EXIST build.fsx (
-  .paket\paket.exe update
-  packages\FAKE\tools\FAKE.exe init.fsx
+if not exist packages\FAKE\tools\Fake.exe (
+  nuget install FAKE -OutputDirectory packages -ExcludeVersion
 )
 packages\FAKE\tools\FAKE.exe build.fsx %*

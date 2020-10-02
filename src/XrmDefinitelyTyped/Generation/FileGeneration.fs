@@ -14,9 +14,11 @@ open CreateLCID
 open CreateView
 
 (** Resource helpers *)
-let getResourceLines resName =
+let resourcePrefix = "XrmDefinitelyTyped.Resources."
+let getResourceLines (resName: string) =
   let assembly = Assembly.GetExecutingAssembly()
-  use res = assembly.GetManifestResourceStream(resName)
+  let prefixedString = if resName.StartsWith(resourcePrefix) then resName else resourcePrefix + resName
+  use res = assembly.GetManifestResourceStream(prefixedString)
   use sr = new StreamReader(res)
   seq {
     while not sr.EndOfStream do yield sr.ReadLine ()
@@ -26,9 +28,9 @@ let allResourceNames =
   let assembly = Assembly.GetExecutingAssembly()
   assembly.GetManifestResourceNames()
 
-let copyResourceDirectly outDir resName =
+let copyResourceDirectly outDir resName filename =
   File.WriteAllLines(
-    sprintf "%s/%s" outDir resName, 
+    sprintf "%s/%s" outDir filename, 
     getResourceLines resName)
 
 let stripReferenceLines : string list -> string list =
@@ -49,7 +51,6 @@ let filterVersionedStrings crmVersion (useDeprecated: bool) (prefix: string) (su
 let getBaseExtensions crmVersion (useDeprecated: bool) prefix suffix = 
   allResourceNames
   |> filterVersionedStrings crmVersion useDeprecated prefix suffix
-
 
 (** Generation functionality *)
 
@@ -85,38 +86,38 @@ let generateFolderStructure out (gSettings: XdtGenerationSettings) =
   printfn "Done!"
 
 // Extend files with version specific additions
-let versionExtendFile crmVersion gSettings outputDir fileName preffix suffix =
-  getBaseExtensions crmVersion gSettings.useDeprecated preffix suffix
+let versionExtendFile crmVersion gSettings outputDir (resName,fileName) preffix suffix =
+  getBaseExtensions crmVersion gSettings.useDeprecated (resourcePrefix + preffix) suffix
   |> Seq.map (getResourceLines >> stripReferenceLines)
-  |> (getResourceLines fileName |> Seq.singleton |> Seq.append)
+  |> (getResourceLines resName |> Seq.singleton |> Seq.append)
   |> List.concat
   |> fun lines -> 
-    File.WriteAllLines(
-      sprintf "%s/%s" outputDir fileName, lines)
+  File.WriteAllLines(
+    sprintf "%s/%s" outputDir fileName, lines)
 
 let generateJSExtResourceFiles crmVersion gSettings =
 
   let path = gSettings.jsLib ?| "."
 
   // Generate extendable js files
-  [ gSettings.webNs ?|> fun _ -> ("dg.xrmquery.web.js", "dg.xrmquery.web_ext_", ".js")
+  [ gSettings.webNs ?|> fun _ -> (("Dist.dg.xrmquery.web.js", "dg.xrmquery.web.js"), "Dist.Extensions.dg.xrmquery.web_ext_", ".js")
   ] |> List.choose id |> List.iter(fun param -> param |||> versionExtendFile crmVersion gSettings path)
  
 /// Generate the declaration files stored as resources
 let generateDtsResourceFiles crmVersion gSettings outputDir =
 
   // Generate extendable files
-  [ Some ("xrm.d.ts", "xrm_ext_", ".d.ts")
-    gSettings.webNs ?|> fun _ -> ("dg.xrmquery.web.d.ts", "dg.xrmquery.web_ext_", ".d.ts")
+  [ Some (("xrm.d.ts","xrm.d.ts"), "Extensions.xrm_ext_", ".d.ts")
+    gSettings.webNs ?|> fun _ -> (("Dist.dg.xrmquery.web.d.ts","dg.xrmquery.web.d.ts"), "Extensions.dg.xrmquery.web_ext_", ".d.ts")
   ] |> List.choose id |> List.iter(fun param -> param |||> versionExtendFile crmVersion gSettings outputDir)
  
   // Copy stable declaration files directly
-  [ Some "metadata.d.ts"
-    gSettings.restNs ?|> fun _ -> "dg.xrmquery.rest.d.ts"
-  ] |> List.choose id |> List.iter (copyResourceDirectly outputDir)
+  [ Some ("metadata.d.ts","metadata.d.ts")
+    gSettings.restNs ?|> fun _ -> ("Dist.dg.xrmquery.rest.d.ts","dg.xrmquery.rest.d.ts")
+  ] |> List.choose id |> List.iter (fun param -> param ||> copyResourceDirectly outputDir)
 
-  [ "sdk.d.ts"
-  ] |> List.iter (copyResourceDirectly (sprintf "%s/_internal" outputDir))
+  [ "_internal.sdk.d.ts","sdk.d.ts"
+  ] |> List.iter (fun param -> param ||> copyResourceDirectly (sprintf "%s/_internal" outputDir))
     
 
 /// Copy the js files stored as resources
@@ -129,12 +130,12 @@ let copyJsLibResourceFiles (gSettings: XdtGenerationSettings) =
   if Directory.Exists path |> not then 
     Directory.CreateDirectory path |> ignore
 
-  [ gSettings.webNs ?|> fun _ -> "dg.xrmquery.web.js"
-    gSettings.webNs ?|> fun _ -> "dg.xrmquery.web.min.js"
-    gSettings.webNs ?|> fun _ -> "dg.xrmquery.web.promise.min.js"
-    gSettings.restNs ?|> fun _ -> "dg.xrmquery.rest.js"
-    gSettings.restNs ?|> fun _ -> "dg.xrmquery.rest.min.js"
-  ] |> List.choose id |> List.iter (copyResourceDirectly path)
+  [ gSettings.webNs ?|> fun _ -> "Dist.dg.xrmquery.web.js","dg.xrmquery.web.js"
+    gSettings.webNs ?|> fun _ -> "Dist.dg.xrmquery.web.min.js","dg.xrmquery.web.min.js"
+    gSettings.webNs ?|> fun _ -> "Dist.dg.xrmquery.web.promise.min.js","dg.xrmquery.web.promise.min.js"
+    gSettings.restNs ?|> fun _ -> "Dist.dg.xrmquery.rest.js","dg.xrmquery.rest.js"
+    gSettings.restNs ?|> fun _ -> "Dist.dg.xrmquery.rest.min.js","dg.xrmquery.rest.min.js"
+  ] |> List.choose id |> List.iter (fun param -> param ||> copyResourceDirectly path)
 
 /// Copy the ts files stored as resources
 let copyTsLibResourceFiles (gSettings: XdtGenerationSettings) =
@@ -146,9 +147,9 @@ let copyTsLibResourceFiles (gSettings: XdtGenerationSettings) =
   if Directory.Exists path |> not then 
     Directory.CreateDirectory path |> ignore
 
-  [ gSettings.webNs ?|> fun _ -> "dg.xrmquery.web.ts"
-    gSettings.restNs ?|> fun _ -> "dg.xrmquery.rest.ts"
-  ] |> List.choose id |> List.iter (copyResourceDirectly path)
+  [ gSettings.webNs ?|> fun _ -> "dg.xrmquery.web.ts","dg.xrmquery.web.ts"
+    gSettings.restNs ?|> fun _ -> "dg.xrmquery.rest.ts","dg.xrmquery.rest.ts"
+  ] |> List.choose id |> List.iter (fun param -> param ||> copyResourceDirectly path)
 
 
 /// Generate the Enum definitions
