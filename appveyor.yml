@@ -1,20 +1,4 @@
-image: Visual Studio 2017
+image: Visual Studio 2019
 build_script:
-- cmd: build.cmd RunXDT
-# Install scripts. (runs after repo cloning)
-install:
-  # Get the latest stable version of Node.js or io.js
-  - ps: cd test
-  - ps: Install-Product node 12
-  # install modules
-  - npm install
-  - ps: cd ..
-  
-test_script:
-  # Output useful info for debugging.
-  - node --version
-  - npm --version
-  - ps: cd test
-  # run tests
-  - npm test
+- cmd: build.cmd test
 
