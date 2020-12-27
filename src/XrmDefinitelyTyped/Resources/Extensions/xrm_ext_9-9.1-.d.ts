@@ -7,4 +7,6 @@ declare namespace Xrm {
          */
         securityRoles: string[];
     }
+
+    interface OnLoadEventContext extends ExecutionContext<UiModule<TabCollectionBase, ControlCollectionBase>, any> { }
 }
