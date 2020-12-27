@@ -61,8 +61,8 @@ declare namespace Xrm {
         getTagValue(): LookupTagValue;
 
         /**
-        * Returns a value indicating whether the lookup tag click event has been canceled because the preventDefault method was used in this event hander or a previous event handler.
-        */
+         * Returns a value indicating whether the lookup tag click event has been canceled because the preventDefault method was used in this event hander or a previous event handler.
+         */
         isDefaultPrevented(): boolean;
 
         /**
@@ -75,13 +75,13 @@ declare namespace Xrm {
 
     interface LookupControl<T extends string> extends Control<LookupAttribute<T>> {
         /**
-        * Adds an event handler to the OnLookupTagClick event.
-        */
+         * Adds an event handler to the OnLookupTagClick event.
+         */
         addOnLookupTagClick(myFunction: (context?: OnLookupTagClickContext) => any): void;
 
         /**
-        * Removes an event handler from the OnLookupTagClick event.
-        */
+         * Removes an event handler from the OnLookupTagClick event.
+         */
         removeOnLookupTagClick(functionRef: Function): void;
     }
 }
