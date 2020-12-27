@@ -31,4 +31,57 @@ declare namespace Xrm {
          */
         setIsValid(bool: boolean, message?: string): void;
     }
+
+    const enum LoadState {
+        InitialLoad = 1,
+        Save = 2,
+        Refresh = 3,
+    }
+
+    interface LoadEventArgs {
+        /**
+         * Gets the state of the data load.
+         */
+        getDataLoadState(): LoadState;
+    }
+
+    interface OnLoadEventContext extends ExecutionContext<UiModule<TabCollectionBase, ControlCollectionBase>, LoadEventArgs> { }
+
+    interface LookupTagValue extends Lookup {
+        /**
+         * The originating lookup field that raised the event.
+         */
+        fieldName: string;
+    }
+
+    interface OnLookupTagClickEventArgs {
+        /**
+         * Gets the selected tag value.
+         */
+        getTagValue(): LookupTagValue;
+
+        /**
+        * Returns a value indicating whether the lookup tag click event has been canceled because the preventDefault method was used in this event hander or a previous event handler.
+        */
+        isDefaultPrevented(): boolean;
+
+        /**
+         * Cancels the lookup tag click event, but all remaining handlers for the event will still be executed.
+         */
+        preventDefault(): void;
+    }
+
+    interface OnLookupTagClickContext extends ExecutionContext<any, OnLookupTagClickEventArgs> { }
+
+    interface LookupControl<T extends string> extends Control<LookupAttribute<T>> {
+        /**
+        * Adds an event handler to the OnLookupTagClick event.
+        */
+        addOnLookupTagClick(myFunction: (context?: OnLookupTagClickContext) => any): void;
+
+        /**
+        * Removes an event handler from the OnLookupTagClick event.
+        */
+        removeOnLookupTagClick(functionRef: Function): void;
+    }
 }
