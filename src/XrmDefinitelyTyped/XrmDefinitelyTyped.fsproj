@@ -5,15 +5,16 @@
   </PropertyGroup>
   <PropertyGroup>
     <PackageProjectUrl>http://delegateas.github.io/</PackageProjectUrl>
+    <PackageTags>microsoft crm xrm dynamics xrmdefinitelytyped typescript ts definitelytyped javascript sdk rest odata fsharp f# delegate D365 Dynamics365 365</PackageTags>
+    <PackageIcon>XrmDefinitelyTyped-sticker_small.png</PackageIcon>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageId>Delegate.XrmDefinitelyTyped</PackageId>
     <Authors>Delegate A/S,Martin Kasban Tange</Authors>
     <Company>Delegate</Company>
     <Description>Tool to generate TypeScript declaration files for MS Dynamics 365/CRM client-side coding.</Description>
-    <PackageTags>microsoft crm xrm dynamics xrmdefinitelytyped typescript ts definitelytyped javascript sdk rest odata fsharp f# delegate D365 Dynamics365 365</PackageTags>
     <Copyright>Copyright (c) Delegate A/S 2017</Copyright>
-    <PackageIcon>XrmDefinitelyTyped-sticker_small.png</PackageIcon>
     <RepositoryUrl>https://github.com/delegateas/XrmDefinitelyTyped</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <OutputType>Exe</OutputType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

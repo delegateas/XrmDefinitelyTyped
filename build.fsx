@@ -204,7 +204,7 @@ Target.create "PublishNuGet" (fun _ ->
       { defaults with
           PushParams = setNugetPushParams defaults.PushParams
        }
-  let nugetPacakge = !!("bin/"+project+".*.nupkg") |> Seq.head
+  let nugetPacakge = !!("bin/Delegate."+project+".*.nupkg") |> Seq.head
   DotNet.nugetPush setParams nugetPacakge)
 
 
