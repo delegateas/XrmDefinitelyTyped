@@ -1,4 +1,7 @@
 # Release Notes
+### 5.4.2 - January 14 2020
+* Added typings for OnLookupTagClick (@mathiasbl)
+
 ### 5.4.1 - September 05 2020
 * Added fallback to window.parent.window.Xrm before calling Xrm.Page in getClientUrl in XrmQuery
 
