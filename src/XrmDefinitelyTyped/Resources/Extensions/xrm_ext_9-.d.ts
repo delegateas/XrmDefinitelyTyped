@@ -945,8 +945,6 @@ declare namespace Xrm {
         saveMode?: SaveMode;
     }
 
-    interface OnLoadEventContext extends ExecutionContext<UiModule<TabCollectionBase, ControlCollectionBase>, any> { }
-
     /**
      * Interface for the data of a form.
      */
