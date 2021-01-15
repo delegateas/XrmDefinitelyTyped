@@ -1023,7 +1023,12 @@
     /**
      * Opens the specified form.
      */
-    navigate(): void;
+      navigate(): void;
+
+    /**
+    * Sets a value that indicates whether the control is visible.
+    */
+    setVisible(visibility: boolean): void;
   }
 
   interface navigation {
