@@ -87,8 +87,8 @@ declare namespace Xrm {
 
     interface FormItem {
         /**
-        * Sets a value that indicates whether the control is visible.
-        */
+         * Sets a value that indicates whether the control is visible.
+         */
         setVisible(visibility: boolean): void;
     }
 }
