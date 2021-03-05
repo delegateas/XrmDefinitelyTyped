@@ -84,4 +84,11 @@ declare namespace Xrm {
          */
         removeOnLookupTagClick(functionRef: Function): void;
     }
+
+    interface FormItem {
+        /**
+        * Sets a value that indicates whether the control is visible.
+        */
+        setVisible(visibility: boolean): void;
+    }
 }
