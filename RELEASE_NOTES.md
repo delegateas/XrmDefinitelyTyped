@@ -1,4 +1,7 @@
 # Release Notes
+### 5.4.4 - March 05 2021
+* Added setVisible to form items (@urossavelj)
+
 ### 5.4.2 - January 14 2020
 * Added typings for OnLookupTagClick (@mathiasbl)
 
