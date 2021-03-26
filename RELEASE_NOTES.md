@@ -1,4 +1,7 @@
 # Release Notes
+### 5.4.5 - March 26 2021
+* Added typings for Knowledgebase Search control
+
 ### 5.4.4 - March 05 2021
 * Added setVisible to form items (@urossavelj)
 
