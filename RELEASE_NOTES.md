@@ -1,4 +1,7 @@
 # Release Notes
+### 5.4.7 - March 26 2021
+* Extended PageEntity with addOnPostSave
+
 ### 5.4.6 - March 26 2021
 * Added title to Xrm.navigateTo.navigationOptions (@ArsenAghajanyan)
 
