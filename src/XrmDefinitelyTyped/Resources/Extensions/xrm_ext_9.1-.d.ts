@@ -236,4 +236,13 @@ declare namespace Xrm {
          */
         setSearchQuery(text: string): void;
     }
+
+    interface PageEntity<T extends AttributeCollectionBase> {
+        /**
+         * Adds a function to be called when save event has completed; either successfully or with a failure.
+         * @param functionRef The function to add to the PostSave event.
+         * The execution context is automatically passed as the first parameter to this function.
+         */
+        addOnPostSave(functionRef: (context?: SaveEventContext<this>) => any): void;
+    }
 }
