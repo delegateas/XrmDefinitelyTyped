@@ -70,6 +70,7 @@ type ControlType =
   | SubGrid of string
   | WebResource
   | IFrame
+  | KBSearch
 
 type AttributeType = 
   | Default of TsType
@@ -107,7 +108,7 @@ type ControlClassId =
   | Float | IFrame | Integer | Language | Lookup | MoneyValue | Notes
   | PartyListLookup | Picklist | RadioButtons | RegardingLookup | MultiPicklist
   | StatusReason | TextArea | TextBox | TickerSymbol | TimeZonePicklist | Url
-  | WebResource | Map | Subgrid | QuickView | Timer
+  | WebResource | Map | Subgrid | QuickView | Timer | KnowledgeBaseSearch
   | Other
   with override x.ToString() = x.GetType().Name
 
