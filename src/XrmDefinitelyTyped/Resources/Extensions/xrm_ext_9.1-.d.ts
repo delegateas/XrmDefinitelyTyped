@@ -92,6 +92,151 @@ declare namespace Xrm {
         setVisible(visibility: boolean): void;
     }
 
+    type KBSeachControlMode = "Inline" | "Popout";
+
+    /**
+     * Interface for a KBSearchResult returned on the method getSelectedResults from the KBSearchControl.
+     * All Date objects will be in the current user's time zone and format.
+     */
+    interface KBSearchResult {
+        /**
+         * The HTML markup containing the content of the article.
+         */
+        answer(): string;
+
+        /**
+         * The article ID in Dynamics 365.
+         */
+        articleId(): string;
+
+        /**
+         * The unique article ID in Dynamics 365.
+         */
+        articleUid(): string;
+
+        /**
+         * The date the article was created.
+         */
+        createdOn(): Date;
+
+        /**
+         * Indicates whether the article is associated with the parent record or not.
+         */
+        isAssociated(): boolean;
+
+        /**
+         * Date on which the article was last modified.
+         */
+        lastModifiedOn(): Date;
+
+        /**
+         * Support Portal URL of the article; blank if Portal URL option is turned off.
+         */
+        publicUrl(): string;
+
+        /**
+         * Indicates whether the article is in published state. True if published; otherwise False.
+         */
+        published(): boolean;
+
+        /**
+         * The title of the article.
+         */
+        question(): string;
+
+        /**
+         * The rating of the article.
+         */
+        rating(): number;
+
+        /**
+         * A short snippet of article content that contains the areas where the search query was hit.
+         */
+        searchBlurb(): string;
+
+        /**
+         * Link to the article in the Dynamics 365.
+         */
+        serviceDeskUri(): string;
+
+        /**
+         * The number of times an article is viewed on the portal by customers.
+         */
+        timesViewved(): number;
+    }
+
+    /**
+     * Interface for a knowledge base search control.
+     */
+    interface KBSearchControl extends BaseControl {
+        /**
+         * Add an event handler to the PostSearch event.
+         * @param functionRef The function to add.
+         */
+        addOnPostSearch(functionRef: (context?: ExecutionContext<this, undefined>) => any): void;
+
+        /**
+         * Add an event handler to the OnResultOpened event.
+         * @param functionRef The function to add.
+         */
+        addOnResultOpened(functionRef: (context?: ExecutionContext<this, undefined>) => any): void;
+
+        /**
+         * Add an event handler to the OnSelection event.
+         * @param functionRef The function to add.
+         */
+        addOnSelection(functionRef: (context?: ExecutionContext<this, undefined>) => any): void;
+
+        /**
+         * Get the text used as the search criteria for the knowledge base management control.
+         */
+        getSearchQuery(): string;
+
+        /**
+         * Get the currently selected result of the search control; the one that is currently open.
+         * @return The currently selected result.
+         */
+        getSelectedResults(): KBSearchResult;
+
+        /**
+         * Gets the count of results found in the search control.
+         * @return The count of the search result.
+         */
+        getTotalResultCount(): number;
+
+        /**
+         * Opens a search result in the search control by specifying the result number.
+         * @param resultNumber Numerical value specifying the result number to be opened. Required.
+         * @param mode Specify "Inline" or "Popout". Optional. Defaults to "Inline".
+         * @return Returns 1 if successful; 0 if unsuccessful; -1 if the specified resultNumber is not present, or if the specified mode is invalid.
+         */
+        openSearchResult(resultNumber: number, mode?: KBSeachControlMode): number;
+
+        /**
+         * Use this method to remove an event handler from the PostSearch event.
+         * @param functionRef The function to remove.
+         */
+        removeOnPostSearch(functionRef: Function): void;
+
+        /**
+         * Remove an event handler from the OnResultOpened event.
+         * @param functionRef The function to remove.
+         */
+        removeOnResultOpened(functionRef: Function): void;
+
+        /**
+         * Remove an event handler from the OnSelection event.
+         * @param functionRef The function to remove.
+         */
+        removeOnSelection(functionRef: Function): void;
+
+        /**
+         * Set the text used as the search criteria for the knowledge base management control.
+         * @param text The text for the search query.
+         */
+        setSearchQuery(text: string): void;
+    }
+
     interface PageEntity<T extends AttributeCollectionBase> {
         /**
          * Adds a function to be called when save event has completed; either successfully or with a failure.

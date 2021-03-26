@@ -42,6 +42,7 @@ let classIds =
     ("E7A81278-8635-4D9E-8D4D-59480B391C5B", Subgrid)
     ("9C5CA0A1-AB4D-4781-BE7E-8DFBE867B87E", Timer)
     ("4AA28AB7-9C13-4F57-A73D-AD894D048B5F", MultiPicklist)
+    ("E616A57F-20E0-4534-8662-A101B5DDF4E0", KnowledgeBaseSearch)
   ] |> List.map (fun (id,t) -> id.ToUpper(), t) |> Map.ofList
  
 let getTargetEntities (tes: string option) (a: XrmAttribute option) =
@@ -140,6 +141,8 @@ let getControl  (enums:Map<string,TsType>) entity (controlField:ControlField): X
     | RegardingLookup 
     | Lookup -> ControlType.Lookup (getTargetEntities tes attribute)
         
+    | KnowledgeBaseSearch -> ControlType.KBSearch
+
     // TODO: Figure out if the following should be special control types
     | Language
     | QuickView
@@ -238,7 +241,7 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
     |> Seq.sortBy (fun (name, _, _) -> name)
     |> List.ofSeq
 
-
+ 
   // Attributes and controls
   let controlFields = 
     form.Descendants(XName.Get("control"))
