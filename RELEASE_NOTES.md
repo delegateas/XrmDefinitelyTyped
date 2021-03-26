@@ -1,4 +1,7 @@
 # Release Notes
+### 5.4.6 - March 26 2021
+* Added title to Xrm.navigateTo.navigationOptions (@ArsenAghajanyan)
+
 ### 5.4.5 - March 26 2021
 * Added typings for Knowledgebase Search control
 
