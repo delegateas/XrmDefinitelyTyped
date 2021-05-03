@@ -101,10 +101,10 @@
     <None Include="paket.references" />
     <None Include="App.config" />
     <None Include="EnvInfo.config" />
-    <Content Include="bin\Release\$(TargetFramework)\*.dll" Pack="true" PackagePath="content\XrmDefinitelyTyped" />
-    <Content Include="bin\Release\$(TargetFramework)\*.exe" Pack="true" PackagePath="content\XrmDefinitelyTyped" />
-    <Content Include="bin\Release\$(TargetFramework)\XrmDefinitelyTyped.xml" Pack="true" PackagePath="content\XrmDefinitelyTyped" />
-    <Content Include="..\..\files\*" Pack="true" PackagePath="content\XrmDefinitelyTyped" />
+    <Content Include="bin\Release\$(TargetFramework)\*.dll" Pack="true" PackagePath="content\XrmDefinitelyTyped;contentFiles\any\any\XrmDefinitelyTyped" />
+    <Content Include="bin\Release\$(TargetFramework)\*.exe" Pack="true" PackagePath="content\XrmDefinitelyTyped;contentFiles\any\any\XrmDefinitelyTyped" />
+    <Content Include="bin\Release\$(TargetFramework)\XrmDefinitelyTyped.xml" Pack="true" PackagePath="content\XrmDefinitelyTyped;contentFiles\any\any\XrmDefinitelyTyped" />
+    <Content Include="..\..\files\*" Pack="true" PackagePath="content\XrmDefinitelyTyped;contentFiles\any\any\XrmDefinitelyTyped" />
     <None Include="package.json" />
     <None Include="tsconfig.json" />
     <None Include="gulpfile.js" />
