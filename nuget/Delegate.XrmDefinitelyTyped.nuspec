@@ -13,15 +13,31 @@
     <releaseNotes>@releaseNotes@</releaseNotes>
     <copyright>@copyright@</copyright>    
     <tags>@tags@</tags>
+    <contentFiles>
+      <files include="any\any\XrmDefinitelyTyped\Run.ps1" buildAction="None" />
+      <files include="any\any\XrmDefinitelyTyped\Run.fsx" buildAction="None" />
+      <files include="any\any\XrmDefinitelyTyped\XrmDefinitelyTyped.exe.config" buildAction="None" />
+      <files include="any\any\XrmDefinitelyTyped\*.dll" buildAction="Content" />
+      <files include="any\any\XrmDefinitelyTyped\*.exe" buildAction="Content" />
+      <files include="any\any\XrmDefinitelyTyped\XrmDefinitelyTyped.xml" buildAction="Content" />
+    </contentFiles>
     @dependencies@
     @references@
   </metadata>
   <files>
+    <!-- content -->
     <file src="..\files\Run.ps1" target="content\XrmDefinitelyTyped" />
     <file src="..\files\Run.fsx" target="content\XrmDefinitelyTyped" />
     <file src="..\files\XrmDefinitelyTyped.exe.config" target="content\XrmDefinitelyTyped" />
     <file src="..\src\XrmDefinitelyTyped\bin\Release\*.dll" target="content\XrmDefinitelyTyped" />
     <file src="..\src\XrmDefinitelyTyped\bin\Release\*.exe" target="content\XrmDefinitelyTyped" />
     <file src="..\src\XrmDefinitelyTyped\bin\Release\XrmDefinitelyTyped.xml" target="content\XrmDefinitelyTyped" />
+    <!-- contentFiles -->
+    <file src="..\files\Run.ps1" target="contentFiles\any\any\XrmDefinitelyTyped" />
+    <file src="..\files\Run.fsx" target="contentFiles\any\any\XrmDefinitelyTyped" />
+    <file src="..\files\XrmDefinitelyTyped.exe.config" target="contentFiles\any\any\XrmDefinitelyTyped" />
+    <file src="..\src\XrmDefinitelyTyped\bin\Release\*.dll" target="contentFiles\any\any\XrmDefinitelyTyped" />
+    <file src="..\src\XrmDefinitelyTyped\bin\Release\*.exe" target="contentFiles\any\any\XrmDefinitelyTyped" />
+    <file src="..\src\XrmDefinitelyTyped\bin\Release\XrmDefinitelyTyped.xml" target="contentFiles\any\any\XrmDefinitelyTyped" />    
   </files>
 </package>
