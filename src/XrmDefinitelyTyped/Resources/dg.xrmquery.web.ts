@@ -655,8 +655,8 @@ namespace XQW {
      */
     private expands: string[] = [];
     /**
-    * @internal
-    */
+     * @internal
+     */
     private explicitQuery: ExplicitQuery;
     /**
      * @internal
@@ -738,8 +738,7 @@ namespace XQW {
       const urlName = "$" + name;
       if (explicit) {
         options.push(urlName + explicit);
-      }
-      else if (values != null && values != undefined) {
+      } else if (values != null && values != undefined) {
         if (Array.isArray(values)) {
           if (values.length > 0) {
              options.push(urlName + values.join(","));
@@ -1283,7 +1282,7 @@ namespace XQW {
   // 5: either "=> {" or "=>" or "{" is required but ignored
   // 6: Get Body of function which may or may not end with a "}"
   //           (      1       )(2)(      3      )(4)(         5          )(        6       )
-  var fPatt = /(?:function)*\s*\(?([a-zA-Z0-9_]+)\)?(?:\s?=>\s?\{?|\s?\{)+([\s\S][^\}]*)\}?$/m; 
+  var fPatt = /(?:function)*\s*\(?([a-zA-Z0-9_]+)\)?(?:\s?=>\s?\{?|\s?\{)+([\s\S][^\}]*)\}?$/m;
 
   /**
    * @internal
