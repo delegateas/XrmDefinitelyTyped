@@ -735,7 +735,7 @@ namespace XQW {
 
     private addOption(options: string[], name: keyof ExplicitQuery, values: number | string[] | WebFilter | null) {
       const explicit = this.explicitQuery[name] as string;
-      const urlName = "$" + name;
+      const urlName = "$" + name + "=";
       if (explicit) {
         options.push(urlName + explicit);
       } else if (values != null && values != undefined) {
