@@ -1282,7 +1282,7 @@ namespace XQW {
   // 5: either "=> {" or "=>" or "{" is required but ignored
   // 6: Get Body of function which may or may not end with a "}"
   //           (      1       )(2)(      3      )(4)(         5          )(        6       )
-  var fPatt = /(?:function)*\s*\(?([a-zA-Z0-9_]+)\)?(?:\s?=>\s?\{?|\s?\{)+([\s\S][^\}]*)\}?$/m;
+  var fPatt = /(?:function)*\s*\(?([a-zA-Z0-9_]+)\)?(?:\s?=>\s?\{?|\s?\{)+([\s\S]*[^\}])\}?$/m;
 
   /**
    * @internal
