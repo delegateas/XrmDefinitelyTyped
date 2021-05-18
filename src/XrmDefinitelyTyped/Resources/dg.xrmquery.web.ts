@@ -352,6 +352,16 @@ interface WebFilter {
   __WebFilter: any;
 }
 
+interface ExplicitQuery {
+    select?: string,
+    expand?: string,
+    filter?: string,
+    orderby?: string,
+    skip?: string,
+    top?: string,
+    [key:string]:string | undefined,
+}
+
 const enum SortOrder {
   Ascending = 1,
   Descending = 2,
@@ -645,6 +655,10 @@ namespace XQW {
      */
     private expands: string[] = [];
     /**
+    * @internal
+    */
+    private explicitQuery: ExplicitQuery;
+    /**
      * @internal
      */
     private expandKeys: string[] = [];
@@ -703,26 +717,37 @@ namespace XQW {
       }
       if (this.specialQuery) return prefix + this.specialQuery;
 
-      let options: string[] = [];
+      const options: string[] = [];
 
-      if (this.selects.length > 0) options.push("$select=" + this.selects.join(","));
+      if (!this.explicitQuery) {
+        this.explicitQuery = {};
+      }
 
-      if (this.expands.length > 0) {
-        options.push("$expand=" + this.expands.join(","));
-      }
-      if (this.filters) {
-        options.push("$filter=" + this.filters);
-      }
-      if (this.ordering.length > 0) {
-        options.push("$orderby=" + this.ordering.join(","));
-      }
-      if (this.skipAmount != null) {
-        options.push("$skip=" + this.skipAmount);
-      }
-      if (this.topAmount != null) {
-        options.push("$top=" + this.topAmount);
-      }
+      this.addOption(options, "select", this.selects);
+      this.addOption(options, "expand", this.expands);
+      this.addOption(options, "filter", this.filters);
+      this.addOption(options, "orderby", this.ordering);
+      this.addOption(options, "skip", this.skipAmount);
+      this.addOption(options, "top", this.topAmount);
+
       return prefix + (options.length > 0 ? `?${options.join("&")}` : "");
+    }
+
+    private addOption(options: string[], name: keyof ExplicitQuery, values: number | string[] | WebFilter | null) {
+      const explicit = this.explicitQuery[name] as string;
+      const urlName = "$" + name;
+      if (explicit) {
+        options.push(urlName + explicit);
+      }
+      else if (values != null && values != undefined) {
+        if (Array.isArray(values)) {
+          if (values.length > 0) {
+             options.push(urlName + values.join(","));
+          }
+        } else {
+          options.push(urlName + values);
+        }
+      }
     }
 
     select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13, R14, F14, R15, F15>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>, WebAttribute<ISelect, R14, F14>, WebAttribute<ISelect, R15, F15>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13 & F14 & F15, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13 & R14 & R15>;
@@ -765,6 +790,10 @@ namespace XQW {
       return this;
     }
 
+    explicit(query: ExplicitQuery) {
+        this.explicitQuery = query;
+        return this;
+    }
 
     expand<IExpSelect, IExpFilter, IExpResult>(
       exps: (x: IExpand) => WebExpand<IExpand, IExpSelect, IExpFilter, IExpResult>,
