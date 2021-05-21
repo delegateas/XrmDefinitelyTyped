@@ -9,7 +9,7 @@
     <PackageIcon>XrmDefinitelyTyped-sticker_small.png</PackageIcon>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageId>Delegate.XrmDefinitelyTyped</PackageId>
-    <Authors>Delegate A/S,Martin Kasban Tange</Authors>
+    <Authors>Delegate A/S,Martin Kasban Tange,Magnus Gether Sørensen</Authors>
     <Company>Delegate</Company>
     <Description>Tool to generate TypeScript declaration files for MS Dynamics 365/CRM client-side coding.</Description>
     <Copyright>Copyright (c) Delegate A/S 2017</Copyright>

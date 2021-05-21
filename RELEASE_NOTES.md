@@ -1,4 +1,7 @@
 # Release Notes
+### 5.5.0 - May 21 2021
+* Added support for installing XrmDefinitelyTyped as a PackageReference (@joshcambell191)
+
 ### 5.4.7 - March 26 2021
 * Extended PageEntity with addOnPostSave
 
