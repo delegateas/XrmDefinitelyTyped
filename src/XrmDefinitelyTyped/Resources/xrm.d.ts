@@ -542,7 +542,7 @@
   /**
    * Type to be be used for iterating over a list of controls and being able to interact with all of them with precursory checks for undefined
    */
-  type AnyControl = BaseControl & Partial<Control<any> & WebResourceControl & IFrameControl & LookupControl<string> & SubGridControl<string> & DateControl & OptionSetControl<any>>;
+  type AnyControl = BaseControl & Partial<Control<any> | WebResourceControl | IFrameControl | LookupControl<string> | SubGridControl<string> | DateControl | OptionSetControl<any>>;
 
   /**
    * Remarks:
