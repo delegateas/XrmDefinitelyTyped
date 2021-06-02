@@ -92,6 +92,48 @@ declare namespace Xrm {
         setVisible(visibility: boolean): void;
     }
 
+    /**
+     * Interface for the ui of a form.
+     */
+    interface UiModule<T extends TabCollectionBase, U extends ControlCollectionBase> {
+        /**
+         * Method to cause the ribbon to re-evaluate data that controls what is displayed in it.
+         */
+        headerSection: HeaderSection;
+    }
+
+    interface HeaderSection {
+        /**
+         * Returns the header's body visibility.
+         */
+        getBodyVisible(): boolean;
+
+        /**
+         * Returns the command bar visibility.
+         */
+        getCommandBarVisible(): boolean;
+
+        /**
+         * Returns the tab navigator visibility.
+         */
+        getTabNavigatorVisible(): boolean;
+
+        /**
+         * Sets the header's body visibility.
+         */
+        setBodyVisible(isVisible: boolean);
+
+        /**
+         * Sets the command bar visibility.
+         */
+        setCommandBarVisible(isVisible: boolean);
+
+        /**
+         * Sets the tab navigator visibility.
+         */
+        setTabNavigatorVisible(isVisible: boolean);
+    }
+
     type KBSeachControlMode = "Inline" | "Popout";
 
     /**
