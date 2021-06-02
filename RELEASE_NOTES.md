@@ -1,4 +1,8 @@
 # Release Notes
+### 5.5.1 - June 02 2021
+* Added support for custom retrievemultiple (@daryllabar)
+* Added headersection and related methods (@ericregnier)
+
 ### 5.5.0 - May 21 2021
 * Added support for installing XrmDefinitelyTyped as a PackageReference (@joshcambell191)
 
