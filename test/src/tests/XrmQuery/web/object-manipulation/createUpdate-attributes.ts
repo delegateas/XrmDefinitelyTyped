@@ -100,7 +100,7 @@ class Web_CreateUpdate_Attributes extends FakeRequests {
     expect(req.method).to.equal("PUT");
     // Check that body was created properly
     var body = JSON.parse(req.requestBody);
-    expect(body).to.deep.equal({ '@odata.id': `/api/data/v8.0/accounts(${targetId})` })
+    expect(body).to.deep.equal({ '@odata.id': `/api/data/v9.2/accounts(${targetId})` })
 
     // Check that response is gotten correctly from header (no response on associate)
     req.respond(200, {}, "");
@@ -124,7 +124,7 @@ class Web_CreateUpdate_Attributes extends FakeRequests {
     expect(req.method).to.equal("POST");
     // Check that body was created properly
     var body = JSON.parse(req.requestBody);
-    expect(body).to.deep.equal({ '@odata.id': `/api/data/v8.0/contacts(${targetId})` })
+    expect(body).to.deep.equal({ '@odata.id': `/api/data/v9.2/contacts(${targetId})` })
 
     // Check that response is gotten correctly from header (no response on associate)
     req.respond(200, {}, "");

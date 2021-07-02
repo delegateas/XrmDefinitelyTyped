@@ -163,7 +163,7 @@ namespace XrmQuery {
   /**
    * @internal
    */
-  export function request(type: XQW.HttpRequestType, url: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb: (err: Error) => any = () => {}, preSend?: (req: XMLHttpRequest) => void, sync: boolean = false) {
+  export function request(type: XQW.HttpRequestType, url: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb: (err: Error) => any = () => { }, preSend?: (req: XMLHttpRequest) => void, sync: boolean = false) {
     let req = new XMLHttpRequest();
     req.open(type, url, !sync);
     req.setRequestHeader("Accept", "application/json");
@@ -322,9 +322,9 @@ namespace Filter {
   }
 }
 
-interface WebEntitiesRetrieve {}
-interface WebEntitiesRelated {}
-interface WebEntitiesCUDA {}
+interface WebEntitiesRetrieve { }
+interface WebEntitiesRelated { }
+interface WebEntitiesCUDA { }
 
 declare var GetGlobalContext: any;
 
@@ -353,13 +353,13 @@ interface WebFilter {
 }
 
 interface ExplicitQuery {
-    select?: string,
-    expand?: string,
-    filter?: string,
-    orderby?: string,
-    skip?: string,
-    top?: string,
-    [key:string]:string | undefined,
+  select?: string,
+  expand?: string,
+  filter?: string,
+  orderby?: string,
+  skip?: string,
+  top?: string,
+  [key: string]: string | undefined,
 }
 
 const enum SortOrder {
@@ -491,7 +491,7 @@ namespace XQW {
     private isDoneSending = false;
     private isDoingWork = false;
 
-    constructor(protected toReturn: any, private successCallback: Function, protected errorCallback: (e: Error) => any) {}
+    constructor(protected toReturn: any, private successCallback: Function, protected errorCallback: (e: Error) => any) { }
 
     protected followLink(linkUrl: string, expandKeys: ExpandKey[], valPlacer: (vs: any[]) => void) {
       this.performingCallback();
@@ -609,7 +609,7 @@ namespace XQW {
   export abstract class Query<T> {
     protected additionalHeaders: RequestHeader[] = [];
 
-    constructor(protected requestType: HttpRequestType) {}
+    constructor(protected requestType: HttpRequestType) { }
 
     abstract getQueryString(): string;
     protected abstract handleResponse(req: XMLHttpRequest, successCallback: (t: T) => any, errorCallback: (e: Error) => any): void;
@@ -619,11 +619,11 @@ namespace XQW {
       return promisifyCallback<T>(this.execute.bind(this));
     }
 
-    execute(successCallback: (x: T) => any, errorCallback: (err: Error) => any = () => {}): void {
+    execute(successCallback: (x: T) => any, errorCallback: (err: Error) => any = () => { }): void {
       this.executeRaw(successCallback, errorCallback, true, false);
     }
 
-    executeSync() : T | Error {
+    executeSync(): T | Error {
       let ret: T | Error = Error("Undefined behavior");
       this.executeRaw((x) => { ret = x; }, (err) => { ret = err; }, true, true);
       return ret;
@@ -634,7 +634,7 @@ namespace XQW {
      */
     executeRaw(successCallback: (x: T) => any, errorCallback: (err: Error) => any, parseResult: true, sync: boolean): void;
     executeRaw(successCallback: (x: XMLHttpRequest) => any, errorCallback: (err: Error) => any, parseResult: false): void;
-    executeRaw(successCallback: ((x: T) => any) & ((x: XMLHttpRequest) => any), errorCallback: (err: Error) => any = () => {}, parseResult: boolean = false, sync: boolean = false): void {
+    executeRaw(successCallback: ((x: T) => any) & ((x: XMLHttpRequest) => any), errorCallback: (err: Error) => any = () => { }, parseResult: boolean = false, sync: boolean = false): void {
       let config = (req: XMLHttpRequest) => this.additionalHeaders.forEach(h => req.setRequestHeader(h.type, h.value));
       let successHandler = (req: XMLHttpRequest) => (parseResult ? this.handleResponse(req, successCallback, errorCallback) : successCallback(req));
       return XrmQuery.sendRequest(this.requestType, this.getQueryString(), this.getObjectToSend(), successHandler, errorCallback, config, sync);
@@ -741,7 +741,7 @@ namespace XQW {
       } else if (values != null && values != undefined) {
         if (Array.isArray(values)) {
           if (values.length > 0) {
-             options.push(urlName + values.join(","));
+            options.push(urlName + values.join(","));
           }
         } else {
           options.push(urlName + values);
@@ -790,8 +790,8 @@ namespace XQW {
     }
 
     explicit(query: ExplicitQuery) {
-        this.explicitQuery = query;
-        return this;
+      this.explicitQuery = query;
+      return this;
     }
 
     expand<IExpSelect, IExpFilter, IExpResult>(
@@ -1325,7 +1325,7 @@ namespace XQW {
    * @internal
    */
   export var ApiUrl: string | null = null;
-  const DefaultApiVersion = "8.0";
+  const DefaultApiVersion = "9.2";
 
   export function getDefaultUrl(v: string) {
     return getClientUrl() + `/api/data/v${v}/`;
@@ -1358,7 +1358,7 @@ namespace XQW {
       if (GetGlobalContext && GetGlobalContext().getClientUrl) {
         return GetGlobalContext().getClientUrl() as string;
       }
-    } catch (e) {}
+    } catch (e) { }
 
     return undefined;
   }
@@ -1371,7 +1371,7 @@ namespace XQW {
       if (Xrm && Xrm.Utility && Xrm.Utility.getGlobalContext) {
         return Xrm.Utility.getGlobalContext().getClientUrl() as string;
       }
-    } catch (e) {}
+    } catch (e) { }
     try {
       if (window && window.parent && window.parent.window) {
         const w = <typeof window & { Xrm: any; }>(window.parent.window);
@@ -1379,7 +1379,7 @@ namespace XQW {
           return w.Xrm.Utility.getGlobalContext().getClientUrl() as string;
         }
       }
-    } catch (e) {}
+    } catch (e) { }
 
     return undefined;
   }
@@ -1392,7 +1392,7 @@ namespace XQW {
       if (Xrm && Xrm.Page && Xrm.Page.context) {
         return Xrm.Page.context.getClientUrl() as string;
       }
-    } catch (e) {}
+    } catch (e) { }
 
     return undefined;
   }
