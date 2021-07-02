@@ -1325,7 +1325,7 @@ namespace XQW {
    * @internal
    */
   export var ApiUrl: string | null = null;
-  const DefaultApiVersion = "8.0";
+  const DefaultApiVersion = "9.2";
 
   export function getDefaultUrl(v: string) {
     return getClientUrl() + `/api/data/v${v}/`;
@@ -1333,7 +1333,7 @@ namespace XQW {
   export function getApiUrl() {
     if (ApiUrl === null) ApiUrl = getDefaultUrl(DefaultApiVersion);
     return ApiUrl;
-  }
+    }
 
   declare var Xrm: any;
   /**
