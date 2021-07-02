@@ -1,4 +1,7 @@
 # Release Notes
+### 5.5.2 - July 02 2021
+* Updated Default API version to v9.2
+
 ### 5.5.1 - June 02 2021
 * Added support for custom retrievemultiple (@daryllabar)
 * Added headersection and related methods (@ericregnier)
