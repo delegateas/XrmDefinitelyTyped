@@ -12,6 +12,12 @@
     BulkEdit = 6,
   }
 
+  namespace Collection {
+    interface MatchingDelegate<T> {
+      (item: T, index?: number): boolean;
+    }
+  }
+
   /**
    * Interface for an option set value.
    */
