@@ -98,7 +98,22 @@ let getAttribute (enums:Map<string,TsType>) (entity: XrmEntity) (_, attrName, co
     | TextBox 
     | Url           -> AttributeType.Default TsType.String
 
-    | _             -> AttributeType.Default TsType.Any
+    // Custom controls will not have their "standard" control type.
+    // These are covered by matching on their attribute type.
+    // There might be additional types that need special handling.
+    // It might be relevant to support some with a configuration setting, allowing override of the attribute type in some scenarios.
+    | _             ->  printfn "%A: cc: %A, at: %A" attrName controlClass attrType
+                        match attribute with
+                        | None   -> AttributeType.Default TsType.Any
+                        | Some a -> match a.specialType with
+                                    // As lookups have TsType string for some custom controls, we need to filter them before checking the attribute type
+                                    | SpecialType.EntityReference -> AttributeType.Lookup (getTargetEntities tes attribute)
+                                    | _ ->  match attrType with
+                                            | TsType.Boolean    -> AttributeType.OptionSet TsType.Boolean
+                                            | TsType.String     -> AttributeType.Default TsType.String
+                                            | TsType.Number     -> AttributeType.Number
+                                            | TsType.Date       -> AttributeType.Date
+                                            | _                 -> AttributeType.Default TsType.Any
         
   Some (attrName, aType, canBeNull)
 
@@ -150,7 +165,11 @@ let getControl  (enums:Map<string,TsType>) entity (controlField:ControlField): X
     | TickerSymbol
     | Map
     | Timer
-    | _ -> ControlType.Default
+    | _ ->  match aType with
+            // Custom controls might need different handling. 
+            | Some (AttributeType.Lookup _)         -> ControlType.Lookup (getTargetEntities tes attribute)
+            | Some (AttributeType.OptionSet aType)  -> ControlType.OptionSet
+            | _                                 -> ControlType.Default
   
   Some (controlId, aType, cType, isBpf, canBeNull)
   
