@@ -180,7 +180,13 @@ let getAttributeFuncs (attributes: XrmFormAttribute list) =
     Function.Create("getAttribute", 
       [ Variable.Create("attributeName", TsType.String) ], 
       TsType.Undefined )
-  attrFuncs @ [ defaultFunc ]
+  
+  let delegateFunc =
+      Function.Create("getAttribute",
+        [ Variable.Create("delegateFunction", TsType.Custom("Xrm.Collection.MatchingDelegate<Xrm.Attribute<any>>"))],
+        TsType.Custom("Xrm.Attribute<any>[]"))
+  
+  attrFuncs @ [ defaultFunc; delegateFunc ]
 
 
   
@@ -203,7 +209,13 @@ let getControlFuncs (controls: XrmFormControl list) (crmVersion: Version)=
     Function.Create("getControl", 
       [ Variable.Create("controlName", TsType.String) ], 
       TsType.Undefined)
-  ctrlFuncs @ [ defaultFunc ]
+  
+  let delegateFunc =
+    Function.Create("getControl",
+      [ Variable.Create("delegateFunction", TsType.Custom("Xrm.Collection.MatchingDelegate<Xrm.Control<any>>"))],
+      TsType.Custom("Xrm.Control<any>[]"))
+  
+  ctrlFuncs @ [ defaultFunc; delegateFunc ]
 
 
 
