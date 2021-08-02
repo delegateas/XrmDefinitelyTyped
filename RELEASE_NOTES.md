@@ -1,4 +1,8 @@
 # Release Notes
+### 5.6.0 - August 02 2021
+* Added typing getAttribute and getControl overrides taking a delegate as argument
+* Fixed attribute and control types for custom controls
+
 ### 5.5.2 - July 02 2021
 * Updated Default API version to v9.2
 
