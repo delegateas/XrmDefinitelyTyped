@@ -98,12 +98,11 @@ let getAttribute (enums:Map<string,TsType>) (entity: XrmEntity) (_, attrName, co
     | TextBox 
     | Url           -> AttributeType.Default TsType.String
 
-    // Custom controls will not have their "standard" control type.
-    // These are covered by matching on their attribute type.
+    // Custom controls will not have their "standard" control type to derivate the attribute type from.
+    // This is done using the typescript type instead.
     // There might be additional types that need special handling.
     // It might be relevant to support some with a configuration setting, allowing override of the attribute type in some scenarios.
-    | _             ->  printfn "%A: cc: %A, at: %A" attrName controlClass attrType
-                        match attribute with
+    | _             ->  match attribute with
                         | None   -> AttributeType.Default TsType.Any
                         | Some a -> match a.specialType with
                                     // As lookups have TsType string for some custom controls, we need to filter them before checking the attribute type
@@ -132,31 +131,31 @@ let getControl  (enums:Map<string,TsType>) entity (controlField:ControlField): X
     
   let cType = 
     match controlClass with
-    | DateTime -> ControlType.Date
+    | DateTime              -> ControlType.Date
 
     | Picklist 
     | StatusReason
     | RadioButtons
-    | CheckBox  -> ControlType.OptionSet
+    | CheckBox              -> ControlType.OptionSet
 
-    | MultiPicklist -> ControlType.MultiSelectOptionSet
+    | MultiPicklist         -> ControlType.MultiSelectOptionSet
         
     | Decimal 
     | Duration
     | Integer 
     | MoneyValue 
-    | Float -> ControlType.Number
+    | Float                 -> ControlType.Number
 
-    | WebResource -> ControlType.WebResource
-    | IFrame -> ControlType.IFrame 
+    | WebResource           -> ControlType.WebResource
+    | IFrame                -> ControlType.IFrame 
         
-    | Subgrid -> ControlType.SubGrid (getTargetEntities tes attribute)
+    | Subgrid               -> ControlType.SubGrid (getTargetEntities tes attribute)
 
     | PartyListLookup 
     | RegardingLookup 
-    | Lookup -> ControlType.Lookup (getTargetEntities tes attribute)
+    | Lookup                -> ControlType.Lookup (getTargetEntities tes attribute)
         
-    | KnowledgeBaseSearch -> ControlType.KBSearch
+    | KnowledgeBaseSearch   -> ControlType.KBSearch
 
     // TODO: Figure out if the following should be special control types
     | Language
@@ -164,12 +163,15 @@ let getControl  (enums:Map<string,TsType>) entity (controlField:ControlField): X
     | TimeZonePicklist 
     | TickerSymbol
     | Map
-    | Timer
-    | _ ->  match aType with
-            // Custom controls might need different handling. 
-            | Some (AttributeType.Lookup _)         -> ControlType.Lookup (getTargetEntities tes attribute)
-            | Some (AttributeType.OptionSet aType)  -> ControlType.OptionSet
-            | _                                 -> ControlType.Default
+    | Timer                 -> ControlType.Default
+                // Custom controls might need different handling. It might be better to set these as CustomControl (need to be created) or just BaseControl. 
+    | _     ->  match aType with
+                | Some (AttributeType.Lookup _)                     -> ControlType.Lookup (getTargetEntities tes attribute)
+                | Some (AttributeType.OptionSet aType)              -> ControlType.OptionSet
+                | Some (AttributeType.Number)                       -> ControlType.Number
+                | Some (AttributeType.Date)                         -> ControlType.Date
+                | Some (AttributeType.MultiSelectOptionSet aType)   -> ControlType.MultiSelectOptionSet
+                | _                                                 -> ControlType.Default
   
   Some (controlId, aType, cType, isBpf, canBeNull)
   
