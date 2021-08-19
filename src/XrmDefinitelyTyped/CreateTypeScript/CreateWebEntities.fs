@@ -38,6 +38,7 @@ let currencyId = {
   readable = true
   createable = true
   updateable = true
+  isDeprecated = false
 }
 
 let entityTag = 

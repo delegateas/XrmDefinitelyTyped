@@ -23,6 +23,7 @@ type XrmAuthentication = {
   domain: string option
   ap: AuthenticationProviderType option
   clientId: string option
+  deprecatedPrefix: string option
   returnUrl: string option
   clientSecret: string option
   connectionString: string option
@@ -44,6 +45,7 @@ type XdtGenerationSettings = {
   formIntersects: Intersect [] option
   viewIntersects: Intersect [] option
   labelMapping: (string * string)[] option
+  deprecatedPrefix: string option 
   generateMappings: bool
 }
 

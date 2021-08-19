@@ -9,7 +9,7 @@ open GenerationMain
 
 type XrmDefinitelyTyped private () = 
 
-  static member GenerateFromCrm(url, ?method, ?username, ?password, ?domain, ?ap, ?clientId, ?returnUrl, ?clientSecret, ?connectionString, ?outDir, ?jsLib, ?tsLib, ?entities, ?solutions, ?crmVersion, ?useDeprecated, ?skipForms, ?oneFile, ?restNs, ?webNs, ?viewNs, ?formIntersects, ?viewintersects, ?labelMapping, ?generateMapping, ?skipInactiveForms) = 
+  static member GenerateFromCrm(url, ?method, ?username, ?password, ?domain, ?ap, ?clientId, ?returnUrl, ?clientSecret, ?connectionString, ?outDir, ?jsLib, ?tsLib, ?entities, ?solutions, ?crmVersion, ?useDeprecated, ?skipForms, ?oneFile, ?restNs, ?webNs, ?viewNs, ?formIntersects, ?viewintersects, ?labelMapping, ?deprecatedPrefix, ?generateMapping, ?skipInactiveForms) = 
     let xrmAuth = 
       { XrmAuthentication.url = Uri(url)
         method = method
@@ -18,6 +18,7 @@ type XrmDefinitelyTyped private () =
         domain = domain
         ap = ap 
         clientId = clientId
+        deprecatedPrefix = deprecatedPrefix
         returnUrl = returnUrl
         clientSecret = clientSecret
         connectionString = connectionString}
@@ -34,6 +35,7 @@ type XrmDefinitelyTyped private () =
         tsLib = tsLib
         crmVersion = crmVersion
         useDeprecated = useDeprecated ?| false
+        deprecatedPrefix = deprecatedPrefix
         skipForms = skipForms ?| false
         oneFile = oneFile ?| false
         restNs = restNs

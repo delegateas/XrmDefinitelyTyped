@@ -4,7 +4,9 @@ open Utility
 
 open IntermediateRepresentation
 open InterpretOptionSetMetadata
+open Microsoft.Xrm.Sdk
 open Microsoft.Xrm.Sdk.Metadata
+open Utility
 
   
 let toSome convertFunc (nullable: System.Nullable<'a>) =
@@ -54,8 +56,12 @@ let interpretNormalAttribute aType (a:AttributeMetadata) (options:OptionSet opti
   | AttributeTypeCode.Decimal   -> toSome typeConv a.AttributeType, SpecialType.Decimal
   | _                           -> toSome typeConv a.AttributeType, SpecialType.Default
 
+let getLabelOption (label:Label) =
+    match label.UserLocalizedLabel <> null with
+    | true -> Some label.UserLocalizedLabel.Label
+    | _ -> None
 
-let interpretAttribute nameMap entityNames labelMapping (a: AttributeMetadata) =
+let interpretAttribute nameMap entityNames labelMapping deprecatedPrefix (a: AttributeMetadata) = 
   let aType = a.AttributeType.GetValueOrDefault()
   if a.AttributeOf <> null ||
       (aType = AttributeTypeCode.Virtual && a.AttributeTypeName <> AttributeTypeDisplayName.MultiSelectPicklistType)||
@@ -88,6 +94,14 @@ let interpretAttribute nameMap entityNames labelMapping (a: AttributeMetadata) =
   match vTypeOption with
   | None -> None, None
   | Some (vType, sType) ->
+
+    let displayName = getLabelOption a.DisplayName
+
+    let isDeprecated = 
+      match displayName, deprecatedPrefix with
+      | Some x, Some prefix -> x.StartsWith(prefix)
+      | _ -> false
+
     options, Some {
       XrmAttribute.schemaName = a.SchemaName
       logicalName = a.LogicalName
@@ -97,6 +111,7 @@ let interpretAttribute nameMap entityNames labelMapping (a: AttributeMetadata) =
       readable = a.IsValidForRead.GetValueOrDefault(false)
       createable = a.IsValidForCreate.GetValueOrDefault(false)
       updateable = a.IsValidForUpdate.GetValueOrDefault(false)
+      isDeprecated = isDeprecated
     }
 
 let sanitizeNavigationProptertyName string =
@@ -166,12 +181,12 @@ let interpretM2MRelationship schemaNames nameMap logicalName (rel: ManyToManyRel
     rSchema, xRel
 
 
-let interpretEntity schemaNames nameMap labelMapping (metadata:EntityMetadata) =
+let interpretEntity schemaNames nameMap labelMapping deprecatedPrefix (metadata:EntityMetadata) =
   if isNull metadata.Attributes then failwith "No attributes found!"
 
   let optionSets, attributes = 
     metadata.Attributes 
-    |> Array.map (interpretAttribute nameMap schemaNames labelMapping)
+    |> Array.map (interpretAttribute nameMap schemaNames labelMapping deprecatedPrefix)
     |> Array.unzip
 
   let attributes = 

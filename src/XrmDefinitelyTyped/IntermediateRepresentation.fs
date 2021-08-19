@@ -28,6 +28,7 @@ type XrmAttribute = {
   readable: bool
   createable: bool
   updateable: bool
+  isDeprecated: bool
 }
 
 type XrmRelationship = {

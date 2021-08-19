@@ -34,7 +34,7 @@ let generateFromRaw gSettings rawState =
 
   // Interpret data and generate resource files
   let data =
-    interpretCrmData out formIntersects viewIntersects rawState gSettings.labelMapping
+    interpretCrmData gSettings out formIntersects viewIntersects rawState gSettings.labelMapping
 
   let defs = 
     seq {

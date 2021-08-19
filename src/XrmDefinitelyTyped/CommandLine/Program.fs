@@ -31,6 +31,7 @@ let getXrmAuth parsedArgs =
     returnUrl = Map.tryFind "mfaReturnUrl" parsedArgs
     clientSecret = Map.tryFind "mfaClientSecret" parsedArgs
     connectionString = Map.tryFind "connectionString" parsedArgs
+    deprecatedPrefix = Map.tryFind "deprecatedString" parsedArgs
     ap = ap; }
 
 let getRetrieveSettings parsedArgs =
@@ -78,6 +79,7 @@ let getGenerationSettings parsedArgs =
     tsLib = Map.tryFind "tsLib" parsedArgs 
     crmVersion = getArg parsedArgs "crmVersion" parseVersion
     useDeprecated = getArg parsedArgs "useDeprecated" parseBoolish ?| false
+    deprecatedPrefix = Map.tryFind "deprecatedPrefix" parsedArgs
     skipForms = getArg parsedArgs "skipForms" parseBoolish ?| false
     oneFile = getArg parsedArgs "oneFile" parseBoolish ?| false
     restNs = getArg parsedArgs "rest" nsSanitizer

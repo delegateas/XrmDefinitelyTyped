@@ -110,6 +110,8 @@
     <None Include="gulpfile.js" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="FAKE.Core" Version="5.16.0" />
+    <PackageReference Include="FAKE.Lib" Version="5.16.0" />
     <PackageReference Include="Microsoft.CrmSdk.XrmTooling.CoreAssembly" Version="9.1.0.51" />
   </ItemGroup>
   <ItemGroup>

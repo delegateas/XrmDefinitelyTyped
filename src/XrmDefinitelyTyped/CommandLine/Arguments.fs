@@ -95,6 +95,11 @@ type Args private () =
       altCommands=["gm"]
       description="Set to true if attribute and control mappings should be generated"
       required=false }
+
+    { command="deprecatedPrefix"
+      altCommands=["dp"]
+      description="Marks all attributes with the given prefix in their display name as deprecated."
+      required=false }
   
     { command="viewintersect"
       altCommands=["vi"]

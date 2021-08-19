@@ -14,6 +14,12 @@ let getLabelString (label:Label) labelMapping =
     |> Utility.sanitizeString
   with _ -> emptyLabel
 
+let getUnsanitizedLabelString (label:Label) (labelmapping:(string*string)[] option) =
+  try
+    label.UserLocalizedLabel.Label 
+    |> Utility.applyLabelMappings labelmapping
+  with _ -> emptyLabel
+
 let getMetadataString (metadata:OptionSetMetadataBase) labelMapping =
   getLabelString metadata.DisplayName labelMapping
   |> fun name -> 
