@@ -31,7 +31,7 @@ let getXrmAuth parsedArgs =
     returnUrl = Map.tryFind "mfaReturnUrl" parsedArgs
     clientSecret = Map.tryFind "mfaClientSecret" parsedArgs
     connectionString = Map.tryFind "connectionString" parsedArgs
-    deprecatedPrefix = Map.tryFind "deprecatedString" parsedArgs
+    deprecatedPrefix = Map.tryFind "deprecatedPrefix" parsedArgs
     ap = ap; }
 
 let getRetrieveSettings parsedArgs =
