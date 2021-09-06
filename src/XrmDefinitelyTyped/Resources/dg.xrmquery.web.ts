@@ -486,6 +486,10 @@ namespace XQW {
     linkKey: string;
   }
 
+  const addHeadersToRequestObject = (headers: RequestHeader[]) => (req: XMLHttpRequest): void => {
+      headers.forEach(header => req.setRequestHeader(header.type, header.value));
+  };
+
   abstract class LinkHelper {
     private missingCallbacks = 0;
     private isDoneSending = false;
@@ -493,13 +497,12 @@ namespace XQW {
 
     constructor(protected toReturn: any, private successCallback: Function, protected errorCallback: (e: Error) => any) { }
 
-    protected followLink(linkUrl: string, expandKeys: ExpandKey[], valPlacer: (vs: any[]) => void) {
+    protected followLink(linkUrl: string, expandKeys: ExpandKey[], additionalHeaders: RequestHeader[], valPlacer: (vs: any[]) => void) {
       this.performingCallback();
-
       XrmQuery.request("GET", linkUrl, null, (req) => {
         let resp = parseRetrievedData<MultiResult>(req);
 
-        PageLinkHelper.followLinks(resp, expandKeys, (vals) => {
+        PageLinkHelper.followLinks(resp, expandKeys, additionalHeaders, (vals) => {
           valPlacer(vals);
           this.callbackReceived();
 
@@ -508,12 +511,14 @@ namespace XQW {
         (err: Error) => {
           this.callbackReceived();
           this.errorCallback(err);
-        });
+          },
+          addHeadersToRequestObject(additionalHeaders),
+      );
     }
 
-    protected populateRecord(rec: any, expandKeys: ExpandKey[]) {
+    protected populateRecord(rec: any, expandKeys: ExpandKey[], additionalHeaders: RequestHeader[]) {
       this.performingCallback();
-      EntityLinkHelper.followLinks(rec, expandKeys, this.callbackReceived, this.errorCallback);
+      EntityLinkHelper.followLinks(rec, expandKeys, additionalHeaders, this.callbackReceived, this.errorCallback);
     }
 
     protected allSent() {
@@ -535,17 +540,17 @@ namespace XQW {
   }
 
   class EntityLinkHelper extends LinkHelper {
-    static followLinks(rec: any, expandKeys: ExpandKey[] | string[], successCallback: (t: any) => any, errorCallback: (e: Error) => any) {
+    static followLinks(rec: any, expandKeys: ExpandKey[] | string[], additionalHeaders: RequestHeader[], successCallback: (t: any) => any, errorCallback: (e: Error) => any) {
       if (expandKeys.length == 0) return successCallback(rec);
 
       if (isStringArray(expandKeys)) {
         expandKeys = expandKeys.map(k => ({ arrKey: k, linkKey: k + NEXT_LINK_ID }));
       }
 
-      return new EntityLinkHelper(rec, expandKeys, successCallback, errorCallback);
+      return new EntityLinkHelper(rec, expandKeys, additionalHeaders, successCallback, errorCallback);
     }
 
-    private constructor(rec: any, expandKeys: ExpandKey[], successCallback: (t: any) => any, errorCallback: (e: Error) => any) {
+    private constructor(rec: any, expandKeys: ExpandKey[], additionalHeaders: RequestHeader[], successCallback: (t: any) => any, errorCallback: (e: Error) => any) {
       super(rec, successCallback, errorCallback);
 
       expandKeys.forEach(exp => {
@@ -553,7 +558,7 @@ namespace XQW {
         if (linkUrl) {
           delete rec[exp.linkKey];
 
-          this.followLink(linkUrl, [], vals => {
+          this.followLink(linkUrl, [], additionalHeaders, vals => {
             rec[exp.arrKey] = rec[exp.arrKey].concat(vals);
           });
         }
@@ -567,11 +572,11 @@ namespace XQW {
    * Helper class to expand on all @odata.nextLink, both pages and on entities retrieved
    */
   class PageLinkHelper extends LinkHelper {
-    static followLinks(obj: MultiResult, expandKeys: ExpandKey[] | string[], successCallback: (t: any) => any, errorCallback: (e: Error) => any) {
+    static followLinks(obj: MultiResult, expandKeys: ExpandKey[] | string[], additionalHeaders: RequestHeader[], successCallback: (t: any) => any, errorCallback: (e: Error) => any) {
       if (!obj["@odata.nextLink"] && (obj.value.length == 0 || expandKeys.length == 0)) return successCallback(obj.value);
 
       if (expandKeys.length == 0) {
-        return new PageLinkHelper(obj, [], successCallback, errorCallback);
+        return new PageLinkHelper(obj, [], additionalHeaders, successCallback, errorCallback);
       }
 
       if (isStringArray(expandKeys)) {
@@ -579,27 +584,27 @@ namespace XQW {
       }
 
       if (obj.value.length == 0) {
-        return new PageLinkHelper(obj, expandKeys, successCallback, errorCallback);
+        return new PageLinkHelper(obj, expandKeys, additionalHeaders, successCallback, errorCallback);
       } else {
         // Trim expand keys down to the ones that may have nextLinks
         let firstRec = obj.value[0];
         let toKeep = expandKeys.filter(exp => firstRec[exp.linkKey]);
-        return new PageLinkHelper(obj, toKeep, successCallback, errorCallback);
+        return new PageLinkHelper(obj, toKeep, additionalHeaders, successCallback, errorCallback);
       }
     }
 
-    private constructor(obj: MultiResult, expandKeys: ExpandKey[], successCallback: (t: any) => any, errorCallback: (e: Error) => any) {
+    private constructor(obj: MultiResult, expandKeys: ExpandKey[], additionalHeaders: RequestHeader[], successCallback: (t: any) => any, errorCallback: (e: Error) => any) {
       super(obj.value, successCallback, errorCallback);
 
       let nextPage = obj["@odata.nextLink"];
       if (nextPage) {
-        this.followLink(nextPage, expandKeys, vals => {
+        this.followLink(nextPage, expandKeys, additionalHeaders, vals => {
           this.toReturn = this.toReturn.concat(vals);
         });
       }
 
       if (expandKeys.length > 0) {
-        obj.value.forEach(r => this.populateRecord(r, expandKeys));
+        obj.value.forEach(r => this.populateRecord(r, expandKeys, additionalHeaders));
       }
 
       this.allSent();
@@ -635,9 +640,8 @@ namespace XQW {
     executeRaw(successCallback: (x: T) => any, errorCallback: (err: Error) => any, parseResult: true, sync: boolean): void;
     executeRaw(successCallback: (x: XMLHttpRequest) => any, errorCallback: (err: Error) => any, parseResult: false): void;
     executeRaw(successCallback: ((x: T) => any) & ((x: XMLHttpRequest) => any), errorCallback: (err: Error) => any = () => { }, parseResult: boolean = false, sync: boolean = false): void {
-      let config = (req: XMLHttpRequest) => this.additionalHeaders.forEach(h => req.setRequestHeader(h.type, h.value));
-      let successHandler = (req: XMLHttpRequest) => (parseResult ? this.handleResponse(req, successCallback, errorCallback) : successCallback(req));
-      return XrmQuery.sendRequest(this.requestType, this.getQueryString(), this.getObjectToSend(), successHandler, errorCallback, config, sync);
+        let successHandler = (req: XMLHttpRequest) => (parseResult ? this.handleResponse(req, successCallback, errorCallback) : successCallback(req));
+        return XrmQuery.sendRequest(this.requestType, this.getQueryString(), this.getObjectToSend(), successHandler, errorCallback, addHeadersToRequestObject(this.additionalHeaders), sync);
     }
   }
 
@@ -697,7 +701,7 @@ namespace XQW {
     }
 
     protected handleResponse(req: XMLHttpRequest, successCallback: (r: Result[]) => any, errorCallback: (e: Error) => any) {
-      PageLinkHelper.followLinks(parseRetrievedData<MultiResult>(req), this.expandKeys, successCallback, errorCallback);
+      PageLinkHelper.followLinks(parseRetrievedData<MultiResult>(req), this.expandKeys, this.additionalHeaders, successCallback, errorCallback);
     }
 
     getFirst(successCallback: (r: Result | null) => any, errorCallback?: (e: Error) => any) {
@@ -927,7 +931,7 @@ namespace XQW {
     }
 
     protected handleResponse(req: XMLHttpRequest, successCallback: (r: Result) => any, errorCallback: (e: Error) => any) {
-      EntityLinkHelper.followLinks(parseRetrievedData<any>(req), this.expandKeys, successCallback, errorCallback);
+      EntityLinkHelper.followLinks(parseRetrievedData<any>(req), this.expandKeys, this.additionalHeaders, successCallback, errorCallback);
     }
 
     select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13, R14, F14, R15, F15>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>, WebAttribute<ISelect, R14, F14>, WebAttribute<ISelect, R15, F15>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13 & F14 & F15, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13 & R14 & R15>;
