@@ -1,4 +1,9 @@
 # Release Notes
+### 5.6.1 - September 23 2021
+* Always include additional headers in linked requests in dg.xrmquery.web.ts (@loeka1234)
+* Fix relative execution directory for Run.ps1 (@mlRosenquist)
+* Dependency updates for ini (1.3.5 -> 1.3.8), path-parse (1.0.5 -> 1.0.7), glob-parent (5.1.1 -> 5.1.2), yargs-parser (5.0.0 -> 5.0.1), y18n (3.2.1 -> 3.2.2), hosted-git-info (2.8.5 -> 2.8.9)
+
 ### 5.6.0 - August 02 2021
 * Added typing getAttribute and getControl overrides taking a delegate as argument
 * Fixed attribute and control types for custom controls
