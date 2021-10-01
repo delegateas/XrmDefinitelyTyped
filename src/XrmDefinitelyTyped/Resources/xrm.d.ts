@@ -713,7 +713,7 @@
     [id: string]: string;
   }
 
-  interface Process {
+  interface DataProcess {
     /**
      * Returns the unique identifier of the process.
      */
@@ -962,7 +962,13 @@
     /**
      * Navigation for the page.
      */
-    navigation: navigation;
+    navigation: Navigation;
+
+    /**
+     * Use the formSelector.getCurrentItem method to retrieve information about the form currently in use and the formSelector.items
+     * collection containing information about all the forms available for the user.
+     */
+    formSelector: FormSelector;
 
     /**
      * Method to get the form context for the record.
@@ -974,12 +980,6 @@
      * Method to close the form.
      */
     close(): void;
-
-    /**
-     * Use the formSelector.getCurrentItem method to retrieve information about the form currently in use and the formSelector.items
-     * collection containing information about all the forms available for the user.
-     */
-    formSelector: FormSelector;
 
     /**
      * Method to get the control object that currently has focus on the form. Web Resource and IFRAME controls are not returned by this method.
@@ -1032,7 +1032,7 @@
     navigate(): void;
   }
 
-  interface navigation {
+  interface Navigation {
     /**
      * Navigation items for the page.
      */
@@ -1052,6 +1052,7 @@
 
     /**
      * Sets the label for the item.
+     * @param label The new label for the item.
      */
     setLabel(label: string): void;
 
@@ -1062,11 +1063,13 @@
 
     /**
      * Returns a value that indicates whether the item is currently visible.
+     * Returns true if the item is visible; false otherwise..
      */
     getVisible(): boolean;
 
     /**
      * Sets a value that indicates whether the item is visible.
+     * @param visible Specify true or false to indicate whether the item is visible or not.
      */
     setVisible(visible: boolean): void;
   }
