@@ -82,7 +82,7 @@ class Web_Retrieve_Promise extends FakeRequests {
     @test
     "No-Content response"() {
         var result = XrmQuery.retrieveRelated(x => x.accounts, "0000-SOME-GUID", y => y.parentaccountid)
-        .select(x => [x.createdby_guid])    
+        .select(x => [x.createdby_guid])
         .promise();
 
         // Check request
