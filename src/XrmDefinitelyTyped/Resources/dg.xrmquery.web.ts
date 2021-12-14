@@ -5,10 +5,19 @@ namespace XrmQuery {
    * @param id GUID of the wanted record.
    */
   export function retrieve<ISelect, IExpand, IFixed, FormattedResult, Result>(
-    entityPicker: (x: WebEntitiesRetrieve) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>,
-    id: string) {
+      entityPicker: (x: WebEntitiesRetrieve) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>,
+      id: string) {
     return XQW.RetrieveRecord.Get<ISelect, IExpand, IFixed, FormattedResult, Result>(entityPicker, id);
   }
+  
+  // TODO maybe this is a fix for issue #139 on github 
+  // export function retrieve<ISelect, IExpand, IFixed, FormattedResult, Result>(
+  //   entityPicker: (x: WebEntitiesRetrieve) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>,
+  //   id: string) {
+  //   id = XQW.stripGUID(id); 
+  //   return XQW.RetrieveRecord.Get<ISelect, IExpand, IFixed, FormattedResult, Result>(entityPicker, id);
+  // }
+  
 
   /**
    * Instantiates specification of a query that can retrieve multiple records of a certain entity.
@@ -159,7 +168,7 @@ namespace XrmQuery {
   export function setApiVersion(v: string) {
     XQW.ApiUrl = XQW.getDefaultUrl(v);
   }
-
+  
   /**
    * @internal
    */
@@ -310,6 +319,7 @@ namespace Filter {
 
   /**
    * @internal
+   * // TODO could this be fix to password problem by adding &qout instead of "''" below?
    */
   function encodeSpecialCharacters(queryString: string) {
     return encodeURI(queryString)
@@ -444,7 +454,7 @@ namespace XQW {
       return value;
     }
   }
-
+  
   /* A bit slower (but nicer) implementation using RegEx */
   //const pattern = /^(_)?(.+?)(_value)?(@OData\.Community\.Display\.V1\.FormattedValue)?$/;
   //function reviver(name: string, value) {

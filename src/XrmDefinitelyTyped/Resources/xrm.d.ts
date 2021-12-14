@@ -175,6 +175,7 @@
   type AttributeRequiredLevel = "none" | "required" | "recommended";
 
   type AttributeSubmitMode = "always" | "never" | "dirty";
+  
 
   /**
    * Interface for an standard entity attribute.

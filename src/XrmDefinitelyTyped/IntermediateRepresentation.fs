@@ -124,6 +124,8 @@ type XrmForm = {
   attributes: XrmFormAttribute list
   controls: XrmFormControl list
   tabs: XrmFormTab list
+ 
+  
 }
 
 
