@@ -9,16 +9,13 @@ namespace XrmQuery {
       id: string) {
     return XQW.RetrieveRecord.Get<ISelect, IExpand, IFixed, FormattedResult, Result>(entityPicker, id);
   }
-  
-  // TODO maybe this is a fix for issue #139 on github 
+  // TODO maybe this is a fix for issue #139 on github
   // export function retrieve<ISelect, IExpand, IFixed, FormattedResult, Result>(
   //   entityPicker: (x: WebEntitiesRetrieve) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>,
   //   id: string) {
-  //   id = XQW.stripGUID(id); 
+  //   id = XQW.stripGUID(id);
   //   return XQW.RetrieveRecord.Get<ISelect, IExpand, IFixed, FormattedResult, Result>(entityPicker, id);
   // }
-  
-
   /**
    * Instantiates specification of a query that can retrieve multiple records of a certain entity.
    * @param entityPicker Function to select which entity should be targeted.
@@ -168,7 +165,6 @@ namespace XrmQuery {
   export function setApiVersion(v: string) {
     XQW.ApiUrl = XQW.getDefaultUrl(v);
   }
-  
   /**
    * @internal
    */
@@ -454,7 +450,6 @@ namespace XQW {
       return value;
     }
   }
-  
   /* A bit slower (but nicer) implementation using RegEx */
   //const pattern = /^(_)?(.+?)(_value)?(@OData\.Community\.Display\.V1\.FormattedValue)?$/;
   //function reviver(name: string, value) {

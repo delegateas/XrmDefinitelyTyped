@@ -513,7 +513,6 @@ declare namespace Xrm {
          */
         data?: string;
     }
-    
     interface Dashboard {
         /**
          * Specify "dashboard"
@@ -523,9 +522,8 @@ declare namespace Xrm {
         /**
          * The ID of the dashboard to load. If you don't specify the ID, navigates to the default dashboard.
          */
-        dashboardId: string;
-    }   
-
+        dashboardId?: string;
+    }
     const enum NavigationOptionsTarget {
         PageInline = 1,
         Dialog = 2,

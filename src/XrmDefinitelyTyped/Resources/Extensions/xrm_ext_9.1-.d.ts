@@ -5,35 +5,29 @@
 declare namespace Xrm {
     var App: App;
     var Panel: Panel;
-    
     interface App {
         // --------------------------------------------------------------------------------------
-        //  TODO:  app app.appSidePane 
+        //  TODO:  app app.appSidePane
         //  TODO: Xrm.app implementation of methods. interface and generation of data needs to be set up
         // --------------------------------------------------------------------------------------
         appSidePane: AppSidePane;
 
         sidePanes: SidePanes;
 
-        /** 
+        /**
          * Displays an error, information, warning, or success notification for an app, and lets you specify actions to
          * execute based on the notification.
-         * @param notification The notification object to add. 
-         **/
-        addGlobalNotification(notification: AppNotification): Promise<undefined>; // TODO figure out if Promise is correct return value
+         * @param notification The notification object to add.
+         * @return On success, returns a promise object containing a GUID value to uniquely identify the notification as described earlier in the description of the successCallback parameter.
+         */
+        addGlobalNotification(notification: AppNotification): Promise<string>;
 
         /**
          * Clears a notification in the app.
          * @param uniqueId The ID to use to clear a specific notification that was set using addGlobalNotification.
          */
-        clearGlobalNotification(uniqueId: string): Promise<undefined>; // TODO figure out if Promise is correct return value
-
-        
-        
+        clearGlobalNotification(uniqueId: string): Promise<undefined>;
     }
-    
-    
-    
     interface AppNotification {
         /**
          * Optional, lebel for action in message and function to execute when label is clicked
@@ -44,25 +38,23 @@ declare namespace Xrm {
          * Defines the level of notification.
          */
         level: LevelValue;
-        
         /**
-         * 
+         * The message to display in the notification.
          */
         message: string;
 
         /**
-         * Indicates whether or not the user can close or dismiss the notification. 
+         * Indicates whether or not the user can close or dismiss the notification.
          * If you don't specify this parameter, users can't close or dismiss the notification by default.
          */
         showCloseButton?: boolean;
 
         /**
-         * Defines the type of notification. Currently, only a value of 2 is supported, 
+         * Defines the type of notification. Currently, only a value of 2 is supported,
          * which displays a message bar at the top of the app.
          */
         type: Number;
     }
-    
     interface AppAction {
 
         /**
@@ -73,24 +65,17 @@ declare namespace Xrm {
         /**
          *  Function reference. The function to execute when the action label is clicked.
          */
-        eventHandler?: Function; 
-        
-        
+        eventHandler?: Function;
     }
-        
     const enum LevelValue {
         Succes = 1,
         Error = 2,
         Warning = 3,
-        Information = 4,        
-        
+        Information = 4,
     }
-
-    //TODO figure out how to implement the app side pane https://docs.microsoft.com/en-us/powerapps/developer/model-driven-apps/clientapi/reference/xrm-app-appsidepane 
+    //TODO figure out how to implement the app side pane https://docs.microsoft.com/en-us/powerapps/developer/model-driven-apps/clientapi/reference/xrm-app-appsidepane
     // should the methods take an input like paneID?
-    
-    interface AppSidePane {  
-
+    interface AppSidePane {
         /**
          * Closes the side pane and removes it from the side bar.
          */
@@ -106,10 +91,7 @@ declare namespace Xrm {
          */
         navigate(): any;
     }
-    
     interface SidePanes {
-
-    //TODO figure out if Object is a correct return type, make type any
             /**
              * Provides all the information to create side panes.
              */
@@ -124,15 +106,11 @@ declare namespace Xrm {
              * returns the appSidePane object
              */
             getPane(paneId: string): Object;
-        
             /**
              * returns the appSidePane object
              */
             getSelectedPane(): Object;
-            
-        
     }
-    
     interface SidePaneOptions {
 
         /**
@@ -164,12 +142,12 @@ declare namespace Xrm {
          * When set to false, the created pane is not selected and leaves the existing pane selected.
          * It also does not expand the pane if collapsed.
          */
-        isSelected?: Number;
+        isSelected?: boolean;
 
         /**
          * The width of the pane in pixels.
          */
-        width?: boolean;
+        width?: number;
 
         /**
          * Hides the pane and tab.
@@ -185,7 +163,6 @@ declare namespace Xrm {
          * Prevents the badge from getting cleared when the pane becomes selected.
          */
         keepBadgeOnSelect?: boolean;
-        
     }
 
     /**
@@ -198,11 +175,8 @@ declare namespace Xrm {
          * @param url URL of the page to be loaded in the side pane static area.
          * @param title Title of the side pane static area.
          */
-        loadPanel(url: string, title: string): any; 
-        //TODO Not sure this should return void, use any and test
-        
+        loadPanel(url: string, title: string): Promise<undefined>;
     }
-    
     /**
      * Lookup-like type object for userSettings.roles.
      */
@@ -258,7 +232,6 @@ declare namespace Xrm {
          */
         fieldName: string;
     }
-    
     // TODO make sure it works
 
     interface OnLookupTagClickEventArgs {
@@ -303,7 +276,7 @@ declare namespace Xrm {
         /**
          * Return a value that indicates whether the form is currently visible
          */
-        getVisible(visibility: boolean): boolean;
+        getVisible(): boolean;
     }
 
     /**
@@ -313,7 +286,6 @@ declare namespace Xrm {
         /**
          * Method to cause the ribbon to re-evaluate data that controls what is displayed in it.
          */
-
         /**
          * Provides information on how to set the visibility of header section.
          */
@@ -323,7 +295,6 @@ declare namespace Xrm {
          * Provides information on how to set the visibility of footer section.
          */
         footerSection: FooterSection;
-        
         /**
          * Provides objects and methods to interact with the business process flow control on a form.
          * More information: formContext.ui.process
@@ -331,10 +302,10 @@ declare namespace Xrm {
         process: UiProcessModule;
 
         /**
-         * Provides methods to access all the quick view controls and its constituent controls on the 
-         * model-driven apps forms when using the new form rendering engine (also called "turbo forms"). 
-         * A quick view control is a quick view form added to a main form in model-driven apps that enables 
-         * you to view information about a related table record within the main form. Data in constituent 
+         * Provides methods to access all the quick view controls and its constituent controls on the
+         * model-driven apps forms when using the new form rendering engine (also called "turbo forms").
+         * A quick view control is a quick view form added to a main form in model-driven apps that enables
+         * you to view information about a related table record within the main form. Data in constituent
          * controls in a quick view control cannot be edited.
          * The quickForms collection provides access to all the quick view controls on a form, and supports all
          * the standard methods of the collections. See Collections) for information about the collection methods.
@@ -345,13 +316,10 @@ declare namespace Xrm {
         quickForms: QuickForms;
 
         /**
-         * A tab is a group of sections on a page. It contains properties and methods to manipulate tabs 
+         * A tab is a group of sections on a page. It contains properties and methods to manipulate tabs
          * as well as access to sections within the tab through the sections collection.
          */
         tabs: T;
-        
-        
-        
         /**
          * Sets the name of the table to be displayed on the form.
          * @param tableName Name of the table to be displayed on the form.
@@ -361,7 +329,7 @@ declare namespace Xrm {
         /**
          * Displays form level notifications.
          * You can display any number of notifications and they will be displayed until they are removed using clearFormNotification.
-         * The height of the notification area is limited so each new message will be added to the top. 
+         * The height of the notification area is limited so each new message will be added to the top.
          * Users can scroll down to view older messages that have not yet been removed.
          * @param messageText The text of the notification message.
          * @param level The level of the message, which defines how the message will be displayed. Specify one of the following values:
@@ -369,7 +337,7 @@ declare namespace Xrm {
          * WARNING : Notification will use the system warning icon.
          * INFO : Notification will use the system info icon.
          * @param uniqueId A unique identifier for the message that can be used later with clearFormNotification to remove the notification.
-         * returns true if the method succeeded; false otherwise.  
+         * returns true if the method succeeded; false otherwise.
          */
         setFormNotification(messageText: string, level: string, uniqueId: string): boolean;
 
@@ -379,23 +347,19 @@ declare namespace Xrm {
          * returns true if the method succeeded, false otherwise.
          */
         clearFormNotification(uniqueId: string): boolean;
-
-        // TODO figure out how to pass functionref as parameter for ui functions
         /**
          * Adds a function to be called on the form OnLoad event.
-         * @param onLoadFunction The function to be executed on the form OnLoad event. 
-         * The function will be added to the bottom of the event handler pipeline. 
-         * The execution context is automatically passed as the first parameter to the function. 
+         * @param onLoadFunction The function to be executed on the form OnLoad event.
+         * The function will be added to the bottom of the event handler pipeline.
+         * The execution context is automatically passed as the first parameter to the function.
          * See Execution context for more information.
          */
-        addOnLoad(onLoadFunction: (context?: ExecutionContext<this, any>) => any): void; 
-        
+        addOnLoad(onLoadFunction: (context?: OnLoadEventContext) => any): void;
         /**
          * Removes a function from the form OnLoad event.
          * @param onLoadFunction The function to be removed from the form OnLoad event.
          */
         removeOnLoad(onLoadFunction: Function): void;
-        
     }
 
     interface HeaderSection {
@@ -491,12 +455,10 @@ declare namespace Xrm {
          * For example: quickViewControl.getControl("firstname") or quickViewControl.getControl(0)
          * Returns an Object or Object collection
          */
-        // getControl(arg?: string); // TODO figure out return type. 
-        
-
+        getControl(arg?: string) : any // TODO figure out return type. Maybe: Xrm.AnyControl | undefined;
         /**
          * Returns a string value that categorizes quick view controls.
-         * For a quick view control, the method returns "quickform". 
+         * For a quick view control, the method returns "quickform".
          * For a constituent control in a quick view control, the method returns the actual category of the control.
          */
         getControlType(): string;
@@ -520,10 +482,8 @@ declare namespace Xrm {
         /**
          * Returns a reference to the section object that contains the control.
          */
-        getParent(): any; 
+        getParent(): any;
         // TODO figure out return type, could be something like (PageSection<Collection<QuickViewControl>>));
-                        
-
         /**
          * Returns a value that indicates whether the quick view control is currently visible.
          * Returns true if the control is visible; false otherwise.
@@ -721,11 +681,10 @@ declare namespace Xrm {
         addOnPostSave(functionRef: (context?: SaveEventContext<this>) => any): void;
     }
 
-
-    // --------------------------------------------------------------------------------------
-    //  TODO:  Tabs needs work
-    // --------------------------------------------------------------------------------------
-
+    /**
+     * Different Content Types
+     */
+    type TabsContentType = "cardSections" | "singleComponent";
     interface PageTab<T extends SectionCollectionBase> {
         /**
          * Collection of sections within this tab.
@@ -734,9 +693,9 @@ declare namespace Xrm {
 
         /**
          * Adds a function to be called when the TabStateChange event occurs.
-         * @param tabStateChangeFunction The function to be executed on the TabStateChange event. 
-         * The function will be added to the bottom of the event handler pipeline. 
-         * The execution context is automatically passed as the first parameter to the function. 
+         * @param tabStateChangeFunction The function to be executed on the TabStateChange event.
+         * The function will be added to the bottom of the event handler pipeline.
+         * The execution context is automatically passed as the first parameter to the function.
          * See Execution context for more information.
          */
         addTabStateChange(tabStateChangeFunction: (context?: ExecutionContext<this, any>) => any): void;
@@ -746,30 +705,19 @@ declare namespace Xrm {
          * only supported on unified interface
          * Returns "cardSections" or "singleComponent".
          */
-        getContentType(): any; //NotimplementedException 
-        // figure out return value
-
+        getContentType(): TabsContentType;
         /**
          * Removes a function to be called when the TabStateChange event occurs.
          * @param tabStateChangeFunction The function to be removed from the TabStateChange event.
          */
         removeTabStateChange(tabStateChangeFunction: Function): void;
-       
         /**
          * Sets the content type.
          * only supported on unified interface
          * @param contentType Defines the content type. It has the following parameters:
-         - cardSections: The default tab behavior.
-         - singleComponent: Maximizes the content of the first component in the tab.
+         * cardSections: The default tab behavior.
+         * singleComponent: Maximizes the content of the first component in the tab.
          */
-        setContentType(contentType: string): void;
-
-
-    }    
-
-
-    
+        setContentType(contentType: TabsContentType): void;
+    }
 }
-
-
-

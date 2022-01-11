@@ -175,7 +175,6 @@
   type AttributeRequiredLevel = "none" | "required" | "recommended";
 
   type AttributeSubmitMode = "always" | "never" | "dirty";
-  
 
   /**
    * Interface for an standard entity attribute.
@@ -714,7 +713,7 @@
     [id: string]: string;
   }
 
-  interface DataProcess {
+  interface Process {
     /**
      * Returns the unique identifier of the process.
      */
