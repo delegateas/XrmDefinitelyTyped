@@ -501,7 +501,7 @@ declare namespace Xrm {
         /**
          * Specify "webresource".
          */
-        pageType: string;
+        pageType: "webresource";
 
         /**
          * The name of the web resource to load.
