@@ -517,7 +517,7 @@ declare namespace Xrm {
         /**
          * Specify "dashboard"
          */
-        pageType: string;
+        pageType: "dashboard";
 
         /**
          * The ID of the dashboard to load. If you don't specify the ID, navigates to the default dashboard.
