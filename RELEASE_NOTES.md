@@ -1,4 +1,7 @@
 # Release Notes
+### 5.7.1 - January 13 2022
+* Resolve System.ValueTuple reference issue.
+
 ### 5.7.0 - January 13 2022
 * Update Xrm typings as per Microsoft documentation (@laws, @mlRosenquist)
 
