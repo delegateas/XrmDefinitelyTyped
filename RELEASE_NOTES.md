@@ -1,4 +1,7 @@
 # Release Notes
+### 5.7.0 - January 13 2022
+* Update Xrm typings as per Microsoft documentation (@laws, @mlRosenquist)
+
 ### 5.6.1 - September 23 2021
 * Always include additional headers in linked requests in dg.xrmquery.web.ts (@loeka1234)
 * Fix relative execution directory for Run.ps1 (@mlRosenquist)
