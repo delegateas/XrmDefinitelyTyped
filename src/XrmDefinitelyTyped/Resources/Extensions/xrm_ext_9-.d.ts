@@ -499,7 +499,7 @@ declare namespace Xrm {
 
     interface WebResource {
         /**
-         * The type of the page.
+         * Specify "webresource".
          */
         pageType: "webresource";
 
@@ -513,7 +513,17 @@ declare namespace Xrm {
          */
         data?: string;
     }
+    interface Dashboard {
+        /**
+         * Specify "dashboard"
+         */
+        pageType: string;
 
+        /**
+         * The ID of the dashboard to load. If you don't specify the ID, navigates to the default dashboard.
+         */
+        dashboardId?: string;
+    }
     const enum NavigationOptionsTarget {
         PageInline = 1,
         Dialog = 2,
@@ -574,7 +584,7 @@ declare namespace Xrm {
          * @param pageInput Input about the page to navigate to. The object definition changes depending on the type of page to navigate to: entity list or HTML web resource.
          * @param navigationOptions Options for navigating to a page: whether to open inline or in a dialog. If you don't specify this parameter, page is opened inline by default.
          */
-        navigateTo(pageInput: EntityRecord | EntityList | WebResource, navigationOptions?: NavigationOptions): Promise<undefined>;
+        navigateTo(pageInput: EntityRecord | EntityList | WebResource| Dashboard, navigationOptions?: NavigationOptions): Promise<undefined>;
 
         /**
          * Displays an alert dialog containing a message and a button.

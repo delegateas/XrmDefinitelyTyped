@@ -5,11 +5,17 @@ namespace XrmQuery {
    * @param id GUID of the wanted record.
    */
   export function retrieve<ISelect, IExpand, IFixed, FormattedResult, Result>(
-    entityPicker: (x: WebEntitiesRetrieve) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>,
-    id: string) {
+      entityPicker: (x: WebEntitiesRetrieve) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>,
+      id: string) {
     return XQW.RetrieveRecord.Get<ISelect, IExpand, IFixed, FormattedResult, Result>(entityPicker, id);
   }
-
+  // TODO maybe this is a fix for issue #139 on github
+  // export function retrieve<ISelect, IExpand, IFixed, FormattedResult, Result>(
+  //   entityPicker: (x: WebEntitiesRetrieve) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>,
+  //   id: string) {
+  //   id = XQW.stripGUID(id);
+  //   return XQW.RetrieveRecord.Get<ISelect, IExpand, IFixed, FormattedResult, Result>(entityPicker, id);
+  // }
   /**
    * Instantiates specification of a query that can retrieve multiple records of a certain entity.
    * @param entityPicker Function to select which entity should be targeted.
@@ -159,7 +165,6 @@ namespace XrmQuery {
   export function setApiVersion(v: string) {
     XQW.ApiUrl = XQW.getDefaultUrl(v);
   }
-
   /**
    * @internal
    */
@@ -310,6 +315,7 @@ namespace Filter {
 
   /**
    * @internal
+   * // TODO could this be fix to password problem by adding &qout instead of "''" below?
    */
   function encodeSpecialCharacters(queryString: string) {
     return encodeURI(queryString)
@@ -322,9 +328,9 @@ namespace Filter {
   }
 }
 
-interface WebEntitiesRetrieve { }
-interface WebEntitiesRelated { }
-interface WebEntitiesCUDA { }
+interface WebEntitiesRetrieve {}
+interface WebEntitiesRelated {}
+interface WebEntitiesCUDA {}
 
 declare var GetGlobalContext: any;
 
@@ -444,7 +450,6 @@ namespace XQW {
       return value;
     }
   }
-
   /* A bit slower (but nicer) implementation using RegEx */
   //const pattern = /^(_)?(.+?)(_value)?(@OData\.Community\.Display\.V1\.FormattedValue)?$/;
   //function reviver(name: string, value) {
@@ -890,8 +895,7 @@ namespace XQW {
      * Sets up the query to filter the entity using the predefined-query.
      * @param xml The query in FetchXML format
      */
-    usePredefinedQuery(type: "savedQuery", guid: string): Query<Result[]>;
-    usePredefinedQuery(type: "userQuery", guid: string): Query<Result[]>;
+    usePredefinedQuery(type: "savedQuery" | "userQuery", guid: string): Query<Result[]>;
     usePredefinedQuery(type: string, guid: string): Query<Result[]> {
       this.specialQuery = `?${type}=${guid}`;
       return this;
