@@ -328,9 +328,9 @@ namespace Filter {
   }
 }
 
-interface WebEntitiesRetrieve { }
-interface WebEntitiesRelated { }
-interface WebEntitiesCUDA { }
+interface WebEntitiesRetrieve {}
+interface WebEntitiesRelated {}
+interface WebEntitiesCUDA {}
 
 declare var GetGlobalContext: any;
 
@@ -895,8 +895,7 @@ namespace XQW {
      * Sets up the query to filter the entity using the predefined-query.
      * @param xml The query in FetchXML format
      */
-    usePredefinedQuery(type: "savedQuery", guid: string): Query<Result[]>;
-    usePredefinedQuery(type: "userQuery", guid: string): Query<Result[]>;
+    usePredefinedQuery(type: "savedQuery" | "userQuery", guid: string): Query<Result[]>;
     usePredefinedQuery(type: string, guid: string): Query<Result[]> {
       this.specialQuery = `?${type}=${guid}`;
       return this;
