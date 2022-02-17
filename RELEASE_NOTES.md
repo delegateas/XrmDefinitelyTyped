@@ -1,4 +1,7 @@
 # Release Notes
+### 6.0.0 - February 17 2022
+* Ignore the special form types InteractionCentricDashboard and TaskFlowForm when generating form contexts. These form types contain attributes and controls that are improperly mapped, and as neither has any apparent applications as you can't apply web ressource handlers to them, they have been removed.
+
 ### 5.7.1 - January 13 2022
 * Resolve System.ValueTuple reference issue.
 
