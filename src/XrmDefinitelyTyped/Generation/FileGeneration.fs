@@ -272,7 +272,7 @@ let generateFormDefs state crmVersion generateMappings =
                     if i = 0 then form
                     else { form with name = sprintf "%s%i" form.name i }))
     |> Array.concat
-    |> Array.filter (fun (form: XrmForm) -> form.formType.IsNone || (form.formType.IsSome && form.formType.Value <> "Card"))
+    |> Array.filter (fun (form: XrmForm) -> form.formType.IsNone || (form.formType.IsSome && form.formType.Value <> "Card" && form.formType.Value <> "InteractionCentricDashboard" && form.formType.Value <> "TaskFlowForm"))
     |> Array.Parallel.map (fun xrmForm -> 
          let path = sprintf "%s/Form/%s%s" state.outputDir xrmForm.entityName (getFormType xrmForm)
          let lines = getFormDts xrmForm crmVersion generateMappings
