@@ -133,6 +133,11 @@ declare namespace Xrm {
         navigate(pageInput: EntityRecord | EntityList | WebResource | Dashboard): Promise<undefined>;
     }
 
+    const enum SidePaneState {
+        Collapsed = 0,
+        Expanded = 1,
+    }
+
     interface SidePanes {
         /**
          * Provides all the information to create side panes.
@@ -152,6 +157,11 @@ declare namespace Xrm {
          * returns the appSidePane object
          */
         getSelectedPane(): AppSidePane;
+
+        /**
+         * Returns whether the selected pane is collapsed or expanded.
+         */
+        state: SidePaneState
     }
 
     interface SidePaneOptions extends SidePaneProperties {
@@ -721,5 +731,8 @@ declare namespace Xrm {
          * singleComponent: Maximizes the content of the first component in the tab.
          */
         setContentType(contentType: TabsContentType): void;
+    }
+
+    interface OnRecordSelectEventContext extends ExecutionContext<UiModule<TabCollectionBase, ControlCollectionBase>, undefined> {
     }
 }
