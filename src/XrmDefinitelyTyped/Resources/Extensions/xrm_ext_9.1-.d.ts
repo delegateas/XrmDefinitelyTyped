@@ -73,46 +73,8 @@ declare namespace Xrm {
         Warning = 3,
         Information = 4,
     }
-    //TODO figure out how to implement the app side pane https://docs.microsoft.com/en-us/powerapps/developer/model-driven-apps/clientapi/reference/xrm-app-appsidepane
-    // should the methods take an input like paneID?
-    interface AppSidePane {
-        /**
-         * Closes the side pane and removes it from the side bar.
-         */
-        close(): any;
 
-        /**
-         * Specify whether the pane should be selected or expanded.
-         */
-        select(): any;
-
-        /**
-         * Opens a page within the selected pane. This is similar to the navigateTo method.
-         */
-        navigate(): any;
-    }
-    interface SidePanes {
-            /**
-             * Provides all the information to create side panes.
-             */
-            createPane(paneOptions?: SidePaneOptions): any;
-
-            /**
-             * returns the appSidePane object
-             */
-            getAllPanes(): Object;
-
-            /**
-             * returns the appSidePane object
-             */
-            getPane(paneId: string): Object;
-            /**
-             * returns the appSidePane object
-             */
-            getSelectedPane(): Object;
-    }
-    interface SidePaneOptions {
-
+    interface SidePaneProperties {
         /**
          * The title of the pane. Used in pane header and for tooltip.
          */
@@ -134,17 +96,6 @@ declare namespace Xrm {
         imageSrc?: string;
 
         /**
-         *  Hides the header pane, including the title and close button. Default value is false.
-         */
-        hideHeader?: boolean;
-
-        /**
-         * When set to false, the created pane is not selected and leaves the existing pane selected.
-         * It also does not expand the pane if collapsed.
-         */
-        isSelected?: boolean;
-
-        /**
          * The width of the pane in pixels.
          */
         width?: number;
@@ -163,6 +114,57 @@ declare namespace Xrm {
          * Prevents the badge from getting cleared when the pane becomes selected.
          */
         keepBadgeOnSelect?: boolean;
+    }
+
+    interface AppSidePane extends SidePaneProperties {
+        /**
+         * Closes the side pane and removes it from the side bar.
+         */
+        close(): Promise<undefined>;
+
+        /**
+         * Specify whether the pane should be selected or expanded.
+         */
+        select(): void;
+
+        /**
+         * Opens a page within the selected pane. This is similar to the navigateTo method.
+         */
+        navigate(pageInput: EntityRecord | EntityList | WebResource | Dashboard): Promise<undefined>;
+    }
+
+    interface SidePanes {
+        /**
+         * Provides all the information to create side panes.
+         */
+        createPane(paneOptions?: SidePaneOptions): Promise<AppSidePane>;
+
+        /**
+         * returns the appSidePane object
+         */
+        getAllPanes(): Collection<AppSidePane>;
+
+        /**
+         * returns the appSidePane object
+         */
+        getPane(paneId: string): AppSidePane;
+        /**
+         * returns the appSidePane object
+         */
+        getSelectedPane(): AppSidePane;
+    }
+
+    interface SidePaneOptions extends SidePaneProperties {
+        /**
+         *  Hides the header pane, including the title and close button. Default value is false.
+         */
+        hideHeader?: boolean;
+
+        /**
+         * When set to false, the created pane is not selected and leaves the existing pane selected.
+         * It also does not expand the pane if collapsed.
+         */
+        isSelected?: boolean;
     }
 
     /**
