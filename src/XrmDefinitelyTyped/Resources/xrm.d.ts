@@ -550,6 +550,20 @@
    */
   type AnyControl = BaseControl & Partial<Control<any> & WebResourceControl & IFrameControl & LookupControl<string> & SubGridControl<string> & DateControl & OptionSetControl<any>>;
 
+  const enum ViewTypeNumber {
+    SavedQuery = 1039,
+    UserQuery = 4230,
+  }
+
+  /**
+   * Interface for a view type reference reference for the view selector
+   */
+  interface ViewReference {
+    entityType: ViewTypeNumber;
+    id: string;
+    name?: string | null;
+  }
+
   /**
    * Remarks:
    * If the subgrid control is not configured to display the view selector, calling this method on the ViewSelector returned by the GridControl.getViewSelector will throw an error.
@@ -558,7 +572,7 @@
     /**
      * Use this method to get a reference to the current view.
      */
-    getCurrentView(): Xrm.EntityReference<string>;
+    getCurrentView(): Xrm.ViewReference;
 
     /**
      * Use this method to determine whether the view selector is visible.
@@ -568,7 +582,7 @@
     /**
      * Use this method to set the current view.
      */
-    setCurrentView(reference: Xrm.EntityReference<string>): void;
+    setCurrentView(reference: Xrm.ViewReference): void;
   }
 
   /**
