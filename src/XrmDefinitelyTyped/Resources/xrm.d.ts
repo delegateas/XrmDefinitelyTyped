@@ -53,7 +53,7 @@
   /**
    * Interface for an entity reference for the Xrm.Page context.
    */
-  interface EntityReference<T extends string> {
+  interface EntityReference<T extends string|number> {
     id: string;
     entityType: T;
     name?: string | null;
@@ -556,15 +556,6 @@
   }
 
   /**
-   * Interface for a view type reference reference for the view selector
-   */
-  interface ViewReference {
-    entityType: ViewTypeNumber;
-    id: string;
-    name?: string | null;
-  }
-
-  /**
    * Remarks:
    * If the subgrid control is not configured to display the view selector, calling this method on the ViewSelector returned by the GridControl.getViewSelector will throw an error.
    */
@@ -572,7 +563,7 @@
     /**
      * Use this method to get a reference to the current view.
      */
-    getCurrentView(): Xrm.ViewReference;
+    getCurrentView(): EntityReference<ViewTypeNumber>;
 
     /**
      * Use this method to determine whether the view selector is visible.
@@ -582,7 +573,7 @@
     /**
      * Use this method to set the current view.
      */
-    setCurrentView(reference: Xrm.ViewReference): void;
+    setCurrentView(reference: EntityReference<ViewTypeNumber>): void;
   }
 
   /**
