@@ -1,4 +1,8 @@
 # Release Notes
+### 6.1.0 - March 14 2022
+* Add support for AppSidePane - https://docs.microsoft.com/en-us/powerapps/developer/model-driven-apps/clientapi/reference/xrm-app-appsidepane (@mathiasbl)
+* Typings for currentView on the view Selector (@skovlund, @mkholt)
+
 ### 6.0.0 - February 17 2022
 * Ignore the special form types InteractionCentricDashboard and TaskFlowForm when generating form contexts. These form types contain attributes and controls that are improperly mapped, and as neither has any apparent applications as you can't apply web ressource handlers to them, they have been removed.
 
