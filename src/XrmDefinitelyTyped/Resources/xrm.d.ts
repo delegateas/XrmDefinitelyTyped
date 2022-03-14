@@ -53,7 +53,7 @@
   /**
    * Interface for an entity reference for the Xrm.Page context.
    */
-  interface EntityReference<T extends string> {
+  interface EntityReference<T extends string|number> {
     id: string;
     entityType: T;
     name?: string | null;
@@ -550,6 +550,11 @@
    */
   type AnyControl = BaseControl & Partial<Control<any> & WebResourceControl & IFrameControl & LookupControl<string> & SubGridControl<string> & DateControl & OptionSetControl<any>>;
 
+  const enum ViewTypeNumber {
+    SavedQuery = 1039,
+    UserQuery = 4230,
+  }
+
   /**
    * Remarks:
    * If the subgrid control is not configured to display the view selector, calling this method on the ViewSelector returned by the GridControl.getViewSelector will throw an error.
@@ -558,7 +563,7 @@
     /**
      * Use this method to get a reference to the current view.
      */
-    getCurrentView(): Xrm.EntityReference<string>;
+    getCurrentView(): EntityReference<ViewTypeNumber>;
 
     /**
      * Use this method to determine whether the view selector is visible.
@@ -568,7 +573,7 @@
     /**
      * Use this method to set the current view.
      */
-    setCurrentView(reference: Xrm.EntityReference<string>): void;
+    setCurrentView(reference: EntityReference<ViewTypeNumber>): void;
   }
 
   /**
