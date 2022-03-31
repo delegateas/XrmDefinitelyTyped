@@ -30,6 +30,8 @@
     <DocumentationFile>bin\Release\XrmDefinitelyTyped.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".eslintignore" />
+    <None Include=".eslintrc" />
     <None Include="..\resources\XrmDefinitelyTyped-sticker_small.png" Pack="true" PackagePath="" />
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Domain.fs" />
@@ -107,7 +109,6 @@
     <Content Include="..\..\files\*" Pack="true" PackagePath="content\XrmDefinitelyTyped;contentFiles\any\any\XrmDefinitelyTyped" />
     <None Include="package.json" />
     <None Include="tsconfig.json" />
-    <None Include="gulpfile.js" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CrmSdk.XrmTooling.CoreAssembly" Version="9.1.0.51" />
