@@ -1,2 +1,3 @@
 ﻿resources/_internal
-*.d.ts
+resources/Dist
+resources/extensions/*.d.ts
