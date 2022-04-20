@@ -467,7 +467,7 @@ declare namespace Xrm {
          * For example: quickViewControl.getControl("firstname") or quickViewControl.getControl(0)
          * Returns an Object or Object collection
          */
-        getControl(arg?: string) : any // TODO figure out return type. Maybe: Xrm.AnyControl | undefined;
+        getControl(arg?: string): any // TODO figure out return type. Maybe: Xrm.AnyControl | undefined;
         /**
          * Returns a string value that categorizes quick view controls.
          * For a quick view control, the method returns "quickform".
@@ -684,13 +684,39 @@ declare namespace Xrm {
         setSearchQuery(text: string): void;
     }
 
+    interface SaveEventArgs {
+        /**
+         * Cancels the save operation if the event handler has a script error, returns a rejected promise for an async event handler or the operation times out.
+         */
+        preventDefaultOnError(): void;
+    }
+
+    interface PostSaveEventContext extends ExecutionContext<null, PostSaveEventArgs> { }
+
+    interface PostSaveEventArgs {
+        /**
+         * Use this method to know information about a table being saved/updated. It returns table ID, and table name if success.
+         */
+        getEntityReference(): EntityReference<string>;
+
+        /**
+         * Use this method to know the error details on why a table save failed.
+         */
+        getSaveErrorInfo(): any | null; // TODO: Figure out proper typing
+
+        /**
+         * Use this method to know whether the OnSave operation is successful or failed.
+         */
+        getIsSaveSuccess(): boolean;
+    }
+
     interface PageEntity<T extends AttributeCollectionBase> {
         /**
          * Adds a function to be called when save event has completed; either successfully or with a failure.
          * @param functionRef The function to add to the PostSave event.
          * The execution context is automatically passed as the first parameter to this function.
          */
-        addOnPostSave(functionRef: (context?: SaveEventContext<this>) => any): void;
+        addOnPostSave(functionRef: (context?: PostSaveEventContext) => any): void;
     }
 
     /**
