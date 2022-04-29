@@ -90,7 +90,7 @@ namespace Filter.REST { // eslint-disable-line @typescript-eslint/no-namespace
    * @internal
    */
   //eslint-disable-next-line @typescript-eslint/no-explicit-any, no-inner-declarations
-  function getVal(v: any) { 
+  function getVal(v: any) {
     if (v == null) return "null";
     if (typeof v === "string") return `'${v}'`;
     if (Object.prototype.toString.call(v) === "[object Date]") return `DateTime'${v.format("yyyy-MM-ddTHH:mm:ss")}'`;
