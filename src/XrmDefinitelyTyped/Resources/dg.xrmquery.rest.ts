@@ -408,7 +408,7 @@ namespace XQR { //eslint-disable-line @typescript-eslint/no-namespace
         },
         errorCallback ? errorCallback : NoOp,
         () => {
-          successCallback([].concat.apply([], pages));
+          successCallback(Array.prototype.concat(...pages));
         });
     }
 
