@@ -1,4 +1,5 @@
-﻿/// <reference path="..\xrm.d.ts" />
+﻿// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="..\xrm.d.ts" />
 
 declare namespace Xrm {
     interface userSettings {
@@ -8,5 +9,6 @@ declare namespace Xrm {
         securityRoles: string[];
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-interface, @typescript-eslint/no-explicit-any
     interface OnLoadEventContext extends ExecutionContext<UiModule<TabCollectionBase, ControlCollectionBase>, any> { }
 }

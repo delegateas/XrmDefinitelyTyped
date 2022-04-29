@@ -1,4 +1,5 @@
-﻿/// <reference path="..\xrm.d.ts" />
+﻿// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="..\xrm.d.ts" />
 declare namespace Xrm {
   interface Utility {
     /**
@@ -7,6 +8,7 @@ declare namespace Xrm {
      * @param message The text of the message to display in the dialog.
      * @param onCloseCallback A function to execute when the OK button is clicked.
      */
+    // eslint-disable-next-line @typescript-eslint/ban-types
     alertDialog(message: string, onCloseCallback?: Function): void;
 
     /**
@@ -16,6 +18,7 @@ declare namespace Xrm {
      * @param yesCloseCallback A function to execute when the OK button is clicked.
      * @param noCloseCallback A function to execute when the Cancel button is clicked.
      */
+    // eslint-disable-next-line @typescript-eslint/ban-types
     confirmDialog(message: string, yesCloseCallback?: Function, noCloseCallback?: Function): void;
 
     /**

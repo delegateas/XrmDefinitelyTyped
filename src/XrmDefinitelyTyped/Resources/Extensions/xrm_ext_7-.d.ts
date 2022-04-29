@@ -1,8 +1,10 @@
-﻿/// <reference path="..\xrm.d.ts" />
+﻿// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="..\xrm.d.ts" />
 declare namespace Xrm {
   /**
    * Interface for the ui of a form.
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface UiModule<T extends TabCollectionBase, U extends ControlCollectionBase> {
     /**
      * Access UI controls for the business process flow on the form.
