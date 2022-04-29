@@ -732,7 +732,7 @@ declare namespace Xrm {
     const enum WebApiOperationType {
         Action = 0,
         Function,
-        CRUD
+        CRUD,
     }
 
     const enum WebApiStructuralProperty {
@@ -741,7 +741,7 @@ declare namespace Xrm {
         ComplexType,
         EnumerationType,
         Collection,
-        EntityType
+        EntityType,
     }
 
     interface WebApiEnumProperty {
