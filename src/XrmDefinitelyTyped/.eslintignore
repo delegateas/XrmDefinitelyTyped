@@ -1,3 +1,2 @@
-﻿resources/_internal
-resources/Dist
-resources/extensions/*.d.ts
+﻿**/Dist/**/*.ts
+**/node_modules/**
