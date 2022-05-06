@@ -1,9 +1,11 @@
-﻿/// <reference path="..\xrm.d.ts" />
+﻿// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="..\xrm.d.ts" />
 declare namespace Xrm {
-  var Page: Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>;
+  let Page: Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>;
   /**
    * Interface for the base of an Xrm.Page
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface PageBase<T extends AttributeCollectionBase, U extends TabCollectionBase, V extends ControlCollectionBase> {
     /**
      * The context of the page.
@@ -25,7 +27,7 @@ declare namespace Xrm {
     /**
      * Returns a dictionary object of key value pairs that represent the query string arguments that were passed to the page.
      */
-    getQueryStringParameters(): any;
+    getQueryStringParameters(): any; // eslint-disable-line @typescript-eslint/no-explicit-any
 
     /**
      * Returns the GUID of the SystemUser.Id value for the current user.
@@ -46,6 +48,7 @@ declare namespace Xrm {
   /**
    * Interface for the entity on a form.
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface PageEntity<T extends AttributeCollectionBase> {
     /**
      * This is the equivalent of using the "Save and Close" command.
@@ -80,6 +83,7 @@ declare namespace Xrm {
      * @param parameters A dictionary object that passes extra query string parameters to the form. Invalid query string parameters will cause an error.
      * @param windowOptions You can choose to open a form in a new window by passing a dictionary object with a boolean openInNewWindow property set to true.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     openEntityForm(name: string, id?: string, parameters?: any, windowOptions?: WindowOptions): void;
 
     /**

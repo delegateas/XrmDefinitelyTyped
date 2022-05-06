@@ -1,4 +1,5 @@
-﻿/// <reference path="..\xrm.d.ts" />
+﻿// eslint-disable-next-line @typescript-eslint/triple-slash-reference 
+/// <reference path="..\xrm.d.ts" />
 declare namespace Xrm {
     interface StringControl extends Control<Attribute<string>> {
         /**
@@ -7,6 +8,7 @@ declare namespace Xrm {
          *
          * @param functionRef The event handler for the OnKeyPressed event.
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         addOnKeyPress(functionRef: (context?: ExecutionContext<this, undefined>) => any): void;
 
         /**
@@ -14,6 +16,7 @@ declare namespace Xrm {
          *
          * @param functionRef The event handler for the OnKeyPressed event.
          */
+        // eslint-disable-next-line @typescript-eslint/ban-types
         removeOnKeyPress(functionRef: Function): void;
 
         /**
@@ -50,6 +53,7 @@ declare namespace Xrm {
          * @param createFromEntity Designates a record that will provide default values based on mapped attribute values.
          * @param parameters A dictionary object that passes extra query string parameters to the form. Invalid query string parameters will cause an error.
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         openQuickCreate(entityLogicalName: string, createFromEntity?: Lookup, parameters?: any): Promise<OpenQuickCreateResult>;
     }
 }

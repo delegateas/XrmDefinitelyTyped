@@ -671,7 +671,7 @@ namespace XQW {
     executeRaw(successCallback: (x: T) => any, errorCallback: (err: Error) => any, parseResult: true, sync: boolean): void; //eslint-disable-line @typescript-eslint/no-explicit-any
     executeRaw(successCallback: (x: XMLHttpRequest) => any, errorCallback: (err: Error) => any, parseResult: false): void; //eslint-disable-line @typescript-eslint/no-explicit-any
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
-    executeRaw(successCallback: ((x: T) => any) & ((x: XMLHttpRequest) => any), errorCallback: (err: Error) => any = () => { /* */ }, parseResult = false, sync = false): void { 
+    executeRaw(successCallback: ((x: T) => any) & ((x: XMLHttpRequest) => any), errorCallback: (err: Error) => any = () => { /* */ }, parseResult = false, sync = false): void {
         const successHandler = (req: XMLHttpRequest) => (parseResult ? this.handleResponse(req, successCallback, errorCallback) : successCallback(req));
         return XrmQuery.sendRequest(this.requestType, this.getQueryString(), this.getObjectToSend(), successHandler, errorCallback, addHeadersToRequestObject(this.additionalHeaders), sync);
     }

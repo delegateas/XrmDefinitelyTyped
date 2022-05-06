@@ -1,4 +1,5 @@
-﻿/// <reference path="..\xrm.d.ts" />
+﻿// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="..\xrm.d.ts" />
 declare namespace Xrm {
   interface BaseControl {
     /**
@@ -29,11 +30,13 @@ declare namespace Xrm {
     /**
      * Use this method to apply changes to lookups based on values current just as the user is about to view results for the lookup.
      */
+    // eslint-disable-next-line @typescript-eslint/ban-types
     addPreSearch(handler: Function): void;
 
     /**
      * Use this method to remove event handler functions that have previously been set for the PreSearch event.
      */
+    // eslint-disable-next-line @typescript-eslint/ban-types
     removePreSearch(handler: Function): void;
   }
 
@@ -44,6 +47,7 @@ declare namespace Xrm {
     setShowTime(doShow: boolean): void;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface PageEntity<T extends AttributeCollectionBase> {
     /**
      * Gets a string for the value of the primary attribute of the entity.
@@ -51,6 +55,7 @@ declare namespace Xrm {
     getPrimaryAttributeValue(): string;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface BaseAttribute<T> {
     /**
      * Determine whether a lookup attribute represents a partylist lookup.
@@ -58,6 +63,7 @@ declare namespace Xrm {
     getIsPartyList(): boolean;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface UiModule<T extends TabCollectionBase, U extends ControlCollectionBase> {
     /**
      * Use this method to remove form level notifications.
