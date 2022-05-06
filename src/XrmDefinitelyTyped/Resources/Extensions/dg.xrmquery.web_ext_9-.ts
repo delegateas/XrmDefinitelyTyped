@@ -1,4 +1,4 @@
-﻿// eslint-disable-next-line @typescript-eslint/no-namespace, @typescript-eslint/no-unused-vars
+﻿//eslint-disable-next-line @typescript-eslint/no-namespace, @typescript-eslint/no-unused-vars
 namespace Filter {
   const GUID_ENDING = "_value";
   const GUID_START = "_";
@@ -39,16 +39,16 @@ namespace Filter {
    */
   function queryFunc<T>(funcName: string, val1: T): WebFilter;
   function queryFunc<T, V>(funcName: string, val1: T, val2: V): WebFilter;
-  // eslint-disable-next-line no-inner-declarations
+  //eslint-disable-next-line no-inner-declarations
   function queryFunc<T, V>(funcName: string, val1: T, val2?: V): WebFilter {
     if (val2 !== undefined) {
-      return <WebFilter><any>(`Microsoft.Dynamics.CRM.${funcName}(PropertyName='${parsePropertyName(getVal(val1))}',PropertyValues=${getVal(val2)})`); // eslint-disable-line @typescript-eslint/no-explicit-any
+      return <WebFilter><any>(`Microsoft.Dynamics.CRM.${funcName}(PropertyName='${parsePropertyName(getVal(val1))}',PropertyValues=${getVal(val2)})`); //eslint-disable-line @typescript-eslint/no-explicit-any
     } else {
-      return <WebFilter><any>(`Microsoft.Dynamics.CRM.${funcName}(PropertyName='${parsePropertyName(getVal(val1))}')`); // eslint-disable-line @typescript-eslint/no-explicit-any
+      return <WebFilter><any>(`Microsoft.Dynamics.CRM.${funcName}(PropertyName='${parsePropertyName(getVal(val1))}')`); //eslint-disable-line @typescript-eslint/no-explicit-any
     }
   }
 
-  // eslint-disable-next-line no-inner-declarations
+  //eslint-disable-next-line no-inner-declarations
   function parsePropertyName(name: string) {
     const idxStart = name.indexOf(GUID_START);
     const idxEnd = name.indexOf(GUID_ENDING);
@@ -56,7 +56,7 @@ namespace Filter {
     return `${name.substr(idxStart + 1, idxEnd - 1)}`;
   }
 
-  // eslint-disable-next-line no-inner-declarations, @typescript-eslint/no-explicit-any
+  //eslint-disable-next-line no-inner-declarations, @typescript-eslint/no-explicit-any
   function getVal(v: any): string {
     if (v === null) return "null";
     if (typeof v === "string") return `'${encodeSpecialCharacters(v)}'`;
@@ -68,7 +68,7 @@ namespace Filter {
   /**
    * @internal
    */
-  // eslint-disable-next-line no-inner-declarations
+  //eslint-disable-next-line no-inner-declarations
   function encodeSpecialCharacters(queryString: string) {
     return encodeURI(queryString)
       .replace(/'/g, "''")
