@@ -1,4 +1,5 @@
-﻿/// <reference path="..\Dist\dg.xrmquery.web.d.ts" />
+﻿// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="..\Dist\dg.xrmquery.web.d.ts" />
 declare namespace Filter {
   function $in<T extends string | number | XQW.Guid>(val: T, listVal: T[]): WebFilter;
   function notIn<T extends string | number | XQW.Guid>(val: T, listVal: T[]): WebFilter;

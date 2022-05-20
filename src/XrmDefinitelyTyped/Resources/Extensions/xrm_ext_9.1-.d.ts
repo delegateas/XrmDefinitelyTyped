@@ -1,8 +1,9 @@
-﻿/// <reference path="..\xrm.d.ts" />
+﻿// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="..\xrm.d.ts" />
 
 declare namespace Xrm {
-    var App: App;
-    var Panel: Panel;
+    let App: App;
+    let Panel: Panel;
     interface App {
         // --------------------------------------------------------------------------------------
         //  TODO:  app app.appSidePane
@@ -51,7 +52,7 @@ declare namespace Xrm {
          * Defines the type of notification. Currently, only a value of 2 is supported,
          * which displays a message bar at the top of the app.
          */
-        type: Number;
+        type: number;
     }
     interface AppAction {
         /**
@@ -62,7 +63,7 @@ declare namespace Xrm {
         /**
          *  Function reference. The function to execute when the action label is clicked.
          */
-        eventHandler?: Function;
+        eventHandler?: Function; // eslint-disable-line @typescript-eslint/ban-types
     }
     const enum LevelValue {
         Succes = 1,
@@ -211,6 +212,7 @@ declare namespace Xrm {
     /**
      * Interface for an standard entity attribute.
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface Attribute<T> {
         /**
          * Sets a value for an attribute to determine whether it is valid or invalid with a message.
@@ -231,8 +233,8 @@ declare namespace Xrm {
         getDataLoadState(): LoadState;
     }
 
-    interface OnLoadEventContext extends ExecutionContext<UiModule<TabCollectionBase, ControlCollectionBase>, LoadEventArgs> {
-    }
+    // eslint-disable-next-line @typescript-eslint/no-empty-interface
+    interface OnLoadEventContext extends ExecutionContext<UiModule<TabCollectionBase, ControlCollectionBase>, LoadEventArgs> {}
 
     interface LookupTagValue extends Lookup {
         /**
@@ -260,18 +262,20 @@ declare namespace Xrm {
         preventDefault(): void;
     }
 
-    interface OnLookupTagClickContext extends ExecutionContext<any, OnLookupTagClickEventArgs> {
-    }
+    // eslint-disable-next-line @typescript-eslint/no-empty-interface, @typescript-eslint/no-explicit-any
+    interface OnLookupTagClickContext extends ExecutionContext<any, OnLookupTagClickEventArgs> { }
 
     interface LookupControl<T extends string> extends Control<LookupAttribute<T>> {
         /**
          * Adds an event handler to the OnLookupTagClick event.
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         addOnLookupTagClick(myFunction: (context?: OnLookupTagClickContext) => any): void;
 
         /**
          * Removes an event handler from the OnLookupTagClick event.
          */
+        // eslint-disable-next-line @typescript-eslint/ban-types
         removeOnLookupTagClick(functionRef: Function): void;
     }
 
@@ -290,6 +294,7 @@ declare namespace Xrm {
     /**
      * Interface for the ui of a form.
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface UiModule<T extends TabCollectionBase, U extends ControlCollectionBase> {
         /**
          * Method to cause the ribbon to re-evaluate data that controls what is displayed in it.
@@ -362,12 +367,12 @@ declare namespace Xrm {
          * The execution context is automatically passed as the first parameter to the function.
          * See Execution context for more information.
          */
-        addOnLoad(onLoadFunction: (context?: OnLoadEventContext) => any): void;
+        addOnLoad(onLoadFunction: (context?: OnLoadEventContext) => any): void; // eslint-disable-line @typescript-eslint/no-explicit-any
         /**
          * Removes a function from the form OnLoad event.
          * @param onLoadFunction The function to be removed from the form OnLoad event.
          */
-        removeOnLoad(onLoadFunction: Function): void;
+        removeOnLoad(onLoadFunction: Function): void; // eslint-disable-line @typescript-eslint/ban-types
     }
 
     interface HeaderSection {
@@ -462,7 +467,7 @@ declare namespace Xrm {
          * For example: quickViewControl.getControl("firstname") or quickViewControl.getControl(0)
          * Returns an Object or Object collection
          */
-        getControl(arg?: string): any // TODO figure out return type. Maybe: Xrm.AnyControl | undefined;
+        getControl(arg?: string): any //eslint-disable-line @typescript-eslint/no-explicit-any
         /**
          * Returns a string value that categorizes quick view controls.
          * For a quick view control, the method returns "quickform".
@@ -489,7 +494,7 @@ declare namespace Xrm {
         /**
          * Returns a reference to the section object that contains the control.
          */
-        getParent(): any;
+        getParent(): any; // eslint-disable-line @typescript-eslint/no-explicit-any
         // TODO figure out return type, could be something like (PageSection<Collection<QuickViewControl>>));
         /**
          * Returns a value that indicates whether the quick view control is currently visible.
@@ -613,18 +618,21 @@ declare namespace Xrm {
          * Add an event handler to the PostSearch event.
          * @param functionRef The function to add.
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         addOnPostSearch(functionRef: (context?: ExecutionContext<this, undefined>) => any): void;
 
         /**
          * Add an event handler to the OnResultOpened event.
          * @param functionRef The function to add.
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         addOnResultOpened(functionRef: (context?: ExecutionContext<this, undefined>) => any): void;
 
         /**
          * Add an event handler to the OnSelection event.
          * @param functionRef The function to add.
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         addOnSelection(functionRef: (context?: ExecutionContext<this, undefined>) => any): void;
 
         /**
@@ -656,19 +664,19 @@ declare namespace Xrm {
          * Use this method to remove an event handler from the PostSearch event.
          * @param functionRef The function to remove.
          */
-        removeOnPostSearch(functionRef: Function): void;
+        removeOnPostSearch(functionRef: Function): void; // eslint-disable-line @typescript-eslint/ban-types
 
         /**
          * Remove an event handler from the OnResultOpened event.
          * @param functionRef The function to remove.
          */
-        removeOnResultOpened(functionRef: Function): void;
+        removeOnResultOpened(functionRef: Function): void; // eslint-disable-line @typescript-eslint/ban-types
 
         /**
          * Remove an event handler from the OnSelection event.
          * @param functionRef The function to remove.
          */
-        removeOnSelection(functionRef: Function): void;
+        removeOnSelection(functionRef: Function): void; // eslint-disable-line @typescript-eslint/ban-types
 
         /**
          * Set the text used as the search criteria for the knowledge base management control.
@@ -677,13 +685,41 @@ declare namespace Xrm {
         setSearchQuery(text: string): void;
     }
 
+    interface SaveEventArgs {
+        /**
+         * Cancels the save operation if the event handler has a script error, returns a rejected promise for an async event handler or the operation times out.
+         */
+        preventDefaultOnError(): void;
+    }
+
+    interface PostSaveEventContext extends ExecutionContext<null, PostSaveEventArgs> { }
+
+    interface PostSaveEventArgs {
+        /**
+         * Use this method to know information about a table being saved/updated. It returns table ID, and table name if success.
+         */
+        getEntityReference(): EntityReference<string>;
+
+        /**
+         * Use this method to know the error details on why a table save failed.
+         */
+        getSaveErrorInfo(): any | null; // TODO: Figure out proper typing
+
+        /**
+         * Use this method to know whether the OnSave operation is successful or failed.
+         */
+        getIsSaveSuccess(): boolean;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface PageEntity<T extends AttributeCollectionBase> {
         /**
          * Adds a function to be called when save event has completed; either successfully or with a failure.
          * @param functionRef The function to add to the PostSave event.
          * The execution context is automatically passed as the first parameter to this function.
          */
-        addOnPostSave(functionRef: (context?: SaveEventContext<this>) => any): void;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        addOnPostSave(functionRef: (context?: PostSaveEventContext) => any): void;
     }
 
     /**
@@ -703,6 +739,7 @@ declare namespace Xrm {
          * The execution context is automatically passed as the first parameter to the function.
          * See Execution context for more information.
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         addTabStateChange(tabStateChangeFunction: (context?: ExecutionContext<this, any>) => any): void;
 
         /**
@@ -715,7 +752,7 @@ declare namespace Xrm {
          * Removes a function to be called when the TabStateChange event occurs.
          * @param tabStateChangeFunction The function to be removed from the TabStateChange event.
          */
-        removeTabStateChange(tabStateChangeFunction: Function): void;
+        removeTabStateChange(tabStateChangeFunction: Function): void; // eslint-disable-line @typescript-eslint/ban-types
         /**
          * Sets the content type.
          * only supported on unified interface
@@ -726,6 +763,7 @@ declare namespace Xrm {
         setContentType(contentType: TabsContentType): void;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-interface
     interface OnRecordSelectEventContext extends ExecutionContext<UiModule<TabCollectionBase, ControlCollectionBase>, undefined> {
     }
 
