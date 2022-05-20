@@ -33,7 +33,7 @@ function compile_ts(){
     ]);
 }
 
-function runTsLint() {
+function runEsLint() {
     return gulp.src("**/*.ts")
         .pipe(eslint.format());
 }
@@ -53,7 +53,7 @@ function concat_promise() {
 gulp.task("default", gulp.series(
     clean,
     compile_ts,
-    runTsLint,
+    runEsLint,
     concat_promise,
     runUglify));
 

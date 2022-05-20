@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
+//eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface RestEntities { }
 
 /**
@@ -14,7 +14,7 @@ declare namespace SDK { //eslint-disable-line @typescript-eslint/no-namespace
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+//eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface RestMapping<O, S, E, F, R> {
   __RestMapping: O;
 }
@@ -31,7 +31,7 @@ interface RestFilter {
   __RestFilter: any; //eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
-namespace Filter.REST { // eslint-disable-line @typescript-eslint/no-namespace
+namespace Filter.REST { //eslint-disable-line @typescript-eslint/no-namespace
   export function equals<T>(v1: T, v2: T): RestFilter {
     return Comp(v1, "eq", v2);
   }
