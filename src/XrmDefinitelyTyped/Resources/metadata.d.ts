@@ -29,6 +29,7 @@ declare namespace SDK {
      *                      This function must accept an Error object as a parameter.
      * @param passThroughObject An Object that will be passed through to as the second parameter to the successCallBack.
      */
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     function RetrieveAllEntities(EntityFilters: EntityFilters, RetrieveAsIfPublished: boolean, successCallback: (metadata: EntityMetadata[], passThroughObject?: any) => any, errorCallback: (error: Error) => any, passThroughObject: any): void;
 
     /**
@@ -45,6 +46,7 @@ declare namespace SDK {
      *                      This function must accept an Error object as a parameter.
      * @param passThroughObject An Object that will be passed through to as the second parameter to the successCallBack.
      */
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     function RetrieveEntity(EntityFilters: EntityFilters, LogicalName: string, MetadataId: string | null, RetrieveAsIfPublished: boolean, successCallback: (metadata: EntityMetadata, passThroughObject?: any) => any, errorCallback: (error: Error) => any, passThroughObject: any): void;
     /**
      * Sends an asynchronous RetrieveAttribute Request to retrieve a specific entity.
@@ -59,10 +61,11 @@ declare namespace SDK {
      *                      This function must accept an Error object as a parameter.
      * @param passThroughObject An Object that will be passed through to as the second parameter to the successCallBack.
      */
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     function RetrieveAttribute(EntityLogicalName: string, LogicalName: string, MetadataId: string | null, RetrieveAsIfPublished: boolean, successCallback: (metadata: AttributeMetadata, passThroughObject?: any) => any, errorCallback: (error: Error) => any, passThroughObject: any): void;
 
     interface BasicMetadata {
-      HasChanged: any;
+      HasChanged: any; //eslint-disable-line @typescript-eslint/no-explicit-any
       MetadataId: string;
       IsManaged: boolean;
     }
@@ -225,7 +228,7 @@ declare namespace SDK {
        */
       Attributes: AttributeMetadata[];
 
-      AutoCreateAccessTeams: any;
+      AutoCreateAccessTeams: any; //eslint-disable-line @typescript-eslint/no-explicit-any
       AutoRouteToOwnerQueue: boolean;
 
       CanBeInManyToMany: ManagedProperty<boolean>;

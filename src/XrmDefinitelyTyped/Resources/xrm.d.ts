@@ -83,7 +83,7 @@
      * @param item The current object.
      * @param index The index of the current object.
      */
-    (item: T, index: number): any;
+    (item: T, index: number): any; //eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   /**
@@ -130,43 +130,43 @@
   /**
    * A collection of attributes.
    */
-  interface AttributeCollection extends Collection<Attribute<any>> {}
+  interface AttributeCollection extends Collection<Attribute<any>> {} //eslint-disable-line @typescript-eslint/no-empty-interface, @typescript-eslint/no-explicit-any
 
   /**
    * A collection of controls.
    */
 
-  interface ControlCollection extends Collection<AnyControl> {}
+  interface ControlCollection extends Collection<AnyControl> {} //eslint-disable-line @typescript-eslint/no-empty-interface
 
   /**
    * A collection of sections.
    */
-  interface SectionCollection extends Collection<PageSection> {}
+  interface SectionCollection extends Collection<PageSection> {} //eslint-disable-line @typescript-eslint/no-empty-interface
 
   /**
    * A collection of tabs.
    */
-  interface TabCollection extends Collection<PageTab<SectionCollection>> {}
+  interface TabCollection extends Collection<PageTab<SectionCollection>> {} //eslint-disable-line @typescript-eslint/no-empty-interface
 
   /**
    * A collection of attributes.
    */
-  interface AttributeCollectionBase extends CollectionBase<Attribute<any>> {}
+  interface AttributeCollectionBase extends CollectionBase<Attribute<any>> {} //eslint-disable-line @typescript-eslint/no-empty-interface, @typescript-eslint/no-explicit-any
 
   /**
    * A collection of controls.
    */
-  interface ControlCollectionBase extends CollectionBase<AnyControl> {}
+  interface ControlCollectionBase extends CollectionBase<AnyControl> {} //eslint-disable-line @typescript-eslint/no-empty-interface
 
   /**
    * A collection of sections.
    */
-  interface SectionCollectionBase extends CollectionBase<PageSection> {}
+  interface SectionCollectionBase extends CollectionBase<PageSection> {} //eslint-disable-line @typescript-eslint/no-empty-interface
 
   /**
    * A collection of tabs.
    */
-  interface TabCollectionBase extends CollectionBase<PageTab<SectionCollectionBase>> {}
+  interface TabCollectionBase extends CollectionBase<PageTab<SectionCollectionBase>> {} //eslint-disable-line @typescript-eslint/no-empty-interface
 
   type AttributeType = "boolean" | "datetime" | "decimal" | "double" | "integer" | "lookup" | "memo" | "money" | "optionset" | "string" | "multiselectoptionset";
 
@@ -225,7 +225,7 @@
     /**
      * Get a reference to the Xrm.Page.data.entity object that is the parent to all attributes.
      */
-    getParent(): PageEntity<Collection<Attribute<any>>>;
+    getParent(): PageEntity<Collection<Attribute<any>>>; //eslint-disable-line @typescript-eslint/no-explicit-any
 
     /**
      * Returns an object with three Boolean properties corresponding to privileges indicating if the user can create,
@@ -239,14 +239,14 @@
      *
      * @param functionRef The event handler for the on change event.
      */
-    addOnChange(functionRef: (context?: ExecutionContext<this, undefined>) => any): void;
+    addOnChange(functionRef: (context?: ExecutionContext<this, undefined>) => any): void; //eslint-disable-line @typescript-eslint/no-explicit-any
 
     /**
      * Removes a function from the OnChange event hander for an attribute.
      *
      * @param functionRef The event handler for the on change event.
      */
-    removeOnChange(functionRef: Function): void;
+    removeOnChange(functionRef: Function): void; //eslint-disable-line @typescript-eslint/ban-types
 
     /**
      * Causes the OnChange event to occur on the attribute so that any script associated to that event can execute.
@@ -410,6 +410,7 @@
     setVisible(visible: boolean): void;
   }
 
+  //eslint-disable-next-line @typescript-eslint/no-explicit-any
   interface Control<T extends Xrm.Attribute<any>> extends BaseControl {
     /**
      * Get the attribute this control is bound to.
@@ -461,7 +462,7 @@
     /**
      * Returns the object in the form that represents an IFRAME or WebResource.
      */
-    getObject(): any;
+    getObject(): any; //eslint-disable-line @typescript-eslint/no-explicit-any
 
     /**
      * Returns the current URL being displayed in an IFRAME or WebResource.
@@ -506,6 +507,7 @@
   /**
    * Interface for a DateTime form control.
    */
+  //eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface DateControl extends Control<Attribute<Date>> {}
 
   /**
@@ -538,6 +540,7 @@
   /**
    * Interface for a SubGrid form control.
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface SubGridControl<T extends string> extends BaseControl {
     /**
      * Refreshes the data displayed in a subgrid.
@@ -548,6 +551,7 @@
   /**
    * Type to be be used for iterating over a list of controls and being able to interact with all of them with precursory checks for undefined
    */
+  //eslint-disable-next-line @typescript-eslint/no-explicit-any
   type AnyControl = BaseControl & Partial<Control<any> & WebResourceControl & IFrameControl & LookupControl<string> & SubGridControl<string> & DateControl & OptionSetControl<any>>;
 
   const enum ViewTypeNumber {
@@ -579,11 +583,13 @@
   /**
    * Interface for a string form control.
    */
+  //eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface StringControl extends Control<Attribute<string>> {}
 
   /**
    * Interface for a number form control.
    */
+  //eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface NumberControl extends Control<NumberAttribute> {}
 
   /**
@@ -601,6 +607,7 @@
      * @param functionRef Reference to a function. It will be added to the bottom of the event handler pipeline.
      *                  The execution context is automatically set to be passed as the first parameter passed to event handlers set using this method.
      */
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     addOnSave(functionRef: (context?: SaveEventContext<this>) => any): void;
 
     /**
@@ -608,7 +615,7 @@
      *
      * @param functionRef Reference to a function that was added to the OnSave event.
      */
-    removeOnSave(functionRef: Function): void;
+    removeOnSave(functionRef: Function): void; //eslint-disable-line @typescript-eslint/ban-types
 
     /**
      * Returns a string representing the GUID id value for the record.
@@ -658,16 +665,17 @@
      * @param key Key for the value
      * @param value The value to be stored
      */
-    setSharedVariable(key: string, value: any): void;
+    setSharedVariable(key: string, value: any): void; //eslint-disable-line @typescript-eslint/no-explicit-any
 
     /**
      * Retrieves a variable set using setSharedVariable.
      *
      * @param key Key for the desired value
      */
-    getSharedVariable(key: string): any;
+    getSharedVariable(key: string): any; //eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
+  //eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface SaveEventContext<T> extends ExecutionContext<T, SaveEventArgs> { }
 
   interface SaveEventArgs {
@@ -1126,7 +1134,7 @@
     /**
      * Generic getAttribute
      */
-    getAttribute(attrName: string): Xrm.Attribute<any> | undefined;
+    getAttribute(attrName: string): Xrm.Attribute<any> | undefined; //eslint-disable-line @typescript-eslint/no-explicit-any
 
     /**
      * Generic getControl
@@ -1139,6 +1147,7 @@ type BaseXrm = typeof Xrm;
 /**
  * Client-side xRM object model.
  */
+//eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface Xrm<T extends Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>> extends BaseXrm {
   /**
    * Various utility functions can be found here.
@@ -1147,7 +1156,7 @@ interface Xrm<T extends Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollect
 }
 
 declare namespace Xrm {
-  var Utility: Utility;
+  let Utility: Utility;
 
   /**
    * Interface for a Lookup which is used by some Xrm.Utility functions.

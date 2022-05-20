@@ -1,11 +1,14 @@
-﻿/// <reference path="..\xrm.d.ts" />
+﻿// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="..\xrm.d.ts" />
 declare namespace Xrm {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface PageTab<T extends SectionCollectionBase> {
     /**
      * Add an event handler on tab state change.
      *
      * @param reference Event handler for tab state change.
      */
+    // eslint-disable-next-line @typescript-eslint/ban-types
     addTabStateChange(reference: Function): void;
   }
 
@@ -69,6 +72,7 @@ declare namespace Xrm {
   /**
    * Interface for the data of a form.
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface DataModule<T extends AttributeCollectionBase> {
     /**
      * Access various functionality for a business process flow.
@@ -88,8 +92,10 @@ declare namespace Xrm {
     getDirection(): ProcessStageChangeDirection;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface StageSelectedContext extends ExecutionContext<Stage, StageSelectedEventArguments> { }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface StageChangeContext extends ExecutionContext<Stage, StageChangeEventArguments> { }
 
   /**
@@ -123,6 +129,7 @@ declare namespace Xrm {
      *                    OR
      *      - The record hasn’t been saved yet.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setActiveStage(stageId: string, callback?: (stringVal: ProcessStageSetAnswer) => any): void;
 
     /**
@@ -139,6 +146,7 @@ declare namespace Xrm {
      *      The enabled processes are filtered according to the user’s privileges. The list of enabled processes is the same ones a user can see in the UI
      *      if they want to change the process manually.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     getEnabledProcesses(callback: (enabledProcesses: ProcessContainer) => any): void;
 
     /**
@@ -152,6 +160,7 @@ declare namespace Xrm {
      *
      * @param handler The function will be added to the bottom of the event handler pipeline.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     addOnStageChange(handler: (context?: StageChangeContext) => any): void;
 
     /**
@@ -159,6 +168,7 @@ declare namespace Xrm {
      *
      * @param handler If an anonymous function is set using the addOnStageChange method it cannot be removed using this method.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     removeOnStageChange(handler: (context?: StageChangeContext) => any): void;
 
     /**
@@ -167,6 +177,7 @@ declare namespace Xrm {
      *
      * @param handler The function will be added to the bottom of the event handler pipeline.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     addOnStageSelected(handler: (context?: StageSelectedContext) => any): void;
 
     /**
@@ -174,6 +185,7 @@ declare namespace Xrm {
      *
      * @param handler If an anonymous function is set using the addOnStageSelected method it cannot be removed using this method.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     removeOnStageSelected(handler: (context?: StageSelectedContext) => any): void;
 
     /**
@@ -188,6 +200,7 @@ declare namespace Xrm {
      *      "invalid": The operation failed because the selected stage isn’t the same as the active stage.
      *      "dirtyForm": This value will be returned if the data in the page is not saved.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     moveNext(callback?: (stringVal: ProcessStageMoveAnswer) => any): void;
 
     /**
@@ -202,6 +215,7 @@ declare namespace Xrm {
      *      "invalid": The operation failed because the selected stage isn’t the same as the active stage.
      *      "dirtyForm": This value will be returned if the data in the page is not saved.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     movePrevious(callback?: (stringVal: ProcessStageMoveAnswer) => any): void;
   }
 

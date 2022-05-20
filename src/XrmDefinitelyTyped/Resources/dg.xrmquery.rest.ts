@@ -1,18 +1,20 @@
-interface RestEntities {}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface RestEntities { }
 
 /**
  * @internal
  */
-declare namespace SDK {
-  namespace REST {
-    function createRecord(object: any, type: string, successCallback: (result: any) => any, errorCallback: (err: Error) => any): void;
-    function deleteRecord(id: string, type: string, successCallBack: () => any, errorCallback: (err: Error) => any): void;
-    function retrieveRecord(id: string, type: string, select: string | null, expand: string | null, successCallback: (result: any) => any, errorCallback: (err: Error) => any): void;
-    function updateRecord(id: string, object: any, type: string, successCallBack: () => any, errorCallback: (err: Error) => any): void;
-    function retrieveMultipleRecords(type: string, options: string | null, successCallback: (result: any[]) => any, errorCallback: (err: Error) => any, onComplete: any): void;
+declare namespace SDK { //eslint-disable-line @typescript-eslint/no-namespace
+  namespace REST { //eslint-disable-line @typescript-eslint/no-namespace
+    function createRecord(object: any, type: string, successCallback: (result: any) => any, errorCallback: (err: Error) => any): void; //eslint-disable-line @typescript-eslint/no-explicit-any
+    function deleteRecord(id: string, type: string, successCallBack: () => any, errorCallback: (err: Error) => any): void; //eslint-disable-line @typescript-eslint/no-explicit-any
+    function retrieveRecord(id: string, type: string, select: string | null, expand: string | null, successCallback: (result: any) => any, errorCallback: (err: Error) => any): void; //eslint-disable-line @typescript-eslint/no-explicit-any
+    function updateRecord(id: string, object: any, type: string, successCallBack: () => any, errorCallback: (err: Error) => any): void; //eslint-disable-line @typescript-eslint/no-explicit-any
+    function retrieveMultipleRecords(type: string, options: string | null, successCallback: (result: any[]) => any, errorCallback: (err: Error) => any, onComplete: any): void; //eslint-disable-line @typescript-eslint/no-explicit-any
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface RestMapping<O, S, E, F, R> {
   __RestMapping: O;
 }
@@ -26,10 +28,10 @@ interface RestExpand<T, U> extends RestAttribute<T> {
 }
 
 interface RestFilter {
-  __RestFilter: any;
+  __RestFilter: any; //eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
-namespace Filter.REST {
+namespace Filter.REST { // eslint-disable-line @typescript-eslint/no-namespace
   export function equals<T>(v1: T, v2: T): RestFilter {
     return Comp(v1, "eq", v2);
   }
@@ -37,16 +39,16 @@ namespace Filter.REST {
     return Comp(v1, "ne", v2);
   }
 
-  export function greaterThan<T extends Number | Date>(v1: T, v2: T): RestFilter {
+  export function greaterThan<T extends number | Date>(v1: T, v2: T): RestFilter {
     return Comp(v1, "gt", v2);
   }
-  export function greaterThanOrEqual<T extends Number | Date>(v1: T, v2: T): RestFilter {
+  export function greaterThanOrEqual<T extends number | Date>(v1: T, v2: T): RestFilter {
     return Comp(v1, "ge", v2);
   }
-  export function lessThan<T extends Number | Date>(v1: T, v2: T): RestFilter {
+  export function lessThan<T extends number | Date>(v1: T, v2: T): RestFilter {
     return Comp(v1, "lt", v2);
   }
-  export function lessThanOrEqual<T extends Number | Date>(v1: T, v2: T): RestFilter {
+  export function lessThanOrEqual<T extends number | Date>(v1: T, v2: T): RestFilter {
     return Comp(v1, "le", v2);
   }
 
@@ -57,7 +59,7 @@ namespace Filter.REST {
     return BiFilter(f1, "or", f2);
   }
   export function not(f1: RestFilter): RestFilter {
-    return <RestFilter><any>("not " + f1);
+    return <RestFilter><any>("not " + f1); //eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   export function ands(fs: RestFilter[]): RestFilter {
@@ -81,12 +83,13 @@ namespace Filter.REST {
    * Makes a string into a GUID that can be sent to the OData source
    */
   export function makeGuid(id: string): XQR.Guid {
-    return <XQR.Guid><any>XQR.makeTag(`(guid'${id}')`);
+    return <XQR.Guid><any>XQR.makeTag(`(guid'${id}')`); //eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   /**
    * @internal
    */
+  //eslint-disable-next-line @typescript-eslint/no-explicit-any, no-inner-declarations
   function getVal(v: any) {
     if (v == null) return "null";
     if (typeof v === "string") return `'${v}'`;
@@ -97,62 +100,67 @@ namespace Filter.REST {
   /**
    * @internal
    */
+  //eslint-disable-next-line no-inner-declarations
   function Comp<T>(val1: T, op: string, val2: T): RestFilter {
-    return <RestFilter><any>(`${getVal(val1)} ${op} ${getVal(val2)}`);
+    return <RestFilter><any>(`${getVal(val1)} ${op} ${getVal(val2)}`); //eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   /**
    * @internal
    */
+  //eslint-disable-next-line no-inner-declarations
   function DataFunc<T>(funcName: string, val1: T, val2: T): RestFilter {
-    return <RestFilter><any>(`${funcName}(${getVal(val1)}, ${getVal(val2)})`);
+    return <RestFilter><any>(`${funcName}(${getVal(val1)}, ${getVal(val2)})`); //eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   /**
    * @internal
    */
+  //eslint-disable-next-line no-inner-declarations
   function BiFilter(f1: RestFilter, conj: string, f2: RestFilter): RestFilter {
-    return <RestFilter><any>(`(${f1} ${conj} ${f2})`);
+    return <RestFilter><any>(`(${f1} ${conj} ${f2})`); //eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   /**
    * @internal
    */
+  //eslint-disable-next-line no-inner-declarations
   function NestedFilter(fs: RestFilter[], conj: string): RestFilter {
-    var last = fs.pop();
+    const last = fs.pop();
     if (last === undefined) {
-      return <RestFilter><any>("");
+      return <RestFilter><any>(""); //eslint-disable-line @typescript-eslint/no-explicit-any
     }
     return fs.reduceRight((acc, c) => BiFilter(c, conj, acc), last);
   }
 }
 
-namespace XrmQuery.REST {
+
+namespace XrmQuery.REST { //eslint-disable-line @typescript-eslint/no-namespace, @typescript-eslint/no-unused-vars
   export function stripGUID(guid: string) {
     if (guid.startsWith("{") && guid.endsWith("}")) return guid.substring(1, guid.length - 1);
     else return guid;
   }
 
-  export function retrieveRecord<O, S, E, R>(entityPicker: (x: RestEntities) => RestMapping<O, S, E, any, R>, id: string) {
+  export function retrieveRecord<O, S, E, R>(entityPicker: (x: RestEntities) => RestMapping<O, S, E, any, R>, id: string) { //eslint-disable-line @typescript-eslint/no-explicit-any
     return new XQR.RetrieveRecord(entityPicker, stripGUID(id));
   }
   export function retrieveMultipleRecords<O, S, E, F, R>(entityPicker: (x: RestEntities) => RestMapping<O, S, E, F, R>) {
     return new XQR.RetrieveMultipleRecords(entityPicker);
   }
-  export function createRecord<O, R>(entityPicker: (x: RestEntities) => RestMapping<O, any, any, any, R>, record: O) {
+  export function createRecord<O, R>(entityPicker: (x: RestEntities) => RestMapping<O, any, any, any, R>, record: O) { //eslint-disable-line @typescript-eslint/no-explicit-any
     return new XQR.CreateRecord(entityPicker, record);
   }
-  export function updateRecord<O>(entityPicker: (x: RestEntities) => RestMapping<O, any, any, any, any>, id: string, record: O) {
+  export function updateRecord<O>(entityPicker: (x: RestEntities) => RestMapping<O, any, any, any, any>, id: string, record: O) { //eslint-disable-line @typescript-eslint/no-explicit-any
     return new XQR.UpdateRecord(entityPicker, stripGUID(id), record);
   }
-  export function deleteRecord<O>(entityPicker: (x: RestEntities) => RestMapping<O, any, any, any, any>, id: string) {
+  export function deleteRecord<O>(entityPicker: (x: RestEntities) => RestMapping<O, any, any, any, any>, id: string) { //eslint-disable-line @typescript-eslint/no-explicit-any
     return new XQR.DeleteRecord(entityPicker, stripGUID(id));
   }
 }
 
-namespace XQR {
+namespace XQR { //eslint-disable-line @typescript-eslint/no-namespace
   export interface Guid {
-    __XqrGuid: any;
+    __XqrGuid: any; //eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   export interface ValueContainerFilter<T> {
@@ -175,28 +183,29 @@ namespace XQR {
   /**
    * @internal
    */
+  //eslint-disable-next-line no-inner-declarations, @typescript-eslint/no-explicit-any
   function taggedExec<T>(f: (x: any) => T): T {
-    var tagged = tagMatches(f);
+    const tagged = tagMatches(f);
     return f(tagged);
   }
 
   /**
    * @internal
    */
-  var fPatt = /function[^\(]*\(([a-zA-Z0-9_]+)[^\{]*\{([\s\S]*)\}$/m;
+  const fPatt = /function[^\(]*\(([a-zA-Z0-9_]+)[^\{]*\{([\s\S]*)\}$/m; //eslint-disable-line no-useless-escape
 
   /**
    * @internal
    */
-  function objRegex(oName: string) {
+  function objRegex(oName: string) { //eslint-disable-line no-inner-declarations
     return new RegExp("\\b" + oName + "\\.([a-zA-Z_$][0-9a-zA-Z_$]*)(\\.([a-zA-Z_$][0-9a-zA-Z_$]*))?", "g");
   }
 
   /**
    * @internal
    */
-  function analyzeFunc(f: (x: any) => any) {
-    var m = f.toString().match(fPatt);
+  function analyzeFunc(f: (x: any) => any) { //eslint-disable-line no-inner-declarations, @typescript-eslint/no-explicit-any
+    const m = f.toString().match(fPatt);
     if (!m) throw new Error(`XrmQuery: Unable to properly parse function: ${f.toString()}`);
     return { arg: m[1], body: m[2] };
   }
@@ -204,12 +213,12 @@ namespace XQR {
   /**
    * @internal
    */
-  function tagMatches(f: (x: any) => any) {
-    var funcInfo = analyzeFunc(f);
-    var regex = objRegex(funcInfo.arg);
+  function tagMatches(f: (x: any) => any) { //eslint-disable-line no-inner-declarations, @typescript-eslint/no-explicit-any
+    const funcInfo = analyzeFunc(f);
+    const regex = objRegex(funcInfo.arg);
 
-    var obj: { [k: string]: any } = {};
-    var match: any;
+    const obj: { [k: string]: any } = {}; //eslint-disable-line @typescript-eslint/no-explicit-any
+    let match: any; //eslint-disable-line @typescript-eslint/no-explicit-any
     while ((match = regex.exec(funcInfo.body)) != null) {
       if (!obj[match[1]]) {
         obj[match[1]] = makeTag(match[1]);
@@ -224,7 +233,9 @@ namespace XQR {
   /**
    * @internal
    */
-  var NoOp = () => {};
+  const NoOp = () => {
+    // do nothing
+  };
 
   /**
    * Contains information about a Retrieve query
@@ -247,24 +258,24 @@ namespace XQR {
      */
     private id: string;
 
-    constructor(entityPicker: (x: RestEntities) => RestMapping<any, S, E, any, R>, id: string) {
+    constructor(entityPicker: (x: RestEntities) => RestMapping<any, S, E, any, R>, id: string) { //eslint-disable-line @typescript-eslint/no-explicit-any
       this.logicalName = taggedExec(entityPicker).toString();
       this.id = id;
     }
 
     select(vars: (x: S) => RestAttribute<S>[]) {
-      this.selects = this.selects.concat(<string[]><any>taggedExec(vars));
+      this.selects = this.selects.concat(<string[]><any>taggedExec(vars)); //eslint-disable-line @typescript-eslint/no-explicit-any
       return this;
     }
 
     expand<S2>(exps: (x: E) => RestExpand<S, S2>, vars?: (x: S2) => RestAttribute<S2>[]) {
-      var expName = taggedExec(exps).toString();
+      const expName = taggedExec(exps).toString();
       this.expands.push(expName);
       if (vars) this.selects = this.selects.concat(taggedExec(vars).map(a => expName + "." + a));
       return this;
     }
 
-    execute(successCallback: (record: R) => any, errorCallback?: (err: Error) => any) {
+    execute(successCallback: (record: R) => any, errorCallback?: (err: Error) => any) { //eslint-disable-line @typescript-eslint/no-explicit-any
       SDK.REST.retrieveRecord(
         this.id,
         this.logicalName,
@@ -308,17 +319,17 @@ namespace XQR {
      */
     private topAmount: number | null = null;
 
-    constructor(entityPicker: (x: RestEntities) => RestMapping<any, S, E, F, R>) {
+    constructor(entityPicker: (x: RestEntities) => RestMapping<any, S, E, F, R>) { //eslint-disable-line @typescript-eslint/no-explicit-any
       this.logicalName = taggedExec(entityPicker).toString();
     }
 
     select(vars: (x: S) => RestAttribute<S>[]) {
-      this.selects = this.selects.concat(<string[]><any>taggedExec(vars));
+      this.selects = this.selects.concat(<string[]><any>taggedExec(vars)); //eslint-disable-line @typescript-eslint/no-explicit-any
       return this;
     }
 
     expand<T2>(exps: (x: E) => RestExpand<S, T2>, vars?: (x: T2) => RestAttribute<T2>[]) {
-      var expName = taggedExec(exps).toString();
+      const expName = taggedExec(exps).toString();
       this.expands.push(expName);
       if (vars) this.selects = this.selects.concat(taggedExec(vars).map(a => `${expName}/${a}`));
       return this;
@@ -373,7 +384,7 @@ namespace XQR {
      * @param errorCallback Called if an error occurs during the retrieval
      * @param onComplete Called when all pages have been successfully retrieved from CRM
      */
-    execute(pageSuccessCallback: (records: R[]) => any, errorCallback: (err: Error) => any, onComplete: () => any) {
+    execute(pageSuccessCallback: (records: R[]) => any, errorCallback: (err: Error) => any, onComplete: () => any) { //eslint-disable-line @typescript-eslint/no-explicit-any
       SDK.REST.retrieveMultipleRecords(
         this.logicalName,
         this.getOptionString(),
@@ -387,8 +398,8 @@ namespace XQR {
      * @param successCallback Called with all records returned from the query
      * @param errorCallback Called if an error occures during the retrieval
      */
-    getAll(successCallback: (records: R[]) => any, errorCallback?: (err: Error) => any) {
-      let pages: any[][] = [];
+    getAll(successCallback: (records: R[]) => any, errorCallback?: (err: Error) => any) { //eslint-disable-line @typescript-eslint/no-explicit-any
+      const pages: any[][] = []; //eslint-disable-line @typescript-eslint/no-explicit-any
       SDK.REST.retrieveMultipleRecords(
         this.logicalName,
         this.getOptionString(),
@@ -397,7 +408,7 @@ namespace XQR {
         },
         errorCallback ? errorCallback : NoOp,
         () => {
-          successCallback([].concat.apply([], pages));
+          successCallback(Array.prototype.concat(...pages));
         });
     }
 
@@ -406,13 +417,13 @@ namespace XQR {
      * @param successCallback Called with the first result of the query (or null, if no record was found)
      * @param errorCallback Called if an error occures during the retrieval
      */
-    getFirst(successCallback: (record: R | null) => any, errorCallback?: (err: Error) => any) {
+    getFirst(successCallback: (record: R | null) => any, errorCallback?: (err: Error) => any) { //eslint-disable-line @typescript-eslint/no-explicit-any
       this.top(1);
       this.execute(recs => successCallback((recs.length > 0) ? recs[0] : null), errorCallback ? errorCallback : NoOp, NoOp);
     }
 
     getOptionString(): string {
-      var options: string[] = [];
+      const options: string[] = [];
       if (this.selects.length > 0) {
         options.push("$select=" + this.selects.join(","));
       }
@@ -448,12 +459,12 @@ namespace XQR {
      */
     private record: O;
 
-    constructor(entityPicker: (x: RestEntities) => RestMapping<O, any, any, any, R>, record: O) {
+    constructor(entityPicker: (x: RestEntities) => RestMapping<O, any, any, any, R>, record: O) { //eslint-disable-line @typescript-eslint/no-explicit-any
       this.logicalName = taggedExec(entityPicker).toString();
       this.record = record;
     }
 
-    execute(successCallback?: (record: R) => any, errorCallback?: (err: Error) => any) {
+    execute(successCallback?: (record: R) => any, errorCallback?: (err: Error) => any) { //eslint-disable-line @typescript-eslint/no-explicit-any
       SDK.REST.createRecord(
         this.record,
         this.logicalName,
@@ -479,13 +490,13 @@ namespace XQR {
      */
     private record: O;
 
-    constructor(entityPicker: (x: RestEntities) => RestMapping<O, any, any, any, any>, id: string, record: O) {
+    constructor(entityPicker: (x: RestEntities) => RestMapping<O, any, any, any, any>, id: string, record: O) { //eslint-disable-line @typescript-eslint/no-explicit-any
       this.logicalName = taggedExec(entityPicker).toString();
       this.id = id;
       this.record = record;
     }
 
-    execute(successCallback?: () => any, errorCallback?: (err: Error) => any) {
+    execute(successCallback?: () => any, errorCallback?: (err: Error) => any) { //eslint-disable-line @typescript-eslint/no-explicit-any
       SDK.REST.updateRecord(
         this.id,
         this.record,
@@ -508,12 +519,12 @@ namespace XQR {
      */
     private id: string;
 
-    constructor(entityPicker: (x: RestEntities) => RestMapping<O, any, any, any, any>, id: string) {
+    constructor(entityPicker: (x: RestEntities) => RestMapping<O, any, any, any, any>, id: string) { //eslint-disable-line @typescript-eslint/no-explicit-any
       this.logicalName = taggedExec(entityPicker).toString();
       this.id = id;
     }
 
-    execute(successCallback?: () => any, errorCallback?: (err: Error) => any) {
+    execute(successCallback?: () => any, errorCallback?: (err: Error) => any) { //eslint-disable-line @typescript-eslint/no-explicit-any
       SDK.REST.deleteRecord(
         this.id,
         this.logicalName,

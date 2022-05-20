@@ -1,4 +1,5 @@
-﻿/// <reference path="..\xrm.d.ts" />
+﻿// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="..\xrm.d.ts" />
 
 //Function helper type for a function that can be set to be called by a view column to show an image with a tooltip instead of the ordinary data
 type TooltipFunc = (rowData: string, lcid: LCID) => [WebResourceImage, string];
@@ -47,6 +48,7 @@ declare namespace Xrm {
     /**
      * Command action
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     action: () => any;
   }
 
@@ -77,6 +79,7 @@ declare namespace Xrm {
     fireOnKeyPress(): void;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface GridEntity<T extends string> {
     /**
      * Returns the GUID of the record.
@@ -89,11 +92,13 @@ declare namespace Xrm {
      * Returns a collection of the related entities for this record.
      * TODO: Unsure as to what type of elements are returned in the collection.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     getRelatedEntities(): GridCollection<any>;
 
     isInHierarchy(): boolean;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-empty-interface 
   interface ProcessStatusChangeContext extends ExecutionContext<Process, any> { }
 
   interface ProcessModule {
@@ -107,6 +112,7 @@ declare namespace Xrm {
      *                anonymous function if you may later want to remove the
      *                event handler.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     addOnProcessStatusChange(handler: (context?: ProcessStatusChangeContext) => any): void;
 
     /**
@@ -114,6 +120,7 @@ declare namespace Xrm {
      * @param handler If an anonymous function is set using the addOnProcessStatusChange method it
      *                cannot be removed using this method.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     removeOnProcessStatusChange(handler: (context?: ProcessStatusChangeContext) => any): void;
 
     /**
@@ -136,6 +143,7 @@ declare namespace Xrm {
      * @param status The new status. The values can be active, aborted, or finished.
      * @param callbackFunction A function to call when the operation is complete. This callback function is passed the new status as a string value.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setStatus(status: ProcessStatus, callbackFunction?: (status: ProcessStatus) => any): ProcessStatus;
   }
 }
