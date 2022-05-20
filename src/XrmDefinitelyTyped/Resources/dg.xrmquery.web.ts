@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-namespace */
 namespace XrmQuery {
   /**
    * Instantiates specification of a query that can retrieve a specific record.
@@ -5,7 +6,7 @@ namespace XrmQuery {
    * @param id GUID of the wanted record.
    */
   export function retrieve<ISelect, IExpand, IFixed, FormattedResult, Result>(
-      entityPicker: (x: WebEntitiesRetrieve) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>,
+      entityPicker: (x: WebEntitiesRetrieve) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>, //eslint-disable-line @typescript-eslint/no-explicit-any
       id: string) {
     return XQW.RetrieveRecord.Get<ISelect, IExpand, IFixed, FormattedResult, Result>(entityPicker, id);
   }
@@ -32,9 +33,9 @@ namespace XrmQuery {
    * @param relatedPicker Function to select which navigation property points to the related record.
    */
   export function retrieveRelated<ISingle, ISelect, IExpand, IFixed, FormattedResult, Result>(
-    entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>,
+    entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>, //eslint-disable-line @typescript-eslint/no-explicit-any
     id: string,
-    relatedPicker: (x: ISingle) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>) {
+    relatedPicker: (x: ISingle) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>) { //eslint-disable-line @typescript-eslint/no-explicit-any
     return XQW.RetrieveRecord.Related<ISingle, ISelect, IExpand, IFixed, FormattedResult, Result>(entityPicker, id, relatedPicker);
   }
 
@@ -45,7 +46,7 @@ namespace XrmQuery {
    * @param relatedPicker Function to select which navigation property points to the related records.
    */
   export function retrieveRelatedMultiple<IMultiple, ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(
-    entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>,
+    entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>, //eslint-disable-line @typescript-eslint/no-explicit-any
     id: string,
     relatedPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>) {
     return XQW.RetrieveMultipleRecords.Related<IMultiple, ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(entityPicker, id, relatedPicker);
@@ -57,7 +58,7 @@ namespace XrmQuery {
    * @param record Object of the record to be created.
    */
   export function create<ICreate>(
-    entityPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<ICreate, any, any>,
+    entityPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<ICreate, any, any>, //eslint-disable-line @typescript-eslint/no-explicit-any
     record?: ICreate) {
     return new XQW.CreateRecord<ICreate>(entityPicker, record);
   }
@@ -69,7 +70,7 @@ namespace XrmQuery {
    * @param record Object containing the attributes to be updated.
    */
   export function update<IUpdate>(
-    entityPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, IUpdate, any>,
+    entityPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, IUpdate, any>, //eslint-disable-line @typescript-eslint/no-explicit-any
     id?: string,
     record?: IUpdate) {
     return new XQW.UpdateRecord<IUpdate>(entityPicker, id, record);
@@ -84,11 +85,11 @@ namespace XrmQuery {
    * @param relationPicker Function to select which N:1 relation (lookup-field) should be used to associate.
    */
   export function associateSingle<ISingle, ISelect>(
-    entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>,
+    entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>, //eslint-disable-line @typescript-eslint/no-explicit-any
     id: string,
-    entityTargetPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, ISelect>,
+    entityTargetPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, ISelect>, //eslint-disable-line @typescript-eslint/no-explicit-any
     targetId: string,
-    relationPicker: (x: ISingle) => WebMappingRetrieve<ISelect, any, any, any, any, any>) {
+    relationPicker: (x: ISingle) => WebMappingRetrieve<ISelect, any, any, any, any, any>) { //eslint-disable-line @typescript-eslint/no-explicit-any
     return new XQW.AssociateRecordSingle<ISingle, ISelect>(entityPicker, id, entityTargetPicker, targetId, relationPicker);
   }
 
@@ -101,11 +102,11 @@ namespace XrmQuery {
    * @param relationPicker Function to select which N:N or 1:N relation should be used to associate.
    */
   export function associateCollection<IMultiple, ISelect>(
-    entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>,
+    entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>, //eslint-disable-line @typescript-eslint/no-explicit-any
     id: string,
-    entityTargetPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, ISelect>,
+    entityTargetPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, ISelect>, //eslint-disable-line @typescript-eslint/no-explicit-any
     targetId: string,
-    relationPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, any, any, any, any, any>) {
+    relationPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, any, any, any, any, any>) { //eslint-disable-line @typescript-eslint/no-explicit-any
     return new XQW.AssociateRecordCollection<IMultiple, ISelect>(entityPicker, id, entityTargetPicker, targetId, relationPicker);
   }
 
@@ -117,9 +118,9 @@ namespace XrmQuery {
    */
 
   export function disassociateSingle<ISingle, ISelect>(
-    entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>,
+    entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>, //eslint-disable-line @typescript-eslint/no-explicit-any
     id: string,
-    relationPicker: (x: ISingle) => WebMappingRetrieve<ISelect, any, any, any, any, any>) {
+    relationPicker: (x: ISingle) => WebMappingRetrieve<ISelect, any, any, any, any, any>) { //eslint-disable-line @typescript-eslint/no-explicit-any
     return XQW.DisassociateRecord.Single<ISingle, ISelect>(entityPicker, id, relationPicker);
   }
 
@@ -132,9 +133,9 @@ namespace XrmQuery {
    */
 
   export function disassociateCollection<IMultiple, ISelect>(
-    entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>,
+    entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>, //eslint-disable-line @typescript-eslint/no-explicit-any
     id: string,
-    relationPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, any, any, any, any, any>,
+    relationPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, any, any, any, any, any>, //eslint-disable-line @typescript-eslint/no-explicit-any
     targetId: string) {
     return XQW.DisassociateRecord.Collection<IMultiple, ISelect>(entityPicker, id, relationPicker, targetId);
   }
@@ -145,7 +146,7 @@ namespace XrmQuery {
    * @param id GUID of the record to be updated.
    */
   export function deleteRecord(
-    entityPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, any>,
+    entityPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, any>, //eslint-disable-line @typescript-eslint/no-explicit-any
     id?: string) {
     return new XQW.DeleteRecord(entityPicker, id);
   }
@@ -168,8 +169,9 @@ namespace XrmQuery {
   /**
    * @internal
    */
-  export function request(type: XQW.HttpRequestType, url: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb: (err: Error) => any = () => { }, preSend?: (req: XMLHttpRequest) => void, sync: boolean = false) {
-    let req = new XMLHttpRequest();
+  //eslint-disable-next-line @typescript-eslint/no-explicit-any
+  export function request(type: XQW.HttpRequestType, url: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb: (err: Error) => any = () => { /* */ }, preSend?: (req: XMLHttpRequest) => void, sync = false) {
+    const req = new XMLHttpRequest();
     req.open(type, url, !sync);
     req.setRequestHeader("Accept", "application/json");
     req.setRequestHeader("Content-Type", "application/json; charset=utf-8");
@@ -179,7 +181,7 @@ namespace XrmQuery {
 
     req.onreadystatechange = function (this) {
       if (this.readyState == 4) {
-        req.onreadystatechange = <any>null;
+        req.onreadystatechange = <any>null; //eslint-disable-line @typescript-eslint/no-explicit-any
         if (this.status == 200 || this.status == 204) successCb(this);
         else errorCb(new Error(this.response));
       }
@@ -196,6 +198,7 @@ namespace XrmQuery {
    * @param errorCb Error callback handler function
    * @param configure Modify the request before it it sent to the endpoint - like adding headers.
    */
+  //eslint-disable-next-line @typescript-eslint/no-explicit-any
   export function sendRequest(type: XQW.HttpRequestType, queryString: string, data: any, successCb: (x: XMLHttpRequest) => any, errorCb?: (err: Error) => any, configure?: (req: XMLHttpRequest) => void, sync?: boolean): void {
     request(type, encodeSpaces(XQW.getApiUrl() + queryString), data, successCb, errorCb, configure, sync);
   }
@@ -207,10 +210,12 @@ namespace XrmQuery {
    * @param data Object to send with request
    * @param configure Modify the request before it it sent to the endpoint - like adding headers.
    */
+  //eslint-disable-next-line @typescript-eslint/no-explicit-any
   export function promiseRequest(type: XQW.HttpRequestType, queryString: string, data: any, configure?: (req: XMLHttpRequest) => void): Promise<XMLHttpRequest> {
     return XQW.promisifyCallback((success, error?) => sendRequest(type, queryString, data, success, error, configure));
   }
 
+  // eslint-disable-next-line no-inner-declarations
   function encodeSpaces(str: string): string {
     return str.replace(/ /g, "%20");
   }
@@ -244,7 +249,7 @@ namespace Filter {
     return biFilter(f1, "or", f2);
   }
   export function not(f1: WebFilter): WebFilter {
-    return <WebFilter><any>("not " + f1);
+    return <WebFilter><any>("not " + f1); //eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   export function ands(fs: WebFilter[]): WebFilter {
@@ -268,12 +273,13 @@ namespace Filter {
    * Makes a string into a GUID that can be sent to the OData source
    */
   export function makeGuid(id: string): XQW.Guid {
-    return <XQW.Guid><any>XQW.makeTag(XQW.stripGUID(id));
+    return <XQW.Guid><any>XQW.makeTag(XQW.stripGUID(id)); //eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   /**
    * @internal
    */
+  //eslint-disable-next-line no-inner-declarations, @typescript-eslint/no-explicit-any
   function getVal(v: any) {
     if (v == null) return "null";
     if (typeof v === "string") return `'${encodeSpecialCharacters(v)}'`;
@@ -284,31 +290,35 @@ namespace Filter {
   /**
    * @internal
    */
+  //eslint-disable-next-line no-inner-declarations
   function comp<T>(val1: T, op: string, val2: T): WebFilter {
-    return <WebFilter><any>(`${getVal(val1)} ${op} ${getVal(val2)}`);
+    return <WebFilter><any>(`${getVal(val1)} ${op} ${getVal(val2)}`); //eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   /**
    * @internal
    */
+  //eslint-disable-next-line no-inner-declarations
   function dataFunc<T>(funcName: string, val1: T, val2: T): WebFilter {
-    return <WebFilter><any>(`${funcName}(${getVal(val1)}, ${getVal(val2)})`);
+    return <WebFilter><any>(`${funcName}(${getVal(val1)}, ${getVal(val2)})`); //eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   /**
    * @internal
    */
+  //eslint-disable-next-line no-inner-declarations
   function biFilter(f1: WebFilter, conj: string, f2: WebFilter): WebFilter {
-    return <WebFilter><any>(`(${f1} ${conj} ${f2})`);
+    return <WebFilter><any>(`(${f1} ${conj} ${f2})`); //eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   /**
    * @internal
    */
+  //eslint-disable-next-line no-inner-declarations
   function nestedFilter(fs: WebFilter[], conj: string): WebFilter {
     const last = fs.pop();
     if (last === undefined) {
-      return <WebFilter><any>("");
+      return <WebFilter><any>(""); //eslint-disable-line @typescript-eslint/no-explicit-any
     }
     return fs.reduceRight((acc, c) => biFilter(c, conj, acc), last);
   }
@@ -317,6 +327,7 @@ namespace Filter {
    * @internal
    * // TODO could this be fix to password problem by adding &qout instead of "''" below?
    */
+  //eslint-disable-next-line no-inner-declarations
   function encodeSpecialCharacters(queryString: string) {
     return encodeURI(queryString)
       .replace(/'/g, "''")
@@ -328,13 +339,13 @@ namespace Filter {
   }
 }
 
-interface WebEntitiesRetrieve {}
-interface WebEntitiesRelated {}
-interface WebEntitiesCUDA {}
+interface WebEntitiesRetrieve {} //eslint-disable-line @typescript-eslint/no-empty-interface
+interface WebEntitiesRelated {} //eslint-disable-line @typescript-eslint/no-empty-interface
+interface WebEntitiesCUDA {} //eslint-disable-line @typescript-eslint/no-empty-interface
 
-declare var GetGlobalContext: any;
+declare let GetGlobalContext: any; //eslint-disable-line @typescript-eslint/no-explicit-any
 
-interface WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult> {
+interface WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult> { //eslint-disable-line @typescript-eslint/no-unused-vars
   __WebMappingRetrieve: ISelect;
 }
 
@@ -346,16 +357,16 @@ interface WebMappingRelated<ISingle, IMultiple> {
   __WebMappingRelated: ISingle & IMultiple;
 }
 
-interface WebAttribute<ISelect, Result, Formatted> {
+interface WebAttribute<ISelect, Result, Formatted> { //eslint-disable-line @typescript-eslint/no-unused-vars
   __WebAttribute: ISelect;
 }
 
-interface WebExpand<IExpand, ChildSelect, ChildFilter, Result> {
+interface WebExpand<IExpand, ChildSelect, ChildFilter, Result> { //eslint-disable-line @typescript-eslint/no-unused-vars
   __WebExpandable: IExpand;
 }
 
 interface WebFilter {
-  __WebFilter: any;
+  __WebFilter: any; //eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 interface ExplicitQuery {
@@ -376,7 +387,7 @@ const enum SortOrder {
 interface ExpandOptions<ISelect, IFilter> {
   filter?: (f: IFilter) => WebFilter;
   top?: number;
-  orderBy?: (s: ISelect) => WebAttribute<ISelect, any, any>;
+  orderBy?: (s: ISelect) => WebAttribute<ISelect, any, any>; //eslint-disable-line @typescript-eslint/no-explicit-any
   sortOrder?: SortOrder;
 }
 
@@ -407,22 +418,26 @@ namespace XQW {
   }
 
   export interface Guid {
-    __XqwGuid: any;
+    __XqwGuid: any; //eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   export function makeTag(name: string) {
     return { __str: name, toString: function () { return this.__str; } };
   }
 
+  //eslint-disable-next-line no-inner-declarations
   function endsWith(str: string, suffix: string) {
     return str.substr(-suffix.length) == suffix;
   }
 
+  //eslint-disable-next-line no-inner-declarations
   function beginsWith(str: string, prefix: string) {
     return str.substr(0, prefix.length) == prefix;
   }
 
   const datePattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
+
+  //eslint-disable-next-line no-inner-declarations, @typescript-eslint/no-explicit-any
   function reviver(name: string, value: any) {
     if (datePattern.test(value)) return new Date(value);
     let newName = name;
@@ -466,14 +481,17 @@ namespace XQW {
     else return guid;
   }
 
+  //eslint-disable-next-line no-inner-declarations
   function parseRetrievedData<T>(req: XMLHttpRequest): T {
     return JSON.parse(req.response, reviver);
   }
 
+  //eslint-disable-next-line no-inner-declarations, @typescript-eslint/no-explicit-any
   function isStringArray(arr: any[] | string[]): arr is string[] {
     return arr.length > 0 && typeof arr[0] === "string";
   }
 
+  //eslint-disable-next-line @typescript-eslint/no-explicit-any
   export function promisifyCallback<T>(callbackFunc: (success: (t: T) => any, errorCb?: (e: Error) => any) => any): Promise<T> {
     if (!Promise) throw new Error("Promises are not natively supported in this browser. Add a polyfill to use it.");
     return new Promise<T>((resolve, reject) => {
@@ -482,7 +500,7 @@ namespace XQW {
   }
 
   interface MultiResult {
-    value: any[];
+    value: any[]; //eslint-disable-line @typescript-eslint/no-explicit-any
     "@odata.nextLink": string;
   }
 
@@ -500,12 +518,14 @@ namespace XQW {
     private isDoneSending = false;
     private isDoingWork = false;
 
-    constructor(protected toReturn: any, private successCallback: Function, protected errorCallback: (e: Error) => any) { }
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
+    constructor(protected toReturn: any, private successCallback: (param: any) => any, protected errorCallback: (e: Error) => any) { }
 
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected followLink(linkUrl: string, expandKeys: ExpandKey[], additionalHeaders: RequestHeader[], valPlacer: (vs: any[]) => void) {
       this.performingCallback();
       XrmQuery.request("GET", linkUrl, null, (req) => {
-        let resp = parseRetrievedData<MultiResult>(req);
+        const resp = parseRetrievedData<MultiResult>(req);
 
         PageLinkHelper.followLinks(resp, expandKeys, additionalHeaders, (vals) => {
           valPlacer(vals);
@@ -521,6 +541,7 @@ namespace XQW {
       );
     }
 
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected populateRecord(rec: any, expandKeys: ExpandKey[], additionalHeaders: RequestHeader[]) {
       this.performingCallback();
       EntityLinkHelper.followLinks(rec, expandKeys, additionalHeaders, this.callbackReceived, this.errorCallback);
@@ -545,6 +566,7 @@ namespace XQW {
   }
 
   class EntityLinkHelper extends LinkHelper {
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     static followLinks(rec: any, expandKeys: ExpandKey[] | string[], additionalHeaders: RequestHeader[], successCallback: (t: any) => any, errorCallback: (e: Error) => any) {
       if (expandKeys.length == 0) return successCallback(rec);
 
@@ -555,11 +577,12 @@ namespace XQW {
       return new EntityLinkHelper(rec, expandKeys, additionalHeaders, successCallback, errorCallback);
     }
 
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     private constructor(rec: any, expandKeys: ExpandKey[], additionalHeaders: RequestHeader[], successCallback: (t: any) => any, errorCallback: (e: Error) => any) {
       super(rec, successCallback, errorCallback);
 
       expandKeys.forEach(exp => {
-        let linkUrl = rec[exp.linkKey];
+        const linkUrl = rec[exp.linkKey];
         if (linkUrl) {
           delete rec[exp.linkKey];
 
@@ -577,6 +600,7 @@ namespace XQW {
    * Helper class to expand on all @odata.nextLink, both pages and on entities retrieved
    */
   class PageLinkHelper extends LinkHelper {
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     static followLinks(obj: MultiResult, expandKeys: ExpandKey[] | string[], additionalHeaders: RequestHeader[], successCallback: (t: any) => any, errorCallback: (e: Error) => any) {
       if (!obj["@odata.nextLink"] && (obj.value.length == 0 || expandKeys.length == 0)) return successCallback(obj.value);
 
@@ -592,16 +616,17 @@ namespace XQW {
         return new PageLinkHelper(obj, expandKeys, additionalHeaders, successCallback, errorCallback);
       } else {
         // Trim expand keys down to the ones that may have nextLinks
-        let firstRec = obj.value[0];
-        let toKeep = expandKeys.filter(exp => firstRec[exp.linkKey]);
+        const firstRec = obj.value[0];
+        const toKeep = expandKeys.filter(exp => firstRec[exp.linkKey]);
         return new PageLinkHelper(obj, toKeep, additionalHeaders, successCallback, errorCallback);
       }
     }
 
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     private constructor(obj: MultiResult, expandKeys: ExpandKey[], additionalHeaders: RequestHeader[], successCallback: (t: any) => any, errorCallback: (e: Error) => any) {
       super(obj.value, successCallback, errorCallback);
 
-      let nextPage = obj["@odata.nextLink"];
+      const nextPage = obj["@odata.nextLink"];
       if (nextPage) {
         this.followLink(nextPage, expandKeys, additionalHeaders, vals => {
           this.toReturn = this.toReturn.concat(vals);
@@ -622,14 +647,15 @@ namespace XQW {
     constructor(protected requestType: HttpRequestType) { }
 
     abstract getQueryString(): string;
-    protected abstract handleResponse(req: XMLHttpRequest, successCallback: (t: T) => any, errorCallback: (e: Error) => any): void;
-    protected getObjectToSend: () => any = () => null;
+    protected abstract handleResponse(req: XMLHttpRequest, successCallback: (t: T) => any, errorCallback: (e: Error) => any): void; //eslint-disable-line @typescript-eslint/no-explicit-any
+    protected getObjectToSend: () => any = () => null; //eslint-disable-line @typescript-eslint/no-explicit-any
 
     promise(): Promise<T> {
       return promisifyCallback<T>(this.execute.bind(this));
     }
 
-    execute(successCallback: (x: T) => any, errorCallback: (err: Error) => any = () => { }): void {
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
+    execute(successCallback: (x: T) => any, errorCallback: (err: Error) => any = () => { /* */ }): void {
       this.executeRaw(successCallback, errorCallback, true, false);
     }
 
@@ -642,10 +668,11 @@ namespace XQW {
     /**
      * @internal
      */
-    executeRaw(successCallback: (x: T) => any, errorCallback: (err: Error) => any, parseResult: true, sync: boolean): void;
-    executeRaw(successCallback: (x: XMLHttpRequest) => any, errorCallback: (err: Error) => any, parseResult: false): void;
-    executeRaw(successCallback: ((x: T) => any) & ((x: XMLHttpRequest) => any), errorCallback: (err: Error) => any = () => { }, parseResult: boolean = false, sync: boolean = false): void {
-        let successHandler = (req: XMLHttpRequest) => (parseResult ? this.handleResponse(req, successCallback, errorCallback) : successCallback(req));
+    executeRaw(successCallback: (x: T) => any, errorCallback: (err: Error) => any, parseResult: true, sync: boolean): void; //eslint-disable-line @typescript-eslint/no-explicit-any
+    executeRaw(successCallback: (x: XMLHttpRequest) => any, errorCallback: (err: Error) => any, parseResult: false): void; //eslint-disable-line @typescript-eslint/no-explicit-any
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
+    executeRaw(successCallback: ((x: T) => any) & ((x: XMLHttpRequest) => any), errorCallback: (err: Error) => any = () => { /* */ }, parseResult = false, sync = false): void {
+        const successHandler = (req: XMLHttpRequest) => (parseResult ? this.handleResponse(req, successCallback, errorCallback) : successCallback(req));
         return XrmQuery.sendRequest(this.requestType, this.getQueryString(), this.getObjectToSend(), successHandler, errorCallback, addHeadersToRequestObject(this.additionalHeaders), sync);
     }
   }
@@ -694,7 +721,7 @@ namespace XQW {
     }
 
     static Related<IMultiple, ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(
-      entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>,
+      entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>, //eslint-disable-line @typescript-eslint/no-explicit-any
       id: string,
       relatedPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, IExpand, IFilter, IFixed, Result, FormattedResult>) {
       return new RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result>(taggedExec(entityPicker).toString(), id, taggedExec(relatedPicker).toString());
@@ -705,10 +732,12 @@ namespace XQW {
       this.id = id !== undefined ? stripGUID(id) : id;
     }
 
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected handleResponse(req: XMLHttpRequest, successCallback: (r: Result[]) => any, errorCallback: (e: Error) => any) {
       PageLinkHelper.followLinks(parseRetrievedData<MultiResult>(req), this.expandKeys, this.additionalHeaders, successCallback, errorCallback);
     }
 
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     getFirst(successCallback: (r: Result | null) => any, errorCallback?: (e: Error) => any) {
       this.top(1);
       this.execute(res => successCallback(res && res.length > 0 ? res[0] : null), errorCallback);
@@ -773,7 +802,7 @@ namespace XQW {
     select<R1, F1, R2, F2, R3, F3>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3, IFixed & R1 & R2 & R3>;
     select<R1, F1, R2, F2>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2, IFixed & R1 & R2>;
     select<R1, F1>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1, IFixed & R1>;
-    select(vars: (x: ISelect) => WebAttribute<ISelect, any, any>[]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result> {
+    select(vars: (x: ISelect) => WebAttribute<ISelect, any, any>[]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result> { //eslint-disable-line @typescript-eslint/no-explicit-any
       this.selects = parseSelects(vars);
       return this;
     }
@@ -793,7 +822,7 @@ namespace XQW {
     selectMore<R1, F1, R2, F2, R3, F3>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2 & F3, Result & R1 & R2 & R3>;
     selectMore<R1, F1, R2, F2>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1 & F2, Result & R1 & R2>;
     selectMore<R1, F1>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, F1, Result & R1>;
-    selectMore(vars: (x: ISelect) => WebAttribute<ISelect, any, any>[]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result> {
+    selectMore(vars: (x: ISelect) => WebAttribute<ISelect, any, any>[]): RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, Result> { //eslint-disable-line @typescript-eslint/no-explicit-any
       this.selects = this.selects.concat(parseSelects(vars));
       return this;
     }
@@ -805,17 +834,17 @@ namespace XQW {
 
     expand<IExpSelect, IExpFilter, IExpResult>(
       exps: (x: IExpand) => WebExpand<IExpand, IExpSelect, IExpFilter, IExpResult>,
-      selectVarFunc?: (x: IExpSelect) => WebAttribute<IExpSelect, any, any>[])
+      selectVarFunc?: (x: IExpSelect) => WebAttribute<IExpSelect, any, any>[]) //eslint-disable-line @typescript-eslint/no-explicit-any
       : RetrieveMultipleRecords<ISelect, IExpand, IFilter, IFixed, FormattedResult, IExpResult & Result> {
 
       const expand = taggedExec(exps).toString();
       this.expandKeys.push(expand);
 
-      let options: string[] = [];
+      const options: string[] = [];
       if (selectVarFunc) options.push(`$select=${parseSelects(selectVarFunc)}`);
 
       this.expands.push(expand + (options.length > 0 ? `(${options.join(";")})` : ""));
-      return <any>this;
+      return <any>this; //eslint-disable-line @typescript-eslint/no-explicit-any
     }
 
     filter(filter: (x: IFilter) => WebFilter) {
@@ -838,16 +867,16 @@ namespace XQW {
     /**
      * @internal
      */
-    private order(varFunc: (x: ISelect) => WebAttribute<ISelect, any, any>, by: string) {
+    private order(varFunc: (x: ISelect) => WebAttribute<ISelect, any, any>, by: string) { //eslint-disable-line @typescript-eslint/no-explicit-any
       this.ordering.push(parseWithTransform(varFunc) + " " + by);
       return this;
     }
 
-    orderAsc(vars: (x: ISelect) => WebAttribute<ISelect, any, any>) {
+    orderAsc(vars: (x: ISelect) => WebAttribute<ISelect, any, any>) { //eslint-disable-line @typescript-eslint/no-explicit-any
       return this.order(vars, "asc");
     }
 
-    orderDesc(vars: (x: ISelect) => WebAttribute<ISelect, any, any>) {
+    orderDesc(vars: (x: ISelect) => WebAttribute<ISelect, any, any>) { //eslint-disable-line @typescript-eslint/no-explicit-any
       return this.order(vars, "desc");
     }
 
@@ -871,7 +900,7 @@ namespace XQW {
      */
     includeFormattedValues(): Query<(FormattedResult & Result)[]> {
       this.additionalHeaders.push(FORMATTED_VALUES_HEADER);
-      return <any>this;
+      return <any>this; //eslint-disable-line @typescript-eslint/no-explicit-any
     }
 
     /**
@@ -879,7 +908,7 @@ namespace XQW {
      */
     includeFormattedValuesAndLookupProperties(): Query<(FormattedResult & Result)[]> {
       this.additionalHeaders.push(INCLUDE_ANNOTATIONS_HEADER);
-      return <any>this;
+      return <any>this; //eslint-disable-line @typescript-eslint/no-explicit-any
     }
 
     /**
@@ -917,14 +946,14 @@ namespace XQW {
     protected expandKeys: string[] = [];
 
     static Related<ISingle, ISelect, IExpand, IFixed, FormattedResult, Result>(
-      entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>,
+      entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>, //eslint-disable-line @typescript-eslint/no-explicit-any
       id: string,
-      relatedPicker: (x: ISingle) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>) {
+      relatedPicker: (x: ISingle) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>) { //eslint-disable-line @typescript-eslint/no-explicit-any
       return new RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result>(taggedExec(entityPicker).toString(), id, taggedExec(relatedPicker).toString());
     }
 
     static Get<ISelect, IExpand, IFixed, FormattedResult, Result>(
-      entityPicker: (x: WebEntitiesRetrieve) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>,
+      entityPicker: (x: WebEntitiesRetrieve) => WebMappingRetrieve<ISelect, IExpand, any, IFixed, Result, FormattedResult>, //eslint-disable-line @typescript-eslint/no-explicit-any
       id: string) {
       return new RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result>(taggedExec(entityPicker).toString(), id);
     }
@@ -934,8 +963,9 @@ namespace XQW {
       this.id = stripGUID(id);
     }
 
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected handleResponse(req: XMLHttpRequest, successCallback: (r: Result) => any, errorCallback: (e: Error) => any) {
-      EntityLinkHelper.followLinks(parseRetrievedData<any>(req), this.expandKeys, this.additionalHeaders, successCallback, errorCallback);
+      EntityLinkHelper.followLinks(parseRetrievedData<any>(req), this.expandKeys, this.additionalHeaders, successCallback, errorCallback); //eslint-disable-line @typescript-eslint/no-explicit-any
     }
 
     select<R1, F1, R2, F2, R3, F3, R4, F4, R5, F5, R6, F6, R7, F7, R8, F8, R9, F9, R10, F10, R11, F11, R12, F12, R13, F13, R14, F14, R15, F15>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>, WebAttribute<ISelect, R4, F4>, WebAttribute<ISelect, R5, F5>, WebAttribute<ISelect, R6, F6>, WebAttribute<ISelect, R7, F7>, WebAttribute<ISelect, R8, F8>, WebAttribute<ISelect, R9, F9>, WebAttribute<ISelect, R10, F10>, WebAttribute<ISelect, R11, F11>, WebAttribute<ISelect, R12, F12>, WebAttribute<ISelect, R13, F13>, WebAttribute<ISelect, R14, F14>, WebAttribute<ISelect, R15, F15>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3 & F4 & F5 & F6 & F7 & F8 & F9 & F10 & F11 & F12 & F13 & F14 & F15, IFixed & R1 & R2 & R3 & R4 & R5 & R6 & R7 & R8 & R9 & R10 & R11 & R12 & R13 & R14 & R15>;
@@ -953,7 +983,7 @@ namespace XQW {
     select<R1, F1, R2, F2, R3, F3>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3, IFixed & R1 & R2 & R3>;
     select<R1, F1, R2, F2>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2, IFixed & R1 & R2>;
     select<R1, F1>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>]): RetrieveRecord<ISelect, IExpand, IFixed, F1, IFixed & R1>;
-    select(varFunc: (x: ISelect) => WebAttribute<ISelect, any, any>[]): RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result> {
+    select(varFunc: (x: ISelect) => WebAttribute<ISelect, any, any>[]): RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result> { //eslint-disable-line @typescript-eslint/no-explicit-any
       this.selects = parseSelects(varFunc);
       return this;
     }
@@ -973,21 +1003,21 @@ namespace XQW {
     selectMore<R1, F1, R2, F2, R3, F3>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>, WebAttribute<ISelect, R3, F3>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2 & F3, Result & R1 & R2 & R3>;
     selectMore<R1, F1, R2, F2>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>, WebAttribute<ISelect, R2, F2>]): RetrieveRecord<ISelect, IExpand, IFixed, F1 & F2, Result & R1 & R2>;
     selectMore<R1, F1>(vars: (x: ISelect) => [WebAttribute<ISelect, R1, F1>]): RetrieveRecord<ISelect, IExpand, IFixed, F1, Result & R1>;
-    selectMore(varFunc: (x: ISelect) => WebAttribute<ISelect, any, any>[]): RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result> {
+    selectMore(varFunc: (x: ISelect) => WebAttribute<ISelect, any, any>[]): RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, Result> { //eslint-disable-line @typescript-eslint/no-explicit-any
       this.selects = this.selects.concat(parseSelects(varFunc));
       return this;
     }
 
     expand<IExpSelect, IExpFilter, IExpResult>(
       exps: (x: IExpand) => WebExpand<IExpand, IExpSelect, IExpFilter, IExpResult>,
-      selectVarFunc?: (x: IExpSelect) => WebAttribute<IExpSelect, any, any>[],
+      selectVarFunc?: (x: IExpSelect) => WebAttribute<IExpSelect, any, any>[], //eslint-disable-line @typescript-eslint/no-explicit-any
       optArgs?: ExpandOptions<IExpSelect, IExpFilter>)
       : RetrieveRecord<ISelect, IExpand, IFixed, FormattedResult, IExpResult & Result> {
 
       const expand = taggedExec(exps).toString();
       this.expandKeys.push(expand);
 
-      let options: string[] = [];
+      const options: string[] = [];
       if (selectVarFunc) options.push(`$select=${parseSelects(selectVarFunc)}`);
       if (optArgs) {
         if (optArgs.top) options.push(`$top=${optArgs.top}`);
@@ -995,13 +1025,13 @@ namespace XQW {
         if (optArgs.filter) options.push(`$filter=${parseWithTransform(optArgs.filter)}`);
       }
       this.expands.push(expand + (options.length > 0 ? `(${options.join(";")})` : ""));
-      return <any>this;
+      return <any>this; //eslint-disable-line @typescript-eslint/no-explicit-any
     }
 
     getQueryString(): string {
       let prefix = `${this.entitySetName}(${this.id})`;
 
-      let options: string[] = [];
+      const options: string[] = [];
       if (this.selects.length > 0) options.push("$select=" + this.selects.join(","));
 
       if (this.expands.length > 0) options.push("$expand=" + this.expands.join(","));
@@ -1017,7 +1047,7 @@ namespace XQW {
      */
     includeFormattedValues(): Query<FormattedResult & Result> {
       this.additionalHeaders.push(FORMATTED_VALUES_HEADER);
-      return <any>this;
+      return <any>this; //eslint-disable-line @typescript-eslint/no-explicit-any
     }
 
     /**
@@ -1025,7 +1055,7 @@ namespace XQW {
      */
     includeFormattedValuesAndLookupProperties(): Query<(FormattedResult & Result)[]> {
       this.additionalHeaders.push(INCLUDE_ANNOTATIONS_HEADER);
-      return <any>this;
+      return <any>this; //eslint-disable-line @typescript-eslint/no-explicit-any
     }
   }
 
@@ -1038,14 +1068,16 @@ namespace XQW {
      */
     private entitySetName: string;
 
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor(entityPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<ICreate, any, any>, private record?: ICreate) {
       super("POST");
       this.entitySetName = taggedExec(entityPicker).toString();
     }
 
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected handleResponse(req: XMLHttpRequest, successCallback: (r: string) => any, errorCallback: (e: Error) => any) {
-      let header = req.getResponseHeader("OData-EntityId");
-      if (header) successCallback(header!.substr(-37, 36));
+      const header = req.getResponseHeader("OData-EntityId");
+      if (header !== null) successCallback(header.substr(-37, 36));
       else errorCallback(new Error("No valid OData-EntityId found in header."));
     }
 
@@ -1070,12 +1102,14 @@ namespace XQW {
      */
     private entitySetName: string;
 
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor(entityPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, any>, private id?: string) {
       super("DELETE");
       this.id = id !== undefined ? stripGUID(id) : id;
       this.entitySetName = taggedExec(entityPicker).toString();
     }
 
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected handleResponse(req: XMLHttpRequest, successCallback: (x?: undefined) => any) {
       successCallback();
     }
@@ -1099,12 +1133,14 @@ namespace XQW {
      */
     private entitySetName: string;
 
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     constructor(entityPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, IUpdate, any>, private id?: string, private record?: IUpdate) {
       super("PATCH");
       this.id = id !== undefined ? stripGUID(id) : id;
       this.entitySetName = taggedExec(entityPicker).toString();
     }
 
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected handleResponse(req: XMLHttpRequest, successCallback: (x?: undefined) => any) {
       successCallback();
     }
@@ -1132,14 +1168,14 @@ namespace XQW {
     private entitySetNameTarget: string;
     private targetId: string;
     private relation: string;
-    private record: any;
+    private record: any; //eslint-disable-line @typescript-eslint/no-explicit-any
 
     constructor(
-      entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>,
+      entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>, //eslint-disable-line @typescript-eslint/no-explicit-any
       private id: string,
-      entityTargetPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, ISelect>,
+      entityTargetPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, ISelect>, //eslint-disable-line @typescript-eslint/no-explicit-any
       targetid: string,
-      relationPicker: (x: ISingle) => WebMappingRetrieve<ISelect, any, any, any, any, any>) {
+      relationPicker: (x: ISingle) => WebMappingRetrieve<ISelect, any, any, any, any, any>) { //eslint-disable-line @typescript-eslint/no-explicit-any
       super("PUT");
       this.entitySetName = taggedExec(entityPicker).toString();
       this.id = id !== undefined ? stripGUID(id) : id;
@@ -1150,11 +1186,12 @@ namespace XQW {
       this.record["_id$" + this.entitySetNameTarget] = this.targetId;
     }
 
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected handleResponse(req: XMLHttpRequest, successCallback: (x?: undefined) => any) {
       successCallback();
     }
 
-    setData(id: string, record: any) {
+    setData(id: string, record: any) { //eslint-disable-line @typescript-eslint/no-explicit-any
       this.id = stripGUID(id);
       this.record = record;
       return this;
@@ -1177,14 +1214,14 @@ namespace XQW {
     private entitySetNameTarget: string;
     private targetId: string;
     private relation: string;
-    private record: any;
+    private record: any; //eslint-disable-line @typescript-eslint/no-explicit-any
 
     constructor(
-      entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>,
+      entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>, //eslint-disable-line @typescript-eslint/no-explicit-any
       private id: string,
-      entityTargetPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, ISelect>,
+      entityTargetPicker: (x: WebEntitiesCUDA) => WebMappingCUDA<any, any, ISelect>, //eslint-disable-line @typescript-eslint/no-explicit-any
       targetid: string,
-      relationPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, any, any, any, any, any>) {
+      relationPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, any, any, any, any, any>) { //eslint-disable-line @typescript-eslint/no-explicit-any
       super("POST");
       this.entitySetName = taggedExec(entityPicker).toString();
       this.id = id !== undefined ? stripGUID(id) : id;
@@ -1195,10 +1232,12 @@ namespace XQW {
       this.record["_id$" + this.entitySetNameTarget] = this.targetId;
     }
 
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected handleResponse(req: XMLHttpRequest, successCallback: (x?: undefined) => any) {
       successCallback();
     }
 
+    //eslint-disable-next-line @typescript-eslint/no-explicit-any
     setData(id: string, record: any) {
       this.id = stripGUID(id);
       this.record = record;
@@ -1215,6 +1254,7 @@ namespace XQW {
   /**
    * Contains information about a Disassociate query
    */
+  //eslint-disable-next-line @typescript-eslint/no-unused-vars
   export class DisassociateRecord<ISelect> extends Query<undefined> {
     /**
      * @internal
@@ -1225,16 +1265,16 @@ namespace XQW {
 
 
     static Single<ISingle, ISelect>(
-      entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>,
+      entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<ISingle, any>, //eslint-disable-line @typescript-eslint/no-explicit-any
       id: string,
-      relationPicker: (x: ISingle) => WebMappingRetrieve<ISelect, any, any, any, any, any>) {
+      relationPicker: (x: ISingle) => WebMappingRetrieve<ISelect, any, any, any, any, any>) { //eslint-disable-line @typescript-eslint/no-explicit-any
       return new DisassociateRecord<ISelect>(taggedExec(entityPicker).toString(), id, taggedExec(relationPicker).toString());
     }
 
     static Collection<IMultiple, ISelect>(
-      entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>,
+      entityPicker: (x: WebEntitiesRelated) => WebMappingRelated<any, IMultiple>, //eslint-disable-line @typescript-eslint/no-explicit-any
       id: string,
-      relationPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, any, any, any, any, any>,
+      relationPicker: (x: IMultiple) => WebMappingRetrieve<ISelect, any, any, any, any, any>, //eslint-disable-line @typescript-eslint/no-explicit-any
       targetId: string) {
       return new DisassociateRecord<ISelect>(taggedExec(entityPicker).toString(), id, taggedExec(relationPicker).toString(), targetId);
     }
@@ -1247,7 +1287,7 @@ namespace XQW {
       this.targetId = targetid !== undefined ? stripGUID(targetid) : targetid;
     }
 
-    protected handleResponse(req: XMLHttpRequest, successCallback: (x?: undefined) => any) {
+    protected handleResponse(req: XMLHttpRequest, successCallback: (x?: undefined) => any) { //eslint-disable-line @typescript-eslint/no-explicit-any
       successCallback();
     }
 
@@ -1270,12 +1310,14 @@ namespace XQW {
   /**
    * @internal
    */
+  //eslint-disable-next-line no-inner-declarations
   function startsWith(needle: string, haystack: string) {
     return haystack.lastIndexOf(needle, 0) === 0;
   }
   /**
    * @internal
    */
+  //eslint-disable-next-line no-inner-declarations, @typescript-eslint/no-explicit-any
   function taggedExec<T>(f: (x: any) => T, transformer?: (x: string) => string): T {
     return f(tagMatches(f, transformer));
   }
@@ -1290,11 +1332,13 @@ namespace XQW {
   // 5: either "=> {" or "=>" or "{" is required but ignored
   // 6: Get Body of function which may or may not end with a "}"
   //           (      1       )(2)(      3      )(4)(         5          )(        6       )
-  var fPatt = /(?:function)*\s*\(?([a-zA-Z0-9_]+)\)?(?:\s?=>\s?\{?|\s?\{)+([\s\S]*[^\}])\}?$/m;
+  //eslint-disable-next-line no-useless-escape
+  const fPatt = /(?:function)*\s*\(?([a-zA-Z0-9_]+)\)?(?:\s?=>\s?\{?|\s?\{)+([\s\S]*[^\}])\}?$/m;
 
   /**
    * @internal
    */
+  //eslint-disable-next-line no-inner-declarations
   function objRegex(oName: string) {
     return new RegExp("\\b" + oName + "\\.([a-zA-Z_$][0-9a-zA-Z_$]*)(\\.([a-zA-Z_$][0-9a-zA-Z_$]*))?", "g");
   }
@@ -1302,8 +1346,9 @@ namespace XQW {
   /**
    * @internal
    */
-  function analyzeFunc(f: (x: any) => any) {
-    let m = f.toString().match(fPatt);
+  //eslint-disable-next-line no-inner-declarations
+  function analyzeFunc(f: (x: any) => any) { //eslint-disable-line @typescript-eslint/no-explicit-any
+    const m = f.toString().match(fPatt);
     if (!m) throw new Error(`XrmQuery: Unable to properly parse function: ${f.toString()}`);
     return { arg: m[1], body: m[2] };
   }
@@ -1311,13 +1356,14 @@ namespace XQW {
   /**
    * @internal
    */
-  function tagMatches(f: (x: any) => any, transformer?: (x: string) => string) {
-    let funcInfo = analyzeFunc(f);
-    let regex = objRegex(funcInfo.arg);
+  //eslint-disable-next-line no-inner-declarations
+  function tagMatches(f: (x: any) => any, transformer?: (x: string) => string) { //eslint-disable-line @typescript-eslint/no-explicit-any
+    const funcInfo = analyzeFunc(f);
+    const regex = objRegex(funcInfo.arg);
 
-    let transformerFunc = transformer ? transformer : (x: string) => x;
-    let obj: { [k: string]: any } = {};
-    let match: any;
+    const transformerFunc = transformer ? transformer : (x: string) => x;
+    const obj: { [k: string]: any } = {}; //eslint-disable-line @typescript-eslint/no-explicit-any
+    let match: any; //eslint-disable-line @typescript-eslint/no-explicit-any
     while ((match = regex.exec(funcInfo.body)) != null) {
       if (!obj[match[1]]) {
         obj[match[1]] = XQW.makeTag(transformerFunc(match[1]));
@@ -1332,7 +1378,7 @@ namespace XQW {
   /**
    * @internal
    */
-  export var ApiUrl: string | null = null;
+  export let ApiUrl: string | null = null;
   const DefaultApiVersion = "9.2";
 
   export function getDefaultUrl(v: string) {
@@ -1343,10 +1389,11 @@ namespace XQW {
     return ApiUrl;
   }
 
-  declare var Xrm: any;
+  declare let Xrm: any; //eslint-disable-line @typescript-eslint/no-explicit-any
   /**
    * @internal
    */
+  //eslint-disable-next-line no-inner-declarations
   function getClientUrl() {
     let url = getClientUrlFromGlobalContext();
     if (url !== undefined) return url;
@@ -1361,12 +1408,13 @@ namespace XQW {
   /**
    * @internal
    */
+  //eslint-disable-next-line no-inner-declarations
   function getClientUrlFromGlobalContext() {
     try {
       if (GetGlobalContext && GetGlobalContext().getClientUrl) {
         return GetGlobalContext().getClientUrl() as string;
       }
-    } catch (e) { }
+    } catch (e) { /* */ }
 
     return undefined;
   }
@@ -1374,20 +1422,21 @@ namespace XQW {
   /**
    * @internal
    */
+  //eslint-disable-next-line no-inner-declarations
   function getClientUrlFromUtility() {
     try {
       if (Xrm && Xrm.Utility && Xrm.Utility.getGlobalContext) {
         return Xrm.Utility.getGlobalContext().getClientUrl() as string;
       }
-    } catch (e) { }
+    } catch (e) { /* */ }
     try {
       if (window && window.parent && window.parent.window) {
-        const w = <typeof window & { Xrm: any; }>(window.parent.window);
+        const w = <typeof window & { Xrm: any; }>(window.parent.window); //eslint-disable-line @typescript-eslint/no-explicit-any
         if (w && w.Xrm && w.Xrm.Utility && w.Xrm.Utility.getGlobalContext) {
           return w.Xrm.Utility.getGlobalContext().getClientUrl() as string;
         }
       }
-    } catch (e) { }
+    } catch (e) { /* */ }
 
     return undefined;
   }
@@ -1395,12 +1444,13 @@ namespace XQW {
   /**
    * @internal
    */
+  //eslint-disable-next-line no-inner-declarations
   function getClientUrlFromXrmPage() {
     try {
       if (Xrm && Xrm.Page && Xrm.Page.context) {
         return Xrm.Page.context.getClientUrl() as string;
       }
-    } catch (e) { }
+    } catch (e) { /* */ }
 
     return undefined;
   }
@@ -1409,6 +1459,7 @@ namespace XQW {
    * Converts a XrmQuery select/filter name to the Web API format
    * @param name
    */
+  //eslint-disable-next-line no-inner-declarations
   function xrmQueryToCrm(name: string) {
     // check if the attribute name ends with '_guid'
     const endsWithUnderscoreGuid = name.match(/_guid$/);
@@ -1421,14 +1472,16 @@ namespace XQW {
    * Helper function to perform tagged execution and mapping to array of selects
    * @internal
    */
+  //eslint-disable-next-line no-inner-declarations, @typescript-eslint/no-explicit-any
   function parseSelects(selectFunc: (x: any) => any[]): string[] {
-    return parseWithTransform(selectFunc).map((x: any) => x.toString());
+    return parseWithTransform(selectFunc).map((x: any) => x.toString()); //eslint-disable-line @typescript-eslint/no-explicit-any
   }
 
   /**
    * Parses a given function and transforms any XrmQuery-specific values to it's corresponding CRM format
    * @param filterFunc
    */
+  //eslint-disable-next-line no-inner-declarations, @typescript-eslint/no-explicit-any
   function parseWithTransform(filterFunc: (x: any) => any) {
     return taggedExec(filterFunc, xrmQueryToCrm);
   }
@@ -1437,17 +1490,18 @@ namespace XQW {
    * Transforms an object XrmQuery format to a CRM format
    * @param obj
    */
+  //eslint-disable-next-line no-inner-declarations, @typescript-eslint/no-explicit-any
   function transformObject(obj: any) {
     if (obj instanceof Date) {
       return obj;
     } else if (typeof obj === "string" && startsWith("{", obj) && endsWith(obj, "}")) {
       return obj.substring(1, obj.length - 1);
     } else if (obj instanceof Array) {
-      var arr: any[] = [];
+      const arr: any[] = []; //eslint-disable-line @typescript-eslint/no-explicit-any
       obj.forEach((v, idx) => (arr[idx] = transformObject(v)));
       return arr;
     } else if (obj instanceof Object) {
-      var newObj = {};
+      const newObj = {};
       Object.keys(obj).forEach(key => parseAttribute(key, transformObject(obj[key]), newObj));
       return newObj;
     } else {
@@ -1460,6 +1514,7 @@ namespace XQW {
    * @param key
    * @param value
    */
+  //eslint-disable-next-line no-inner-declarations, @typescript-eslint/no-explicit-any
   function parseAttribute(key: string, val: any, newObj: any) {
     if (key.indexOf(BIND_ID) >= 0) {
       const lookupIdx = key.indexOf(BIND_ID);

@@ -1,10 +1,12 @@
-﻿/// <reference path="..\xrm.d.ts" />
+﻿// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="..\xrm.d.ts" />
 declare namespace Xrm {
   interface SubGridControl<T extends string> extends BaseControl {
     /**
      * Add event handlers to this event to run every time the subgrid refreshes.
      * This includes when users sort the values by clicking the column headings.
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     addOnLoad(functionRef: (context?: ExecutionContext<this, any>) => any): void;
 
     /**
@@ -25,6 +27,7 @@ declare namespace Xrm {
     /**
      * Use this method to remove event handlers from the GridControl.OnLoad event.
      */
+    // eslint-disable-next-line @typescript-eslint/ban-types
     removeOnLoad(reference: Function): void;
 
     /**

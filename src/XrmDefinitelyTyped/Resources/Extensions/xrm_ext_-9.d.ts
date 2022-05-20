@@ -1,5 +1,7 @@
-﻿/// <reference path="..\xrm.d.ts" />
+﻿// eslint-disable-next-line @typescript-eslint/triple-slash-reference
+/// <reference path="..\xrm.d.ts" />
 declare namespace Xrm {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface DataModule<T extends AttributeCollectionBase> {
     /**
      * Asynchronously refreshes and optionally saves all the data of the form without reloading the page.
@@ -16,6 +18,7 @@ declare namespace Xrm {
     save(saveOptions?: SaveOptions): Then<undefined>;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface SubGridControl<T extends string> extends BaseControl {
         /**
          * Use this method to get the logical name of the relationship used for the data displayed in the grid.

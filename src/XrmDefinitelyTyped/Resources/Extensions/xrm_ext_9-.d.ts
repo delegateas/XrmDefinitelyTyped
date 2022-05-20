@@ -1,11 +1,11 @@
+// eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="..\xrm.d.ts" />
 
 declare namespace Xrm {
-    var Device: Device;
-    var Encoding: Encoding;
-    var Navigation: Navigation;
-    //var UI: UI;
-    var WebApi: WebApi;
+    let Device: Device;
+    let Encoding: Encoding;
+    let Navigation: Navigation;
+    let WebApi: WebApi;
 
     interface ImageOptions {
         /**
@@ -81,8 +81,8 @@ declare namespace Xrm {
     /**
      * Interface for geo location object acquired through Xrm.Device.getCurrentPosition
      */
-    interface GeoObject {
-        coords: any;
+  interface GeoObject {
+        coords: any; // eslint-disable-line @typescript-eslint/no-explicit-any
         timestamp: number;
     }
 
@@ -620,6 +620,7 @@ declare namespace Xrm {
          * @param formParameters A dictionary object that passes extra parameters to the form.
          * See examples at: https://docs.microsoft.com/en-us/dynamics365/customer-engagement/developer/set-field-values-using-parameters-passed-form
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         openForm(entityFormOptions: EntityFormOptions, formParameters?: any): Then<OpenFormResult | undefined>;
 
         /**
@@ -642,12 +643,8 @@ declare namespace Xrm {
     /**
      * Contains methods for displaying and hiding app-level global notifications.
      */
-    interface UI {
-        /**
-         * addGlobalNotification();
-         * clearGlobalNotification();
-         */
-    }
+    // eslint-disable-next-line @typescript-eslint/no-empty-interface
+    interface UI { }
 
     interface WebApiBase {
         /**
@@ -675,6 +672,7 @@ declare namespace Xrm {
          * @param options OData system query options, $select and $expand, to retrieve your data.
          * See examples at: https://docs.microsoft.com/en-us/dynamics365/customer-engagement/developer/clientapi/reference/xrm-webapi/retrieverecord
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         retrieveRecord(entityLogicalName: string, id: string, options?: string): Promise<any>;
 
         /**
@@ -686,6 +684,7 @@ declare namespace Xrm {
          * @param maxPageSize Specify a positive number that indicates the number of entity records to be returned per page. If you do not specify this parameter, the default value is passed as 5000.
          * If the number of records being retrieved is more than the specified maxPageSize value, nextLink attribute in the returned promise object will contain a link to retrieve the next set of entities.
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         retrieveMultipleRecords(entityLogicalName: string, options?: string, maxPageSize?: number): Promise<any>;
 
         /**
@@ -708,6 +707,7 @@ declare namespace Xrm {
         isAvailableOffline(entityLogicalName: string): boolean;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-interface
     interface WebApiResponse extends Response { }
 
     interface WebApiOnline extends WebApiBase {
@@ -717,6 +717,7 @@ declare namespace Xrm {
          * @param request Object that will be passed to the Web API endpoint to execute an action, function, or CRUD request.
          * The object exposes a getMetadata method that lets you define the metadata for the action, function or CRUD request you want to execute.
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         execute(request: any): Promise<WebApiResponse>;
 
         /**
@@ -727,6 +728,7 @@ declare namespace Xrm {
          * We recommend using XrmQuery instead of this interface.
          * @param requests An array of requests and changesets. Requests are the same as for execute. Changesets are arrays of requests that will be executed in transaction.
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         executeMultiple(requests: any): Promise<WebApiResponse[]>;
     }
 
@@ -822,6 +824,7 @@ declare namespace Xrm {
          * @param entityName The logical name of the entity.
          * @param attributes The attributes to get metadata for.
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         getEntityMetadata(entityName: string, attributes?: string[]): Promise<any>;
 
         /**
@@ -847,6 +850,7 @@ declare namespace Xrm {
          * @param name of the process action to invoke.
          * @param parameters An object containing input parameters for the action. You define an object using key:value pairs of items, where key is of String type.
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         invokeProcessAction(name: string, parameters?: any): Promise<undefined>;
 
         /**
@@ -869,8 +873,10 @@ declare namespace Xrm {
         showProgressIndicator(message: string): void;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-interface, @typescript-eslint/no-explicit-any
     interface PreProcessStatusChangeContext extends ExecutionContext<Process, any> { }
 
+    // eslint-disable-next-line @typescript-eslint/no-empty-interface
     interface PreStageChangeContext extends ExecutionContext<Stage, StageChangeEventArguments> { }
 
     interface ProcessInstanceContext {
@@ -894,12 +900,14 @@ declare namespace Xrm {
          *                event handler.
          * This client API is only supported on the Unified Client. The legacy web client does not support this client API.
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         addOnPreProcessStatusChange(handler: (context?: PreProcessStatusChangeContext) => any): void;
 
         /**
          * Removes an event handler from the OnPreProcessStatusChange event.
          * @param handler The function to be removed from the OnPreProcessStatusChange event.
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         removeOnPreProcessStatusChange(handler: (context?: PreProcessStatusChangeContext) => any): void;
 
         /**
@@ -913,12 +921,14 @@ declare namespace Xrm {
          *                event handler.
          * This client API is only supported on the Unified Client. The legacy web client does not support this client API.
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         addOnPreStageChange(handler: (context?: PreStageChangeContext) => any): void;
 
         /**
          * Removes an event handler from the OnPreStageChange event.
          * @param handler The function to be removed from the OnPreStageChange event.
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         removeOnPreStageChange(handler: (context?: PreStageChangeContext) => any): void;
 
         /**
@@ -926,6 +936,7 @@ declare namespace Xrm {
          * @param handler The callback function is passed an object with the following attributes
          *                and their corresponding values as the key: value pair.
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         getProcessInstances(callbackFunction: (context?: ProcessInstanceContext) => any): void;
 
         /**
@@ -933,6 +944,7 @@ declare namespace Xrm {
          * @param processInstanceid The Id of the process instance to set as the active instance.
          * @param callbackFunction A function to call when the operation is complete. This callback function is passed either string "succes" or "invalid" to indicate whether the operation succeeded:
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         setActiveProcessInstance(processInstanceId: string, callbackFunction?: (succesOrInvalid: "success" | "invalid") => any): void;
 
         /**
@@ -942,12 +954,14 @@ declare namespace Xrm {
          * @param callback A function to call when the operation is complete. This callback function is passed one of the following string
          *    values to indicate whether the operation succeeded. Is "success" or "invalid".
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         setActiveProcess(processId: string, callback?: (successOrInvalid: "success" | "invalid") => any): void;
     }
 
     /**
      * Form executionContext
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface ExecutionContext<TSource, TArgs> {
         getFormContext(): Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>;
     }
@@ -972,6 +986,7 @@ declare namespace Xrm {
         /**
          * Adds a function to be called when form data is loaded.
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         addOnLoad(myFunction: (context?: OnLoadEventContext) => any): void;
 
         /**
@@ -987,6 +1002,7 @@ declare namespace Xrm {
         /**
          * Removes a function to be called when form data is loaded.
          */
+        // eslint-disable-next-line @typescript-eslint/ban-types
         removeOnLoad(myFunction: Function): void;
 
         /**
@@ -1015,6 +1031,7 @@ declare namespace Xrm {
     /**
      * Interface for the entity on a form.
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface PageEntity<T extends AttributeCollectionBase> {
         /**
          * Returns a lookup value that references the record.
@@ -1035,6 +1052,7 @@ declare namespace Xrm {
     /**
      * Interface for an standard entity attribute.
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface Attribute<T> {
 
         /**
@@ -1046,18 +1064,21 @@ declare namespace Xrm {
     /**
      * Interface for the ui of a form.
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface UiModule<T extends TabCollectionBase, U extends ControlCollectionBase> {
         /**
          * Adds a function to be called on the form OnLoad event.
          * @param myFunction The function to be executed on the form OnLoad event. The function will be added to the bottom of the event handler pipeline.
          * The execution context is automatically passed as the first parameter to the function. See Execution context for more information.
          */
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         addOnLoad(myFunction: (context?: OnLoadEventContext) => any): void;
 
         /**
          * Removes a function from the form OnLoad event.
          * @param myFunction The function to be removed from the form OnLoad event.
          */
+        // eslint-disable-next-line @typescript-eslint/ban-types
         removeOnLoad(myFunction: Function): void;
     }
 
@@ -1305,6 +1326,7 @@ declare namespace Xrm {
         MobileApplication = 1,
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface SubGridControl<T extends string> extends BaseControl {
         /**
          * Gets the FetchXML query that represents the current data, including filtered and sorted data, in the grid control.
@@ -1359,9 +1381,11 @@ declare namespace Xrm {
         attributes: GridCollection<GridEntityAttribute<T>>;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-interface
     interface GridCollection<T> {
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-interface
     interface GridEntityAttribute<T extends string> {
     }
 
@@ -1369,7 +1393,7 @@ declare namespace Xrm {
 
     interface actionsObject {
         message?: string;
-        actions?: Function[];
+        actions?: Function[]; // eslint-disable-line @typescript-eslint/ban-types
     }
 
     interface AddNotificationObject {
@@ -1414,7 +1438,7 @@ declare namespace Xrm {
     }
 }
 
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface Xrm<T extends Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>> extends BaseXrm {
     Device: Xrm.Device;
     Encoding: Xrm.Encoding;
