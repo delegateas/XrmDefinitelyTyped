@@ -692,6 +692,32 @@ declare namespace Xrm {
         setSearchQuery(text: string): void;
     }
 
+    interface SaveEventArgs {
+        /**
+         * Cancels the save operation if the event handler has a script error, returns a rejected promise for an async event handler or the operation times out.
+         */
+        preventDefaultOnError(): void;
+    }
+
+    interface PostSaveEventContext extends ExecutionContext<null, PostSaveEventArgs> { }
+
+    interface PostSaveEventArgs {
+        /**
+         * Use this method to know information about a table being saved/updated. It returns table ID, and table name if success.
+         */
+        getEntityReference(): EntityReference<string>;
+
+        /**
+         * Use this method to know the error details on why a table save failed.
+         */
+        getSaveErrorInfo(): any | null; // TODO: Figure out proper typing
+
+        /**
+         * Use this method to know whether the OnSave operation is successful or failed.
+         */
+        getIsSaveSuccess(): boolean;
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface PageEntity<T extends AttributeCollectionBase> {
         /**
@@ -700,7 +726,7 @@ declare namespace Xrm {
          * The execution context is automatically passed as the first parameter to this function.
          */
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        addOnPostSave(functionRef: (context?: SaveEventContext<this>) => any): void;
+        addOnPostSave(functionRef: (context?: PostSaveEventContext) => any): void;
     }
 
     /**
