@@ -215,7 +215,7 @@ namespace XrmQuery {
     return XQW.promisifyCallback((success, error?) => sendRequest(type, queryString, data, success, error, configure));
   }
 
-  // eslint-disable-next-line no-inner-declarations
+  //eslint-disable-next-line no-inner-declarations
   function encodeSpaces(str: string): string {
     return str.replace(/ /g, "%20");
   }
