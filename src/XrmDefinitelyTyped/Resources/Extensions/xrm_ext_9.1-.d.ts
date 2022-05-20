@@ -1,8 +1,6 @@
 ﻿// eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="..\xrm.d.ts" />
 
-
-
 declare namespace Xrm {
     let App: App;
     let Panel: Panel;
@@ -57,7 +55,6 @@ declare namespace Xrm {
         type: number;
     }
     interface AppAction {
-
         /**
          * The label for the action in the message.
          */
@@ -217,7 +214,6 @@ declare namespace Xrm {
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface Attribute<T> {
-
         /**
          * Sets a value for an attribute to determine whether it is valid or invalid with a message.
          */
@@ -461,7 +457,6 @@ declare namespace Xrm {
          * @param visibility Specify true to show the control; false to hide the control.
          */
         setVisible(visibility: boolean): void;
-
     }
 
     interface QuickForms {
@@ -472,7 +467,7 @@ declare namespace Xrm {
          * For example: quickViewControl.getControl("firstname") or quickViewControl.getControl(0)
          * Returns an Object or Object collection
          */
-        getControl(arg?: string): any // eslint-disable-line @typescript-eslint/no-explicit-any
+        getControl(arg?: string): any //eslint-disable-line @typescript-eslint/no-explicit-any
         /**
          * Returns a string value that categorizes quick view controls.
          * For a quick view control, the method returns "quickform".
@@ -540,9 +535,7 @@ declare namespace Xrm {
          * @param visible Specify true or false to display or hide the control.
          */
         setVisible(visible: boolean): void;
-
     }
-
 
     type KBSeachControlMode = "Inline" | "Popout";
 
@@ -772,5 +765,92 @@ declare namespace Xrm {
 
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
     interface OnRecordSelectEventContext extends ExecutionContext<UiModule<TabCollectionBase, ControlCollectionBase>, undefined> {
+    }
+
+    const enum WebApiOperationType {
+        Action = 0,
+        Function,
+        CRUD,
+    }
+
+    const enum WebApiStructuralProperty {
+        Unknown = 0,
+        PrimitiveType,
+        ComplexType,
+        EnumerationType,
+        Collection,
+        EntityType,
+    }
+
+    interface WebApiEnumProperty {
+        name: string,
+        value: number,
+    }
+
+    interface WebApiParameterType {
+        /**
+         * The fully qualified name of the parameter type.
+         */
+        typeName: string,
+
+        /**
+         * The metadata for enum types.
+         */
+        enumProperties?: WebApiEnumProperty[],
+
+        /**
+         * The category of the parameter type.
+         */
+        structuralProperty: WebApiStructuralProperty
+    }
+
+    interface WebApiMetadataObject {
+        /**
+         * The name of the bound parameter for the action or function to execute.
+         */
+        boundParameter?: null | undefined | "entity",
+
+        /**
+         * Name of the action, function, or one of the following values if you are executing a CRUD request: "Create", "Retrieve", "Update", or "Delete".
+         */
+        operationName?: string
+
+        /**
+         * Indicates the type of operation you are executing
+         */
+        operationType?: WebApiOperationType,
+
+        /**
+         * The metadata for parameter types
+         */
+        parameterTypes: { [key: string]: WebApiParameterType }
+    }
+
+    interface WebApiRequest {
+        getMetadata(): WebApiMetadataObject
+    }
+
+    type ChangeSetRequest = WebApiRequest[];
+
+    type ExecuteMultipleRequests = (WebApiRequest | ChangeSetRequest[])[];
+
+    interface WebApiOnline extends WebApiBase {
+        /**
+         * Execute a single action, function, or CRUD operation.
+         * We recommend using XrmQuery instead of this interface.
+         * @param request Object that will be passed to the Web API endpoint to execute an action, function, or CRUD request.
+         * The object exposes a getMetadata method that lets you define the metadata for the action, function or CRUD request you want to execute.
+         */
+        execute(request: WebApiRequest): Promise<WebApiResponse>;
+
+        /**
+         * Execute a collection of action, function, or CRUD operations.
+         * If you want to execute multiple requests in a transaction, you must pass in a change set as a parameter to this method.
+         * Change sets represent a collection of operations that are executed in a transaction.
+         * You can also pass in individual requests and change sets together as parameters to this method.
+         * We recommend using XrmQuery instead of this interface.
+         * @param requests An array of requests and changesets. Requests are the same as for execute. Changesets are arrays of requests that will be executed in transaction.
+         */
+        executeMultiple(requests: ExecuteMultipleRequests): Promise<WebApiResponse[]>;
     }
 }
