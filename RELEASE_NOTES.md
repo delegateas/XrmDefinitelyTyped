@@ -1,4 +1,10 @@
 # Release Notes
+### 6.2.0 - July 8 2022
+* Use overridden API version in OData paths.
+* Switch to eslint
+* Add support for webapi requests (@mathiasbl)
+* Fixed typings for Post Save Event and added preventDefaultOnError to Save Event (@skovlund)
+
 ### 6.1.0 - March 14 2022
 * Add support for AppSidePane - https://docs.microsoft.com/en-us/powerapps/developer/model-driven-apps/clientapi/reference/xrm-app-appsidepane (@mathiasbl)
 * Typings for currentView on the view Selector (@skovlund, @mkholt)
