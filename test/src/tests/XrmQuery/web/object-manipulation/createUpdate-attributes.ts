@@ -96,11 +96,11 @@ class Web_CreateUpdate_Attributes extends FakeRequests {
     // Check request is valid 
     expect(this.requests.length).to.equal(1);
     var req = this.requests[0];
-    expect(req.url).to.equal(`contacts(SOME_CONTACT_GUID)/parentcustomerid_account/$ref`);
+    expect(req.url).to.equal(`contacts(${contactId})/parentcustomerid_account/$ref`);
     expect(req.method).to.equal("PUT");
     // Check that body was created properly
     var body = JSON.parse(req.requestBody);
-    expect(body).to.deep.equal({ '@odata.id': `/api/data/v9.2/accounts(${targetId})` })
+    expect(body).to.deep.equal({ '@odata.id': `accounts(${targetId})` })
 
     // Check that response is gotten correctly from header (no response on associate)
     req.respond(200, {}, "");
@@ -120,11 +120,11 @@ class Web_CreateUpdate_Attributes extends FakeRequests {
     // Check request is valid 
     expect(this.requests.length).to.equal(1);
     var req = this.requests[0];
-    expect(req.url).to.equal(`accounts(SOME_ACCOUNT_GUID)/dg_account_contact/$ref`);
+    expect(req.url).to.equal(`accounts(${accountId})/dg_account_contact/$ref`);
     expect(req.method).to.equal("POST");
     // Check that body was created properly
     var body = JSON.parse(req.requestBody);
-    expect(body).to.deep.equal({ '@odata.id': `/api/data/v9.2/contacts(${targetId})` })
+    expect(body).to.deep.equal({ '@odata.id': `contacts(${targetId})` })
 
     // Check that response is gotten correctly from header (no response on associate)
     req.respond(200, {}, "");

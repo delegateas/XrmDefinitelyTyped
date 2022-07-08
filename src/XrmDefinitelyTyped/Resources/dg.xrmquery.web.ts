@@ -1526,7 +1526,7 @@ namespace XQW {
       const lookupIdx = key.indexOf(ID_ID);
       if (lookupIdx >= 0) {
         const setName = key.substr(lookupIdx + ID_ID.length);
-        const url = getDefaultUrl(DefaultApiVersion);
+        const url = getApiUrl();
         newObj[`${key.substr(0, lookupIdx)}@odata.id`] = `${url}${setName}(${val})`;
       }
     } else {
