@@ -91,7 +91,7 @@ let versionExtendFile crmVersion gSettings outputDir (resName,fileName) preffix 
   |> Seq.map (getResourceLines >> stripReferenceLines)
   |> (getResourceLines resName |> Seq.singleton |> Seq.append)
   |> List.concat
-  |> Seq.map (fun l -> l.Replace("#XRMNS#", gSettings.xrmNs))
+  |> Seq.map (fun l -> l.Replace("_XRMNS_", gSettings.xrmNs))
   |> fun lines -> 
     File.WriteAllLines(
     sprintf "%s/%s" outputDir fileName, lines

@@ -212,8 +212,8 @@ let getControlFuncs (controls: XrmFormControl list) (crmVersion: Version) (xrmNs
   
   let delegateFunc =
     Function.Create("getControl",
-      [ Variable.Create("delegateFunction", TsType.Custom("Xrm.Collection.MatchingDelegate<Xrm.Control<any>>"))],
-      TsType.Custom("Xrm.Control<any>[]"))
+      [ Variable.Create("delegateFunction", TsType.Custom(sprintf "%s.Collection.MatchingDelegate<%s.Control<any>>" xrmNs xrmNs))],
+      TsType.Custom(sprintf "%s.Control<any>[]" xrmNs))
   
   ctrlFuncs @ [ defaultFunc; delegateFunc ]
 

@@ -100,6 +100,12 @@ type Args private () =
       altCommands=["vi"]
       description="Comma-separated list of named semicolon-separated lists of view GUIDs that should be intersected. "
       required=false }
+
+    { command = "xrmNamespace"
+      altCommands = ["xrmNs"]
+      description = "Namespace to use instead of Xrm."
+      required = false
+    }
   ]
 
   static member connectionArgs = [
