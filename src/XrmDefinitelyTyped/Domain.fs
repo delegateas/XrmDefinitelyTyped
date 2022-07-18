@@ -45,6 +45,7 @@ type XdtGenerationSettings = {
   viewIntersects: Intersect [] option
   labelMapping: (string * string)[] option
   generateMappings: bool
+  xrmNs: string
 }
 
 type EntityName = string

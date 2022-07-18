@@ -91,9 +91,11 @@ let versionExtendFile crmVersion gSettings outputDir (resName,fileName) preffix 
   |> Seq.map (getResourceLines >> stripReferenceLines)
   |> (getResourceLines resName |> Seq.singleton |> Seq.append)
   |> List.concat
+  |> Seq.map (fun l -> l.Replace("#XRMNS#", gSettings.xrmNs))
   |> fun lines -> 
-  File.WriteAllLines(
-    sprintf "%s/%s" outputDir fileName, lines)
+    File.WriteAllLines(
+    sprintf "%s/%s" outputDir fileName, lines
+    )
 
 let generateJSExtResourceFiles crmVersion gSettings =
 
@@ -258,7 +260,7 @@ let generateWebEntityDefs ns state =
   defs
 
 /// Generate the Form definitions
-let generateFormDefs state crmVersion generateMappings = 
+let generateFormDefs state crmVersion xdtSettings = 
   printf "Generation Form definitions..."
   let getFormType xrmForm = xrmForm.formType ?|> sprintf "/%s" ?| ""
   
@@ -275,7 +277,7 @@ let generateFormDefs state crmVersion generateMappings =
     |> Array.filter (fun (form: XrmForm) -> form.formType.IsNone || (form.formType.IsSome && form.formType.Value <> "Card" && form.formType.Value <> "InteractionCentricDashboard" && form.formType.Value <> "TaskFlowForm"))
     |> Array.Parallel.map (fun xrmForm -> 
          let path = sprintf "%s/Form/%s%s" state.outputDir xrmForm.entityName (getFormType xrmForm)
-         let lines = getFormDts xrmForm crmVersion generateMappings
+         let lines = getFormDts xrmForm crmVersion xdtSettings
          sprintf "%s/%s.d.ts" path xrmForm.name, lines)
 
   printfn "Done!"

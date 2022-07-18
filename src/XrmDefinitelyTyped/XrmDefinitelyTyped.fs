@@ -43,6 +43,7 @@ type XrmDefinitelyTyped private () =
         viewIntersects = viewintersects
         labelMapping = labelMapping
         generateMappings = generateMapping ?| false
+        xrmNs = "Xrm"
        }
     
     XrmDefinitelyTyped.GenerateFromCrm(xrmAuth, rSettings, gSettings)
