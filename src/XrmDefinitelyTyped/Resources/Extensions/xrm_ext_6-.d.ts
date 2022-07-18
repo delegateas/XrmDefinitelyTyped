@@ -1,6 +1,6 @@
 ﻿// eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="..\xrm.d.ts" />
-declare namespace Xrm {
+declare namespace _XRMNS_ {
   interface BaseControl {
     /**
      * Display a message near the control to indicate that data isn?t valid. When this method is used on Microsoft Dynamics CRM for tablets a red "X" icon appears next to the control. Tapping on the icon will display the message.

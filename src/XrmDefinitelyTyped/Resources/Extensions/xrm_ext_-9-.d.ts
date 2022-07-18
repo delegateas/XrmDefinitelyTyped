@@ -1,7 +1,7 @@
 ﻿// eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="..\xrm.d.ts" />
-declare namespace Xrm {
-  let Page: Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>;
+declare namespace _XRMNS_ {
+  let Page: _XRMNS_.PageBase<_XRMNS_.AttributeCollectionBase, _XRMNS_.TabCollectionBase, _XRMNS_.ControlCollectionBase>;
   /**
    * Interface for the base of an Xrm.Page
    */
@@ -10,7 +10,7 @@ declare namespace Xrm {
     /**
      * The context of the page.
      */
-    context: Xrm.context;
+    context: _XRMNS_.context;
   }
 
   interface context {
@@ -98,7 +98,7 @@ declare namespace Xrm {
   }
 }
 
-interface Xrm<T extends Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>> extends BaseXrm {
+interface _XRMNS_<T extends _XRMNS_.PageBase<_XRMNS_.AttributeCollectionBase, _XRMNS_.TabCollectionBase, _XRMNS_.ControlCollectionBase>> extends BaseXrm {
   /**
    * The Xrm.Page object model, which contains data about the current page.
    */
