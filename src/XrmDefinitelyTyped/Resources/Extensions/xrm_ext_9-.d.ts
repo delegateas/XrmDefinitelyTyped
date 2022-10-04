@@ -524,6 +524,29 @@ declare namespace Xrm {
          */
         dashboardId?: string;
     }
+    
+    interface Custom {
+        /**
+         * The type of the page.
+         */
+        pageType: "custom";
+
+        /**
+         * Logical name of the custom page
+         */
+        name: string;
+
+        /**
+         * Logical name of the entity to display the form for.
+         */
+        entityName?: string;
+
+        /**
+         * ID of the table record to be made available in the custom page via Param("recordId").
+         */
+        recordId?: string;
+    }
+    
     const enum NavigationOptionsTarget {
         PageInline = 1,
         Dialog = 2,
@@ -584,7 +607,7 @@ declare namespace Xrm {
          * @param pageInput Input about the page to navigate to. The object definition changes depending on the type of page to navigate to: entity list or HTML web resource.
          * @param navigationOptions Options for navigating to a page: whether to open inline or in a dialog. If you don't specify this parameter, page is opened inline by default.
          */
-        navigateTo(pageInput: EntityRecord | EntityList | WebResource| Dashboard, navigationOptions?: NavigationOptions): Promise<undefined>;
+        navigateTo(pageInput: EntityRecord | EntityList | WebResource | Dashboard | Custom, navigationOptions?: NavigationOptions): Promise<undefined>;
 
         /**
          * Displays an alert dialog containing a message and a button.
