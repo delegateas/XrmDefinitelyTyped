@@ -525,19 +525,19 @@ declare namespace Xrm {
         dashboardId?: string;
     }
     
-    interface Custom {
+    interface CustomPage {
         /**
          * The type of the page.
          */
         pageType: "custom";
 
         /**
-         * Logical name of the custom page
+         * The logical name of the custom page to open.
          */
         name: string;
 
         /**
-         * Logical name of the entity to display the form for.
+         * The logical name of the table to be made available in the custom page via Param("entityName").
          */
         entityName?: string;
 
@@ -588,12 +588,12 @@ declare namespace Xrm {
         height?: number | SizeValue;
 
         /**
-         * Number. Specify 1 to open the dialog in center; 2 to open the dialog on the side. Default is 1 (center).
+         * Specify 1 to open the dialog in center; 2 to open the dialog on the side. Default is 1 (center).
          */
         position?: NavigationOptionsPosition;
 
         /**
-         * String. The dialog title on top of the center or side dialog.
+         * The dialog title on top of the center or side dialog.
          */
         title?: string;
     }
@@ -607,7 +607,7 @@ declare namespace Xrm {
          * @param pageInput Input about the page to navigate to. The object definition changes depending on the type of page to navigate to: entity list or HTML web resource.
          * @param navigationOptions Options for navigating to a page: whether to open inline or in a dialog. If you don't specify this parameter, page is opened inline by default.
          */
-        navigateTo(pageInput: EntityRecord | EntityList | WebResource | Dashboard | Custom, navigationOptions?: NavigationOptions): Promise<undefined>;
+        navigateTo(pageInput: EntityRecord | EntityList | WebResource | Dashboard | CustomPage, navigationOptions?: NavigationOptions): Promise<undefined>;
 
         /**
          * Displays an alert dialog containing a message and a button.
