@@ -1,4 +1,4 @@
-﻿declare namespace Xrm {
+﻿declare namespace _XRMNS_ {
   /**
    * Enum which corresponds to the values of Xrm.Page.ui.getFormType()
    */
@@ -411,7 +411,7 @@
   }
 
   //eslint-disable-next-line @typescript-eslint/no-explicit-any
-  interface Control<T extends Xrm.Attribute<any>> extends BaseControl {
+  interface Control<T extends _XRMNS_.Attribute<any>> extends BaseControl {
     /**
      * Get the attribute this control is bound to.
      */
@@ -1114,12 +1114,12 @@
     /**
      * Data on the page.
      */
-    data: Xrm.DataModule<T>;
+    data: _XRMNS_.DataModule<T>;
 
     /**
      * UI of the page.
      */
-    ui: Xrm.UiModule<U, V>;
+    ui: _XRMNS_.UiModule<U, V>;
 
     /**
      * Returns string with current page URL.
@@ -1134,28 +1134,28 @@
     /**
      * Generic getAttribute
      */
-    getAttribute(attrName: string): Xrm.Attribute<any> | undefined; //eslint-disable-line @typescript-eslint/no-explicit-any
+    getAttribute(attrName: string): _XRMNS_.Attribute<any> | undefined; //eslint-disable-line @typescript-eslint/no-explicit-any
 
     /**
      * Generic getControl
      */
-    getControl(ctrlName: string): Xrm.AnyControl | undefined;
+    getControl(ctrlName: string): _XRMNS_.AnyControl | undefined;
   }
 }
 
-type BaseXrm = typeof Xrm;
+type BaseXrm = typeof _XRMNS_;
 /**
  * Client-side xRM object model.
  */
 //eslint-disable-next-line @typescript-eslint/no-unused-vars
-interface Xrm<T extends Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>> extends BaseXrm {
+interface _XRMNS_<T extends _XRMNS_.PageBase<_XRMNS_.AttributeCollectionBase, _XRMNS_.TabCollectionBase, _XRMNS_.ControlCollectionBase>> extends BaseXrm {
   /**
    * Various utility functions can be found here.
    */
-  Utility: Xrm.Utility;
+  Utility: _XRMNS_.Utility;
 }
 
-declare namespace Xrm {
+declare namespace _XRMNS_ {
   let Utility: Utility;
 
   /**

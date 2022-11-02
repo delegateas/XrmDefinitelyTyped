@@ -87,6 +87,7 @@ let getGenerationSettings parsedArgs =
     viewIntersects = intersects "viewintersect"
     labelMapping = labelMapping
     generateMappings = getArg parsedArgs "generateMappings" parseBoolish ?| false
+    xrmNs = getArg parsedArgs "xrmNamespace" nsSanitizer ?| "Xrm"
   }
 
 

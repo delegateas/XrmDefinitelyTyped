@@ -1,6 +1,6 @@
 ﻿// eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="..\xrm.d.ts" />
-declare namespace Xrm {
+declare namespace _XRMNS_ {
   interface Utility {
     /**
      * Displays a dialog box containing an application-defined message.

@@ -1,6 +1,6 @@
 ﻿// eslint-disable-next-line @typescript-eslint/triple-slash-reference 
 /// <reference path="..\xrm.d.ts" />
-declare namespace Xrm {
+declare namespace _XRMNS_ {
     interface StringControl extends Control<Attribute<string>> {
         /**
          * Use this to add a function as an event handler for the keypress event so that the function is called when you type a character in the specific text field.

@@ -1,6 +1,6 @@
 ﻿// eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="..\xrm.d.ts" />
-declare namespace Xrm {
+declare namespace _XRMNS_ {
   interface SubGridControl<T extends string> extends BaseControl {
     /**
      * Add event handlers to this event to run every time the subgrid refreshes.
@@ -78,7 +78,7 @@ declare namespace Xrm {
     /**
      * Returns an entity reference for the record in the row.
      */
-    getEntityReference(): Xrm.EntityReference<T>;
+    getEntityReference(): _XRMNS_.EntityReference<T>;
 
     /**
      * Returns the id for the record in the row.

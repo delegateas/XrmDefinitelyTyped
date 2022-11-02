@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/triple-slash-reference
 /// <reference path="..\xrm.d.ts" />
 
-declare namespace Xrm {
+declare namespace _XRMNS_ {
     let Device: Device;
     let Encoding: Encoding;
     let Navigation: Navigation;
@@ -635,7 +635,7 @@ declare namespace Xrm {
          * @param file An object describing the file to open.
          * @param openFileOptions Specify whether to open or save the file.
          */
-        openFile(file: Xrm.File, openFileOptions?: OpenFileOptions): void;
+      openFile(file: _XRMNS_.File, openFileOptions?: OpenFileOptions): void;
 
         /**
          * Opens an entity form or a quick create form.
@@ -986,7 +986,7 @@ declare namespace Xrm {
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface ExecutionContext<TSource, TArgs> {
-        getFormContext(): Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>;
+        getFormContext(): _XRMNS_.PageBase<_XRMNS_.AttributeCollectionBase, _XRMNS_.TabCollectionBase, _XRMNS_.ControlCollectionBase>;
     }
 
     interface SaveOptions {
@@ -1462,10 +1462,10 @@ declare namespace Xrm {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-interface Xrm<T extends Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>> extends BaseXrm {
-    Device: Xrm.Device;
-    Encoding: Xrm.Encoding;
-    Navigation: Xrm.Navigation;
-    //UI: Xrm.UI;
-    WebApi: Xrm.WebApi;
+interface _XRMNS_<T extends _XRMNS_.PageBase<_XRMNS_.AttributeCollectionBase, _XRMNS_.TabCollectionBase, _XRMNS_.ControlCollectionBase>> extends BaseXrm {
+    Device: _XRMNS_.Device;
+    Encoding: _XRMNS_.Encoding;
+    Navigation: _XRMNS_.Navigation;
+    //UI: _XRMNS_.UI;
+    WebApi: _XRMNS_.WebApi;
 }

@@ -1,4 +1,7 @@
 # Release Notes
+### 6.3.0 - July 18 2022
+* Added support for custom Xrm namespace.
+
 ### 6.2.0 - July 8 2022
 * Use overridden API version in OData paths.
 * Switch to eslint
