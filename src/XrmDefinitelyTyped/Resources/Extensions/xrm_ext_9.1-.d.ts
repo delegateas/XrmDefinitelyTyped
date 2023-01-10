@@ -326,7 +326,7 @@ declare namespace Xrm {
          * You can retrieve a quick view control in the quickForms collection by using the get method by specifying
          * either the index value (integer) or name (string) of the quick view control as the argument:
          */
-        quickForms: QuickForms;
+        quickForms: Collection<QuickForms>;
 
         /**
          * A tab is a group of sections on a page. It contains properties and methods to manipulate tabs
