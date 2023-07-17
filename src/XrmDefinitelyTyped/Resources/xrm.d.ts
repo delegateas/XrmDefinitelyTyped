@@ -484,7 +484,12 @@
     /**
      * Returns the value of the data query string parameter passed to a web resource.
      */
-    getData(): string;
+      getData(): string;
+
+     /**
+     *Returns the content window that represents a web resource.
+     */
+      getContentWindow(): Promise<any>;
 
     /**
      * Sets the value of the data query string parameter passed to a web resource.
@@ -501,7 +506,12 @@
     /**
      * Returns the default URL that an IFRAME control is configured to display. This method is not available for web resources.
      */
-    getInitialUrl(): string;
+      getInitialUrl(): string;
+
+    /**
+    *Returns the content window that represents an IFRAME .
+    */
+      getContentWindow(): Promise<any>;
   }
 
   /**
