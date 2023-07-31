@@ -1429,6 +1429,12 @@ declare namespace Xrm {
     interface BaseControl {
         addNotification(notification: AddNotificationObject): void;
     }
+    interface ExternalControl {
+        /**
+         * Returns the content window that represents an IFRAME or web resource.
+         */
+        getContentWindow(): Promise<any>;
+    }
 
     interface NavigationBehaviorObject {
         allowCreateNew(): boolean
