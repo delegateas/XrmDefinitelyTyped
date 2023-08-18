@@ -180,9 +180,9 @@ namespace XrmQuery {
     if (preSend) preSend(req);
 
     req.onreadystatechange = function (this) {
-      if (this.readyState == 4) {
+      if (this.readyState === 4) {
         req.onreadystatechange = <any>null; //eslint-disable-line @typescript-eslint/no-explicit-any
-        if (this.status == 200 || this.status == 204) successCb(this);
+        if (this.status === 200 || this.status === 204) successCb(this);
         else errorCb(new Error(this.response));
       }
     };
@@ -281,7 +281,7 @@ namespace Filter {
    */
   //eslint-disable-next-line no-inner-declarations, @typescript-eslint/no-explicit-any
   function getVal(v: any) {
-    if (v == null) return "null";
+    if (v === undefined || v === null) return "null";
     if (typeof v === "string") return `'${encodeSpecialCharacters(v)}'`;
     if (v instanceof Date) return encodeSpecialCharacters(v.toISOString());
     return encodeSpecialCharacters(v.toString());
@@ -427,12 +427,12 @@ namespace XQW {
 
   //eslint-disable-next-line no-inner-declarations
   function endsWith(str: string, suffix: string) {
-    return str.substr(-suffix.length) == suffix;
+    return str.slice(-suffix.length) === suffix;
   }
 
   //eslint-disable-next-line no-inner-declarations
   function beginsWith(str: string, prefix: string) {
-    return str.substr(0, prefix.length) == prefix;
+    return str.substring(0, prefix.length) === prefix;
   }
 
   const datePattern = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/;
@@ -445,12 +445,12 @@ namespace XQW {
     const lookupLogicalName = endsWith(newName, LOOKUP_LOGICALNAME_SUFFIX);
     const lookupNavProperty = endsWith(newName, LOOKUP_NAVIGATIONPROPERTY_SUFFIX);
 
-    if (formatted) newName = newName.substr(0, newName.length - FORMATTED_VALUE_SUFFIX.length);
-    else if (lookupLogicalName) newName = newName.substr(0, newName.length - LOOKUP_LOGICALNAME_SUFFIX.length);
-    else if (lookupNavProperty) newName = newName.substr(0, newName.length - LOOKUP_NAVIGATIONPROPERTY_SUFFIX.length);
+    if (formatted) newName = newName.substring(0, newName.length - FORMATTED_VALUE_SUFFIX.length);
+    else if (lookupLogicalName) newName = newName.substring(0, newName.length - LOOKUP_LOGICALNAME_SUFFIX.length);
+    else if (lookupNavProperty) newName = newName.substring(0, newName.length - LOOKUP_NAVIGATIONPROPERTY_SUFFIX.length);
 
     if (beginsWith(newName, "_") && endsWith(newName, "_value")) {
-      newName = newName.substr(1, newName.length - 7);
+      newName = newName.substring(1, newName.length - 6);
       if (formatted) newName += FORMATTED_ENDING;
       else if (lookupLogicalName) newName += LOOKUP_LOGICALNAME_ENDING;
       else if (lookupNavProperty) newName += LOOKUP_NAVIGATIONPROPERTY_ENDING;
@@ -459,7 +459,7 @@ namespace XQW {
       if (formatted) newName += FORMATTED_ENDING;
     }
 
-    if (newName != name) {
+    if (newName !== name) {
       this[newName] = value;
     } else {
       return value;
@@ -559,7 +559,7 @@ namespace XQW {
 
     protected callbackReceived = () => {
       this.missingCallbacks--;
-      if (this.allSent && this.missingCallbacks == 0) {
+      if (this.allSent && this.missingCallbacks === 0) {
         this.successCallback(this.toReturn);
       }
     }
@@ -568,7 +568,7 @@ namespace XQW {
   class EntityLinkHelper extends LinkHelper {
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
     static followLinks(rec: any, expandKeys: ExpandKey[] | string[], additionalHeaders: RequestHeader[], successCallback: (t: any) => any, errorCallback: (e: Error) => any) {
-      if (expandKeys.length == 0) return successCallback(rec);
+      if (expandKeys.length === 0) return successCallback(rec);
 
       if (isStringArray(expandKeys)) {
         expandKeys = expandKeys.map(k => ({ arrKey: k, linkKey: k + NEXT_LINK_ID }));
@@ -602,9 +602,9 @@ namespace XQW {
   class PageLinkHelper extends LinkHelper {
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
     static followLinks(obj: MultiResult, expandKeys: ExpandKey[] | string[], additionalHeaders: RequestHeader[], successCallback: (t: any) => any, errorCallback: (e: Error) => any) {
-      if (!obj["@odata.nextLink"] && (obj.value.length == 0 || expandKeys.length == 0)) return successCallback(obj.value);
+      if (!obj["@odata.nextLink"] && (obj.value.length === 0 || expandKeys.length === 0)) return successCallback(obj.value);
 
-      if (expandKeys.length == 0) {
+      if (expandKeys.length === 0) {
         return new PageLinkHelper(obj, [], additionalHeaders, successCallback, errorCallback);
       }
 
@@ -612,7 +612,7 @@ namespace XQW {
         expandKeys = expandKeys.map(k => ({ arrKey: k, linkKey: k + NEXT_LINK_ID }));
       }
 
-      if (obj.value.length == 0) {
+      if (obj.value.length === 0) {
         return new PageLinkHelper(obj, expandKeys, additionalHeaders, successCallback, errorCallback);
       } else {
         // Trim expand keys down to the ones that may have nextLinks
@@ -776,7 +776,7 @@ namespace XQW {
       const urlName = "$" + name + "=";
       if (explicit) {
         options.push(urlName + explicit);
-      } else if (values != null && values != undefined) {
+      } else if (values !== null && values !== undefined) {
         if (Array.isArray(values)) {
           if (values.length > 0) {
             options.push(urlName + values.join(","));
@@ -1021,7 +1021,7 @@ namespace XQW {
       if (selectVarFunc) options.push(`$select=${parseSelects(selectVarFunc)}`);
       if (optArgs) {
         if (optArgs.top) options.push(`$top=${optArgs.top}`);
-        if (optArgs.orderBy) options.push(`$orderby=${parseWithTransform(optArgs.orderBy)} ${optArgs.sortOrder != SortOrder.Descending ? "asc" : "desc"}`);
+        if (optArgs.orderBy) options.push(`$orderby=${parseWithTransform(optArgs.orderBy)} ${optArgs.sortOrder !== SortOrder.Descending ? "asc" : "desc"}`);
         if (optArgs.filter) options.push(`$filter=${parseWithTransform(optArgs.filter)}`);
       }
       this.expands.push(expand + (options.length > 0 ? `(${options.join(";")})` : ""));
@@ -1077,7 +1077,7 @@ namespace XQW {
     //eslint-disable-next-line @typescript-eslint/no-explicit-any
     protected handleResponse(req: XMLHttpRequest, successCallback: (r: string) => any, errorCallback: (e: Error) => any) {
       const header = req.getResponseHeader("OData-EntityId");
-      if (header !== null) successCallback(header.substr(-37, 36));
+      if (header !== null) successCallback(header.slice(-37, -1));
       else errorCallback(new Error("No valid OData-EntityId found in header."));
     }
 
@@ -1297,7 +1297,7 @@ namespace XQW {
     }
 
     getQueryString(): string {
-      if (this.targetId == undefined) {
+      if (this.targetId === undefined || this.targetId === null) {
         // single-valued
         return `${this.entitySetName}(${this.id})/${this.relation}/$ref`;
       } else {
@@ -1364,7 +1364,7 @@ namespace XQW {
     const transformerFunc = transformer ? transformer : (x: string) => x;
     const obj: { [k: string]: any } = {}; //eslint-disable-line @typescript-eslint/no-explicit-any
     let match: any; //eslint-disable-line @typescript-eslint/no-explicit-any
-    while ((match = regex.exec(funcInfo.body)) != null) {
+    while ((match = regex.exec(funcInfo.body)) !== null) {
       if (!obj[match[1]]) {
         obj[match[1]] = XQW.makeTag(transformerFunc(match[1]));
       }
@@ -1465,7 +1465,7 @@ namespace XQW {
     const endsWithUnderscoreGuid = name.match(/_guid$/);
     if (!endsWithUnderscoreGuid) return name;
 
-    return `_${name.substr(0, endsWithUnderscoreGuid.index)}_value`;
+    return `_${name.substring(0, endsWithUnderscoreGuid.index)}_value`;
   }
 
   /**
@@ -1519,15 +1519,15 @@ namespace XQW {
     if (key.indexOf(BIND_ID) >= 0) {
       const lookupIdx = key.indexOf(BIND_ID);
       if (lookupIdx >= 0) {
-        const setName = key.substr(lookupIdx + BIND_ID.length);
-        newObj[`${key.substr(0, lookupIdx)}@odata.bind`] = `/${setName}(${val})`;
+        const setName = key.substring(lookupIdx + BIND_ID.length);
+        newObj[`${key.substring(0, lookupIdx)}@odata.bind`] = `/${setName}(${val})`;
       }
     } else if (key.indexOf(ID_ID) >= 0) {
       const lookupIdx = key.indexOf(ID_ID);
       if (lookupIdx >= 0) {
-        const setName = key.substr(lookupIdx + ID_ID.length);
+        const setName = key.substring(lookupIdx + ID_ID.length);
         const url = getApiUrl();
-        newObj[`${key.substr(0, lookupIdx)}@odata.id`] = `${url}${setName}(${val})`;
+        newObj[`${key.substring(0, lookupIdx)}@odata.id`] = `${url}${setName}(${val})`;
       }
     } else {
       newObj[key] = val;
