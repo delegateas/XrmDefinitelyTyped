@@ -179,7 +179,7 @@ let getAttributeFuncs (attributes: XrmFormAttribute list) =
   let defaultFunc =
     Function.Create("getAttribute", 
       [ Variable.Create("attributeName", TsType.String) ], 
-      TsType.Undefined )
+      TsType.Custom("Xrm.Attribute<any>") )
   
   let delegateFunc =
       Function.Create("getAttribute",
@@ -208,7 +208,7 @@ let getControlFuncs (controls: XrmFormControl list) (crmVersion: Version)=
   let defaultFunc =
     Function.Create("getControl", 
       [ Variable.Create("controlName", TsType.String) ], 
-      TsType.Undefined)
+      TsType.Custom("Xrm.BaseControl"))
   
   let delegateFunc =
     Function.Create("getControl",
