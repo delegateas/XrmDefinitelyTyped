@@ -208,7 +208,7 @@ let getControlFuncs (controls: XrmFormControl list) (crmVersion: Version)=
   let defaultFunc =
     Function.Create("getControl", 
       [ Variable.Create("controlName", TsType.String) ], 
-      TsType.Custom("Xrm.BaseControl"))
+      TsType.Custom("Xrm.AnyControl"))
   
   let delegateFunc =
     Function.Create("getControl",
