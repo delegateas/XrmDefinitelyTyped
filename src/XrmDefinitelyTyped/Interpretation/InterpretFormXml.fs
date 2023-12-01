@@ -180,14 +180,22 @@ let getValue (xEl:XElement) (str:string) =
   | null -> null
   | xattr -> xattr.Value
 
-let (|IsWebresouce|) (str:string) = str.StartsWith("WebResource_")
-let getControlClass id (classId:string) =
+let (|IsWebResource|) (str:string) = str.StartsWith("WebResource_")
+let getControlClass id (classId:string) (uniqueId:string) (controlDescriptions:Map<string,string>) =
   match id with
-    | IsWebresouce true -> ControlClassId.WebResource
+    | IsWebResource true -> ControlClassId.WebResource
     | _ -> 
       let normalizedClassId = Regex.Replace(classId.ToUpper(), "[{}]", "")
-      classIds.TryFind normalizedClassId ?| ControlClassId.Other
-  
+      if normalizedClassId = "F9A8A302-114E-466A-B582-6771B2AE0D92" // CustomControl
+      then 
+        match Map.tryFind uniqueId controlDescriptions with
+        | Some customControlId -> 
+          let normalizedCustomControlId = Regex.Replace(customControlId.ToUpper(), "[{}]", "")
+          classIds.TryFind normalizedCustomControlId ?| ControlClassId.Other
+        | None -> ControlClassId.Other
+      else 
+        classIds.TryFind normalizedClassId ?| ControlClassId.Other
+
 
 /// Renames controls with number suffixes if some share the same id
 let renameControls (controls:XrmFormControl list) =
@@ -265,11 +273,23 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
  
   // Attributes and controls
   let controlFields = 
+    let controlDescriptions =
+      form.Descendants(XName.Get("controlDescription"))
+      |> Seq.choose (fun cd -> 
+        cd.Elements(XName.Get("customControl"))
+        |> Seq.choose (fun cc -> 
+          match getValue cc "id" with 
+          | null -> None 
+          | x -> Some (getValue cd "forControl", x))
+        |> Seq.tryHead)
+      |> Map.ofSeq
+
     form.Descendants(XName.Get("control"))
     |> Seq.map (fun c -> 
       let id = getValue c "id"
       let classId = getValue c "classid"
-      let controlClass = getControlClass id classId
+      let uniqueId = getValue c "uniqueid"
+      let controlClass = getControlClass id classId uniqueId controlDescriptions
       let datafieldname = getValue c "datafieldname"
 
       let targetEntities = 
