@@ -1379,7 +1379,7 @@ namespace XQW {
    * @internal
    */
   export let ApiUrl: string | null = null;
-  const DefaultApiVersion = Xrm.Utility.getGlobalContext().getVersion().split('.').slice(0, 2).join('.');
+  const DefaultApiVersion = Xrm.Utility.getGlobalContext().getVersion().split(".").slice(0, 2).join(".");
 
   export function getDefaultUrl(v: string) {
     return getClientUrl() + `/api/data/v${v}/`;
