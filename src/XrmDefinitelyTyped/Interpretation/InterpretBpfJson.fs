@@ -70,7 +70,7 @@ let rec analyzeEntity (data:List<InnerData>) (fields:ControlField list) : Contro
       match box d.controlId with
       | null -> fields
       | _ ->
-        let controlClass = getControlClass d.controlId d.classId
+        let controlClass = getControlClass d.controlId d.classId String.Empty Map.empty // Empty string and map must be replaced to generate proper typings for controls in BPFs
         ( d.controlId, 
           d.dataFieldName, 
           controlClass,
