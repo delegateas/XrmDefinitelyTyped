@@ -1053,7 +1053,7 @@ namespace XQW {
     /**
      * Sets a header that lets you retrieve formatted values and lookup properties as well. Should be used after using select and expand of attributes.
      */
-    includeFormattedValuesAndLookupProperties(): Query<(FormattedResult & Result)[]> {
+    includeFormattedValuesAndLookupProperties(): Query<(FormattedResult & Result)> {
       this.additionalHeaders.push(INCLUDE_ANNOTATIONS_HEADER);
       return <any>this; //eslint-disable-line @typescript-eslint/no-explicit-any
     }
