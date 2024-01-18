@@ -1,10 +1,13 @@
 # Release Notes
-### 6.3.0 - January 1 2024
+### 6.4.0 - January 1 2024
 * Add getContentWindow method in ExternalControl( Webresource and IFrame) (@VlassisBakas)
 * XrmQuery clean usage of substr and == (@skovlund)
 * Fix typings for includeFormattedValuesAndLookupProperties (@skovlund)
 * Enforce source-map v. ^0.7.4 allowing usage of NodeJS > v18 (@skovlund)
 * Typings for custom controls no longer default to BaseControl (@skovlund)
+
+### 6.3.0 - October 25 2022
+* Add CustomPage typing to navigateTo method (@CHolmstoel)
 
 ### 6.2.0 - July 8 2022
 * Use overridden API version in OData paths.
