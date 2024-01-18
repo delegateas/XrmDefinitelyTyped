@@ -59,7 +59,7 @@ class Web_Retrieve_Promise extends FakeRequests {
     @test
     "create promise"() {
         const relatedAccountId = "SOME_ACCOUNT_GUID";
-        const newAccountId = "SOME_NEW_ACCOUNT_GUID";
+        const newAccountId = "00000000-0000-0000-0000-000000000000";
 
         var result = XrmQuery.create(x => x.accounts, { parentaccountid_bind$accounts: relatedAccountId })
             .promise();
@@ -75,7 +75,7 @@ class Web_Retrieve_Promise extends FakeRequests {
         expect(body).to.deep.equal({ 'parentaccountid@odata.bind': `/accounts(${relatedAccountId})` })
 
         // Check that response is gotten correctly from header
-        req.respond(200, { 'OData-EntityId': newAccountId }, "");
+        req.respond(200, { 'OData-EntityId': `https://organization.tld/api/data/v9.0/accounts(${newAccountId})` }, "");
         expect(result).to.eventually.equal(newAccountId);
     }
 }
