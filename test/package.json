@@ -19,7 +19,7 @@
         "chai": "4.2.0",
         "chai-as-promised": "7.1.1",
         "fs": "0.0.1-security",
-        "mocha": "^7.1.1",
+        "mocha": "^10.2.0",
         "sinon": "9.0.2",
         "ts-node": "3.2.0",
         "typescript": "^2.9.2"
