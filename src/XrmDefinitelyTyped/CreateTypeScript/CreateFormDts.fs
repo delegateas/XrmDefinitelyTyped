@@ -60,7 +60,7 @@ let getControlInterface cType aType canBeNull =
 /// Default collection functions which also use the "get" function name.
 let defaultCollectionFuncs defaultType = 
   [ Function.Create("get", 
-      [ Variable.Create("name", TsType.String) ], TsType.Undefined)
+      [ Variable.Create("name", TsType.String) ], TsType.Custom defaultType)
 
     Function.Create("get", [], TsType.Array (TsType.Custom defaultType))
     Function.Create("get", 
@@ -179,7 +179,7 @@ let getAttributeFuncs (attributes: XrmFormAttribute list) =
   let defaultFunc =
     Function.Create("getAttribute", 
       [ Variable.Create("attributeName", TsType.String) ], 
-      TsType.Undefined )
+      TsType.Custom("Xrm.Attribute<any>") )
   
   let delegateFunc =
       Function.Create("getAttribute",
@@ -208,7 +208,7 @@ let getControlFuncs (controls: XrmFormControl list) (crmVersion: Version)=
   let defaultFunc =
     Function.Create("getControl", 
       [ Variable.Create("controlName", TsType.String) ], 
-      TsType.Undefined)
+      TsType.Custom("Xrm.AnyControl"))
   
   let delegateFunc =
     Function.Create("getControl",
