@@ -246,7 +246,18 @@ declare namespace Xrm {
         message?: string;
     }
 
-    const enum OpenFileOptions {
+    /**
+     * An object describing whether to open or save the file
+     */
+    interface OpenFileOptions {
+        /**
+         * If you do not specify this parameter, by default 1 (open) is passed.
+         * This parameter is only supported on Unified Interface
+         */
+        openMode?: OpenFileOptionsOpenMode;
+    }
+
+    const enum OpenFileOptionsOpenMode {
         Open = 1,
         Save = 2,
     }
