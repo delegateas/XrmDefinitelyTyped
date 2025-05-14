@@ -856,7 +856,7 @@ declare namespace Xrm {
         /**
          * returns an object with the input property. The input property is an object with different values depending on whether you are currently on the entity form or entity list.
          */
-        getPageContext(): PageContext
+        getPageContext(): EntityListPageContext | EntityRecordPageContext;
 
         /**
          * Returns the entity metadata for the specified entity
@@ -1279,9 +1279,9 @@ declare namespace Xrm {
     }
 
     /**
-     * Interface for the result of calling Utility.getPageContext
+     * Interface for the result of calling Utility.getPageContext from an entity record
      */
-    interface PageContext {
+    interface EntityRecordPageContext {
         input: {
             /**
              * The current page type. The value returned is entityrecord or entitylist
@@ -1303,6 +1303,22 @@ declare namespace Xrm {
              * ID of the currently displayed form.
              */
             formId?: string;
+        }
+    }
+
+    /**
+     * Interface for the result of calling Utility.getPageContext from an entity list
+     */
+    interface EntityListPageContext {
+        input: {
+            /**
+             * The current page type. The value returned is entityrecord or entitylist
+             */
+            pageType: string;
+            /**
+             * Logical name of the table currently displayed.
+             */
+            entityName: string;
             /**
              * ID of the view currently displayed.
              */
@@ -1310,7 +1326,7 @@ declare namespace Xrm {
             /**
              * Type of the view currently displayed. Possible values are savedquery or userquery.
              */
-            viewType?: string;
+            viewType?: "savedquery" | "userquery";
         }
     }
 
