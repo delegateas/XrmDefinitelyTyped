@@ -1286,7 +1286,7 @@ declare namespace Xrm {
             /**
              * The current page type. The value returned is entityrecord or entitylist
              */
-            pageType: string;
+            pageType: "entityrecord" | "entitylist";
             /**
              * Logical name of the table currently displayed.
              */
@@ -1314,7 +1314,7 @@ declare namespace Xrm {
             /**
              * The current page type. The value returned is entityrecord or entitylist
              */
-            pageType: string;
+            pageType: "entityrecord" | "entitylist";
             /**
              * Logical name of the table currently displayed.
              */
