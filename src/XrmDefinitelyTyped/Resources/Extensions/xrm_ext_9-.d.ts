@@ -854,6 +854,11 @@ declare namespace Xrm {
         getAllowedStatusTransitions(entityName: string, stateCode: number): Promise<number[] | null>;
 
         /**
+         * returns an object with the input property. The input property is an object with different values depending on whether you are currently on the entity form or entity list.
+         */
+        getPageContext(): EntityListPageContext | EntityRecordPageContext;
+
+        /**
          * Returns the entity metadata for the specified entity
          * @param entityName The logical name of the entity.
          * @param attributes The attributes to get metadata for.
@@ -1271,6 +1276,58 @@ declare namespace Xrm {
          * Returns a boolean value indicating if the model-driven apps instance is hosted on-premises or online.
          */
         isOnPremises(): boolean;
+    }
+
+    /**
+     * Interface for the result of calling Utility.getPageContext from an entity record
+     */
+    interface EntityRecordPageContext {
+        input: {
+            /**
+             * The current page type. The value returned is entityrecord
+             */
+            pageType: "entityrecord";
+            /**
+             * Logical name of the table currently displayed.
+             */
+            entityName: string;
+            /**
+             * ID of the table record currently displayed in the form.
+             */
+            entityId?: string;
+            /**
+             * The parent record that provides default values based on mapped column values. The lookup object has the following String properties: entityType, id, and name.
+             */
+            createFromEntity?: Lookup;
+            /**
+             * ID of the currently displayed form.
+             */
+            formId?: string;
+        }
+    }
+
+    /**
+     * Interface for the result of calling Utility.getPageContext from an entity list
+     */
+    interface EntityListPageContext {
+        input: {
+            /**
+             * The current page type. The value returned is entitylist
+             */
+            pageType: "entitylist";
+            /**
+             * Logical name of the table currently displayed.
+             */
+            entityName: string;
+            /**
+             * ID of the view currently displayed.
+             */
+            viewId?: string;
+            /**
+             * Type of the view currently displayed. Possible values are savedquery or userquery.
+             */
+            viewType?: "savedquery" | "userquery";
+        }
     }
 
     /**
