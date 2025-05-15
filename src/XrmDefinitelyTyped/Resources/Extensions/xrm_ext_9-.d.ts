@@ -1284,9 +1284,9 @@ declare namespace Xrm {
     interface EntityRecordPageContext {
         input: {
             /**
-             * The current page type. The value returned is entityrecord or entitylist
+             * The current page type. The value returned is entityrecord
              */
-            pageType: "entityrecord" | "entitylist";
+            pageType: "entityrecord";
             /**
              * Logical name of the table currently displayed.
              */
@@ -1312,9 +1312,9 @@ declare namespace Xrm {
     interface EntityListPageContext {
         input: {
             /**
-             * The current page type. The value returned is entityrecord or entitylist
+             * The current page type. The value returned is entitylist
              */
-            pageType: "entityrecord" | "entitylist";
+            pageType: "entitylist";
             /**
              * Logical name of the table currently displayed.
              */
