@@ -1,4 +1,7 @@
 # Release Notes
+### 6.6.1 - May 15 2025
+* Add: Types for Xrm.Utility.getPageContext (@beyro)
+
 ### 6.6.0 - June 19 2024
 * Fix types related to QuickViewForms and form.ui.QuickViewForms (@mkholt)
 
