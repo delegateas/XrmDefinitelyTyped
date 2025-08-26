@@ -78,7 +78,7 @@ let retrieveViews entitiesToFetch rawEntityMetadata mainProxy : ViewData[] * Ent
     getViews entitiesToFetch mainProxy
     |> Seq.fold (fun previous (entityName, guid, viewName, fetchXml) ->
     let (previousNames, previousViews) = previous
-    let regex = new Regex(@"[^a-zA-Z0-9_]")
+    let regex = new Regex(@"[^a-zA-Zа-яА-Я0-9_]")
     let trimmedName = 
       regex.Replace(viewName, "")
       |> fun s -> if Char.IsNumber(s, 0) then "_" + s else s
