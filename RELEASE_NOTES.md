@@ -1,4 +1,7 @@
 # Release Notes
+### 7.0.0 - ? 2026
+* Complete rewrite in C# as dotnet tool
+
 ### 6.6.1 - May 15 2025
 * Add: Types for Xrm.Utility.getPageContext (@beyro)
 
