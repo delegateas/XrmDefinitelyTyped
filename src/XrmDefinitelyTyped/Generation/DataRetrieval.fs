@@ -116,7 +116,7 @@ let retrieveCrmVersion mainProxy =
   version
 
 /// Retrieve all the necessary CRM data
-let retrieveCrmData crmVersion entities solutions (mainProxy:IOrganizationService) skipInactiveForms =
+let retrieveCrmData crmVersion entities solutions (mainProxy:IOrganizationService) skipInactiveForms fetchViews =
   let nameMap = 
     retrieveEntityNameMap mainProxy
 
@@ -125,7 +125,7 @@ let retrieveCrmData crmVersion entities solutions (mainProxy:IOrganizationServic
     |> Array.sortBy(fun md -> md.LogicalName)
     
   let rawViewData, additionalEntityMetadata = 
-    match crmVersion .>= (8,2,0,0) with
+    match fetchViews && crmVersion .>= (8,2,0,0) with
     | false -> [||], [||]
     | true  -> retrieveViews entities originalRawEntityMetadata mainProxy
 

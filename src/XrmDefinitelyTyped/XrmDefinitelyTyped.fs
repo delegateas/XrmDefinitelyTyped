@@ -53,7 +53,7 @@ type XrmDefinitelyTyped private () =
     try
     #endif 
       
-      retrieveRawState xrmAuth rSettings
+      retrieveRawState xrmAuth rSettings (gSettings.viewNs |> Option.isSome)
       |> generateFromRaw gSettings
       printfn "\nSuccessfully generated all TypeScript declaration files."
 
@@ -76,7 +76,7 @@ type XrmDefinitelyTyped private () =
       let serializer = DataContractJsonSerializer(typeof<RawState>, null, System.Int32.MaxValue, true, null, false)
       use stream = new FileStream(filePath, FileMode.Create)
 
-      retrieveRawState xrmAuth rSettings
+      retrieveRawState xrmAuth rSettings true
       |> fun state -> serializer.WriteObject(stream, state)
       printfn "\nSuccessfully saved retrieved data to file %s." (Path.GetFullPath filePath)
 
