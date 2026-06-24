@@ -1,4 +1,14 @@
 # Release Notes
+### 6.6.1 - May 15 2025
+* Add: Types for Xrm.Utility.getPageContext (@beyro)
+
+### 6.6.0 - June 19 2024
+* Fix types related to QuickViewForms and form.ui.QuickViewForms (@mkholt)
+
+### 6.5.0 - May 8 2024
+* Fix Xrm.Navigation.openFile has inncorect type for openFileOptions (@matejskubic)
+* Do not append 1 to field name in select type (@mkholt)
+
 ### 6.4.0 - January 1 2024
 * Add getContentWindow method in ExternalControl( Webresource and IFrame) (@VlassisBakas)
 * XrmQuery clean usage of substr and == (@skovlund)

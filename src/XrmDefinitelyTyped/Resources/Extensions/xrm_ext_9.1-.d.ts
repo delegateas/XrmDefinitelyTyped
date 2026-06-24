@@ -234,7 +234,7 @@ declare namespace Xrm {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    interface OnLoadEventContext extends ExecutionContext<UiModule<TabCollectionBase, ControlCollectionBase>, LoadEventArgs> {}
+    interface OnLoadEventContext extends ExecutionContext<UiModule<TabCollectionBase, ControlCollectionBase, QuickViewFormCollectionBase>, LoadEventArgs> {}
 
     interface LookupTagValue extends Lookup {
         /**
@@ -295,7 +295,7 @@ declare namespace Xrm {
      * Interface for the ui of a form.
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    interface UiModule<T extends TabCollectionBase, U extends ControlCollectionBase> {
+    interface UiModule<T extends TabCollectionBase, C extends ControlCollectionBase, Q extends QuickViewFormCollectionBase = QuickViewFormCollectionBase> {
         /**
          * Method to cause the ribbon to re-evaluate data that controls what is displayed in it.
          */
@@ -326,7 +326,7 @@ declare namespace Xrm {
          * You can retrieve a quick view control in the quickForms collection by using the get method by specifying
          * either the index value (integer) or name (string) of the quick view control as the argument:
          */
-        quickForms: QuickForms;
+        quickForms: Q;
 
         /**
          * A tab is a group of sections on a page. It contains properties and methods to manipulate tabs
@@ -458,16 +458,8 @@ declare namespace Xrm {
          */
         setVisible(visibility: boolean): void;
     }
-
-    interface QuickForms {
-        /**
-         * Gets the control on a form.
-         * @param arg Optional. You can access a single control in the constituent controls collection by passing an
-         * argument as either the name or the index value of the constituent control in a quick view control.
-         * For example: quickViewControl.getControl("firstname") or quickViewControl.getControl(0)
-         * Returns an Object or Object collection
-         */
-        getControl(arg?: string): any //eslint-disable-line @typescript-eslint/no-explicit-any
+    
+    interface QuickViewForm<T extends TabCollectionBase, C extends ControlCollectionBase> extends PageBase<AttributeCollectionBase, T, C, QuickViewFormCollectionBase> {
         /**
          * Returns a string value that categorizes quick view controls.
          * For a quick view control, the method returns "quickform".
@@ -764,7 +756,7 @@ declare namespace Xrm {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-empty-interface
-    interface OnRecordSelectEventContext extends ExecutionContext<UiModule<TabCollectionBase, ControlCollectionBase>, undefined> {
+    interface OnRecordSelectEventContext extends ExecutionContext<UiModule<TabCollectionBase, ControlCollectionBase, QuickViewFormCollectionBase>, undefined> {
     }
 
     const enum WebApiOperationType {

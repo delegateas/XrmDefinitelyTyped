@@ -79,6 +79,7 @@ let rec analyzeEntity (data:List<InnerData>) (fields:ControlField list) : Contro
           match box d.entity, controlClass with
           | e, Lookup when e <> null -> Some (sprintf "\"%s\"" d.entity.entityName)
           | _, _ -> None
+          , None
         ) :: fields
     | _ -> fields
   ) |> List.concat
@@ -107,6 +108,6 @@ let interpretBpfs (workflows:Entity[]): Map<string,ControlField list> =
     lname, 
     x |> Array.map snd 
     |> List.concat 
-    |> List.filter (fun (_, datafieldname,_,_,_,_) -> datafieldname <> String.Empty)
-    |> List.map (fun (id, datafieldname, controlClass, canBeNull, _, tes) -> sprintf "header_process_%s" datafieldname, datafieldname,  controlClass, canBeNull, true, tes))
+    |> List.filter (fun (_, datafieldname,_,_,_,_,_) -> datafieldname <> String.Empty)
+    |> List.map (fun (id, datafieldname, controlClass, canBeNull, _, tes, qfs) -> sprintf "header_process_%s" datafieldname, datafieldname,  controlClass, canBeNull, true, tes, qfs))
     |> Map.ofArray

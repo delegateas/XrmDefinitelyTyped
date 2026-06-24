@@ -5,7 +5,7 @@ declare namespace Xrm {
    * Interface for the ui of a form.
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface UiModule<T extends TabCollectionBase, U extends ControlCollectionBase> {
+  interface UiModule<T extends TabCollectionBase, C extends ControlCollectionBase, Q extends QuickViewFormCollectionBase = QuickViewFormCollectionBase> {
     /**
      * Access UI controls for the business process flow on the form.
      */

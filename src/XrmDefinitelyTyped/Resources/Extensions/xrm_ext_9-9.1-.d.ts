@@ -10,5 +10,5 @@ declare namespace Xrm {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-empty-interface, @typescript-eslint/no-explicit-any
-    interface OnLoadEventContext extends ExecutionContext<UiModule<TabCollectionBase, ControlCollectionBase>, any> { }
+    interface OnLoadEventContext extends ExecutionContext<UiModule<TabCollectionBase, ControlCollectionBase, QuickViewFormCollectionBase>, any> { }
 }

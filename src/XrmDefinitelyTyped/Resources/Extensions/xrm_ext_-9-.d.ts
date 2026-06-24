@@ -6,7 +6,7 @@ declare namespace Xrm {
    * Interface for the base of an Xrm.Page
    */
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface PageBase<T extends AttributeCollectionBase, U extends TabCollectionBase, V extends ControlCollectionBase> {
+  interface PageBase<A extends AttributeCollectionBase, T extends TabCollectionBase, C extends ControlCollectionBase, Q extends QuickViewFormCollectionBase = QuickViewFormCollectionBase> {
     /**
      * The context of the page.
      */
@@ -98,7 +98,7 @@ declare namespace Xrm {
   }
 }
 
-interface Xrm<T extends Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>> extends BaseXrm {
+interface Xrm<T extends Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase, Xrm.QuickViewFormCollectionBase>> extends BaseXrm {
   /**
    * The Xrm.Page object model, which contains data about the current page.
    */

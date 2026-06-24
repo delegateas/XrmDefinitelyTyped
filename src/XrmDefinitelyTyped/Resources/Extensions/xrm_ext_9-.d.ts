@@ -246,7 +246,18 @@ declare namespace Xrm {
         message?: string;
     }
 
-    const enum OpenFileOptions {
+    /**
+     * An object describing whether to open or save the file
+     */
+    interface OpenFileOptions {
+        /**
+         * If you do not specify this parameter, by default 1 (open) is passed.
+         * This parameter is only supported on Unified Interface
+         */
+        openMode?: OpenFileOptionsOpenMode;
+    }
+
+    const enum OpenFileOptionsOpenMode {
         Open = 1,
         Save = 2,
     }
@@ -843,6 +854,11 @@ declare namespace Xrm {
         getAllowedStatusTransitions(entityName: string, stateCode: number): Promise<number[] | null>;
 
         /**
+         * returns an object with the input property. The input property is an object with different values depending on whether you are currently on the entity form or entity list.
+         */
+        getPageContext(): EntityListPageContext | EntityRecordPageContext;
+
+        /**
          * Returns the entity metadata for the specified entity
          * @param entityName The logical name of the entity.
          * @param attributes The attributes to get metadata for.
@@ -986,7 +1002,7 @@ declare namespace Xrm {
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     interface ExecutionContext<TSource, TArgs> {
-        getFormContext(): Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>;
+        getFormContext(): Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase, Xrm.QuickViewFormCollectionBase>;
     }
 
     interface SaveOptions {
@@ -1088,7 +1104,7 @@ declare namespace Xrm {
      * Interface for the ui of a form.
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    interface UiModule<T extends TabCollectionBase, U extends ControlCollectionBase> {
+    interface UiModule<T extends TabCollectionBase, C extends ControlCollectionBase, Q extends QuickViewFormCollectionBase = QuickViewFormCollectionBase> {
         /**
          * Adds a function to be called on the form OnLoad event.
          * @param myFunction The function to be executed on the form OnLoad event. The function will be added to the bottom of the event handler pipeline.
@@ -1260,6 +1276,58 @@ declare namespace Xrm {
          * Returns a boolean value indicating if the model-driven apps instance is hosted on-premises or online.
          */
         isOnPremises(): boolean;
+    }
+
+    /**
+     * Interface for the result of calling Utility.getPageContext from an entity record
+     */
+    interface EntityRecordPageContext {
+        input: {
+            /**
+             * The current page type. The value returned is entityrecord
+             */
+            pageType: "entityrecord";
+            /**
+             * Logical name of the table currently displayed.
+             */
+            entityName: string;
+            /**
+             * ID of the table record currently displayed in the form.
+             */
+            entityId?: string;
+            /**
+             * The parent record that provides default values based on mapped column values. The lookup object has the following String properties: entityType, id, and name.
+             */
+            createFromEntity?: Lookup;
+            /**
+             * ID of the currently displayed form.
+             */
+            formId?: string;
+        }
+    }
+
+    /**
+     * Interface for the result of calling Utility.getPageContext from an entity list
+     */
+    interface EntityListPageContext {
+        input: {
+            /**
+             * The current page type. The value returned is entitylist
+             */
+            pageType: "entitylist";
+            /**
+             * Logical name of the table currently displayed.
+             */
+            entityName: string;
+            /**
+             * ID of the view currently displayed.
+             */
+            viewId?: string;
+            /**
+             * Type of the view currently displayed. Possible values are savedquery or userquery.
+             */
+            viewType?: "savedquery" | "userquery";
+        }
     }
 
     /**
@@ -1468,7 +1536,7 @@ declare namespace Xrm {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-interface Xrm<T extends Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase>> extends BaseXrm {
+interface Xrm<T extends Xrm.PageBase<Xrm.AttributeCollectionBase, Xrm.TabCollectionBase, Xrm.ControlCollectionBase, Xrm.QuickViewFormCollectionBase>> extends BaseXrm {
     Device: Xrm.Device;
     Encoding: Xrm.Encoding;
     Navigation: Xrm.Navigation;

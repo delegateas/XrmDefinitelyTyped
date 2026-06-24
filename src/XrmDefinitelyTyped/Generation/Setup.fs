@@ -18,8 +18,8 @@ let intersectMappedSets a b = Map.ofSeq (seq {
 
 // Reduces a list of quadruple sets to a single quadruple set
 let intersectFormQuads =
-  Seq.reduce (fun (d1, a1, c1, t1) (d2, a2, c2, t2) ->
-    Set.union d1 d2, Set.intersect a1 a2, Set.intersect c1 c2, intersectMappedSets t1 t2)
+  Seq.reduce (fun (d1, a1, c1, q1, t1) (d2, a2, c2, q2, t2) ->
+    Set.union d1 d2, Set.intersect a1 a2, Set.intersect c1 c2, Set.intersect q1 q2, intersectMappedSets t1 t2)
 
 let intersectContentByGuid typ (dict: IDictionary<Guid, 'a>) ((name, guids): Intersect) contentMap reduce =
   guids 
@@ -39,6 +39,7 @@ let intersectFormContentByGuid (formDict: IDictionary<Guid, XrmForm>) intersect 
       f.entityDependencies |> Set.ofSeq,  
       f.attributes |> Set.ofList, 
       f.controls |> Set.ofList, 
+      f.quickViewForms |> Set.ofList,
       f.tabs |> Seq.map (fun (name, iname, sections) -> (name, iname), sections |> Set.ofList) |> Map.ofSeq)
 
   intersectContentByGuid "Form" formDict intersect contentMap intersectFormQuads
@@ -63,7 +64,7 @@ let intersect (dict: IDictionary<Guid, 'a>) instersectContentByGuids mapContent 
 // Intersect forms based on argument
 let intersectForms formDict formsToIntersect =
   let contentMap =
-    (fun (name, (deps, a, c, t)) -> 
+    (fun (name, (deps, a, c, q, t)) -> 
     { XrmForm.name = name
       entityName = "_special"
       guid = None
@@ -71,6 +72,7 @@ let intersectForms formDict formsToIntersect =
       formType = None
       attributes = a |> Set.toList
       controls = c |> Set.toList
+      quickViewForms = q |> Seq.toList
       tabs = t |> Map.toList |> List.map (fun ((k1, k2), v) -> k1, k2, v |> Set.toList)
     })
 

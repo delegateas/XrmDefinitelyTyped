@@ -34,4 +34,11 @@ class Web_RetrieveMultiple_ResultTypeCheck {
             .execute(x => x[0].birthdate_formatted)
     }
 
+    @test
+    "select, attribute name matches entity name"() {
+        XrmQuery.retrieveMultiple(x => x.dg_responses)
+            .select(x => [x.dg_response])
+            .execute(x => x[0].dg_response)
+    }
+
 }

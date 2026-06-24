@@ -261,6 +261,15 @@ let generateWebEntityDefs ns state =
 let generateFormDefs state crmVersion generateMappings = 
   printf "Generation Form definitions..."
   let getFormType xrmForm = xrmForm.formType ?|> sprintf "/%s" ?| ""
+
+  let formMap =
+    state.forms
+    |> Array.choose (fun (form: XrmForm) ->
+      match form.guid with 
+      | Some formId -> Some (formId, form)
+      | None -> None
+    )
+    |> Map.ofArray
   
   let defs = 
     state.forms
@@ -275,7 +284,7 @@ let generateFormDefs state crmVersion generateMappings =
     |> Array.filter (fun (form: XrmForm) -> form.formType.IsNone || (form.formType.IsSome && form.formType.Value <> "Card" && form.formType.Value <> "InteractionCentricDashboard" && form.formType.Value <> "TaskFlowForm"))
     |> Array.Parallel.map (fun xrmForm -> 
          let path = sprintf "%s/Form/%s%s" state.outputDir xrmForm.entityName (getFormType xrmForm)
-         let lines = getFormDts xrmForm crmVersion generateMappings
+         let lines = getFormDts xrmForm formMap crmVersion generateMappings
          sprintf "%s/%s.d.ts" path xrmForm.name, lines)
 
   printfn "Done!"

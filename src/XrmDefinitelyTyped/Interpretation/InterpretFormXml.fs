@@ -61,7 +61,7 @@ let getTargetEntities (tes: string option) (a: XrmAttribute option) =
 let getAttributeType = function
   | None -> TsType.Undefined
   | Some a -> a.varType
-let getAttribute (enums:Map<string,TsType>) (entity: XrmEntity) (_, attrName, controlClass, canBeNull, _, tes) =
+let getAttribute (enums:Map<string,TsType>) (entity: XrmEntity) (_, attrName, controlClass, canBeNull, _, tes, _) =
   if String.IsNullOrEmpty attrName then None else 
   
   let attribute =
@@ -118,12 +118,10 @@ let getAttribute (enums:Map<string,TsType>) (entity: XrmEntity) (_, attrName, co
 
 
 let getControl  (enums:Map<string,TsType>) entity (controlField:ControlField): XrmFormControl option =
-  let controlId, attrName, controlClass, canBeNull, isBpf, tes = controlField
+  let controlId, attrName, controlClass, canBeNull, isBpf, tes, _ = controlField
   if controlClass = QuickView then None else
 
-  let aType = 
-    getAttribute enums entity controlField
-    |> Option.map (fun (_, a, _) -> a)
+  let attr = getAttribute enums entity controlField
 
   let attribute =
     entity.attributes
@@ -165,15 +163,15 @@ let getControl  (enums:Map<string,TsType>) entity (controlField:ControlField): X
     | Map
     | Timer                 -> ControlType.Default
                 // Custom controls might need different handling. It might be better to set these as CustomControl (need to be created) or just BaseControl. 
-    | _     ->  match aType with
-                | Some (AttributeType.Lookup _)                     -> ControlType.Lookup (getTargetEntities tes attribute)
-                | Some (AttributeType.OptionSet aType)              -> ControlType.OptionSet
-                | Some (AttributeType.Number)                       -> ControlType.Number
-                | Some (AttributeType.Date)                         -> ControlType.Date
-                | Some (AttributeType.MultiSelectOptionSet aType)   -> ControlType.MultiSelectOptionSet
-                | _                                                 -> ControlType.Default
+    | _     ->  match attr with
+                | Some (_, (AttributeType.Lookup _), _)                 -> ControlType.Lookup (getTargetEntities tes attribute)
+                | Some (_, (AttributeType.OptionSet _), _)              -> ControlType.OptionSet
+                | Some (_, (AttributeType.Number), _)                   -> ControlType.Number
+                | Some (_, (AttributeType.Date), _)                     -> ControlType.Date
+                | Some (_, (AttributeType.MultiSelectOptionSet _), _)   -> ControlType.MultiSelectOptionSet
+                | _                                                     -> ControlType.Default
   
-  Some (controlId, aType, cType, isBpf, canBeNull)
+  Some (controlId, attr, cType, isBpf, canBeNull)
   
 let getValue (xEl:XElement) (str:string) =
   match xEl.Attribute(XName.Get(str)) with
@@ -212,12 +210,13 @@ let renameControls (controls:XrmFormControl list) =
   |> List.concat
 
 
-let getCompositeField (id, datafieldname, _, canBeNull, isBpf, _) subFieldName ty : ControlField =
+let getCompositeField (id, datafieldname, _, canBeNull, isBpf, _, _) subFieldName ty : ControlField =
   sprintf "%s_compositionLinkControl_%s" id subFieldName,
   subFieldName,
   ty,
   canBeNull,
   isBpf,
+  None,
   None
 
 let (|IsCompositeAddress|_|) (str:string) = 
@@ -229,7 +228,7 @@ let (|IsCompositeAddress|_|) (str:string) =
 /// Finds all composite fields and adds the sub-fields that they bring along
 let getCompositeFields : ControlField list -> ControlField list =
   List.choose (fun field  ->
-    let (id, datafieldname, _, _,_, _) = field
+    let (id, datafieldname, _, _,_, _, _) = field
 
     match datafieldname with
     | null -> None
@@ -245,6 +244,23 @@ let getCompositeFields : ControlField list -> ControlField list =
         ]
     | _ -> None
   ) >> List.concat
+
+let getQuickViewFormControls : ControlField list -> XrmFormQuickViewForm list =
+  List.choose (fun (controlId, _, _, _, _, _, quickViewForms) ->
+    match quickViewForms with
+    | Some qf ->
+      let qfHead = qf |> List.head
+      let qfIds = XElement.Parse qfHead
+      let qfId = qfIds.Descendants(XName.Get("QuickFormId")) |> Seq.head
+      let ref =
+          let formId = System.Guid.Parse qfId.Value
+          let entityName = qfId.Attribute(XName.Get("entityname")).Value
+
+          (entityName, formId)
+
+      Some (controlId, ref)
+    | None -> None
+  )
 
 /// Function to interpret a single FormXml
 let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list option) entity (systemForm:Entity) =
@@ -294,7 +310,7 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
 
       let targetEntities = 
         let parms = c.Descendants(XName.Get("parameters")) 
-        if Seq.isEmpty parms then 
+        if Seq.isEmpty parms then
           let rel = getValue c "relationship"
           entity.allRelationships
           |> List.choose (fun r -> if r.schemaName = rel then Some r.relatedSetName else None)
@@ -303,6 +319,18 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
           |> Seq.collect (fun p -> p.Elements(XName.Get("TargetEntityType")))
           |> Seq.map (fun e -> e.Value)
           |> Seq.toList
+
+      let quickViewForms =
+        let parms = c.Descendants(XName.Get("parameters"))
+        if Seq.isEmpty parms then None
+        else
+          parms
+          |> Seq.collect (fun p -> p.Elements(XName.Get("QuickForms")))
+          |> Seq.map (fun e -> e.Value)
+          |> Seq.toList
+          |> function
+            | [] -> None
+            | x -> Some x
       
       //Composite controls are on the form in Web UI, but not in UUI
       let canBeNull = match datafieldname with 
@@ -314,9 +342,10 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
       if(targetEntities.Length > 0) then
         let tes =
           Seq.fold(fun acc e -> sprintf "%s | \"%s\"" acc e) (sprintf "\"%s\"" targetEntities.Head) targetEntities.Tail
-        id, datafieldname, controlClass, canBeNull, false, Some tes
+        id, datafieldname, controlClass, canBeNull, false, Some tes, quickViewForms
       else
-        id, datafieldname, controlClass, canBeNull, false, None)
+        id, datafieldname, controlClass, canBeNull, false, None, quickViewForms
+    )
     |> List.ofSeq
 
   let compositeFields = getCompositeFields controlFields
@@ -342,6 +371,8 @@ let interpretFormXml (enums:Map<string,TsType>) (bpfFields: ControlField list op
       |> List.choose (getControl enums entity)
       |> renameControls
       |> List.sortBy (fun (name, _, _, _,_) -> name)
+
+    quickViewForms = getQuickViewFormControls controlFields
 
     tabs = tabs
   }

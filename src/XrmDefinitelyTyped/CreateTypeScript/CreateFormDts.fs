@@ -36,22 +36,22 @@ let getAttributeMap ty canBeNull =
  
 /// Gets the corresponding enum of the option set if possible
 let getOptionSetType = function
-  | Some (AttributeType.OptionSet ty) 
-  | Some (AttributeType.MultiSelectOptionSet ty) -> ty
+  | Some (_, AttributeType.OptionSet ty, _) 
+  | Some (_, AttributeType.MultiSelectOptionSet ty, _) -> ty
   | _ -> TsType.Number
 
 /// Translate internal control type to corresponding TypeScript interface.
-let getControlInterface cType aType canBeNull =
+let getControlInterface cType attr canBeNull =
   let returnType = 
-    match aType, cType with
+    match attr, cType with
     | None, ControlType.Default       -> TsType.Custom "Xrm.BaseControl"
-    | Some (AttributeType.Default TsType.String), ControlType.Default
+    | Some (_, AttributeType.Default TsType.String, _), ControlType.Default
                                       -> TsType.Custom "Xrm.StringControl"
-    | Some at, ControlType.Default    -> TsType.SpecificGeneric ("Xrm.Control", [ getAttributeInterface at canBeNull ]) 
+    | Some (_, at, _), ControlType.Default    -> TsType.SpecificGeneric ("Xrm.Control", [ getAttributeInterface at canBeNull ]) 
     | aType, ControlType.OptionSet    -> TsType.SpecificGeneric ("Xrm.OptionSetControl", [ getOptionSetType aType ])
     | aType, ControlType.MultiSelectOptionSet
                                       -> TsType.SpecificGeneric ("Xrm.MultiSelectOptionSetControl", [ getOptionSetType aType ])
-    | Some (AttributeType.Lookup _), ControlType.Lookup tes
+    | Some (_, AttributeType.Lookup _, _), ControlType.Lookup tes
     | _, ControlType.Lookup tes       -> TsType.Custom (sprintf "Xrm.LookupControl<%s>" tes)
     | _, ControlType.SubGrid tes      -> TsType.Custom (sprintf "Xrm.SubGridControl<%s>" tes)
     | _, x                            -> TsType.Custom (sprintf "Xrm.%AControl" x)
@@ -98,17 +98,18 @@ let getAttributeCollectionMap (attributes: XrmFormAttribute list) =
   Interface.Create("AttributeValueMap", vars = getVars)
 
 /// Auxiliary function that determines if a control is to be included based on it's name and the crmVersion
-let includeControl (name: string) crmVersion =
-    (not (name.StartsWith("header_")) && not (name.StartsWith("footer_"))) || crmVersion .>= (6,0,0,0)
+let includeControl (name: string) (formType: string option) crmVersion =
+    (not (name.StartsWith("header_")) && not (name.StartsWith("footer_")))
+      || (crmVersion .>= (6,0,0,0) && not(formType.IsSome && formType.Value.Equals("Quick")))
 
 /// Generate Xrm.Page.ui.controls.get(<string>) functions.
-let getControlCollection (controls: XrmFormControl list) (crmVersion: Version)=
+let getControlCollection (controls: XrmFormControl list) (formType: string option) (crmVersion: Version) =
   let getFuncs = 
     controls
-    |> List.map (fun (name, aType, cType, isBpf, canBeNull) ->
+    |> List.map (fun (name, attr, cType, isBpf, canBeNull) ->
       let paramType = getConstantType name
-      let returnType = getControlInterface cType aType  canBeNull         
-      match includeControl name crmVersion with
+      let returnType = getControlInterface cType attr canBeNull         
+      match includeControl name formType crmVersion with
       | false -> None
       | true ->
         Some (Function.Create("get", [Variable.Create("name", paramType)], returnType))
@@ -120,18 +121,40 @@ let getControlCollection (controls: XrmFormControl list) (crmVersion: Version)=
     funcs = getFuncs @ defaultFuncs)
 
 /// Generate Xrm.Page.ui.controls map.
-let getControlCollectionMap (controls: XrmFormControl list) (crmVersion: Version)=
+let getControlCollectionMap (controls: XrmFormControl list) (formType: string option) (crmVersion: Version) =
   let getVars = 
     controls
     |> List.map (fun (name, aType, cType, isBpf, canBeNull) ->
       let returnType = getControlInterface cType aType canBeNull          
-      match includeControl name crmVersion with
+      match includeControl name formType crmVersion with
       | false -> None
       | true -> Some (Variable.Create(name, returnType))
       )
     |> List.choose id
     
   Interface.Create("ControlMap", vars = getVars)
+
+let nsName xrmForm = 
+  sprintf "Form.%s%s" 
+    (xrmForm.entityName |> Utility.sanitizeString)
+    (match xrmForm.formType with
+    | Some ty -> sprintf ".%s" ty
+    | None   -> "")
+
+let getQuickViewFormCollection (quickViewForms: XrmFormQuickViewForm list) (formMap: Map<System.Guid, XrmForm>) =
+  let getFuncs =
+    quickViewForms
+    |> List.map (fun (name, (_, formId)) ->
+        let paramType = getConstantType name
+        let returnType = 
+          match formMap.TryGetValue formId with
+          | (true, form) -> TsType.Custom (sprintf "%s.%s" (nsName form) form.name)
+          | (false, _) -> TsType.Custom "Xrm.QuickViewFormBase"
+        Function.Create("get", [Variable.Create("name", paramType)], returnType)
+    )
+
+  Interface.Create("QuickViewForms", extends = ["Xrm.QuickViewFormCollectionBase"],
+    funcs = getFuncs @ defaultCollectionFuncs "Xrm.QuickViewFormBase")
 
 /// Generate Xrm.Page.ui.tabs.get(<string>) functions.
 let getTabCollection (tabs: XrmFormTab list) =
@@ -164,12 +187,22 @@ let getSectionCollections (tabs: XrmFormTab list) =
     Interface.Create(iname, extends = ["Xrm.SectionCollectionBase"],
       funcs = getFuncs sections @ defaultFuncs))
 
-
-
 /// Generate Xrm.Page.getAttribute(<string>) functions.
-let getAttributeFuncs (attributes: XrmFormAttribute list) =
+let getAttributeFuncs (attributes: XrmFormAttribute list) (controls: XrmFormControl list) (formType: string option) (crmVersion: Version) =
+  let controlMap =
+    controls
+    |> List.choose(fun (id, attr, _, _, _) ->
+      match includeControl id formType crmVersion with
+      | false -> None
+      | true ->
+        match attr with
+        | Some (aName, _, _) -> Some (aName, id)
+        | None -> None)
+    |> Map.ofList
+
   let attrFuncs = 
     attributes
+    |> List.filter (fun (aName, _, _) -> not(formType = Some "Quick") || controlMap |> Map.containsKey aName)
     |> List.map (fun (name, ty, canBeNull) ->
       let paramType = getConstantType name
       let returnType = getAttributeInterface ty canBeNull
@@ -191,13 +224,13 @@ let getAttributeFuncs (attributes: XrmFormAttribute list) =
 
   
 /// Generate Xrm.Page.getControl(<string>) functions.
-let getControlFuncs (controls: XrmFormControl list) (crmVersion: Version)=
+let getControlFuncs (controls: XrmFormControl list) (formType: string option) (crmVersion: Version)=
   let ctrlFuncs = 
     controls
     |> List.map (fun (name, aType, cType, isBpf, canBeNull) ->
       let paramType = getConstantType name
       let returnType = getControlInterface cType aType canBeNull
-      match includeControl name crmVersion with
+      match includeControl name formType crmVersion with
       | false -> None
       | true ->
         Some (Function.Create("getControl", 
@@ -220,17 +253,19 @@ let getControlFuncs (controls: XrmFormControl list) (crmVersion: Version)=
 
 
 /// Generate internal namespace for keeping track all the collections.
-let getFormNamespace (form: XrmForm) crmVersion generateMappings =
+let getFormNamespace (form: XrmForm) formMap crmVersion generateMappings =
   let baseInterfaces =
-    [ getAttributeCollection form.attributes
-      getControlCollection form.controls crmVersion
-      getTabCollection form.tabs ]
+    [ if not(form.formType = Some "Quick") then Some (getAttributeCollection form.attributes) else None
+      Some (getControlCollection form.controls form.formType crmVersion)
+      if not(form.formType = Some "Quick") then Some (getQuickViewFormCollection form.quickViewForms formMap) else None
+      Some (getTabCollection form.tabs) ]
+    |> List.choose id
   Namespace.Create(form.name,
     interfaces = 
       (if generateMappings then 
         baseInterfaces @ 
         [getAttributeCollectionMap form.attributes
-         getControlCollectionMap form.controls crmVersion] 
+         getControlCollectionMap form.controls form.formType crmVersion] 
       else baseInterfaces),
     namespaces = 
       [ Namespace.Create("Tabs", interfaces = getSectionCollections form.tabs) ])
@@ -238,30 +273,26 @@ let getFormNamespace (form: XrmForm) crmVersion generateMappings =
 
 /// Generate the interface for the Xrm.Page of the form.
 let getFormInterface (form: XrmForm) crmVersion =
-  let superClass = 
-    sprintf "Xrm.PageBase<%s.Attributes,%s.Tabs,%s.Controls>"
-      form.name form.name form.name
+  let superClass =
+    if (form.formType = Some "Quick") then
+      sprintf "Xrm.QuickViewForm<%s.Tabs,%s.Controls>"
+        form.name form.name
+    else
+      sprintf "Xrm.PageBase<%s.Attributes,%s.Tabs,%s.Controls,%s.QuickViewForms>"
+        form.name form.name form.name form.name
 
   Interface.Create(form.name, extends = [superClass], 
     funcs = 
-      getAttributeFuncs form.attributes @ 
-      getControlFuncs form.controls crmVersion)
-
+      getAttributeFuncs form.attributes form.controls form.formType crmVersion @ 
+      getControlFuncs form.controls form.formType crmVersion)
 
 /// Generate the namespace containing all the form interface and internal 
 /// namespaces for collections.
-let getFormDts (form: XrmForm) crmVersion generateMappings = 
-  let nsName = 
-    sprintf "Form.%s%s" 
-      (form.entityName |> Utility.sanitizeString)
-      (match form.formType with
-      | Some ty -> sprintf ".%s" ty
-      | None   -> "")
-
+let getFormDts (form: XrmForm) (formMap: Map<System.Guid, XrmForm>) crmVersion generateMappings = 
   Namespace.Create(
-    nsName,
+    nsName form,
     declare = true,
-    namespaces = [ getFormNamespace form crmVersion generateMappings],
+    namespaces = [ getFormNamespace form formMap crmVersion generateMappings],
     interfaces = [ getFormInterface form crmVersion]) 
   |> nsToString
 

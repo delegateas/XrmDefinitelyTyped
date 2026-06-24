@@ -78,7 +78,7 @@ type XrmDefinitelyTyped private () =
 
       retrieveRawState xrmAuth rSettings
       |> fun state -> serializer.WriteObject(stream, state)
-      printfn "\nSuccessfully saved retrieved data to file."
+      printfn "\nSuccessfully saved retrieved data to file %s." (Path.GetFullPath filePath)
 
     #if !DEBUG
     with ex -> getFirstExceptionMessage ex |> failwithf "\nUnable to generate data file: %s"
