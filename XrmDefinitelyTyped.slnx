@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/XrmDefinitelyTyped.Core/XrmDefinitelyTyped.Core.csproj" />
+    <Project Path="src/XrmDefinitelyTyped.Tool/XrmDefinitelyTyped.Tool.csproj" />
+  </Folder>
+</Solution>

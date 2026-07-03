@@ -1,0 +1,70 @@
+declare namespace Form.{{ EntityLogicalName }}.{{ FormTypeName }} {
+  namespace {{ FormName }} {
+    namespace Tabs {
+{{~ for tab in Tabs ~}}
+      interface {{ tab.Name }} extends Xrm.SectionCollectionBase {
+{{~ for section in tab.Sections ~}}
+        get(name: "{{ section.Name }}"): Xrm.PageSection;
+{{~ end ~}}
+        get(name: string): undefined;
+        get(): Xrm.PageSection[];
+        get(index: number): Xrm.PageSection;
+        get(chooser: (item: Xrm.PageSection, index: number) => boolean): Xrm.PageSection[];
+      }
+{{~ if !for.last ~}}
+
+{{~ end ~}}
+{{~ end ~}}
+    }
+
+    interface Attributes extends Xrm.AttributeCollectionBase {
+{{~ for attr in Attributes ~}}
+      get(name: "{{ attr.FieldName }}"): {{ attr.AttributeType }};
+{{~ end ~}}
+      get(name: string): undefined;
+      get(): Xrm.Attribute<any>[];
+      get(index: number): Xrm.Attribute<any>;
+      get(chooser: (item: Xrm.Attribute<any>, index: number) => boolean): Xrm.Attribute<any>[];
+    }
+
+    interface Controls extends Xrm.ControlCollectionBase {
+{{~ for ctrl in Controls ~}}
+      get(name: "{{ ctrl.ControlId }}"): {{ ctrl.ControlType }};
+{{~ end ~}}
+      get(name: string): undefined;
+      get(): Xrm.BaseControl[];
+      get(index: number): Xrm.BaseControl;
+      get(chooser: (item: Xrm.BaseControl, index: number) => boolean): Xrm.BaseControl[];
+    }
+
+    interface QuickViewForms extends Xrm.QuickViewFormCollectionBase {
+      get(name: string): undefined;
+      get(): Xrm.QuickViewFormBase[];
+      get(index: number): Xrm.QuickViewFormBase;
+      get(chooser: (item: Xrm.QuickViewFormBase, index: number) => boolean): Xrm.QuickViewFormBase[];
+    }
+
+    interface Tabs extends Xrm.TabCollectionBase {
+{{~ for tab in Tabs ~}}
+      get(name: "{{ tab.Name }}"): Xrm.PageTab<Tabs.{{ tab.Name }}>;
+{{~ end ~}}
+      get(name: string): undefined;
+      get(): Xrm.PageTab<Xrm.Collection<Xrm.PageSection>>[];
+      get(index: number): Xrm.PageTab<Xrm.Collection<Xrm.PageSection>>;
+      get(chooser: (item: Xrm.PageTab<Xrm.Collection<Xrm.PageSection>>, index: number) => boolean): Xrm.PageTab<Xrm.Collection<Xrm.PageSection>>[];
+    }
+  }
+
+  interface {{ FormName }} extends Xrm.PageBase<{{ FormName }}.Attributes,{{ FormName }}.Tabs,{{ FormName }}.Controls,{{ FormName }}.QuickViewForms> {
+{{~ for attr in Attributes ~}}
+    getAttribute(attributeName: "{{ attr.FieldName }}"): {{ attr.AttributeType }};
+{{~ end ~}}
+    getAttribute(attributeName: string): undefined;
+    getAttribute(delegateFunction: Xrm.Collection.MatchingDelegate<Xrm.Attribute<any>>): Xrm.Attribute<any>[];
+{{~ for ctrl in Controls ~}}
+    getControl(controlName: "{{ ctrl.ControlId }}"): {{ ctrl.ControlType }};
+{{~ end ~}}
+    getControl(controlName: string): undefined;
+    getControl(delegateFunction: Xrm.Collection.MatchingDelegate<Xrm.Control<any>>): Xrm.Control<any>[];
+  }
+}
