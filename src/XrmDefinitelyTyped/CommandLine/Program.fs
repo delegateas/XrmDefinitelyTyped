@@ -10,8 +10,8 @@ open CommandLineHelper
 
 let getXrmAuth parsedArgs = 
   let ap = 
-    getArg parsedArgs "ap" (fun ap ->
-      Enum.Parse(typeof<AuthenticationProviderType>, ap) 
+    getArg parsedArgs "ap" (fun (ap: string) ->
+      Enum.Parse(typeof<AuthenticationProviderType>, ap)
         :?> AuthenticationProviderType)
   let method =
     getArg parsedArgs "method" (fun method ->

@@ -20,11 +20,9 @@ generating early-bound .NET classes for server-side code, it generates TypeScrip
 
 ### Build
 
-Recommended environment: [Visual Studio 2019](https://www.visualstudio.com/downloads/)
-
 **Requirements:**
 
-* [F# 4.0+](https://www.microsoft.com/en-us/download/details.aspx?id=48179)
+* [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 * [Node.js and npm](https://nodejs.org/)
 * [TypeScript 2.0+](http://www.typescriptlang.org/index.html#download-links)
 
@@ -33,9 +31,11 @@ Recommended environment: [Visual Studio 2019](https://www.visualstudio.com/downl
 This project is created from [ProjectScaffold](http://fsprojects.github.io/ProjectScaffold/index.html), 
 which uses [FAKE](http://fsharp.github.io/FAKE/) to automate a lot of the build tasks (setup, build, test, docs, nuget package, releases, etc).
 
-Before you can build/run the project from Visual Studio, you need to run `build` from the command-line in the root folder. 
-This will trigger the default FAKE build. FAKE handles setting up the project and it's dependencies as needed, before running the actual MSBuild task on the project. 
-Once it has been set up correctly by FAKE, you will be able to build the project using Visual Studio from then on.
+Run `build` from the command line in the root folder to execute the FAKE build, or build the project directly:
+
+```bash
+dotnet build src/XrmDefinitelyTyped/XrmDefinitelyTyped.fsproj -c Release
+```
 
 
 ### Test

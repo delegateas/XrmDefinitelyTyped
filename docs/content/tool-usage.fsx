@@ -2,7 +2,7 @@
 // This block of code is omitted in the generated HTML documentation. Use 
 // it to define helpers that you do not want to show in the documentation.
 #r "../../bin/XrmDefinitelyTyped/Microsoft.Xrm.Sdk.dll"
-#r "../../bin/XrmDefinitelyTyped/XrmDefinitelyTyped.exe"
+#r "../../bin/XrmDefinitelyTyped/XrmDefinitelyTyped.dll"
 
 (**
 Usage of XrmDefinitelyTyped 
@@ -20,7 +20,8 @@ Here is the full list of arguments for configuring the tool:
 
 | Argument          | Short-hand  | Description   
 | :-                | :-          |:-             
-| url               |             | URL to the Organization.svc
+| url               |             | Dataverse environment URL.
+| method            |             | Connection method: OAuth, ClientSecret, ConnectionString, or legacy Proxy (unsupported on modern .NET).
 | username          | u, usr      | Username for the CRM system.
 | password          | p, pwd      | Password for the CRM system.
 | domain            | d, dmn      | Domain for the user.
@@ -68,8 +69,9 @@ The arguments are similar to those given to the [CrmSvcUtil][crmsvcutil] tool.
 Example usage from a command prompt:
 
     [lang=bash]
-    XrmDefinitelyTyped.exe /url:http://<serverName>/<organizationName>/XRMServices/2011/Organization.svc  
-            /out:WebResources\typings\XRM /username:<username> /password:<password> /domain:<domainName>
+    XrmDefinitelyTyped.exe /url:https://<environment>.crm.dynamics.com /method:OAuth
+            /mfaAppId:<application-id> /mfaReturnUrl:http://localhost
+            /out:WebResources\typings\XRM /username:<username> /password:<password>
 
   [crmsvcutil]: https://msdn.microsoft.com/en-us/library/gg327844.aspx
 
@@ -85,8 +87,12 @@ open Microsoft.Xrm.Sdk.Client
 open DG.XrmDefinitelyTyped
 
 XrmDefinitelyTyped.GenerateFromCrm(
-  "http://<serverName>/<organizationName>/XRMServices/2011/Organization.svc", 
-  "username", "password", 
+  "https://<environment>.crm.dynamics.com",
+  method = ConnectionType.OAuth,
+  username = "username",
+  password = "password",
+  clientId = "application-id",
+  returnUrl = "http://localhost",
   outDir = @"WebResources\typings\XRM")
 
 

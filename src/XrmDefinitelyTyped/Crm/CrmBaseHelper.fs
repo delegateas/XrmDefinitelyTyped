@@ -5,18 +5,14 @@ open System.Threading.Tasks
 
 open Utility
 open Microsoft.Xrm.Sdk
-open Microsoft.Xrm.Sdk.Client
 open Microsoft.Xrm.Sdk.Messages
 open Microsoft.Xrm.Sdk.Query
 open Microsoft.Xrm.Sdk.Metadata
 open Microsoft.Crm.Sdk.Messages
-open Microsoft.Xrm.Sdk.WebServiceClient
+open Microsoft.PowerPlatform.Dataverse.Client
 
 // Execute request
 let getResponse<'T when 'T :> OrganizationResponse> (proxy:IOrganizationService) request =
-  if(proxy :? OrganizationServiceProxy) then 
-    let orgProxy = proxy :?> OrganizationServiceProxy
-    orgProxy.Timeout <- TimeSpan(1,0,0)
   (proxy.Execute(request)) :?> 'T
 
 // Retrieve version
@@ -213,22 +209,18 @@ let retrieveSolutionEntities (proxy:IOrganizationService) solutionName =
 
 // Proxy helper that makes it easy to get a new proxy instance
 let proxyHelper xrmAuth () =
-  let method = xrmAuth.method ?| ConnectionType.Proxy
+  let method = xrmAuth.method ?| ConnectionType.OAuth
   let username = xrmAuth.username ?| ""
   let password = xrmAuth.password ?| ""
-  let ap = xrmAuth.ap ?| AuthenticationProviderType.OnlineFederation
-  let domain = xrmAuth.domain ?| ""
   let clientId = xrmAuth.clientId ?| ""
   let returnUrl = xrmAuth.returnUrl ?| ""
   let clientSecret = xrmAuth.clientSecret ?| ""
 
-  let proxyInstance = 
+  let proxyInstance =
     match method with
     | Proxy ->
-      let manager = CrmAuth.getServiceManagement xrmAuth.url
-      let authToken = CrmAuth.authenticate manager ap username password domain
-      CrmAuth.getOrganizationServiceProxy manager authToken
-    | OAuth -> CrmAuth.getCrmServiceClient username password xrmAuth.url clientId returnUrl 
+      failwith "The 'Proxy' (WS-Trust/on-premises) connection method is not supported on modern .NET. Use method=OAuth, ClientSecret or ConnectionString instead."
+    | OAuth -> CrmAuth.getCrmServiceClient username password xrmAuth.url clientId returnUrl
     | ClientSecret -> CrmAuth.getCrmServiceClientClientSecret xrmAuth.url clientId clientSecret
     | ConnectionString -> CrmAuth.getCrmServiceClientConnectionString xrmAuth.connectionString
   proxyInstance

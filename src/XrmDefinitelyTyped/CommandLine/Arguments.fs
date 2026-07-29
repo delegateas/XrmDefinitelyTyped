@@ -105,7 +105,7 @@ type Args private () =
   static member connectionArgs = [
     { command="url"
       altCommands=[]
-      description="Url to the Organization.svc"
+      description="Dataverse environment URL"
       required=true }
     
     { command="method"
@@ -231,20 +231,24 @@ type Args private () =
 
   // Usage
   static member usageString = 
-    @"Usage: XrmDefinitelyTyped.exe /url:http://<serverName>/<organizationName>/XRMServices/2011/Organization.svc /u:<username> /p:<password>"
+    @"Usage: XrmDefinitelyTyped.exe /url:https://<environment>.crm.dynamics.com /method:OAuth /mfaAppId:<application-id> /mfaReturnUrl:<redirect-uri> /u:<username> /p:<password>"
   
   static member helpArgs = [ "?"; "help"; "-h"; "-help"; "--help"; "/h"; "/help" ] |> Set.ofList
 
   static member configFileMissing () =
-    File.Exists(AppDomain.CurrentDomain.SetupInformation.ConfigurationFile) |> not
+    let config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None)
+    File.Exists(config.FilePath) |> not
 
   static member genConfig () =
     let configmanager = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None)
     let config = configmanager.AppSettings.Settings
     config.AllKeys |> Array.iter config.Remove
-    config.Add("url", "https://INSTANCE.crm4.dynamics.com/XRMServices/2011/Organization.svc")
+    config.Add("url", "https://INSTANCE.crm4.dynamics.com")
+    config.Add("method", "OAuth")
     config.Add("username","admin@INSTANCE.onmicrosoft.com")
     config.Add("password", "pass@word1")
+    config.Add("mfaAppId", "APPLICATION-ID")
+    config.Add("mfaReturnUrl", "http://localhost")
     config.Add("out", "../typings/XRM")
     config.Add("solutions", "")
     config.Add("entities", "account, contact")

@@ -1,13 +1,12 @@
 open System.Diagnostics
+open System.IO
 
-let shellExecute program args =
-  let startInfo = new ProcessStartInfo()
-  startInfo.FileName <- program
-  startInfo.Arguments <- args
-  startInfo.UseShellExecute <- true
+let assemblyPath = Path.Combine(__SOURCE_DIRECTORY__, "XrmDefinitelyTyped.dll")
+let startInfo = ProcessStartInfo("dotnet")
+startInfo.ArgumentList.Add(assemblyPath)
+startInfo.UseShellExecute <- false
 
-  let proc = Process.Start(startInfo)
-  proc.WaitForExit()
-  ()
-
-shellExecute (__SOURCE_DIRECTORY__ + "/XrmDefinitelyTyped.exe") ""
+use proc = Process.Start(startInfo)
+proc.WaitForExit()
+if proc.ExitCode <> 0 then
+  failwithf "XrmDefinitelyTyped returned exit code %d" proc.ExitCode

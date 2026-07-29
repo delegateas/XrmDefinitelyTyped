@@ -136,8 +136,8 @@ Target.create "Build" (fun _ ->
 
 Target.create "RunXDT" (fun _ ->
   // Run XrmDefinitelyTyped
-  let pathToRelease = Path.GetFullPath @"src/XrmDefinitelyTyped/bin/Release/net462"
-  let result = 
+  let pathToRelease = Path.GetFullPath @"src/XrmDefinitelyTyped/bin/Release/net8.0"
+  let arguments =
     [
       "load", "../../../XdtData.json"
       "out", "../../../../../test/typings/XRM"
@@ -147,12 +147,16 @@ Target.create "RunXDT" (fun _ ->
       "entities", "account,contact"
     ]
     |> List.map (fun (k,v) -> sprintf "-%s:%s" k v)
-    |> CreateProcess.fromRawCommand (pathToRelease ++ @"XrmDefinitelyTyped.exe")
+    |> fun arguments -> (pathToRelease ++ @"XrmDefinitelyTyped.dll") :: arguments
+
+  let result =
+    arguments
+    |> CreateProcess.fromRawCommand "dotnet"
     |> CreateProcess.withWorkingDirectory pathToRelease
     |> Proc.run
 
-  if result.ExitCode <> 0 then 
-    failwithf "XrmDefinitelyTyped.exe returned with a non-zero exit code"
+  if result.ExitCode <> 0 then
+    failwithf "XrmDefinitelyTyped returned with a non-zero exit code"
 )
 
 Target.create "Test" (fun _ ->
