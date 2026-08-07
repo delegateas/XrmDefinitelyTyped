@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noUncheckedIndexedAccess": false,
+    "exactOptionalPropertyTypes": false,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "noEmit": true,
+    "types": ["node"]
+  },
+  "include": ["src", "tests", "*.ts"],
+  // Its typings declare `accounts` on the global merge interfaces, which collides with
+  // `tests/fixtures/entities.d.ts`. Checked separately via `npm run typecheck:xdt`.
+  "exclude": ["tests/xdt-compat"]
+}

@@ -5,9 +5,30 @@
     <AssemblyName>XrmDefinitelyTyped.Tool</AssemblyName>
     <RootNamespace>XrmDefinitelyTyped.Tool</RootNamespace>
     <PackAsTool>true</PackAsTool>
-    <PackageId>XrmDefinitelyTyped.Tool</PackageId>
+    <PackageId>XrmDefinitelyTyped</PackageId>
     <ToolCommandName>xdt</ToolCommandName>
   </PropertyGroup>
+
+  <PropertyGroup>
+    <Authors>Delegate A/S</Authors>
+    <Company>Delegate A/S</Company>
+    <Description>Generates TypeScript declaration files for your Dynamics 365/Dataverse solution. The TypeScript equivalent of CrmSvcUtil, for client-side code.</Description>
+    <PackageTags>dataverse;dynamics-365;power-apps;typescript;codegen;xrm;dotnet-tool</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/delegateas/XrmDefinitelyTyped</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/delegateas/XrmDefinitelyTyped</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>XrmDefinitelyTyped-sticker_small.png</PackageIcon>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="" />
+    <None Include="..\..\resources\XrmDefinitelyTyped-sticker_small.png" Pack="true" PackagePath="" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="DataverseConnection" Version="1.1.1" />

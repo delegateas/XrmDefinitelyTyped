@@ -1,0 +1,44 @@
+name: Tool CI
+
+on:
+  pull_request:
+    paths:
+      - "src/XrmDefinitelyTyped.Core/**"
+      - "src/XrmDefinitelyTyped.Tool/**"
+      - "Directory.Build.props"
+      - "global.json"
+      - "*.slnx"
+      - ".github/workflows/dotnet-ci.yml"
+  push:
+    branches: [main]
+    paths:
+      - "src/XrmDefinitelyTyped.Core/**"
+      - "src/XrmDefinitelyTyped.Tool/**"
+      - "Directory.Build.props"
+      - "global.json"
+      - "*.slnx"
+      - ".github/workflows/dotnet-ci.yml"
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test --configuration Release --no-build
+
+      - name: Verify package can be produced
+        run: dotnet pack src/XrmDefinitelyTyped.Tool --configuration Release --no-build -p:Version=0.0.0-ci

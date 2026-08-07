@@ -1,4 +1,4 @@
-# XrmDefinitelyTyped [![NuGet version](https://badge.fury.io/nu/Delegate.XrmDefinitelyTyped.svg)](https://badge.fury.io/nu/Delegate.XrmDefinitelyTyped) [![Join the chat at https://gitter.im/delegateas/XrmDefinitelyTyped](https://badges.gitter.im/delegateas/XrmDefinitelyTyped.svg)](https://gitter.im/delegateas/XrmDefinitelyTyped?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# XrmDefinitelyTyped [![NuGet version](https://badge.fury.io/nu/XrmDefinitelyTyped.svg)](https://badge.fury.io/nu/XrmDefinitelyTyped) [![npm version](https://badge.fury.io/js/@contextand%2Fxrmquery.svg)](https://www.npmjs.com/package/@contextand/xrmquery) [![Join the chat at https://gitter.im/delegateas/XrmDefinitelyTyped](https://badges.gitter.im/delegateas/XrmDefinitelyTyped.svg)](https://gitter.im/delegateas/XrmDefinitelyTyped?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 XrmDefinitelyTyped generates [TypeScript](http://www.typescriptlang.org/)
 declaration files based on *your* Dynamics 365/CRM/xRM solution.
@@ -6,6 +6,30 @@ declaration files based on *your* Dynamics 365/CRM/xRM solution.
 It is the TypeScript equivalent of [CrmSvcUtil](https://msdn.microsoft.com/en-us/library/gg327844.aspx), but instead of generating early-bound .NET classes for server-side code, it generates TypeScript interfaces for all your client-side coding.
 
 [Read more here](https://github.com/delegateas/XrmDefinitelyTyped/wiki)
+
+## Repository layout
+
+This repository ships two artifacts: the generator and the runtime library that consumes what it
+generates.
+
+| Path | Artifact | Registry |
+| --- | --- | --- |
+| `src/XrmDefinitelyTyped.Tool` | `XrmDefinitelyTyped` — dotnet tool, command `xdt` | NuGet |
+| `src/XrmDefinitelyTyped.Core` | Generation and metadata library used by the tool | — |
+| [`src/XrmQuery`](src/XrmQuery) | `@contextand/xrmquery` — type-safe Dataverse Web API query library | npm |
+
+XrmQuery used to be emitted onto disk by the tool itself via `-jsLib`. It is now a normal npm
+package with ES module exports — see [`src/XrmQuery/MIGRATION.md`](src/XrmQuery/MIGRATION.md) for
+moving off the old web-resource setup.
+
+## Releasing
+
+Both artifacts are released by pushing a tag; the version is taken from the tag name.
+
+```bash
+git tag tool-v3.0.0     && git push origin tool-v3.0.0        # -> NuGet
+git tag xrmquery-v0.1.0 && git push origin xrmquery-v0.1.0    # -> npm
+```
 
 ## Installation
 

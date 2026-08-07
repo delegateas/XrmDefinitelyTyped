@@ -30,6 +30,13 @@ TestResults/
 # Auto-generated files
 *.generated.cs
 
+# Node/TypeScript build outputs
+node_modules/
+dist/
+coverage/
+*.tgz
+.DS_Store
+
 # Others
 *.swp
 *.bak

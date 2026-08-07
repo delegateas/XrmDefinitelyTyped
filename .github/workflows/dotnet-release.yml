@@ -1,0 +1,41 @@
+name: Tool Release
+
+on:
+  push:
+    tags: ["tool-v*"]
+
+concurrency: tool-release
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Resolve version from tag
+        run: echo "VERSION=${GITHUB_REF_NAME#tool-v}" >> "$GITHUB_ENV"
+
+      - name: Build
+        run: dotnet build --configuration Release -p:Version=${{ env.VERSION }}
+
+      - name: Test
+        run: dotnet test --configuration Release --no-build
+
+      - name: Pack
+        run: dotnet pack src/XrmDefinitelyTyped.Tool --configuration Release --no-build -p:Version=${{ env.VERSION }} -o artifacts
+
+      - name: Push to NuGet
+        run: >
+          dotnet nuget push "artifacts/*.nupkg"
+          --source https://api.nuget.org/v3/index.json
+          --api-key ${{ secrets.NUGET_API_KEY }}
+          --skip-duplicate
