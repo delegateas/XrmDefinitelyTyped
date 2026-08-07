@@ -52,6 +52,7 @@
     "build": "tsup",
     "typecheck": "tsc --noEmit",
     "typecheck:xdt": "tsc --noEmit -p tests/xdt-compat/tsconfig.json",
+    "typecheck:generated": "tsc --noEmit -p tests/generated-compat/tsconfig.json",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint .",

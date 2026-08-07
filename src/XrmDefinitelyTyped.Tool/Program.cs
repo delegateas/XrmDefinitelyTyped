@@ -2,11 +2,14 @@ using DataverseConnection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.PowerPlatform.Dataverse.Client;
+using XrmDefinitelyTyped.Core.Domain;
 using XrmDefinitelyTyped.Core.Generation;
+using XrmDefinitelyTyped.Core.Generation.Generators;
 using XrmDefinitelyTyped.Core.Metadata;
 using XrmDefinitelyTyped.Core.Output;
 using XrmDefinitelyTyped.Tool;
 using XrmDefinitelyTyped.Tool.Configuration;
+using XrmQueryTyped.Core.Generation;
 
 try
 {
@@ -26,7 +29,11 @@ try
         new XdtGenerationConfig(
             paramsConfig.IntersectMapping ?? appSettingsConfig.IntersectMapping ?? new Dictionary<string, IReadOnlyList<string>>(),
             SingleFile: paramsConfig.SingleFile ?? appSettingsConfig.SingleFile ?? false,
-            GenerateCustomApis: paramsConfig.GenerateCustomApis ?? appSettingsConfig.GenerateCustomApis ?? false));
+            GenerateCustomApis: paramsConfig.GenerateCustomApis ?? appSettingsConfig.GenerateCustomApis ?? false),
+        GeneratorKinds.Parse(paramsConfig.Generate ?? appSettingsConfig.Generate ?? []),
+        new XrmQueryGenerationConfig(
+            paramsConfig.WebNamespace ?? appSettingsConfig.WebNamespace ?? "XDT",
+            SingleFile: paramsConfig.SingleFile ?? appSettingsConfig.SingleFile ?? false));
 
     ConfigValidator.Validate(config);
 
@@ -39,17 +46,40 @@ try
     using var provider = services.BuildServiceProvider();
     var serviceClient = provider.GetRequiredService<ServiceClient>();
 
-    var fetcher = new DataverseMetadataSourceFactory(serviceClient)
-        .CreateFetcher(MetadataSourceType.Dataverse, config.Fetch);
+    var sourceFactory = new DataverseMetadataSourceFactory(serviceClient);
+    var files = new List<GeneratedFile>();
+    var optionSets = new List<OptionSetModel>();
 
-    Console.WriteLine($"Fetching form metadata from {configuration["DATAVERSE_URL"]} ...");
-    var forms = await fetcher.FetchMetadataAsync();
-    Console.WriteLine($"Fetched {forms.Count} form(s).");
+    if (config.Generators.Contains(GeneratorKind.Forms))
+    {
+        Console.WriteLine($"Fetching form metadata from {configuration["DATAVERSE_URL"]} ...");
+        var forms = await sourceFactory
+            .CreateFetcher(MetadataSourceType.Dataverse, config.Fetch)
+            .FetchMetadataAsync();
+        Console.WriteLine($"Fetched {forms.Count} form(s).");
 
-    var files = new CodeGenerator().GenerateCode(forms, [], config.Generation).ToList();
-    Console.WriteLine($"Generated {files.Count} file(s).");
+        files.AddRange(new CodeGenerator().GenerateCode(forms, [], config.Generation));
+    }
 
-    new FileSystemOutputWriter().WriteFiles(files, config.OutputDirectory);
+    if (config.Generators.Contains(GeneratorKind.Web))
+    {
+        Console.WriteLine($"Fetching entity metadata from {configuration["DATAVERSE_URL"]} ...");
+        var entities = await sourceFactory
+            .CreateEntityMetadataFetcher(MetadataSourceType.Dataverse, config.Fetch)
+            .FetchEntityMetadataAsync();
+        Console.WriteLine($"Fetched {entities.Count} entity/entities.");
+
+        files.AddRange(new EntityTypesGenerator().Generate(entities, config.XrmQuery));
+        optionSets.AddRange(entities.SelectMany(entity => entity.OptionSets));
+    }
+
+    files.AddRange(new OptionSetGenerator().Generate(optionSets));
+
+    // A single write, since the output writer clears the output directory before writing.
+    var outputFiles = files.DistinctBy(file => file.Filename, StringComparer.Ordinal).ToList();
+    Console.WriteLine($"Generated {outputFiles.Count} file(s).");
+
+    new FileSystemOutputWriter().WriteFiles(outputFiles, config.OutputDirectory);
     Console.WriteLine($"Wrote output to {Path.GetFullPath(config.OutputDirectory)}");
 
     return 0;

@@ -5,6 +5,8 @@ on:
     paths:
       - "src/XrmDefinitelyTyped.Core/**"
       - "src/XrmDefinitelyTyped.Tool/**"
+      - "src/XrmQueryTyped.Core/**"
+      - "test/**"
       - "Directory.Build.props"
       - "global.json"
       - "*.slnx"
@@ -14,6 +16,8 @@ on:
     paths:
       - "src/XrmDefinitelyTyped.Core/**"
       - "src/XrmDefinitelyTyped.Tool/**"
+      - "src/XrmQueryTyped.Core/**"
+      - "test/**"
       - "Directory.Build.props"
       - "global.json"
       - "*.slnx"

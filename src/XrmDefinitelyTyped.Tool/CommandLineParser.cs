@@ -6,16 +6,7 @@ namespace XrmDefinitelyTyped.Tool;
 
 internal static class CommandLineParser
 {
-    public static (
-        string? OutputDirectory,
-        IReadOnlyList<string>? Solutions,
-        IReadOnlyList<string>? Entities,
-        IReadOnlyDictionary<string, IReadOnlyList<string>>? IntersectMapping,
-        IReadOnlyDictionary<string, string>? LabelMappings,
-        bool? SkipInactiveForms,
-        bool? SingleFile,
-        bool? GenerateCustomApis)
-        Parse(string[] args)
+    public static PartialConfig Parse(string[] args)
     {
 
         var outputOption = new Option<string>("--output-directory", "-o")
@@ -100,6 +91,18 @@ internal static class CommandLineParser
             Description = "Generate Custom API types (not yet implemented).",
         };
 
+        var generateOption = new Option<string[]>("--generate", "-g")
+        {
+            Description = $"What to generate: '{GeneratorKinds.FormsValue}', '{GeneratorKinds.WebValue}' or both (default).",
+            AllowMultipleArgumentsPerToken = true,
+            CustomParser = GetCommaSeparatedValue,
+        };
+
+        var webNamespaceOption = new Option<string>("--web-namespace", "-wns")
+        {
+            Description = "Namespace for the generated web entity types.",
+        };
+
         var root = new RootCommand("XrmDefinitelyTyped - generate TypeScript declarations from Dataverse forms.")
         {
             outputOption,
@@ -110,6 +113,8 @@ internal static class CommandLineParser
             labelMappingsOption,
             singleFileOption,
             customApisOption,
+            generateOption,
+            webNamespaceOption,
         };
 
         var result = root.Parse(args);
@@ -117,17 +122,20 @@ internal static class CommandLineParser
         if (result.Errors.Count > 0)
             throw new ArgumentException(string.Join("; ", result.Errors.Select(e => e.Message)));
 
-        return (
+        return new PartialConfig(
             result.GetValue(outputOption),
-            result.GetValue(solutionsOption),
-            result.GetValue(entitiesOption),
-            result.GetValue(intersectOption),
+            AsList(result.GetValue(solutionsOption)),
+            AsList(result.GetValue(entitiesOption)),
             result.GetValue(labelMappingsOption),
+            result.GetValue(intersectOption),
             result.GetValue(skipInactiveOption),
             result.GetValue(singleFileOption),
-            result.GetValue(customApisOption)
-        );
+            result.GetValue(customApisOption),
+            AsList(result.GetValue(generateOption)),
+            result.GetValue(webNamespaceOption));
     }
+
+    private static List<string>? AsList(string[]? values) => values is null ? null : [.. values];
 
     private static string[] GetCommaSeparatedValue(System.CommandLine.Parsing.ArgumentResult result)
     {

@@ -16,7 +16,12 @@ export default tseslint.config(
   {
     // The ambient contract and the XDT-shaped test fixture are declaration-only. `XQW.Guid` has to
     // stay a global namespace: generated `_Select` interfaces reference it by that name.
-    files: ["src/globals.ts", "tests/fixtures/**/*.d.ts", "tests/xdt-compat/typings/*.d.ts"],
+    files: [
+      "src/globals.ts",
+      "tests/fixtures/**/*.d.ts",
+      "tests/xdt-compat/typings/*.d.ts",
+      "tests/generated-compat/typings/*.d.ts",
+    ],
     rules: {
       "@typescript-eslint/no-unused-vars": "off",
       "@typescript-eslint/no-empty-object-type": "off",

@@ -1,5 +1,4 @@
 using Scriban;
-using Scriban.Runtime;
 using System.Reflection;
 using XrmDefinitelyTyped.Core.Domain;
 using XrmDefinitelyTyped.Core.Generation;
@@ -10,7 +9,9 @@ namespace XrmDefinitelyTyped.Core.Generation.Generators;
 
 public sealed class FormGenerator
 {
-    private static readonly Template _template = LoadTemplate();
+    private static readonly Template Template = TemplateRenderer.Load(
+        Assembly.GetExecutingAssembly(),
+        "XrmDefinitelyTyped.Core.Templates.form.sbn");
 
     public IReadOnlyList<GeneratedFile> Generate(IReadOnlyList<FormModel> forms)
     {
@@ -21,14 +22,7 @@ public sealed class FormGenerator
     private static GeneratedFile GenerateFormFile(FormModel form)
     {
         var viewModel = BuildFormViewModel(form);
-
-        var scriptObject = new ScriptObject();
-        scriptObject.Import(viewModel, renamer: member => member.Name);
-
-        var context = new TemplateContext { MemberRenamer = member => member.Name };
-        context.PushGlobal(scriptObject);
-
-        var content = _template.Render(context);
+        var content = TemplateRenderer.Render(Template, viewModel);
         var filename = Path.Combine(form.EntityLogicalName, form.FormType.ToString(), $"{viewModel.FormName}.d.ts");
         return new GeneratedFile(filename, content);
     }
@@ -76,14 +70,5 @@ public sealed class FormGenerator
             .Select(s => new SectionViewModel(s.Name))
             .ToList();
         return new TabViewModel(tab.Name, sections);
-    }
-
-    private static Template LoadTemplate()
-    {
-        var assembly = Assembly.GetExecutingAssembly();
-        using var stream = assembly.GetManifestResourceStream("XrmDefinitelyTyped.Core.Templates.form.sbn")
-            ?? throw new InvalidOperationException("Embedded template 'form.sbn' not found.");
-        using var reader = new StreamReader(stream);
-        return Template.Parse(reader.ReadToEnd());
     }
 }

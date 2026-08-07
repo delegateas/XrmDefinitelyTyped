@@ -22,6 +22,8 @@ public static class AppSettingsConfigBuilder
             configSection.GetSection("IntersectMapping").Get<Dictionary<string, IReadOnlyList<string>>>(),
             configSection.GetValue<bool?>("SkipInactiveForms"),
             configSection.GetValue<bool?>("SingleFile"),
-            configSection.GetValue<bool?>("GenerateCustomApis"));
+            configSection.GetValue<bool?>("GenerateCustomApis"),
+            configSection.GetSection("Generate").Get<List<string>>(),
+            configSection.GetValue<string>("WebNamespace"));
     }
 }

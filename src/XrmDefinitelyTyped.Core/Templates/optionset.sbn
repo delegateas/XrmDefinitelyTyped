@@ -1,0 +1,8 @@
+/**
+ * Dataverse option set `{{ Name }}`.
+ *
+{{~ for option in Options ~}}
+ * - `{{ option.Value }}`: {{ option.Label }}
+{{~ end ~}}
+ */
+declare type {{ Name }} = {{ Union }};

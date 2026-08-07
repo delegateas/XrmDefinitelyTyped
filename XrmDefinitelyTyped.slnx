@@ -2,5 +2,9 @@
   <Folder Name="/src/">
     <Project Path="src/XrmDefinitelyTyped.Core/XrmDefinitelyTyped.Core.csproj" />
     <Project Path="src/XrmDefinitelyTyped.Tool/XrmDefinitelyTyped.Tool.csproj" />
+    <Project Path="src/XrmQueryTyped.Core/XrmQueryTyped.Core.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/XrmQueryTyped.Core.Tests/XrmQueryTyped.Core.Tests.csproj" />
   </Folder>
 </Solution>

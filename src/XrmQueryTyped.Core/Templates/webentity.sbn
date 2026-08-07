@@ -1,0 +1,26 @@
+{{~ if HasNamespace ~}}
+declare namespace {{ Namespace }} {
+{{~ end ~}}
+{{~ for entityInterface in Interfaces ~}}
+{{ Indent }}interface {{ entityInterface.Name }}{{ entityInterface.Extends }} {
+{{~ for member in entityInterface.Members ~}}
+{{ Indent }}  {{ member.Name }}{{ member.Optional }}: {{ member.Type }};
+{{~ end ~}}
+{{ Indent }}}
+{{ end ~}}
+{{~ if HasNamespace ~}}
+}
+{{ end ~}}
+{{~ for entitySet in EntitySets ~}}
+interface WebEntitiesRetrieve {
+  {{ entitySet.EntitySetName }}: {{ entitySet.RetrieveMapping }};
+}
+
+interface WebEntitiesRelated {
+  {{ entitySet.EntitySetName }}: {{ entitySet.RelatedMapping }};
+}
+
+interface WebEntitiesCUDA {
+  {{ entitySet.EntitySetName }}: {{ entitySet.CreateUpdateDeleteAssociateMapping }};
+}
+{{ end ~}}

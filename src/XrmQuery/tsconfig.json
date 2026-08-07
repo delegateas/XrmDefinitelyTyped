@@ -18,5 +18,5 @@
   "include": ["src", "tests", "*.ts"],
   // Its typings declare `accounts` on the global merge interfaces, which collides with
   // `tests/fixtures/entities.d.ts`. Checked separately via `npm run typecheck:xdt`.
-  "exclude": ["tests/xdt-compat"]
+  "exclude": ["tests/xdt-compat", "tests/generated-compat"]
 }

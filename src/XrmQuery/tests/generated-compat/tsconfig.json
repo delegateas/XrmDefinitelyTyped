@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@contextand/xrmquery": ["../../src/index.ts"]
+    },
+    "types": []
+  },
+  // The root config excludes this folder; undo that inherited exclusion here.
+  "include": ["."],
+  "exclude": []
+}

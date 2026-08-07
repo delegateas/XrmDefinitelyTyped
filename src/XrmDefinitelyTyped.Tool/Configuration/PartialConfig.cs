@@ -8,4 +8,6 @@ public record PartialConfig(
     Dictionary<string, IReadOnlyList<string>>? IntersectMapping,
     bool? SkipInactiveForms,
     bool? SingleFile,
-    bool? GenerateCustomApis);
+    bool? GenerateCustomApis,
+    List<string>? Generate,
+    string? WebNamespace);

@@ -1,8 +1,6 @@
 using XrmDefinitelyTyped.Core.Domain;
 using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
-using Microsoft.Xrm.Sdk.Messages;
-using Microsoft.Xrm.Sdk.Metadata;
 using Microsoft.Xrm.Sdk.Query;
 using System.Xml.Linq;
 
@@ -11,11 +9,12 @@ namespace XrmDefinitelyTyped.Core.Metadata;
 public sealed class DataverseMetadataFetcher(ServiceClient serviceClient, XrmFetchConfig config) : IDataverseMetadataFetcher
 {
     private const int MaxParallelism = 8;
-    private const int EntityComponentType = 1;
+
+    private readonly EntitySelectionResolver entitySelectionResolver = new(serviceClient, config);
 
     public async Task<IReadOnlyList<FormModel>> FetchMetadataAsync()
     {
-        var entityNames = await ResolveEntityNamesAsync();
+        var entityNames = await entitySelectionResolver.ResolveEntityNamesAsync();
         var query = BuildFormQuery(entityNames);
         var entities = await RetrieveAllPagesAsync(query);
 
@@ -23,93 +22,6 @@ public sealed class DataverseMetadataFetcher(ServiceClient serviceClient, XrmFet
             .AsParallel()
             .WithDegreeOfParallelism(MaxParallelism)
             .Select(ParseForm)
-            .ToList();
-    }
-
-    private async Task<IReadOnlyList<string>> ResolveEntityNamesAsync()
-    {
-        var entityNames = new HashSet<string>(config.Entities, StringComparer.OrdinalIgnoreCase);
-
-        if (config.Solutions.Count > 0)
-        {
-            var solutionEntityNames = await FetchEntityNamesFromSolutionsAsync();
-            entityNames.UnionWith(solutionEntityNames);
-        }
-
-        return [.. entityNames];
-    }
-
-    private async Task<IReadOnlyList<string>> FetchEntityNamesFromSolutionsAsync()
-    {
-        var solutionIds = await FetchSolutionIdsAsync();
-        if (solutionIds.Count == 0)
-            return [];
-
-        var entityMetadataIds = await FetchEntityMetadataIdsFromSolutionsAsync(solutionIds);
-        if (entityMetadataIds.Count == 0)
-            return [];
-
-        return await ResolveEntityLogicalNamesAsync(entityMetadataIds);
-    }
-
-    private async Task<IReadOnlyList<Guid>> FetchSolutionIdsAsync()
-    {
-        var query = new QueryExpression("solution")
-        {
-            ColumnSet = new ColumnSet("solutionid"),
-            Criteria = new FilterExpression(),
-        };
-
-        var condition = new ConditionExpression("uniquename", ConditionOperator.In);
-        foreach (var name in config.Solutions)
-        {
-            condition.Values.Add(name);
-        }
-
-        query.Criteria.Conditions.Add(condition);
-
-        var response = await serviceClient.RetrieveMultipleAsync(query);
-        return response.Entities.Select(e => e.Id).ToList();
-    }
-
-    private async Task<IReadOnlyList<Guid>> FetchEntityMetadataIdsFromSolutionsAsync(IReadOnlyList<Guid> solutionIds)
-    {
-        var query = new QueryExpression("solutioncomponent")
-        {
-            ColumnSet = new ColumnSet("objectid"),
-            Criteria = new FilterExpression(),
-        };
-
-        var solutionCondition = new ConditionExpression("solutionid", ConditionOperator.In);
-        foreach (var id in solutionIds)
-        {
-            solutionCondition.Values.Add(id);
-        }
-
-        query.Criteria.Conditions.Add(solutionCondition);
-        query.Criteria.AddCondition("componenttype", ConditionOperator.Equal, EntityComponentType);
-
-        var response = await serviceClient.RetrieveMultipleAsync(query);
-        return response.Entities
-            .Select(e => e.GetAttributeValue<Guid>("objectid"))
-            .Where(id => id != Guid.Empty)
-            .ToList();
-    }
-
-    private async Task<IReadOnlyList<string>> ResolveEntityLogicalNamesAsync(IReadOnlyList<Guid> entityMetadataIds)
-    {
-        var request = new RetrieveAllEntitiesRequest
-        {
-            EntityFilters = EntityFilters.Entity,
-            RetrieveAsIfPublished = true,
-        };
-
-        var response = (RetrieveAllEntitiesResponse)await serviceClient.ExecuteAsync(request);
-        var metadataIdSet = new HashSet<Guid>(entityMetadataIds);
-
-        return response.EntityMetadata
-            .Where(e => e.MetadataId.HasValue && metadataIdSet.Contains(e.MetadataId.Value))
-            .Select(e => e.LogicalName)
             .ToList();
     }
 

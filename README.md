@@ -15,7 +15,8 @@ generates.
 | Path | Artifact | Registry |
 | --- | --- | --- |
 | `src/XrmDefinitelyTyped.Tool` | `XrmDefinitelyTyped` — dotnet tool, command `xdt` | NuGet |
-| `src/XrmDefinitelyTyped.Core` | Generation and metadata library used by the tool | — |
+| `src/XrmDefinitelyTyped.Core` | Form generation and Dataverse metadata library used by the tool | — |
+| `src/XrmQueryTyped.Core` | Web entity type generation for `@contextand/xrmquery` | — |
 | [`src/XrmQuery`](src/XrmQuery) | `@contextand/xrmquery` — type-safe Dataverse Web API query library | npm |
 
 XrmQuery used to be emitted onto disk by the tool itself via `-jsLib`. It is now a normal npm
@@ -36,6 +37,18 @@ git tag xrmquery-v0.1.0 && git push origin xrmquery-v0.1.0    # -> npm
 ## Configuration
 
 ## Usage
+
+The tool runs two generators. Pick them with `--generate` (`-g`); the default is both.
+
+```bash
+xdt -o typings                      # forms and web entity types
+xdt -o typings --generate forms     # form types only
+xdt -o typings --generate web       # web entity types for @contextand/xrmquery only
+```
+
+Web entity types land in `typings/Web/<entity>.d.ts` (or a single `typings/Web/WebEntities.d.ts` with
+`--single-file`) inside the `XDT` namespace, overridable with `--web-namespace`. Option-set types are
+written to `typings/_internal/Enum/` by whichever generator needs them.
 
 ## Configuration Options
 

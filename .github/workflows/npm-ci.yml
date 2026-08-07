@@ -50,6 +50,9 @@ jobs:
       - name: Typecheck against real XrmDefinitelyTyped output
         run: npm run typecheck:xdt
 
+      - name: Typecheck against XrmQueryTyped.Core output
+        run: npm run typecheck:generated
+
       - name: Test
         run: npm test
 
