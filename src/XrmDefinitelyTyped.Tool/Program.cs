@@ -2,14 +2,16 @@ using DataverseConnection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.PowerPlatform.Dataverse.Client;
-using XrmDefinitelyTyped.Core.Domain;
 using XrmDefinitelyTyped.Core.Generation;
-using XrmDefinitelyTyped.Core.Generation.Generators;
 using XrmDefinitelyTyped.Core.Metadata;
-using XrmDefinitelyTyped.Core.Output;
 using XrmDefinitelyTyped.Tool;
 using XrmDefinitelyTyped.Tool.Configuration;
 using XrmQueryTyped.Core.Generation;
+using XrmTyped.Shared.Domain;
+using XrmTyped.Shared.Generation;
+using XrmTyped.Shared.Generation.Generators;
+using XrmTyped.Shared.Metadata;
+using XrmTyped.Shared.Output;
 
 try
 {
@@ -46,14 +48,15 @@ try
     using var provider = services.BuildServiceProvider();
     var serviceClient = provider.GetRequiredService<ServiceClient>();
 
-    var sourceFactory = new DataverseMetadataSourceFactory(serviceClient);
+    var formSourceFactory = new DataverseMetadataSourceFactory(serviceClient);
+    var entitySourceFactory = new DataverseEntityMetadataSourceFactory(serviceClient);
     var files = new List<GeneratedFile>();
     var optionSets = new List<OptionSetModel>();
 
     if (config.Generators.Contains(GeneratorKind.Forms))
     {
         Console.WriteLine($"Fetching form metadata from {configuration["DATAVERSE_URL"]} ...");
-        var forms = await sourceFactory
+        var forms = await formSourceFactory
             .CreateFetcher(MetadataSourceType.Dataverse, config.Fetch)
             .FetchMetadataAsync();
         Console.WriteLine($"Fetched {forms.Count} form(s).");
@@ -64,7 +67,7 @@ try
     if (config.Generators.Contains(GeneratorKind.Web))
     {
         Console.WriteLine($"Fetching entity metadata from {configuration["DATAVERSE_URL"]} ...");
-        var entities = await sourceFactory
+        var entities = await entitySourceFactory
             .CreateEntityMetadataFetcher(MetadataSourceType.Dataverse, config.Fetch)
             .FetchEntityMetadataAsync();
         Console.WriteLine($"Fetched {entities.Count} entity/entities.");

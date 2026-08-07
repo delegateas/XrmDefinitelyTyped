@@ -1,4 +1,5 @@
 using Microsoft.PowerPlatform.Dataverse.Client;
+using XrmTyped.Shared.Metadata;
 
 namespace XrmDefinitelyTyped.Core.Metadata;
 
@@ -8,16 +9,7 @@ public sealed class DataverseMetadataSourceFactory(ServiceClient serviceClient) 
     {
         return type switch
         {
-            MetadataSourceType.Dataverse => new DataverseMetadataFetcher(serviceClient, AsFetchConfig(config)),
-            _ => throw new NotSupportedException($"Metadata source type {type} is not supported by this factory."),
-        };
-    }
-
-    public IEntityMetadataFetcher CreateEntityMetadataFetcher(MetadataSourceType type, object config)
-    {
-        return type switch
-        {
-            MetadataSourceType.Dataverse => new DataverseEntityMetadataFetcher(serviceClient, AsFetchConfig(config)),
+            MetadataSourceType.Dataverse => new DataverseMetadataFetcher(serviceClient, XrmFetchConfig.From(config)),
             _ => throw new NotSupportedException($"Metadata source type {type} is not supported by this factory."),
         };
     }
@@ -25,13 +17,5 @@ public sealed class DataverseMetadataSourceFactory(ServiceClient serviceClient) 
     public bool SupportsSourceType(MetadataSourceType type)
     {
         return type is MetadataSourceType.Dataverse;
-    }
-
-    private static XrmFetchConfig AsFetchConfig(object config)
-    {
-        if (config is not XrmFetchConfig fetchConfig)
-            throw new ArgumentException("Expected XrmFetchConfig for Dataverse metadata source.", nameof(config));
-
-        return fetchConfig;
     }
 }

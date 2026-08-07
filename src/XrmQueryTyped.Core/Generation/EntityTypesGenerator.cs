@@ -1,8 +1,8 @@
 using Scriban;
 using System.Reflection;
-using XrmDefinitelyTyped.Core.Domain;
-using XrmDefinitelyTyped.Core.Generation;
-using XrmDefinitelyTyped.Core.Generation.Utilities;
+using XrmTyped.Shared.Domain;
+using XrmTyped.Shared.Generation;
+using XrmTyped.Shared.Generation.Utilities;
 using XrmQueryTyped.Core.Generation.ViewModels;
 
 namespace XrmQueryTyped.Core.Generation;

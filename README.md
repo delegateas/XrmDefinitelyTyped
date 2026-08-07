@@ -15,7 +15,8 @@ generates.
 | Path | Artifact | Registry |
 | --- | --- | --- |
 | `src/XrmDefinitelyTyped.Tool` | `XrmDefinitelyTyped` — dotnet tool, command `xdt` | NuGet |
-| `src/XrmDefinitelyTyped.Core` | Form generation and Dataverse metadata library used by the tool | — |
+| `src/XrmTyped.Shared` | Shared by both generators: Dataverse entity metadata, option sets, TypeScript emission plumbing, output writing | — |
+| `src/XrmDefinitelyTyped.Core` | Form generation | — |
 | `src/XrmQueryTyped.Core` | Web entity type generation for `@contextand/xrmquery` | — |
 | [`src/XrmQuery`](src/XrmQuery) | `@contextand/xrmquery` — type-safe Dataverse Web API query library | npm |
 

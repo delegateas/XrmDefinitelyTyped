@@ -1,4 +1,4 @@
-using XrmDefinitelyTyped.Core.Generation;
+using XrmTyped.Shared.Generation;
 using XrmQueryTyped.Core.Generation;
 
 namespace XrmQueryTyped.Core.Tests;

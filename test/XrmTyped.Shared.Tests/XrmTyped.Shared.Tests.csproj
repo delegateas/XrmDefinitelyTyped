@@ -11,11 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\XrmQueryTyped.Core\XrmQueryTyped.Core.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="Fixtures\**" CopyToOutputDirectory="PreserveNewest" />
+    <ProjectReference Include="..\..\src\XrmTyped.Shared\XrmTyped.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

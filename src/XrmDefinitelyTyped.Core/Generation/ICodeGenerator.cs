@@ -1,4 +1,5 @@
 using XrmDefinitelyTyped.Core.Domain;
+using XrmTyped.Shared.Generation;
 
 namespace XrmDefinitelyTyped.Core.Generation;
 

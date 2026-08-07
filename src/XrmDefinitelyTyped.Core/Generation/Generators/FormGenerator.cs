@@ -4,6 +4,8 @@ using XrmDefinitelyTyped.Core.Domain;
 using XrmDefinitelyTyped.Core.Generation;
 using XrmDefinitelyTyped.Core.Generation.Utilities;
 using XrmDefinitelyTyped.Core.Generation.ViewModels;
+using XrmTyped.Shared.Generation;
+using XrmTyped.Shared.Generation.Utilities;
 
 namespace XrmDefinitelyTyped.Core.Generation.Generators;
 

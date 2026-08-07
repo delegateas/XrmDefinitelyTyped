@@ -3,8 +3,10 @@
     <Project Path="src/XrmDefinitelyTyped.Core/XrmDefinitelyTyped.Core.csproj" />
     <Project Path="src/XrmDefinitelyTyped.Tool/XrmDefinitelyTyped.Tool.csproj" />
     <Project Path="src/XrmQueryTyped.Core/XrmQueryTyped.Core.csproj" />
+    <Project Path="src/XrmTyped.Shared/XrmTyped.Shared.csproj" />
   </Folder>
   <Folder Name="/test/">
     <Project Path="test/XrmQueryTyped.Core.Tests/XrmQueryTyped.Core.Tests.csproj" />
+    <Project Path="test/XrmTyped.Shared.Tests/XrmTyped.Shared.Tests.csproj" />
   </Folder>
 </Solution>

@@ -1,18 +1,14 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyName>XrmDefinitelyTyped.Core</AssemblyName>
-    <RootNamespace>XrmDefinitelyTyped.Core</RootNamespace>
+    <AssemblyName>XrmTyped.Shared</AssemblyName>
+    <RootNamespace>XrmTyped.Shared</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.PowerPlatform.Dataverse.Client" Version="1.*" />
     <PackageReference Include="Scriban" Version="7.*" />
     <PackageReference Include="System.Security.Cryptography.Xml" Version="10.*" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\XrmTyped.Shared\XrmTyped.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\XrmDefinitelyTyped.Core\XrmDefinitelyTyped.Core.csproj" />
+    <ProjectReference Include="..\XrmTyped.Shared\XrmTyped.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

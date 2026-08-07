@@ -1,4 +1,4 @@
-using XrmDefinitelyTyped.Core.Domain;
+using XrmTyped.Shared.Domain;
 using XrmQueryTyped.Core.Generation.ViewModels;
 
 namespace XrmQueryTyped.Core.Generation;

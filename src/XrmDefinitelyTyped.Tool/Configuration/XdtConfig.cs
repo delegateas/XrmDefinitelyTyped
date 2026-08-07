@@ -1,5 +1,5 @@
 using XrmDefinitelyTyped.Core.Generation;
-using XrmDefinitelyTyped.Core.Metadata;
+using XrmTyped.Shared.Metadata;
 using XrmQueryTyped.Core.Generation;
 
 namespace XrmDefinitelyTyped.Tool.Configuration;

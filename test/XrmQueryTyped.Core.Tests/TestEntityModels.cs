@@ -1,4 +1,4 @@
-using XrmDefinitelyTyped.Core.Domain;
+using XrmTyped.Shared.Domain;
 
 namespace XrmQueryTyped.Core.Tests;
 

@@ -3,6 +3,7 @@ using Microsoft.PowerPlatform.Dataverse.Client;
 using Microsoft.Xrm.Sdk;
 using Microsoft.Xrm.Sdk.Query;
 using System.Xml.Linq;
+using XrmTyped.Shared.Metadata;
 
 namespace XrmDefinitelyTyped.Core.Metadata;
 
