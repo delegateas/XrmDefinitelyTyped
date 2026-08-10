@@ -39,9 +39,10 @@ try
 
     ConfigValidator.Validate(config);
 
-    // Authentication is handled by the DataverseConnection package via DefaultAzureCredential,
-    // whose credential chain includes the caller's Azure CLI session (`az login`). The package
-    // reads the environment URL from configuration (DATAVERSE_URL).
+    // Authentication is handled by the DataverseConnection package, which reads its settings from the
+    // IConfiguration registered below: DATAVERSE_URL for the environment, and DATAVERSE_CREDENTIAL_TYPE
+    // to pick the credential (browser, devicecode, azcli, ...). Defaults to DefaultAzureCredential,
+    // whose chain includes the caller's Azure CLI session (`az login`).
     var services = new ServiceCollection();
     services.AddSingleton(configuration);
     services.AddDataverse();

@@ -19,7 +19,9 @@ public static class TemplateRenderer
         var scriptObject = new ScriptObject();
         scriptObject.Import(viewModel, renamer: member => member.Name);
 
-        var context = new TemplateContext { MemberRenamer = member => member.Name };
+        // LoopLimit counts iterations cumulatively across the whole context, so the default of 1000
+        // trips on wide entities (nested member loops). 0 disables the limit.
+        var context = new TemplateContext { MemberRenamer = member => member.Name, LoopLimit = 0 };
         context.PushGlobal(scriptObject);
 
         return template.Render(context);

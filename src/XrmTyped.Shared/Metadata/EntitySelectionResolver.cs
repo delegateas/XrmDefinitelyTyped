@@ -28,6 +28,13 @@ public sealed class EntitySelectionResolver(ServiceClient serviceClient, XrmFetc
             entityNames.UnionWith(solutionEntityNames);
         }
 
+        if (config.Solutions.Count > 0 && entityNames.Count == 0)
+        {
+            Console.Error.WriteLine(
+                $"Warning: the requested solution(s) [{string.Join(", ", config.Solutions)}] contain no tables, " +
+                "so every table in the environment will be generated.");
+        }
+
         return [.. entityNames];
     }
 
@@ -54,8 +61,6 @@ public sealed class EntitySelectionResolver(ServiceClient serviceClient, XrmFetc
     private async Task<IReadOnlyList<string>> FetchEntityNamesFromSolutionsAsync(IReadOnlyDictionary<string, EntityNameInfo> nameMap)
     {
         var solutionIds = await FetchSolutionIdsAsync();
-        if (solutionIds.Count == 0)
-            return [];
 
         var entityMetadataIds = await FetchEntityMetadataIdsFromSolutionsAsync(solutionIds);
         if (entityMetadataIds.Count == 0)
@@ -73,7 +78,7 @@ public sealed class EntitySelectionResolver(ServiceClient serviceClient, XrmFetc
     {
         var query = new QueryExpression("solution")
         {
-            ColumnSet = new ColumnSet("solutionid"),
+            ColumnSet = new ColumnSet("solutionid", "uniquename"),
             Criteria = new FilterExpression(),
         };
 
@@ -86,6 +91,20 @@ public sealed class EntitySelectionResolver(ServiceClient serviceClient, XrmFetc
         query.Criteria.Conditions.Add(condition);
 
         var response = await serviceClient.RetrieveMultipleAsync(query);
+
+        var foundNames = response.Entities
+            .Select(e => e.GetAttributeValue<string>("uniquename"))
+            .Where(name => !string.IsNullOrWhiteSpace(name))
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
+        var missing = config.Solutions.Where(name => !foundNames.Contains(name)).ToList();
+        if (missing.Count > 0)
+        {
+            throw new InvalidOperationException(
+                $"Solution(s) not found in the environment: {string.Join(", ", missing)}. " +
+                "Check the unique name (not the display name).");
+        }
+
         return response.Entities.Select(e => e.Id).ToList();
     }
 

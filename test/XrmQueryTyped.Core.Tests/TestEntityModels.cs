@@ -55,6 +55,22 @@ internal static class TestEntityModels
         ],
         OptionSets: []);
 
+    /// <summary>An entity with many attributes, used to cover templates rendering wide tables.</summary>
+    public static EntityModel Wide(int attributeCount) => new(
+        TypeCode: 3,
+        SchemaName: "Wide",
+        LogicalName: "wide",
+        EntitySetName: "wides",
+        PrimaryIdAttribute: "wideid",
+        Attributes:
+        [
+            Attribute("WideId", "wideid", "string", SpecialAttributeType.Guid, updateable: false),
+            .. Enumerable.Range(1, attributeCount).Select(index =>
+                Attribute($"Field{index}", $"field{index}", "string", SpecialAttributeType.Default)),
+        ],
+        Relationships: [],
+        OptionSets: []);
+
     public static OptionSetModel AccountCategoryCode() => new(
         "account_accountcategorycode",
         [new OptionModel("PreferredCustomer", 1), new OptionModel("Standard", 2)]);

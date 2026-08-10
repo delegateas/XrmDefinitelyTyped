@@ -14,7 +14,6 @@ internal static class CommandLineParser
             Description = "Output directory for generated files."
         };
 
-        // TODO: Fix issue with: --solutions ""
         var solutionsOption = new Option<string[]>("--solutions", "-s")
         {
             Description = "Solution unique names.",
@@ -135,7 +134,16 @@ internal static class CommandLineParser
             result.GetValue(webNamespaceOption));
     }
 
-    private static List<string>? AsList(string[]? values) => values is null ? null : [.. values];
+    // An absent option parses to an empty array rather than null, and an explicit `-s ""` to [""].
+    // Both must stay null so the appsettings.json fallback in Program.cs is not suppressed.
+    private static List<string>? AsList(string[]? values)
+    {
+        if (values is null)
+            return null;
+
+        List<string> cleaned = [.. values.Select(value => value.Trim()).Where(value => value.Length > 0)];
+        return cleaned.Count == 0 ? null : cleaned;
+    }
 
     private static string[] GetCommaSeparatedValue(System.CommandLine.Parsing.ArgumentResult result)
     {

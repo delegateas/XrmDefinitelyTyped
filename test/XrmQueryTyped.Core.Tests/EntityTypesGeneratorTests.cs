@@ -51,6 +51,15 @@ public sealed class EntityTypesGeneratorTests
         Assert.Contains("interface Account_Fixed {", files[0].Content, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void Generate_WithWideEntity_DoesNotHitTemplateLoopLimit()
+    {
+        var files = new EntityTypesGenerator().Generate([TestEntityModels.Wide(400)], DefaultConfig);
+
+        var file = files.Single(generated => generated.Filename == Path.Combine("Web", "wide.d.ts"));
+        Assert.Contains("field400: string;", file.Content, StringComparison.Ordinal);
+    }
+
     private static IReadOnlyList<GeneratedFile> Generate(XrmQueryGenerationConfig config) =>
         new EntityTypesGenerator().Generate([TestEntityModels.Account(), TestEntityModels.Contact()], config);
 
