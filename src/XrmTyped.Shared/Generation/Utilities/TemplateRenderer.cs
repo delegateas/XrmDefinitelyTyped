@@ -19,9 +19,16 @@ public static class TemplateRenderer
         var scriptObject = new ScriptObject();
         scriptObject.Import(viewModel, renamer: member => member.Name);
 
-        // LoopLimit counts iterations cumulatively across the whole context, so the default of 1000
-        // trips on wide entities (nested member loops). 0 disables the limit.
-        var context = new TemplateContext { MemberRenamer = member => member.Name, LoopLimit = 0 };
+        // Both Scriban defaults are too small for generated declarations: LoopLimit (1000) counts
+        // iterations cumulatively across the whole context and trips on wide entities, and
+        // LimitToString (1 MiB) silently truncates the output mid-token and appends "...".
+        // 0 disables each limit.
+        var context = new TemplateContext
+        {
+            MemberRenamer = member => member.Name,
+            LoopLimit = 0,
+            LimitToString = 0,
+        };
         context.PushGlobal(scriptObject);
 
         return template.Render(context);

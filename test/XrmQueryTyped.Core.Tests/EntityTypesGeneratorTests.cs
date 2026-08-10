@@ -60,6 +60,17 @@ public sealed class EntityTypesGeneratorTests
         Assert.Contains("field400: string;", file.Content, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void Generate_WithOutputLargerThanOneMebibyte_IsNotTruncated()
+    {
+        var files = new EntityTypesGenerator().Generate([TestEntityModels.Wide(8000)], DefaultConfig);
+
+        var content = files.Single(generated => generated.Filename == Path.Combine("Web", "wide.d.ts")).Content;
+        Assert.True(content.Length > 1024 * 1024, $"Expected more than 1 MiB of output, got {content.Length} chars.");
+        Assert.DoesNotContain("...", content, StringComparison.Ordinal);
+        Assert.Contains("field8000: string;", content, StringComparison.Ordinal);
+    }
+
     private static IReadOnlyList<GeneratedFile> Generate(XrmQueryGenerationConfig config) =>
         new EntityTypesGenerator().Generate([TestEntityModels.Account(), TestEntityModels.Contact()], config);
 
