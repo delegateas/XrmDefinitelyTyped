@@ -1,4 +1,4 @@
-# @contextand/xrmquery
+# @delegateas/xrmquery
 
 Type-safe queries against the Dataverse (Dynamics 365) Web API.
 
@@ -21,7 +21,7 @@ See [MIGRATION.md](./MIGRATION.md) if you are coming from the web-resource versi
 ## Install
 
 ```bash
-npm install @contextand/xrmquery
+npm install @delegateas/xrmquery
 ```
 
 Requires TypeScript 5.0+ (for `const` type parameters) and a runtime with a global `fetch`
@@ -39,7 +39,7 @@ for the XrmQuery types themselves, having the package in `node_modules` is enoug
 ## Quick start
 
 ```ts
-import { XrmQuery, Filter } from "@contextand/xrmquery";
+import { XrmQuery, Filter } from "@delegateas/xrmquery";
 
 const accounts = await XrmQuery.retrieveMultiple((x) => x.accounts)
   .select((x) => [x.name, x.revenue, x.primarycontactid_guid])
@@ -56,7 +56,7 @@ Inside a model-driven app the base url is taken from `Xrm.Utility.getGlobalConte
 Anywhere else, configure it:
 
 ```ts
-import { configure } from "@contextand/xrmquery";
+import { configure } from "@delegateas/xrmquery";
 
 configure({
   baseUrl: "https://contoso.crm4.dynamics.com/api/data/v9.2/",
@@ -329,7 +329,7 @@ A default `callerId` and default `headers` can also be set globally through `con
 A non-2xx response rejects with an `XrmQueryError`:
 
 ```ts
-import { XrmQueryError } from "@contextand/xrmquery";
+import { XrmQueryError } from "@delegateas/xrmquery";
 
 try {
   await XrmQuery.retrieve((x) => x.accounts, id).execute();

@@ -6,7 +6,7 @@ on:
       - "src/XrmQuery/**"
       - ".github/workflows/npm-ci.yml"
   push:
-    branches: [main]
+    branches: [gh_master]
     paths:
       - "src/XrmQuery/**"
       - ".github/workflows/npm-ci.yml"

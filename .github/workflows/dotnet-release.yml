@@ -1,13 +1,24 @@
 name: Tool Release
 
 on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish, e.g. 0.1.0-preview.1"
+        required: true
+        type: string
+      dry_run:
+        description: "Build and pack, but do not push"
+        type: boolean
+        default: true
   push:
     tags: ["tool-v*"]
 
 concurrency: tool-release
 
 permissions:
-  contents: read
+  contents: write # create the GitHub Release for tag pushes
+  id-token: write # required for NuGet trusted publishing (OIDC)
 
 jobs:
   release:
@@ -21,21 +32,69 @@ jobs:
         with:
           global-json-file: global.json
 
-      - name: Resolve version from tag
-        run: echo "VERSION=${GITHUB_REF_NAME#tool-v}" >> "$GITHUB_ENV"
+      - name: Resolve version
+        id: version
+        env:
+          # Via env, not direct interpolation: workflow_dispatch input is untrusted.
+          VERSION_INPUT: ${{ inputs.version }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            version="$VERSION_INPUT"
+          else
+            version="${GITHUB_REF_NAME#tool-v}"
+          fi
+
+          if ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "::error::'$version' is not a valid semver version"
+            exit 1
+          fi
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          case "$version" in
+            *-*) echo "prerelease=true" >> "$GITHUB_OUTPUT" ;;
+            *) echo "prerelease=false" >> "$GITHUB_OUTPUT" ;;
+          esac
 
       - name: Build
-        run: dotnet build --configuration Release -p:Version=${{ env.VERSION }}
+        run: dotnet build --configuration Release -p:Version=${{ steps.version.outputs.version }}
 
       - name: Test
         run: dotnet test --configuration Release --no-build
 
       - name: Pack
-        run: dotnet pack src/XrmDefinitelyTyped.Tool --configuration Release --no-build -p:Version=${{ env.VERSION }} -o artifacts
+        run: dotnet pack src/XrmDefinitelyTyped.Tool --configuration Release --no-build -p:Version=${{ steps.version.outputs.version }} -o artifacts
+
+      - name: Upload package artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: nupkg-${{ steps.version.outputs.version }}
+          path: artifacts/*
+
+      # Trusted publishing: exchange the GitHub OIDC token for a NuGet API key
+      # that is valid for 1 hour. Kept immediately before the push so it cannot
+      # expire in between.
+      - name: NuGet login (OIDC)
+        if: ${{ github.event_name == 'push' || !inputs.dry_run }}
+        uses: NuGet/login@v1
+        id: nuget_login
+        with:
+          user: ${{ secrets.NUGET_USER }}
 
       - name: Push to NuGet
+        if: ${{ github.event_name == 'push' || !inputs.dry_run }}
         run: >
           dotnet nuget push "artifacts/*.nupkg"
           --source https://api.nuget.org/v3/index.json
-          --api-key ${{ secrets.NUGET_API_KEY }}
+          --api-key ${{ steps.nuget_login.outputs.NUGET_API_KEY }}
           --skip-duplicate
+
+      - name: Create GitHub Release
+        if: ${{ github.event_name == 'push' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >
+          gh release create "$GITHUB_REF_NAME"
+          --title "XrmDefinitelyTyped ${{ steps.version.outputs.version }}"
+          --generate-notes
+          ${{ steps.version.outputs.prerelease == 'true' && '--prerelease' || '' }}
+          artifacts/*.nupkg

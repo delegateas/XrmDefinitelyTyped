@@ -1,4 +1,4 @@
-# XrmDefinitelyTyped [![NuGet version](https://badge.fury.io/nu/XrmDefinitelyTyped.svg)](https://badge.fury.io/nu/XrmDefinitelyTyped) [![npm version](https://badge.fury.io/js/@contextand%2Fxrmquery.svg)](https://www.npmjs.com/package/@contextand/xrmquery) [![Join the chat at https://gitter.im/delegateas/XrmDefinitelyTyped](https://badges.gitter.im/delegateas/XrmDefinitelyTyped.svg)](https://gitter.im/delegateas/XrmDefinitelyTyped?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+# XrmDefinitelyTyped [![NuGet version](https://badge.fury.io/nu/XrmDefinitelyTyped.svg)](https://badge.fury.io/nu/XrmDefinitelyTyped) [![npm version](https://badge.fury.io/js/@delegateas%2Fxrmquery.svg)](https://www.npmjs.com/package/@delegateas/xrmquery) [![Join the chat at https://gitter.im/delegateas/XrmDefinitelyTyped](https://badges.gitter.im/delegateas/XrmDefinitelyTyped.svg)](https://gitter.im/delegateas/XrmDefinitelyTyped?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 XrmDefinitelyTyped generates [TypeScript](http://www.typescriptlang.org/)
 declaration files based on *your* Dynamics 365/CRM/xRM solution.
@@ -17,8 +17,8 @@ generates.
 | `src/XrmDefinitelyTyped.Tool` | `XrmDefinitelyTyped` — dotnet tool, command `xdt` | NuGet |
 | `src/XrmTyped.Shared` | Shared by both generators: Dataverse entity metadata, option sets, TypeScript emission plumbing, output writing | — |
 | `src/XrmDefinitelyTyped.Core` | Form generation | — |
-| `src/XrmQueryTyped.Core` | Web entity type generation for `@contextand/xrmquery` | — |
-| [`src/XrmQuery`](src/XrmQuery) | `@contextand/xrmquery` — type-safe Dataverse Web API query library | npm |
+| `src/XrmQueryTyped.Core` | Web entity type generation for `@delegateas/xrmquery` | — |
+| [`src/XrmQuery`](src/XrmQuery) | `@delegateas/xrmquery` — type-safe Dataverse Web API query library | npm |
 
 XrmQuery used to be emitted onto disk by the tool itself via `-jsLib`. It is now a normal npm
 package with ES module exports — see [`src/XrmQuery/MIGRATION.md`](src/XrmQuery/MIGRATION.md) for
@@ -44,7 +44,7 @@ The tool runs two generators. Pick them with `--generate` (`-g`); the default is
 ```bash
 xdt -o typings                      # forms and web entity types
 xdt -o typings --generate forms     # form types only
-xdt -o typings --generate web       # web entity types for @contextand/xrmquery only
+xdt -o typings --generate web       # web entity types for @delegateas/xrmquery only
 ```
 
 Web entity types land in `typings/Web/<entity>.d.ts` (or a single `typings/Web/WebEntities.d.ts` with

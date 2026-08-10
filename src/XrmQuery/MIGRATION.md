@@ -11,7 +11,7 @@ changes is how the library gets into your bundle, and the removal of everything 
 ## 1. Install and import
 
 ```diff
-+import { XrmQuery, Filter, SortOrder } from "@contextand/xrmquery";
++import { XrmQuery, Filter, SortOrder } from "@delegateas/xrmquery";
 ```
 
 `XrmQuery` and `Filter` are no longer globals. Stop deploying `dg.xrmquery.web.js` as a web resource
@@ -70,7 +70,7 @@ and the constants come from the package.
 
 ```diff
 -.expand(x => x.contact_customer_accounts, x => [x.fullname], { sortOrder: SortOrder.Descending })
-+import { SortOrder } from "@contextand/xrmquery";
++import { SortOrder } from "@delegateas/xrmquery";
 ```
 
 **Errors are `XrmQueryError`, not `Error`.** A failed request rejects with `status`, `errorCode`,

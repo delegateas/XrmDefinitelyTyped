@@ -2,7 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "paths": {
-      "@contextand/xrmquery": ["../../src/index.ts"]
+      "@delegateas/xrmquery": ["../../src/index.ts"]
     },
     "types": []
   },

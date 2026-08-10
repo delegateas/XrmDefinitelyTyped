@@ -9,7 +9,7 @@
  * would collide with `tests/fixtures/entities.d.ts` in the root project.
  */
 
-import { Filter, SortOrder, XrmQuery } from "@contextand/xrmquery";
+import { Filter, SortOrder, XrmQuery } from "@delegateas/xrmquery";
 
 /** Compile-time assertion that `Actual` is exactly `Expected`. */
 type Equals<A, B> =

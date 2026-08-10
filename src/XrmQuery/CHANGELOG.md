@@ -1,4 +1,4 @@
-# @contextand/xrmquery
+# @delegateas/xrmquery
 
 ## 0.1.0
 

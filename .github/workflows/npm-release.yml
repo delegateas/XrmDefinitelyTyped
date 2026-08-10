@@ -1,14 +1,24 @@
 name: XrmQuery Release
 
 on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish, e.g. 0.1.0-preview.1"
+        required: true
+        type: string
+      dry_run:
+        description: "Build and pack, but do not publish"
+        type: boolean
+        default: true
   push:
     tags: ["xrmquery-v*"]
 
 concurrency: xrmquery-release
 
 permissions:
-  contents: read
-  id-token: write # required for npm provenance
+  contents: write # create the GitHub Release for tag pushes
+  id-token: write # required for npm trusted publishing (OIDC) + provenance
 
 defaults:
   run:
@@ -24,15 +34,48 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
+          # Trusted publishing needs Node >= 22.14.0.
           node-version: 22.x
           cache: npm
           cache-dependency-path: src/XrmQuery/package-lock.json
-          registry-url: https://registry.npmjs.org
+          # No registry-url on purpose: it writes an .npmrc line referencing
+          # NODE_AUTH_TOKEN, which is unset under trusted publishing.
+          # registry.npmjs.org is the default anyway.
 
-      - name: Resolve version from tag
+      - name: Upgrade npm for trusted publishing
+        # Node 22 bundles npm 10.x; OIDC publishing needs npm >= 11.5.1.
         run: |
-          version="${GITHUB_REF_NAME#xrmquery-v}"
-          echo "Publishing @contextand/xrmquery@$version"
+          npm install -g npm@latest
+          npm --version
+
+      - name: Resolve version
+        id: version
+        env:
+          # Via env, not direct interpolation: workflow_dispatch input is untrusted.
+          VERSION_INPUT: ${{ inputs.version }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            version="$VERSION_INPUT"
+          else
+            version="${GITHUB_REF_NAME#xrmquery-v}"
+          fi
+
+          if ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "::error::'$version' is not a valid semver version"
+            exit 1
+          fi
+
+          # A prerelease must never take the 'latest' dist-tag, or every plain
+          # `npm install` picks up the preview.
+          case "$version" in
+            *-*) dist_tag=next ;;
+            *) dist_tag=latest ;;
+          esac
+
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "dist_tag=$dist_tag" >> "$GITHUB_OUTPUT"
+          echo "Publishing $(node -p "require('./package.json').name")@$version under dist-tag '$dist_tag'"
+
           npm version "$version" --no-git-tag-version --allow-same-version
 
       - name: Install dependencies
@@ -41,7 +84,23 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Inspect package contents
+        run: npm pack --dry-run
+
       - name: Publish to npm
-        run: npm publish --provenance --access public
+        if: ${{ github.event_name == 'push' || !inputs.dry_run }}
+        # Trusted publishing: auth comes from the OIDC token via id-token: write,
+        # and provenance attestations are generated automatically, so neither
+        # NODE_AUTH_TOKEN nor --provenance is needed.
+        run: npm publish --access public --tag "${{ steps.version.outputs.dist_tag }}"
+
+      - name: Create GitHub Release
+        if: ${{ github.event_name == 'push' }}
+        working-directory: ${{ github.workspace }}
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+        run: >
+          gh release create "$GITHUB_REF_NAME"
+          --title "XrmQuery ${{ steps.version.outputs.version }}"
+          --generate-notes
+          ${{ steps.version.outputs.dist_tag == 'next' && '--prerelease' || '' }}
