@@ -94,13 +94,28 @@ jobs:
         # NODE_AUTH_TOKEN nor --provenance is needed.
         run: npm publish --access public --tag "${{ steps.version.outputs.dist_tag }}"
 
+      # Publishing from the Releases UI creates the tag, which triggers this
+      # workflow, which then finds the release already there. Nothing to attach
+      # here, so leave it as the human wrote it.
       - name: Create GitHub Release
         if: ${{ github.event_name == 'push' }}
         working-directory: ${{ github.workspace }}
         env:
           GH_TOKEN: ${{ github.token }}
-        run: >
-          gh release create "$GITHUB_REF_NAME"
-          --title "XrmQuery ${{ steps.version.outputs.version }}"
-          --generate-notes
-          ${{ steps.version.outputs.dist_tag == 'next' && '--prerelease' || '' }}
+          TAG: ${{ github.ref_name }}
+          TITLE: XrmQuery ${{ steps.version.outputs.version }}
+          DIST_TAG: ${{ steps.version.outputs.dist_tag }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists; nothing to do."
+            exit 0
+          fi
+
+          create_args=(--title "$TITLE" --generate-notes)
+          if [ "$DIST_TAG" = "next" ]; then
+            create_args+=(--prerelease)
+          fi
+
+          # A release can appear between the check above and this call (UI
+          # publish, or a concurrent run) -- do not fail the run over it.
+          gh release create "$TAG" "${create_args[@]}" || gh release view "$TAG"

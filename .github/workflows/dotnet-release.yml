@@ -91,13 +91,33 @@ jobs:
           --api-key ${{ steps.nuget_login.outputs.NUGET_API_KEY }}
           --skip-duplicate
 
-      - name: Create GitHub Release
+      # Publishing from the Releases UI creates the tag, which triggers this
+      # workflow, which then finds the release already there. Attach the packages
+      # to it instead of failing, and leave its hand-written notes alone.
+      - name: Create or update GitHub Release
         if: ${{ github.event_name == 'push' }}
         env:
           GH_TOKEN: ${{ github.token }}
-        run: >
-          gh release create "$GITHUB_REF_NAME"
-          --title "XrmDefinitelyTyped ${{ steps.version.outputs.version }}"
-          --generate-notes
-          ${{ steps.version.outputs.prerelease == 'true' && '--prerelease' || '' }}
-          artifacts/*.nupkg
+          TAG: ${{ github.ref_name }}
+          TITLE: XrmDefinitelyTyped ${{ steps.version.outputs.version }}
+          PRERELEASE: ${{ steps.version.outputs.prerelease }}
+        run: |
+          upload() { gh release upload "$TAG" artifacts/*.nupkg --clobber; }
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists; uploading packages to it."
+            upload
+            exit 0
+          fi
+
+          create_args=(--title "$TITLE" --generate-notes)
+          if [ "$PRERELEASE" = "true" ]; then
+            create_args+=(--prerelease)
+          fi
+
+          # Still guard the create: a release can appear between the check above
+          # and this call (UI publish, or a concurrent run).
+          if ! gh release create "$TAG" "${create_args[@]}" artifacts/*.nupkg; then
+            echo "Create failed; assuming the release now exists and uploading instead."
+            upload
+          fi
