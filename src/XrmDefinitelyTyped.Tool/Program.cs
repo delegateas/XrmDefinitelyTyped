@@ -41,8 +41,8 @@ try
 
     // Authentication is handled by the DataverseConnection package, which reads its settings from the
     // IConfiguration registered below: DATAVERSE_URL for the environment, and DATAVERSE_CREDENTIAL_TYPE
-    // to pick the credential (browser, devicecode, azcli, ...). Defaults to DefaultAzureCredential,
-    // whose chain includes the caller's Azure CLI session (`az login`).
+    // to pick the credential (browser, devicecode, azcli, ...). Browser and device-code credentials
+    // use DataverseConnection's persistent token cache when their option objects remain unset.
     var services = new ServiceCollection();
     services.AddSingleton(configuration);
     services.AddDataverse();
