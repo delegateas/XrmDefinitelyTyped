@@ -8,6 +8,8 @@ public static class AppSettingsConfigBuilder
         new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: true)
+            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production"}.json", optional: true)
+            .AddEnvironmentVariables()
             .Build();
 
     public static PartialConfig BuildFromConfiguration(IConfiguration configuration)
